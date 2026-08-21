@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "fixture": true,
+  "generatedAt": "2026-08-21T22:00:00Z",
+  "sources": [
+    {
+      "id": "ctx-source:example-reference",
+      "sourceId": "synthetic-reference-a",
+      "title": "Synthetic Reference A",
+      "publisher": "Unreached Test Fixtures",
+      "url": "https://example.com/synthetic-reference-a",
+      "sourceType": "reference",
+      "publicationDate": "2026-01-01",
+      "accessedAt": "2026-08-21T22:00:00Z",
+      "locator": "Fixture section 1"
+    },
+    {
+      "id": "ctx-source:example-research",
+      "sourceId": "synthetic-reference-b",
+      "title": "Synthetic Research B",
+      "publisher": "Unreached Test Fixtures",
+      "url": "https://example.com/synthetic-reference-b",
+      "sourceType": "academic",
+      "publicationDate": "2026-02-01",
+      "accessedAt": "2026-08-21T22:00:00Z",
+      "locator": "Fixture section 2"
+    }
+  ],
+  "profiles": [
+    {
+      "peopleGroupId": "people:999001",
+      "sourcePeopleId": 999001,
+      "whoTheyAre": {
+        "summary": "Example People is a fictional group used only to validate Unreached's editorial pipeline.",
+        "claimIds": ["claim:example-identity", "claim:example-geography"]
+      },
+      "religionAndCommunity": {
+        "summary": "The synthetic fixture tests respectful handling of aggregate religious context without implying uniform personal belief.",
+        "claimIds": ["claim:example-religion"]
+      },
+      "whyUnreachedIntro": "The following fictional factors test how Unreached separates sourced facts from evidence synthesis.",
+      "whyUnreached": [
+        {
+          "dimension": "language-media",
+          "heading": "Language and media",
+          "summary": "Synthetic source material indicates that some resources are incomplete in the primary fixture language.",
+          "claimIds": ["claim:example-language"]
+        },
+        {
+          "dimension": "access-gap",
+          "heading": "Access gap",
+          "summary": "Two fictional references support a cautious synthesis that local access is limited in the test scenario.",
+          "claimIds": ["claim:example-access"]
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim:example-identity",
+          "dimension": "identity",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "stable",
+          "text": "The Example People fixture is defined as a single synthetic people-group record.",
+          "citationIds": ["ctx-source:example-reference"],
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:example-geography",
+          "dimension": "geography",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "stable",
+          "text": "The fixture places the group in fictional Exampleland.",
+          "citationIds": ["ctx-source:example-reference"],
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "generalized",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:example-religion",
+          "dimension": "religion-community",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "stable",
+          "text": "The fixture's aggregate primary-religion field is Islam; this is a classification and not a claim about every individual.",
+          "citationIds": ["ctx-source:example-reference"],
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:example-language",
+          "dimension": "language-media",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "current",
+          "text": "The synthetic source reports Scripture portions rather than a complete Bible in Example Language.",
+          "citationIds": ["ctx-source:example-reference"],
+          "asOf": "2026-08-21",
+          "reviewAfter": "2027-02-21",
+          "sensitivity": "public",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:example-access",
+          "dimension": "access-gap",
+          "kind": "synthesis",
+          "evidenceLevel": "B",
+          "certainty": "medium",
+          "temporalClass": "current",
+          "text": "Taken together, the fictional records suggest a limited local-language resource environment in the test scenario.",
+          "citationIds": ["ctx-source:example-reference", "ctx-source:example-research"],
+          "asOf": "2026-08-21",
+          "reviewAfter": "2027-02-21",
+          "sensitivity": "public",
+          "interpretationNote": null
+        }
+      ],
+      "sourceIds": ["ctx-source:example-reference", "ctx-source:example-research"],
+      "review": {
+        "status": "published",
+        "qualityTier": 3,
+        "aiAssisted": true,
+        "reviewedAt": "2026-08-21T22:00:00Z",
+        "reviewerRole": "Synthetic fixture validator",
+        "checklist": {
+          "namingChecked": true,
+          "materialClaimsCited": true,
+          "currentClaimsFresh": true,
+          "noStereotypeShortcuts": true,
+          "religionNuanced": true,
+          "sensitiveDataChecked": true,
+          "sourceLicensingChecked": true
+        }
+      }
+    }
+  ]
+}
