@@ -1,7 +1,7 @@
 # U4 — Release Gates
 
 **Phase:** Mission Visualization Engine  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Aggregation and semantics
 
@@ -35,16 +35,18 @@
 - [x] Current production status explicitly marks mission data unavailable.
 - [x] U0/U2 public redistribution gate remains unchanged.
 
-## Validation required before U4 completion
+## Build validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2 data checks still pass
-- [ ] U3 geography build/check still passes
-- [ ] synthetic visualization aggregation check passes
-- [ ] all five synthetic layer checks pass
-- [ ] geography join/no-data checks pass
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2 data checks still pass
+- [x] U3 geography build/check still passes
+- [x] synthetic visualization aggregation check passes
+- [x] all five synthetic layer checks pass
+- [x] geography join/no-data checks pass
+- [x] Vite production build passes
+
+GitHub Actions validated the complete U4 implementation on PR #5, CI run #39, on 2026-08-21.
 
 ## Deferred to U5+
 
