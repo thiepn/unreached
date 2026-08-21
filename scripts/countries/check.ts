@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { buildCountryExplorerDataset, countryExplorerAvailabilitySchema } from "../../src/countries/index.js";
+import { buildCountryExplorerDataset } from "../../src/countries/derive.js";
+import { countryExplorerAvailabilitySchema } from "../../src/countries/types.js";
 import { loadFixtureDataset } from "../data/fixtures.js";
 
 const { dataset } = await loadFixtureDataset();
