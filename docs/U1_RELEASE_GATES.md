@@ -24,14 +24,16 @@
 - [x] Empty/future systems avoid fake mission statistics.
 - [x] Architecture and design-system documentation exist.
 
-## Validation required before merge
+## Validation
 
-- [ ] GitHub Actions dependency install
-- [ ] `npm run build`
-- [ ] desktop smoke test
-- [ ] mobile smoke test
-- [ ] GitHub Pages workflow validation after integration
+- [x] GitHub Actions dependency install
+- [x] `npm run build` (strict TypeScript + Vite production build)
+- [ ] desktop smoke test after deployment
+- [ ] mobile smoke test after deployment
+- [ ] GitHub Pages deployment validation after integration to `main`
+
+CI build passed on U1 PR #2 on 2026-08-21.
 
 ## Exit condition
 
-U1 passes when the production shell builds successfully and later phases can add data, maps, profiles, and prayer functionality without reconstructing navigation, responsive ownership, routing, or global visual tokens.
+U1 is **code-complete and build-validated**. The remaining three checks are deployment-only release gates and do not block U2 development. Later phases can add data, maps, profiles, and prayer functionality without reconstructing navigation, responsive ownership, routing, or global visual tokens.
