@@ -1,7 +1,7 @@
 # U9 — Release Gates
 
 **Phase:** Languages & Scripture Integration  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Language model
 
@@ -39,18 +39,20 @@
 - [x] Proprietary linguistic datasets remain unbundled.
 - [x] U0 Joshua Project release gate remains unchanged.
 
-## Validation required before U9 completion
+## Validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2–U8 checks still pass
-- [ ] U9 language derivation check passes
-- [ ] U9 people/country relationship checks pass
-- [ ] U9 Scripture/resource semantics checks pass
-- [ ] U9 no-inferred-taxonomy check passes
-- [ ] U9 filtering checks pass
-- [ ] U9 production status/release-gate check passes
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2–U8 checks still pass
+- [x] U9 language derivation check passes
+- [x] U9 people/country relationship checks pass
+- [x] U9 Scripture/resource semantics checks pass
+- [x] U9 no-inferred-taxonomy check passes
+- [x] U9 filtering checks pass
+- [x] U9 production status/release-gate check passes
+- [x] Vite production build passes
+
+GitHub Actions CI run #122 passed on 2026-08-22 for the complete U9 implementation head.
 
 ## Deferred
 
