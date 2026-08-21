@@ -1,0 +1,1 @@
+Country mission data is intentionally not published in U5. status.json is the browser release gate. Synthetic country data is used only by validation scripts and must never be presented as real-world mission statistics.
