@@ -143,7 +143,6 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
         maxBounds: [[-180, -84], [180, 84]],
         renderWorldCopies: false,
         attributionControl: false,
-        antialias: false,
         fadeDuration: reducedMotion() ? 0 : 180,
       });
     } catch (error: unknown) {
