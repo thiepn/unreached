@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U8 complete; U9 next
+- **Current phase:** U9 implementation; U10 next after validation
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 
 `npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
 
-Full production/data/map/visualization/country/people/context/prayer validation:
+Full production/data/map/content/prayer/language validation:
 
 ```bash
 npm run check
@@ -38,6 +38,7 @@ npm run country:check
 npm run people:check
 npm run context:check
 npm run prayer:check
+npm run language:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -55,8 +56,9 @@ Vite is configured for the `/unreached/` project path.
 - evidence-backed editorial context dataset for `Who are they?` and `Why Unreached?`
 - reviewed prayer-guide dataset joined to U6 people and U7 contextual claims
 - deterministic daily prayer selection and 2/5/10-minute focused-prayer flows
-- separate build-time data, geography, editorial and prayer-validation pipelines
-- static-host-safe hash routing with shareable country, people, prayer, camera and layer state
+- first-class ISO 639-3 language profiles with people/country relationships and Scripture/resource summaries
+- separate build-time validation for data, geography, editorial context, prayer and languages
+- static-host-safe hash routing with shareable country, people, language, prayer, camera and layer state
 - deterministic mission-data chunking with SHA-256 manifest metadata
 - machine-enforced source permissions and publication gates
 - locally bundled Newsreader + Source Sans 3 typography
@@ -96,18 +98,26 @@ See [`docs/CONTEXT_EDITORIAL_ARCHITECTURE.md`](docs/CONTEXT_EDITORIAL_ARCHITECTU
 
 ## U8 prayer experience
 
-Prayer now has two stable routes:
-
-- `#/pray` — prayer hub, country scope and deterministic People to Pray for Today
-- `#/pray/:sourcePeopleId` — focused prayer guide
-
-Reviewed guides contain 4–7 prompts across at least four categories, including gospel and believers/church. Prompts explicitly distinguish biblical, contextual and mixed grounding; contextual factual assumptions reference U7 claims. Current prompts expire through `reviewAfter` dates. Scripture is stored as references and application purposes rather than copied verse text.
-
-Focused prayer offers optional 2/5/10-minute pacing with step navigation. It deliberately has no prayer score, XP, streak, leaderboard, completion target or public prayer log. People profiles link into focused prayer, while country pages link to prayer-ready peoples scoped to that country.
+Prayer has `#/pray` for the prayer hub and `#/pray/:sourcePeopleId` for focused guides. Reviewed guides contain 4–7 prompts, explicit biblical/contextual grounding, freshness rules, Scripture references and no prayer scoring or competitive gamification.
 
 The production browser currently ships no real-world prayer-guide dataset. `public/data/prayer/status.json` keeps that gate explicit and production blocks fixture data.
 
 See [`docs/PRAYER_EXPERIENCE.md`](docs/PRAYER_EXPERIENCE.md), [`docs/PRAYER_DISPLAY_RULES.md`](docs/PRAYER_DISPLAY_RULES.md), and [`docs/U8_RELEASE_GATES.md`](docs/U8_RELEASE_GATES.md).
+
+## U9 languages & Scripture
+
+Language exploration now has:
+
+- `#/languages` — local search, status filters, Scripture filters, resource-focused discovery and sorting
+- `#/languages/:iso6393` — stable language profile
+
+Profiles connect the normalized language record to canonical people groups and country-specific people contexts. They show reported Scripture milestones, milestone years, audio availability and Jesus Film availability while explicitly separating those flags from practical access or actual use.
+
+Language family/branch taxonomy is intentionally nullable: U9 does not infer it from geography, religion, names or people-group relationships. ProgressBible registered data and proprietary linguistic datasets remain unbundled without permission.
+
+The production browser currently ships no real source-derived language dataset. `public/data/languages/status.json` keeps that gate explicit and production code rejects fixture data.
+
+See [`docs/LANGUAGE_SCRIPTURE_ARCHITECTURE.md`](docs/LANGUAGE_SCRIPTURE_ARCHITECTURE.md), [`docs/LANGUAGE_SCRIPTURE_DISPLAY_RULES.md`](docs/LANGUAGE_SCRIPTURE_DISPLAY_RULES.md), and [`docs/U9_RELEASE_GATES.md`](docs/U9_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -128,56 +138,16 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 
 ## Foundation documents
 
-### U0
-- [`docs/PROJECT_CONSTITUTION.md`](docs/PROJECT_CONSTITUTION.md)
-- [`docs/DATA_AND_LEGAL_POLICY.md`](docs/DATA_AND_LEGAL_POLICY.md)
-- [`docs/EDITORIAL_AND_PRAYER_STANDARD.md`](docs/EDITORIAL_AND_PRAYER_STANDARD.md)
-- [`docs/U0_RELEASE_GATES.md`](docs/U0_RELEASE_GATES.md)
-- [`data/source-registry.json`](data/source-registry.json)
-
-### U1
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
-- [`docs/U1_RELEASE_GATES.md`](docs/U1_RELEASE_GATES.md)
-
-### U2
-- [`docs/DATA_ARCHITECTURE.md`](docs/DATA_ARCHITECTURE.md)
-- [`docs/JOSHUA_PROJECT_MAPPING.md`](docs/JOSHUA_PROJECT_MAPPING.md)
-- [`docs/U2_RELEASE_GATES.md`](docs/U2_RELEASE_GATES.md)
-
-### U3
-- [`docs/MAP_ARCHITECTURE.md`](docs/MAP_ARCHITECTURE.md)
-- [`docs/U3_RELEASE_GATES.md`](docs/U3_RELEASE_GATES.md)
-- [`data/geography-source.json`](data/geography-source.json)
-
-### U4
-- [`docs/MISSION_VISUALIZATION.md`](docs/MISSION_VISUALIZATION.md)
-- [`docs/U4_RELEASE_GATES.md`](docs/U4_RELEASE_GATES.md)
-- [`public/data/mission/status.json`](public/data/mission/status.json)
-
-### U5
-- [`docs/COUNTRY_EXPLORER.md`](docs/COUNTRY_EXPLORER.md)
-- [`docs/COUNTRY_DATA_DISPLAY_RULES.md`](docs/COUNTRY_DATA_DISPLAY_RULES.md)
-- [`docs/U5_RELEASE_GATES.md`](docs/U5_RELEASE_GATES.md)
-- [`public/data/countries/status.json`](public/data/countries/status.json)
-
-### U6
-- [`docs/PEOPLE_GROUP_EXPLORER.md`](docs/PEOPLE_GROUP_EXPLORER.md)
-- [`docs/PEOPLE_GROUP_DISPLAY_RULES.md`](docs/PEOPLE_GROUP_DISPLAY_RULES.md)
-- [`docs/U6_RELEASE_GATES.md`](docs/U6_RELEASE_GATES.md)
-- [`public/data/peoples/status.json`](public/data/peoples/status.json)
-
-### U7
-- [`docs/CONTEXT_EDITORIAL_ARCHITECTURE.md`](docs/CONTEXT_EDITORIAL_ARCHITECTURE.md)
-- [`docs/WHY_UNREACHED_DISPLAY_RULES.md`](docs/WHY_UNREACHED_DISPLAY_RULES.md)
-- [`docs/U7_RELEASE_GATES.md`](docs/U7_RELEASE_GATES.md)
-- [`public/data/context/status.json`](public/data/context/status.json)
-
-### U8
-- [`docs/PRAYER_EXPERIENCE.md`](docs/PRAYER_EXPERIENCE.md)
-- [`docs/PRAYER_DISPLAY_RULES.md`](docs/PRAYER_DISPLAY_RULES.md)
-- [`docs/U8_RELEASE_GATES.md`](docs/U8_RELEASE_GATES.md)
-- [`public/data/prayer/status.json`](public/data/prayer/status.json)
+- **U0:** `docs/PROJECT_CONSTITUTION.md`, `docs/DATA_AND_LEGAL_POLICY.md`, `docs/EDITORIAL_AND_PRAYER_STANDARD.md`, `docs/U0_RELEASE_GATES.md`
+- **U1:** `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, `docs/U1_RELEASE_GATES.md`
+- **U2:** `docs/DATA_ARCHITECTURE.md`, `docs/JOSHUA_PROJECT_MAPPING.md`, `docs/U2_RELEASE_GATES.md`
+- **U3:** `docs/MAP_ARCHITECTURE.md`, `docs/U3_RELEASE_GATES.md`
+- **U4:** `docs/MISSION_VISUALIZATION.md`, `docs/U4_RELEASE_GATES.md`
+- **U5:** `docs/COUNTRY_EXPLORER.md`, `docs/COUNTRY_DATA_DISPLAY_RULES.md`, `docs/U5_RELEASE_GATES.md`
+- **U6:** `docs/PEOPLE_GROUP_EXPLORER.md`, `docs/PEOPLE_GROUP_DISPLAY_RULES.md`, `docs/U6_RELEASE_GATES.md`
+- **U7:** `docs/CONTEXT_EDITORIAL_ARCHITECTURE.md`, `docs/WHY_UNREACHED_DISPLAY_RULES.md`, `docs/U7_RELEASE_GATES.md`
+- **U8:** `docs/PRAYER_EXPERIENCE.md`, `docs/PRAYER_DISPLAY_RULES.md`, `docs/U8_RELEASE_GATES.md`
+- **U9:** `docs/LANGUAGE_SCRIPTURE_ARCHITECTURE.md`, `docs/LANGUAGE_SCRIPTURE_DISPLAY_RULES.md`, `docs/U9_RELEASE_GATES.md`
 
 ## Development phases
 
@@ -190,7 +160,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U6 — People Group Explorer** ✅
 - **U7 — Context & “Why Unreached?”** ✅
 - **U8 — Prayer Experience** ✅
-- **U9 — Languages & Scripture Integration**
+- **U9 — Languages & Scripture Integration** — validation in progress
 - **U10 — Search, Discovery & Local Personalization**
 - **U11 — Release Hardening & Data Expansion**
 
