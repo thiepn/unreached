@@ -1,7 +1,7 @@
 # U5 — Release Gates
 
 **Phase:** Country Explorer  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Routing and navigation
 
@@ -31,16 +31,18 @@
 - [x] Production runtime blocks fixture country datasets.
 - [x] U0/U2 redistribution policy remains unchanged.
 
-## Validation required before U5 completion
+## Validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2 data checks still pass
-- [ ] U3 geography build/check still passes
-- [ ] U4 visualization check still passes
-- [ ] U5 country derivation check passes
-- [ ] country status release gate check passes
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2 data checks still pass
+- [x] U3 geography build/check still passes
+- [x] U4 visualization check still passes
+- [x] U5 country derivation check passes
+- [x] country status release gate check passes
+- [x] Vite production build passes
+
+GitHub Actions validated the corrected U5 implementation on PR #6 on 2026-08-21. The initial CI run exposed a build-time/browser barrel-import boundary issue; U5 now imports build-time derivation modules directly instead of weakening TypeScript environment separation.
 
 ## Deferred to later phases
 
