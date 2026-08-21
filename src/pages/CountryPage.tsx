@@ -8,6 +8,11 @@ function coverageLabel(value: number | null): string {
   return value === null ? "Unknown" : `${Math.round(value)}%`;
 }
 
+function peopleProfileHref(peopleGroupId: string): string {
+  const sourceId = peopleGroupId.replace(/^people:/, "");
+  return hrefFor(`/peoples/${sourceId}`);
+}
+
 function CountryMetrics({ record }: { record: CountryExplorerRecord }) {
   const mission = record.mission;
   return (
@@ -110,7 +115,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
                       <tbody>
                         {unreachedPeople.slice(0, 20).map((people) => (
                           <tr key={people.id}>
-                            <th scope="row">{people.name}</th>
+                            <th scope="row"><a class="country-people-link" href={peopleProfileHref(people.peopleGroupId)}>{people.name}</a></th>
                             <td>{formatCount(people.population)}</td>
                             <td>{people.primaryReligionName ?? "Unknown"}</td>
                             <td>{people.primaryLanguageName ?? "Unknown"}</td>

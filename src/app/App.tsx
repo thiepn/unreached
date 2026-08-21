@@ -3,6 +3,8 @@ import { CountriesPage } from "../pages/CountriesPage";
 import { CountryPage } from "../pages/CountryPage";
 import { ExplorePage } from "../pages/ExplorePage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { PeoplePage } from "../pages/PeoplePage";
+import { PeoplesPage } from "../pages/PeoplesPage";
 import { SectionPage } from "../pages/SectionPage";
 import { useHashRoute } from "./router";
 
@@ -16,7 +18,7 @@ export function App() {
       page = <ExplorePage />;
       break;
     case "peoples":
-      page = <SectionPage kind="peoples" />;
+      page = route.peopleSourceId ? <PeoplePage sourcePeopleId={route.peopleSourceId} /> : <PeoplesPage />;
       break;
     case "countries":
       page = route.countryIso3 ? <CountryPage iso3={route.countryIso3} /> : <CountriesPage />;

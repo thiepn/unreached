@@ -1,4 +1,4 @@
-import { RELIGION_NAMES, type NormalizedDataset, type PeopleGroup, type PeopleGroupInCountry, type ScriptureResources } from "../domain";
+import { RELIGION_NAMES, type NormalizedDataset, type PeopleGroup, type PeopleGroupInCountry } from "../domain";
 import { peopleExplorerDatasetSchema, type PeopleCountryContext, type PeopleExplorerDataset, type PeopleGroupProfile, type PeopleScriptureSummary, type RelatedPeople } from "./types";
 
 function populationValue(value: number | null): number {
@@ -33,6 +33,7 @@ function contextFor(record: PeopleGroupInCountry, dataset: NormalizedDataset): P
     locationText: record.locationText,
     hasCoordinates: record.coordinates !== null,
     scripture: record.scripture,
+    provenance: record.provenance,
     sourceIds: uniqueStrings(record.provenance.map((item) => item.sourceId)),
   };
 }
@@ -126,10 +127,12 @@ function profileFor(group: PeopleGroup, dataset: NormalizedDataset): PeopleGroup
       name: language.name,
       status: language.status,
       scripture: language.scripture,
+      provenance: language.provenance,
     } : null,
     primaryReligion: group.primaryReligionId ? {
       religionId: group.primaryReligionId,
       name: religion?.name ?? (religionCode !== null ? RELIGION_NAMES[religionCode] ?? "Unknown" : "Unknown"),
+      provenance: religion?.provenance ?? group.provenance,
     } : null,
     largestCountry: largestCountryFor(group, contexts, dataset),
     countryCount: contexts.length,
@@ -141,6 +144,7 @@ function profileFor(group: PeopleGroup, dataset: NormalizedDataset): PeopleGroup
       ...group.provenance.map((item) => item.sourceId),
       ...contexts.flatMap((item) => item.sourceIds),
       ...(language?.provenance.map((item) => item.sourceId) ?? []),
+      ...(religion?.provenance.map((item) => item.sourceId) ?? []),
     ]),
   };
 }

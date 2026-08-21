@@ -13,6 +13,7 @@ export interface RouteState {
   id: RouteId;
   path: string;
   countryIso3: string | null;
+  peopleSourceId: number | null;
 }
 
 const ROUTES: Readonly<Record<string, RouteId>> = {
@@ -40,12 +41,18 @@ function readRoute(): RouteState {
   const path = normalizeHash(window.location.hash);
   const countryMatch = path.match(/^\/countries\/([A-Za-z]{3})$/);
   if (countryMatch?.[1]) {
-    return { id: "countries", path, countryIso3: countryMatch[1].toUpperCase() };
+    return { id: "countries", path, countryIso3: countryMatch[1].toUpperCase(), peopleSourceId: null };
+  }
+  const peopleMatch = path.match(/^\/peoples\/([0-9]+)$/);
+  if (peopleMatch?.[1]) {
+    const sourceId = Number(peopleMatch[1]);
+    return { id: "peoples", path, countryIso3: null, peopleSourceId: Number.isSafeInteger(sourceId) && sourceId > 0 ? sourceId : null };
   }
   return {
     id: ROUTES[path] ?? "not-found",
     path,
     countryIso3: null,
+    peopleSourceId: null,
   };
 }
 

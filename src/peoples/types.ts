@@ -35,6 +35,7 @@ export const peopleCountryContextSchema = z.object({
   locationText: z.string().trim().min(1).nullable(),
   hasCoordinates: z.boolean(),
   scripture: scriptureResourcesSchema,
+  provenance: z.array(fieldProvenanceSchema).min(1),
   sourceIds: z.array(z.string().min(1)),
 });
 
@@ -62,10 +63,12 @@ export const peopleGroupProfileSchema = z.object({
     name: z.string().trim().min(1),
     status: z.enum(["living", "extinct", "nearly-extinct", "historical", "ancient", "constructed", "unknown"]),
     scripture: scriptureResourcesSchema,
+    provenance: z.array(fieldProvenanceSchema).min(1),
   }).nullable(),
   primaryReligion: z.object({
     religionId: religionIdSchema,
     name: z.string().trim().min(1),
+    provenance: z.array(fieldProvenanceSchema).min(1),
   }).nullable(),
   largestCountry: z.object({
     countryId: countryIdSchema,
