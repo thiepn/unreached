@@ -12,7 +12,7 @@ const { dataset } = await loadFixtureDataset();
 const people = buildPeopleExplorerDataset(dataset, "2026-08-21T22:00:00Z");
 
 assertContextDatasetIntegrity(context, new Date("2026-08-22T00:00:00Z"));
-assertContextMatchesPeople(context, people.people);
+assertContextMatchesPeople(context, people.peoples);
 
 if (!context.fixture) throw new Error("Synthetic editorial context must remain fixture data.");
 const profile = context.profiles[0];
