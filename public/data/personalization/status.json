@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "storage": "browser-local",
+  "accountRequired": false,
+  "cloudSync": false,
+  "analytics": false,
+  "storageKey": "unreached.personal.v1"
+}
