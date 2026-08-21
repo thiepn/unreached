@@ -1,7 +1,7 @@
 # U7 — Release Gates
 
 **Phase:** Context & Why Unreached?  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Editorial model
 
@@ -34,16 +34,18 @@
 - [x] Raw precise people coordinates remain outside the editorial display.
 - [x] U0 sensitive-data and image rules remain unchanged.
 
-## Validation required before U7 completion
+## Validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2–U6 checks still pass
-- [ ] U7 editorial schema/integrity check passes
-- [ ] U7 stale-claim detection passes
-- [ ] U7 people-profile cross-reference check passes
-- [ ] U7 production status/release-gate check passes
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2–U6 checks still pass
+- [x] U7 editorial schema/integrity check passes
+- [x] U7 stale-claim detection passes
+- [x] U7 people-profile cross-reference check passes
+- [x] U7 production status/release-gate check passes
+- [x] Vite production build passes
+
+GitHub Actions CI run #86 passed on 2026-08-21 after correcting two U7 validation-interface mismatches. The fixes aligned U7 cross-reference validation with the canonical U6 `peoples` collection and `peopleGroupId` field; validation was not weakened.
 
 ## Deferred
 
