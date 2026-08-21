@@ -1,4 +1,10 @@
-import maplibregl, { type Map as MapLibreMap, type StyleSpecification } from "maplibre-gl";
+import {
+  AttributionControl,
+  LngLatBounds,
+  Map as MapLibreMap,
+  NavigationControl,
+  type StyleSpecification,
+} from "maplibre-gl";
 import { useEffect, useRef } from "preact/hooks";
 
 import type { MapCountryFeature, MapViewState, WorldGeography } from "./types";
@@ -20,8 +26,8 @@ function reducedMotion(): boolean {
   return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 }
 
-function boundsFor(feature: MapCountryFeature): maplibregl.LngLatBounds {
-  const bounds = new maplibregl.LngLatBounds();
+function boundsFor(feature: MapCountryFeature): LngLatBounds {
+  const bounds = new LngLatBounds();
 
   const visit = (value: unknown): void => {
     if (!Array.isArray(value)) return;
@@ -127,7 +133,7 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
     let map: MapLibreMap;
 
     try {
-      map = new maplibregl.Map({
+      map = new MapLibreMap({
         container,
         style: mapStyle(geography),
         center: [start.longitude, start.latitude],
@@ -146,8 +152,8 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
     }
 
     mapRef.current = map;
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false, showZoom: true }), "top-right");
-    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+    map.addControl(new NavigationControl({ showCompass: false, showZoom: true }), "top-right");
+    map.addControl(new AttributionControl({ compact: true }), "bottom-right");
 
     const findCountry = (key: string): MapCountryFeature | undefined => geography.features.find((feature) => feature.properties.mapKey === key);
 
