@@ -1,14 +1,17 @@
 {
   "name": "unreached",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run geography:build",
     "dev": "vite",
-    "build": "npm run typecheck && npm run data:check && vite build",
+    "build": "npm run typecheck && npm run data:check && npm run geography:build && npm run geography:check && vite build",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "data:check": "tsx scripts/data/check.ts",
     "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
+    "geography:build": "tsx scripts/geography/build-natural-earth.ts",
+    "geography:check": "tsx scripts/geography/check.ts",
     "preview": "vite preview",
     "check": "npm run build"
   },
@@ -19,11 +22,13 @@
     "@fontsource-variable/newsreader": "5.3.0",
     "@fontsource-variable/source-sans-3": "5.3.0",
     "lucide-preact": "1.33.0",
+    "maplibre-gl": "6.5.0",
     "preact": "10.29.8",
     "zod": "4.4.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "2.10.6",
+    "@types/geojson": "7946.0.16",
     "@types/node": "22.20.1",
     "tsx": "4.23.12",
     "typescript": "7.0.2",

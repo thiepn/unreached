@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "natural-earth",
+  "dataset": "Admin 0 – Countries",
+  "scale": "1:110m",
+  "version": "5.1.1",
+  "sourceUrl": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.1/geojson/ne_110m_admin_0_countries.geojson",
+  "outputPath": "public/maps/world-countries.geojson",
+  "boundaryPresentation": "de-facto",
+  "runtimeExternalRequests": false,
+  "notes": [
+    "Natural Earth is public domain.",
+    "Natural Earth describes its default Admin-0 boundary presentation as de facto according to control rather than de jure claims.",
+    "The build strips unused Natural Earth attributes before browser delivery."
+  ]
+}

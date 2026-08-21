@@ -24,8 +24,12 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/about": "about"
 };
 
+function routePart(hash: string): string {
+  return hash.replace(/^#/, "").split("?", 1)[0] ?? "";
+}
+
 function normalizeHash(hash: string): string {
-  const raw = hash.replace(/^#/, "").trim();
+  const raw = routePart(hash).trim();
   if (!raw || raw === "/") return "/";
   const withSlash = raw.startsWith("/") ? raw : `/${raw}`;
   return withSlash.replace(/\/+$/, "") || "/";
