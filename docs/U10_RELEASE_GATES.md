@@ -1,7 +1,7 @@
 # U10 — Release Gates
 
 **Phase:** Search, Discovery & Local Personalization  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Global search
 
@@ -39,16 +39,18 @@
 - [x] Recent-route tracking only initializes the active domain loader.
 - [x] Global search data loaders mount on demand rather than permanently.
 
-## Validation required before U10 completion
+## Validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2–U9 checks still pass
-- [ ] U10 cross-domain search checks pass
-- [ ] U10 fuzzy/ranking checks pass
-- [ ] U10 save/remove state checks pass
-- [ ] U10 recent-history cap/deduplication checks pass
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2–U9 checks still pass
+- [x] U10 cross-domain search checks pass
+- [x] U10 fuzzy/ranking checks pass
+- [x] U10 save/remove state checks pass
+- [x] U10 recent-history cap/deduplication checks pass
+- [x] Vite production build passes
+
+GitHub Actions CI run #147 passed on 2026-08-22 for the corrected complete U10 implementation head. The first U10 validation run exposed a test assertion that mixed two different recent-history domains; the assertion was corrected to verify the intended domain + stable-key deduplication rule without weakening the implementation.
 
 ## Deferred
 
