@@ -15,7 +15,7 @@ export function RecentRouteTracker({ route }: { route: RouteState }) {
   const { recordRecent } = usePersonalization();
 
   useEffect(() => {
-    if (route.id === "people" || route.id === "not-found") return;
+    if (route.id === "not-found") return;
 
     if (route.peopleSourceId) {
       const people = peoples.peopleBySourceId.get(route.peopleSourceId);
