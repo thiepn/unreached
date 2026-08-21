@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U8 implementation; U9 next after validation
+- **Current phase:** U8 complete; U9 next
 
 ## Local development
 
@@ -189,7 +189,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U5 — Country Explorer** ✅
 - **U6 — People Group Explorer** ✅
 - **U7 — Context & “Why Unreached?”** ✅
-- **U8 — Prayer Experience** — validation in progress
+- **U8 — Prayer Experience** ✅
 - **U9 — Languages & Scripture Integration**
 - **U10 — Search, Discovery & Local Personalization**
 - **U11 — Release Hardening & Data Expansion**
