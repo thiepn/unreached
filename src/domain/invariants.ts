@@ -5,7 +5,7 @@ export interface DataInvariantIssue {
   message: string;
 }
 
-function duplicateIds<T extends { id: string }>(records: readonly T[]): string[] {
+function duplicateIds(records: readonly { id: string }[]): string[] {
   const seen = new Set<string>();
   const duplicates = new Set<string>();
   for (const record of records) {
@@ -17,14 +17,14 @@ function duplicateIds<T extends { id: string }>(records: readonly T[]): string[]
 
 export function validateDatasetInvariants(dataset: NormalizedDataset): DataInvariantIssue[] {
   const issues: DataInvariantIssue[] = [];
-  const collections = [
+  const collections: ReadonlyArray<readonly [string, readonly { id: string }[]]> = [
     ["regions", dataset.regions],
     ["religions", dataset.religions],
     ["countries", dataset.countries],
     ["peopleGroups", dataset.peopleGroups],
     ["peopleGroupsInCountries", dataset.peopleGroupsInCountries],
     ["languages", dataset.languages],
-  ] as const;
+  ];
 
   for (const [name, records] of collections) {
     for (const id of duplicateIds(records)) {
