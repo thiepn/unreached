@@ -4,11 +4,42 @@
 
 Unreached is a browser-based Christian world atlas for discovering unreached peoples, understanding their cultural, linguistic, religious, geographic, and gospel-access context, and praying for them intelligently.
 
-- **Target:** https://www.thiepn.dev/unreached
+- **Target:** https://www.thiepn.dev/unreached/
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U0 complete; U1 next
+- **Current phase:** U1 complete; U2 next
+
+## Local development
+
+Requires Node.js 22.12+.
+
+```bash
+npm install
+npm run dev
+```
+
+Production validation:
+
+```bash
+npm run build
+```
+
+Vite is configured for the `/unreached/` project path.
+
+## Current architecture
+
+- Vite 8
+- TypeScript 7
+- Preact 10
+- static-host-safe hash routing
+- locally bundled Newsreader + Source Sans 3 typography
+- Lucide Preact icons
+- native CSS design-token system
+- GitHub Actions → GitHub Pages deployment
+- no backend, authentication, analytics SDK, or client-side source API keys
+
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md), and [`docs/U1_RELEASE_GATES.md`](docs/U1_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -29,24 +60,24 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 
 ## Foundational documents
 
-- [`docs/PROJECT_CONSTITUTION.md`](docs/PROJECT_CONSTITUTION.md) — product mission, scope, definitions, safety, privacy, and architecture constraints
-- [`docs/DATA_AND_LEGAL_POLICY.md`](docs/DATA_AND_LEGAL_POLICY.md) — data-source approvals, licensing, provenance, attribution, and release gates
-- [`docs/EDITORIAL_AND_PRAYER_STANDARD.md`](docs/EDITORIAL_AND_PRAYER_STANDARD.md) — profile-writing, evidence, “Why unreached?”, prayer, naming, and sensitive-content standards
-- [`docs/U0_RELEASE_GATES.md`](docs/U0_RELEASE_GATES.md) — U0 completion checklist and unresolved external release gates
-- [`data/source-registry.json`](data/source-registry.json) — machine-readable source status registry
+### U0
 
-## Data baseline
+- [`docs/PROJECT_CONSTITUTION.md`](docs/PROJECT_CONSTITUTION.md)
+- [`docs/DATA_AND_LEGAL_POLICY.md`](docs/DATA_AND_LEGAL_POLICY.md)
+- [`docs/EDITORIAL_AND_PRAYER_STANDARD.md`](docs/EDITORIAL_AND_PRAYER_STANDARD.md)
+- [`docs/U0_RELEASE_GATES.md`](docs/U0_RELEASE_GATES.md)
+- [`data/source-registry.json`](data/source-registry.json)
 
-- **Joshua Project:** conditional primary mission-data source; non-commercial use, visible attribution, and value-added presentation required. Full-scale static public distribution is gated on written confirmation.
-- **Natural Earth:** approved public-domain geographic base.
-- **ProgressBible registered data:** not included without written permission.
-- **Wikimedia Commons:** media accepted only after per-file license review.
-- **Proprietary linguistic datasets:** not ingested without a compatible license.
+### U1
+
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
+- [`docs/U1_RELEASE_GATES.md`](docs/U1_RELEASE_GATES.md)
 
 ## Development phases
 
 - **U0 — Product Constitution, Definitions & Data Legality** ✅
-- **U1 — Production Architecture & Design System**
+- **U1 — Production Architecture & Design System** ✅
 - **U2 — Data Pipeline & Domain Model**
 - **U3 — Global Map Foundation**
 - **U4 — Mission Visualization Engine**
