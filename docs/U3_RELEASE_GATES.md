@@ -1,6 +1,7 @@
 # U3 — Release Gates
 
-**Phase:** Global Map Foundation
+**Phase:** Global Map Foundation  
+**Status:** code-complete and build-validated
 
 ## Geography pipeline
 
@@ -42,14 +43,16 @@
 - [x] Map and custom controls have keyboard/focus foundations.
 - [x] Boundary presentation disclosure is visible.
 
-## Validation before completion
+## Build validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2 data checks still pass
-- [ ] Natural Earth build succeeds from the pinned source
-- [ ] generated geography check passes
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2 data checks still pass
+- [x] Natural Earth build succeeds from the pinned source
+- [x] generated geography check passes
+- [x] Vite production build passes
+
+GitHub Actions validated the complete U3 implementation on PR #4 on 2026-08-21. The initial runs exposed two MapLibre v6 API/type mismatches; both were corrected before this gate was marked passed.
 
 ## Deferred intentionally to U4
 
@@ -63,4 +66,4 @@
 
 ## Deployment-only checks
 
-Desktop/mobile visual smoke testing and final Pages verification remain deployment gates once the stacked U0–U3 sequence is integrated to `main`.
+Desktop/mobile visual smoke testing and final Pages verification remain deployment gates once the stacked U0–U3 sequence is integrated to `main`. They do not block U4 development.
