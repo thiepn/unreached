@@ -33,16 +33,18 @@
 - [x] Natural Earth public release allowed.
 - [x] ProgressBible registered data remains blocked without permission.
 
-## Validation before U2 completion
+## Validation
 
-- [ ] script TypeScript check passes
-- [ ] application TypeScript check passes
-- [ ] source-registry validation passes
-- [ ] synthetic raw adapters pass
-- [ ] normalized dataset schema passes
-- [ ] cross-reference invariants pass
-- [ ] deterministic chunk test passes
-- [ ] Vite production build passes
+- [x] script TypeScript check passes
+- [x] application TypeScript check passes
+- [x] source-registry validation passes
+- [x] synthetic raw adapters pass
+- [x] normalized dataset schema passes
+- [x] cross-reference invariants pass
+- [x] deterministic chunk test passes
+- [x] Vite production build passes
+
+GitHub Actions U2 CI passed on 2026-08-21 after correcting a heterogeneous-collection invariant typing defect discovered by the first CI run.
 
 ## External release gates retained from U0
 
@@ -50,3 +52,7 @@
 - Third-party imagery still requires per-item rights approval.
 
 These gates do not block U3 map development using synthetic/local approved data.
+
+## Exit condition
+
+U2 is **code-complete and build-validated**. U3 can consume the normalized data contracts without depending on raw provider API shapes or client-side credentials.
