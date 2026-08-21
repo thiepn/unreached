@@ -8,5 +8,6 @@ import "./styles/base.css";
 import "./styles/app.css";
 import "./styles/map.css";
 import "./styles/mission-map.css";
+import "./styles/countries.css";
 
 render(<App />, document.getElementById("app")!);
