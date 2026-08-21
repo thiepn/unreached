@@ -54,7 +54,7 @@
 - [x] people status release-gate check passes
 - [x] Vite production build passes
 
-GitHub Actions CI run #68 passed on 2026-08-21 for the complete U6 head.
+GitHub Actions CI run #72 passed on 2026-08-21 for the validated U6 implementation before this documentation-only correction.
 
 ## Deferred to later phases
 
