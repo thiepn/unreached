@@ -1,5 +1,5 @@
 import type { EditorialContextDataset, PeopleContextProfile } from "../context/types";
-import type { PeopleExplorerRecord } from "../peoples/types";
+import type { PeopleGroupProfile } from "../peoples/types";
 import type { PrayerDataset, PrayerProfile, PrayerPrompt } from "./types";
 
 function dateMs(value: string): number {
@@ -40,7 +40,7 @@ function assertContextReferences(profile: PrayerProfile, context: PeopleContextP
 
 export function assertPrayerDatasetIntegrity(
   dataset: PrayerDataset,
-  people: PeopleExplorerRecord[],
+  people: PeopleGroupProfile[],
   contextDataset: EditorialContextDataset,
   now = new Date(),
 ): void {
