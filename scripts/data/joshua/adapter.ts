@@ -99,8 +99,9 @@ const rawLanguageSchema = z.object({
 }).passthrough();
 
 type Context = { retrievedAt: string };
+type ProvenanceField = [field: string, sourceField: string, transformation?: string | null];
 
-function provenance(recordId: string, retrievedAt: string, fields: Array<[string, string, string | null?]>): FieldProvenance[] {
+function provenance(recordId: string, retrievedAt: string, fields: ProvenanceField[]): FieldProvenance[] {
   return fields.map(([field, sourceField, transformation = null]) => ({
     field,
     sourceId: SOURCE_ID,
