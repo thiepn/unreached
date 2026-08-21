@@ -1,7 +1,7 @@
 # U6 — Release Gates
 
 **Phase:** People Group Explorer  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Domain and derivation
 
@@ -42,17 +42,19 @@
 - [x] Production runtime blocks fixture people datasets.
 - [x] U0/U2 redistribution policy remains unchanged.
 
-## Validation required before U6 completion
+## Validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2 data checks still pass
-- [ ] U3 geography build/check still passes
-- [ ] U4 visualization check still passes
-- [ ] U5 country check still passes
-- [ ] U6 people derivation/filter check passes
-- [ ] people status release-gate check passes
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2 data checks still pass
+- [x] U3 geography build/check still passes
+- [x] U4 visualization check still passes
+- [x] U5 country check still passes
+- [x] U6 people derivation/filter check passes
+- [x] people status release-gate check passes
+- [x] Vite production build passes
+
+GitHub Actions CI run #68 passed on 2026-08-21 for the complete U6 head.
 
 ## Deferred to later phases
 
