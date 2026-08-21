@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U5 complete; U6 next
+- **Current phase:** U6 implementation; U7 next after validation
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 
 `npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
 
-Full production/data/map/visualization/country validation:
+Full production/data/map/visualization/country/people validation:
 
 ```bash
 npm run check
@@ -35,6 +35,7 @@ npm run geography:build
 npm run geography:check
 npm run visualization:check
 npm run country:check
+npm run people:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -48,8 +49,10 @@ Vite is configured for the `/unreached/` project path.
 - five-layer country mission-visualization engine
 - population-coverage-aware derived metrics
 - dedicated country-intelligence dataset and stable ISO3 country routes
+- canonical global people profiles with stable source-ID routes
+- country-context, language, religion, Scripture and provenance-aware people profiles
 - separate build-time data and geography pipelines
-- static-host-safe hash routing with shareable country, camera, and layer state
+- static-host-safe hash routing with shareable country, people, camera and layer state
 - deterministic mission-data chunking with SHA-256 manifest metadata
 - machine-enforced source permissions
 - locally bundled Newsreader + Source Sans 3 typography
@@ -59,32 +62,30 @@ Vite is configured for the `/unreached/` project path.
 
 ## U4 mission visualization
 
-The map supports five mission lenses:
+The map supports five mission lenses: Unreached population share, Frontier population share, Evangelical presence, Primary religion and Scripture availability. Every layer has explicit missing-data semantics, a legend, methodology text, and a textual country-list equivalent.
 
-1. Unreached population share
-2. Frontier population share
-3. Evangelical presence
-4. Primary religion
-5. Scripture availability
-
-Every layer has explicit missing-data semantics, a legend, methodology text, and a textual country-list equivalent. Selected countries expose the active value plus population coverage.
-
-The production browser currently does **not** receive real Joshua Project-derived mission records because the U0 redistribution permission gate remains unresolved. The engine is validated against clearly synthetic fixtures, and production runtime code refuses fixture datasets.
+The production browser currently does **not** receive real Joshua Project-derived mission records because the U0 redistribution permission gate remains unresolved.
 
 See [`docs/MISSION_VISUALIZATION.md`](docs/MISSION_VISUALIZATION.md) and [`docs/U4_RELEASE_GATES.md`](docs/U4_RELEASE_GATES.md).
 
 ## U5 country explorer
 
-Country exploration now has two stable browser routes:
-
-- `#/countries` — searchable country index based on Natural Earth geography
-- `#/countries/:ISO3` — country intelligence page
-
-Country pages can render geographic identity even while mission intelligence is release-gated. When publishable country data is available, the page exposes U4 mission metrics, country vs represented population, largest unreached peoples, languages, derived religious context, Scripture distribution, source IDs, and explicit population coverage. Map selections link into country profiles and country profiles link back to the same map area.
-
-The production browser currently does **not** receive real Joshua Project-derived country records. `public/data/countries/status.json` keeps that release gate explicit, and production code rejects fixture country datasets.
+Country exploration has stable `#/countries` and `#/countries/:ISO3` routes. Country pages can render geographic identity independently of mission data and, when publishable data exists, expose mission metrics, population scope, largest unreached peoples, languages, derived religious context, Scripture distribution, sources and coverage.
 
 See [`docs/COUNTRY_EXPLORER.md`](docs/COUNTRY_EXPLORER.md), [`docs/COUNTRY_DATA_DISPLAY_RULES.md`](docs/COUNTRY_DATA_DISPLAY_RULES.md), and [`docs/U5_RELEASE_GATES.md`](docs/U5_RELEASE_GATES.md).
+
+## U6 people-group explorer
+
+People exploration now has:
+
+- `#/peoples` — typed search, filters and sorting across published people profiles
+- `#/peoples/:sourcePeopleId` — global people-group profile
+
+Profiles separate the canonical global record from country-specific contexts, retain metric quality/unknown semantics, resolve language and religion, disclose the basis for Scripture status, expose source-taxonomy related groups with limitations, and provide field-level provenance. Country people tables link directly into global people profiles.
+
+The production browser currently does **not** receive real source-derived people records. `public/data/peoples/status.json` keeps the release gate explicit and production code rejects fixture datasets.
+
+See [`docs/PEOPLE_GROUP_EXPLORER.md`](docs/PEOPLE_GROUP_EXPLORER.md), [`docs/PEOPLE_GROUP_DISPLAY_RULES.md`](docs/PEOPLE_GROUP_DISPLAY_RULES.md), and [`docs/U6_RELEASE_GATES.md`](docs/U6_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -138,6 +139,12 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - [`docs/U5_RELEASE_GATES.md`](docs/U5_RELEASE_GATES.md)
 - [`public/data/countries/status.json`](public/data/countries/status.json)
 
+### U6
+- [`docs/PEOPLE_GROUP_EXPLORER.md`](docs/PEOPLE_GROUP_EXPLORER.md)
+- [`docs/PEOPLE_GROUP_DISPLAY_RULES.md`](docs/PEOPLE_GROUP_DISPLAY_RULES.md)
+- [`docs/U6_RELEASE_GATES.md`](docs/U6_RELEASE_GATES.md)
+- [`public/data/peoples/status.json`](public/data/peoples/status.json)
+
 ## Development phases
 
 - **U0 — Product Constitution, Definitions & Data Legality** ✅
@@ -146,7 +153,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U3 — Global Map Foundation** ✅
 - **U4 — Mission Visualization Engine** ✅
 - **U5 — Country Explorer** ✅
-- **U6 — People Group Explorer**
+- **U6 — People Group Explorer** — validation in progress
 - **U7 — Context & “Why Unreached?”**
 - **U8 — Prayer Experience**
 - **U9 — Languages & Scripture Integration**
