@@ -29,6 +29,7 @@
 - [x] Recent exploration appears in global search and Saved.
 - [x] Recent exploration can be cleared.
 - [x] Cross-tab localStorage changes are observed.
+- [x] Local actions remain usable for the current session if localStorage is unavailable.
 - [x] No account, backend, cloud synchronization or analytics event is added.
 
 ## Architecture and source safety
@@ -50,7 +51,7 @@
 - [x] U10 recent-history cap/deduplication checks pass
 - [x] Vite production build passes
 
-GitHub Actions CI run #147 passed on 2026-08-22 for the corrected complete U10 implementation head. The first U10 validation run exposed a test assertion that mixed two different recent-history domains; the assertion was corrected to verify the intended domain + stable-key deduplication rule without weakening the implementation.
+GitHub Actions CI run #153 passed on 2026-08-22 for the final U10 implementation head, including degraded-storage hardening. An earlier validation run exposed a test assertion that mixed two different recent-history domains; the assertion was corrected to verify the intended domain + stable-key deduplication rule without weakening the implementation.
 
 ## Deferred
 
