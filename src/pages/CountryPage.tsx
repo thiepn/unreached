@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, Languages, UsersRound } from "lucide-preact";
+import { ArrowLeft, ArrowUpRight, BookOpen, Compass, Database, Globe2, Languages, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
 import { formatCount, formatPercent, formatScriptureStatus, useCountryExplorer, type CountryExplorerRecord } from "../countries";
@@ -69,6 +69,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
   const name = record?.name ?? feature.properties.name;
   const unreachedPeople = record?.peopleGroups.filter((people) => people.classification === "unreached") ?? [];
   const mapHref = `#/?country=${encodeURIComponent(feature.properties.mapKey)}`;
+  const prayerHref = `#/pray?country=${encodeURIComponent(code)}`;
 
   return (
     <article class="country-page">
@@ -84,7 +85,10 @@ export function CountryPage({ iso3 }: { iso3: string }) {
           <h1 class="display-title">{name}</h1>
           <div class="country-identity-line"><span>{code}</span><span>{feature.properties.continent ?? "World"}</span></div>
         </div>
-        <a class="country-map-link" href={mapHref}>Explore on map <ArrowUpRight size={17} aria-hidden="true" /></a>
+        <div class="country-hero-actions">
+          <a class="country-map-link" href={mapHref}>Explore on map <ArrowUpRight size={17} aria-hidden="true" /></a>
+          <a class="country-map-link" href={prayerHref}>Pray for this country’s peoples <Compass size={17} aria-hidden="true" /></a>
+        </div>
       </header>
 
       {!intelligence.loading && !record ? (
