@@ -1,4 +1,5 @@
 import type { ComponentChildren } from "preact";
+import { useEffect, useState } from "preact/hooks";
 import {
   Bookmark,
   Compass,
@@ -10,6 +11,7 @@ import {
 } from "lucide-preact";
 
 import { hrefFor, type RouteId } from "../app/router";
+import { SearchDialog } from "./SearchDialog";
 
 interface AppShellProps {
   activeRoute: RouteId;
@@ -45,7 +47,27 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   );
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tag = target.tagName.toLowerCase();
+  return tag === "input" || tag === "textarea" || tag === "select" || target.isContentEditable;
+}
+
 export function AppShell({ activeRoute, children }: AppShellProps) {
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target)) return;
+      if (event.key === "/" || ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k")) {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div class="site-shell">
       <a class="skip-link" href="#main-content">
@@ -69,13 +91,14 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
 
         <div class="header-actions">
           <button
-            class="icon-action"
+            class="icon-action search-action"
             type="button"
-            aria-label="Search"
-            title="Search foundation — data-backed search arrives in U10"
-            disabled
+            aria-label="Search people, countries and languages"
+            title="Search people, countries and languages (/)"
+            onClick={() => setSearchOpen(true)}
           >
             <Search size={18} aria-hidden="true" />
+            <kbd aria-hidden="true">/</kbd>
           </button>
           <a
             class={`icon-action${activeRoute === "saved" ? " is-active" : ""}`}
@@ -97,6 +120,8 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
           <NavLink key={item.id} item={item} active={activeRoute === item.id} />
         ))}
       </nav>
+
+      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );
 }
