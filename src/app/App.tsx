@@ -1,6 +1,7 @@
 import { AppShell } from "../components/AppShell";
 import { CountryLanguageConnections, PeopleLanguageConnection } from "../components/LanguageConnections";
 import { RecentRouteTracker } from "../components/RecentRouteTracker";
+import { AboutPage } from "../pages/AboutPage";
 import { CountriesPage } from "../pages/CountriesPage";
 import { CountryPage } from "../pages/CountryPage";
 import { ExplorePage } from "../pages/ExplorePage";
@@ -12,7 +13,6 @@ import { PeoplesPage } from "../pages/PeoplesPage";
 import { PrayPage } from "../pages/PrayPage";
 import { PrayerFocusPage } from "../pages/PrayerFocusPage";
 import { SavedPage } from "../pages/SavedPage";
-import { SectionPage } from "../pages/SectionPage";
 import { useHashRoute } from "./router";
 
 export function App() {
@@ -26,7 +26,7 @@ export function App() {
     case "languages": page = route.languageIso6393 ? <LanguagePage iso6393={route.languageIso6393} /> : <LanguagesPage />; break;
     case "pray": page = route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />; break;
     case "saved": page = <SavedPage />; break;
-    case "about": page = <SectionPage kind="about" />; break;
+    case "about": page = <AboutPage />; break;
     default: page = <NotFoundPage />;
   }
 
