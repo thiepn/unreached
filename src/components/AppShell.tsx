@@ -121,7 +121,7 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
         ))}
       </nav>
 
-      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {searchOpen ? <SearchDialog open onClose={() => setSearchOpen(false)} /> : null}
     </div>
   );
 }
