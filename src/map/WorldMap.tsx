@@ -1,5 +1,6 @@
 import {
   AttributionControl,
+  GeoJSONSource,
   LngLatBounds,
   Map as MapLibreMap,
   NavigationControl,
@@ -7,6 +8,7 @@ import {
 } from "maplibre-gl";
 import { useEffect, useRef } from "preact/hooks";
 
+import type { MissionMapGeography } from "../visualization";
 import type { MapCountryFeature, MapViewState, WorldGeography } from "./types";
 
 const HOME_VIEW: MapViewState = { longitude: 10, latitude: 18, zoom: 1.15 };
@@ -14,10 +16,12 @@ const NONE_FILTER_KEY = "__unreached-none__";
 
 interface WorldMapProps {
   geography: WorldGeography;
+  visualizedGeography: MissionMapGeography;
   selectedKey: string | null;
   initialView: MapViewState | null;
   resetToken: number;
   onSelect: (country: MapCountryFeature) => void;
+  onHover: (country: MapCountryFeature | null) => void;
   onViewChange: (view: MapViewState) => void;
   onError: (message: string) => void;
 }
@@ -42,7 +46,7 @@ function boundsFor(feature: MapCountryFeature): LngLatBounds {
   return bounds;
 }
 
-function mapStyle(geography: WorldGeography): StyleSpecification {
+function mapStyle(geography: MissionMapGeography): StyleSpecification {
   return {
     version: 8,
     sources: {
@@ -63,8 +67,8 @@ function mapStyle(geography: WorldGeography): StyleSpecification {
         type: "fill",
         source: "countries",
         paint: {
-          "fill-color": "#cbd7cf",
-          "fill-opacity": 0.92,
+          "fill-color": ["coalesce", ["get", "missionFill"], "#d5ddd8"],
+          "fill-opacity": 0.94,
         },
       },
       {
@@ -73,8 +77,8 @@ function mapStyle(geography: WorldGeography): StyleSpecification {
         source: "countries",
         paint: {
           "line-color": "#75877d",
-          "line-width": 0.75,
-          "line-opacity": 0.8,
+          "line-width": 0.7,
+          "line-opacity": 0.82,
         },
       },
       {
@@ -83,8 +87,8 @@ function mapStyle(geography: WorldGeography): StyleSpecification {
         source: "countries",
         filter: ["==", ["get", "mapKey"], NONE_FILTER_KEY],
         paint: {
-          "fill-color": "#6d8b78",
-          "fill-opacity": 0.34,
+          "fill-color": "#ffffff",
+          "fill-opacity": 0.22,
         },
       },
       {
@@ -93,8 +97,8 @@ function mapStyle(geography: WorldGeography): StyleSpecification {
         source: "countries",
         filter: ["==", ["get", "mapKey"], NONE_FILTER_KEY],
         paint: {
-          "fill-color": "#315d72",
-          "fill-opacity": 0.48,
+          "fill-color": "#ffffff",
+          "fill-opacity": 0.15,
         },
       },
       {
@@ -104,24 +108,39 @@ function mapStyle(geography: WorldGeography): StyleSpecification {
         filter: ["==", ["get", "mapKey"], NONE_FILTER_KEY],
         paint: {
           "line-color": "#173f52",
-          "line-width": 1.8,
+          "line-width": 2.2,
         },
       },
     ],
   };
 }
 
-export function WorldMap({ geography, selectedKey, initialView, resetToken, onSelect, onViewChange, onError }: WorldMapProps) {
+export function WorldMap({
+  geography,
+  visualizedGeography,
+  selectedKey,
+  initialView,
+  resetToken,
+  onSelect,
+  onHover,
+  onViewChange,
+  onError,
+}: WorldMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const selectedKeyRef = useRef(selectedKey);
+  const visualizationRef = useRef(visualizedGeography);
   const onSelectRef = useRef(onSelect);
+  const onHoverRef = useRef(onHover);
   const onViewChangeRef = useRef(onViewChange);
   const onErrorRef = useRef(onError);
   const previousResetToken = useRef(resetToken);
+  const lastHoverKey = useRef<string | null>(null);
 
   selectedKeyRef.current = selectedKey;
+  visualizationRef.current = visualizedGeography;
   onSelectRef.current = onSelect;
+  onHoverRef.current = onHover;
   onViewChangeRef.current = onViewChange;
   onErrorRef.current = onError;
 
@@ -135,7 +154,7 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
     try {
       map = new MapLibreMap({
         container,
-        style: mapStyle(geography),
+        style: mapStyle(visualizationRef.current),
         center: [start.longitude, start.latitude],
         zoom: start.zoom,
         minZoom: 0.6,
@@ -169,6 +188,8 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
     };
 
     map.on("load", () => {
+      const source = map.getSource("countries");
+      if (source instanceof GeoJSONSource) source.setData(visualizationRef.current);
       const key = selectedKeyRef.current;
       if (key) {
         map.setFilter("countries-selected", ["==", ["get", "mapKey"], key]);
@@ -186,13 +207,20 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
 
     map.on("mousemove", "countries-fill", (event) => {
       const key = event.features?.[0]?.properties?.mapKey;
-      map.getCanvas().style.cursor = typeof key === "string" ? "pointer" : "";
-      map.setFilter("countries-hover", ["==", ["get", "mapKey"], typeof key === "string" ? key : NONE_FILTER_KEY]);
+      const nextKey = typeof key === "string" ? key : null;
+      map.getCanvas().style.cursor = nextKey ? "pointer" : "";
+      map.setFilter("countries-hover", ["==", ["get", "mapKey"], nextKey ?? NONE_FILTER_KEY]);
+      if (nextKey !== lastHoverKey.current) {
+        lastHoverKey.current = nextKey;
+        onHoverRef.current(nextKey ? findCountry(nextKey) ?? null : null);
+      }
     });
 
     map.on("mouseleave", "countries-fill", () => {
       map.getCanvas().style.cursor = "";
       map.setFilter("countries-hover", ["==", ["get", "mapKey"], NONE_FILTER_KEY]);
+      lastHoverKey.current = null;
+      onHoverRef.current(null);
     });
 
     map.on("moveend", () => {
@@ -207,9 +235,17 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
 
     return () => {
       mapRef.current = null;
+      onHoverRef.current(null);
       map.remove();
     };
   }, [geography, initialView]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+    const source = map.getSource("countries");
+    if (source instanceof GeoJSONSource) source.setData(visualizedGeography);
+  }, [visualizedGeography]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -250,7 +286,7 @@ export function WorldMap({ geography, selectedKey, initialView, resetToken, onSe
       ref={containerRef}
       class="world-map"
       role="application"
-      aria-label="Interactive world map. Use arrow keys to pan and plus or minus to zoom after focusing the map."
+      aria-label="Interactive mission world map. Use arrow keys to pan and plus or minus to zoom after focusing the map."
       tabIndex={0}
     />
   );
