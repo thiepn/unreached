@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "reviewedAt": "2026-08-21",
   "sources": [
     {
@@ -8,19 +8,16 @@
       "provider": "Joshua Project",
       "canonicalUrl": "https://api.joshuaproject.net/",
       "termsUrl": "https://api.joshuaproject.net/terms_of_use",
-      "contentTypes": [
-        "people_groups",
-        "countries",
-        "languages",
-        "mission_metrics",
-        "scripture_resource_indicators"
-      ],
+      "contentTypes": ["people_groups", "countries", "languages", "mission_metrics", "scripture_resource_indicators"],
       "status": "conditional",
       "commercialUse": false,
       "publicRedistribution": "value-added use only; full static database scale requires written confirmation before release",
       "cacheStatus": "conditional",
       "attributionRequired": true,
       "attributionText": "Data provided by Joshua Project",
+      "developmentIngestionAllowed": true,
+      "publicReleaseAllowed": false,
+      "browserRedistributionAllowed": false,
       "requirements": [
         "non-commercial use",
         "clear linked attribution on pages displaying Joshua Project content",
@@ -43,10 +40,10 @@
       "publicRedistribution": "not assumed",
       "cacheStatus": "not approved by default",
       "attributionRequired": null,
-      "requirements": [
-        "verify the rights of each individual image",
-        "do not scrape or mirror the Joshua Project photo library"
-      ],
+      "developmentIngestionAllowed": false,
+      "publicReleaseAllowed": false,
+      "browserRedistributionAllowed": false,
+      "requirements": ["verify the rights of each individual image", "do not scrape or mirror the Joshua Project photo library"],
       "termsReviewedAt": "2026-08-21"
     },
     {
@@ -62,10 +59,10 @@
       "cacheStatus": "allowed",
       "attributionRequired": false,
       "attributionText": "Made with Natural Earth",
-      "requirements": [
-        "document any deliberate boundary modifications",
-        "retain awareness of disputed-boundary representation"
-      ],
+      "developmentIngestionAllowed": true,
+      "publicReleaseAllowed": true,
+      "browserRedistributionAllowed": true,
+      "requirements": ["document any deliberate boundary modifications", "retain awareness of disputed-boundary representation"],
       "termsReviewedAt": "2026-08-21"
     },
     {
@@ -80,10 +77,10 @@
       "publicRedistribution": "not approved for product inclusion without written permission",
       "cacheStatus": "not approved",
       "attributionRequired": true,
-      "requirements": [
-        "do not ingest registered supplied data into Unreached without written permission",
-        "do not scrape the public website into a replacement dataset"
-      ],
+      "developmentIngestionAllowed": false,
+      "publicReleaseAllowed": false,
+      "browserRedistributionAllowed": false,
+      "requirements": ["do not ingest registered supplied data into Unreached without written permission", "do not scrape the public website into a replacement dataset"],
       "permissionGate": "Written permission explicitly covering inclusion in this public browser product is required.",
       "termsReviewedAt": "2026-08-21"
     },
@@ -99,12 +96,10 @@
       "publicRedistribution": "depends on individual file license",
       "cacheStatus": "depends on individual file license",
       "attributionRequired": null,
-      "requirements": [
-        "verify the individual file license",
-        "record creator, source, license, license URL, attribution and modification status",
-        "satisfy ShareAlike obligations where applicable",
-        "consider personality and privacy rights independently of copyright"
-      ],
+      "developmentIngestionAllowed": false,
+      "publicReleaseAllowed": false,
+      "browserRedistributionAllowed": false,
+      "requirements": ["verify the individual file license", "record creator, source, license, license URL, attribution and modification status", "satisfy ShareAlike obligations where applicable", "consider personality and privacy rights independently of copyright"],
       "termsReviewedAt": "2026-08-21"
     },
     {
@@ -118,10 +113,10 @@
       "publicRedistribution": "not approved",
       "cacheStatus": "not approved",
       "attributionRequired": null,
-      "requirements": [
-        "do not scrape or bulk reproduce proprietary linguistic data",
-        "obtain a compatible license before dataset integration"
-      ],
+      "developmentIngestionAllowed": false,
+      "publicReleaseAllowed": false,
+      "browserRedistributionAllowed": false,
+      "requirements": ["do not scrape or bulk reproduce proprietary linguistic data", "obtain a compatible license before dataset integration"],
       "termsReviewedAt": "2026-08-21"
     }
   ]
