@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U9 complete; U10 next
+- **Current phase:** U10 complete; U11 next
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 
 `npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
 
-Full production/data/map/content/prayer/language validation:
+Full production/data/map/content/prayer/language/discovery validation:
 
 ```bash
 npm run check
@@ -39,6 +39,7 @@ npm run people:check
 npm run context:check
 npm run prayer:check
 npm run language:check
+npm run discovery:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -57,7 +58,9 @@ Vite is configured for the `/unreached/` project path.
 - reviewed prayer-guide dataset joined to U6 people and U7 contextual claims
 - deterministic daily prayer selection and 2/5/10-minute focused-prayer flows
 - first-class ISO 639-3 language profiles with people/country relationships and Scripture/resource summaries
-- separate build-time validation for data, geography, editorial context, prayer and languages
+- unified browser search across published peoples, countries and languages
+- versioned browser-local saved prayer peoples and recent exploration
+- separate build-time validation for data, geography, editorial context, prayer, languages and discovery
 - static-host-safe hash routing with shareable country, people, language, prayer, camera and layer state
 - deterministic mission-data chunking with SHA-256 manifest metadata
 - machine-enforced source permissions and publication gates
@@ -119,6 +122,14 @@ The production browser currently ships no real source-derived language dataset. 
 
 See [`docs/LANGUAGE_SCRIPTURE_ARCHITECTURE.md`](docs/LANGUAGE_SCRIPTURE_ARCHITECTURE.md), [`docs/LANGUAGE_SCRIPTURE_DISPLAY_RULES.md`](docs/LANGUAGE_SCRIPTURE_DISPLAY_RULES.md), and [`docs/U9_RELEASE_GATES.md`](docs/U9_RELEASE_GATES.md).
 
+## U10 search, discovery & local personalization
+
+The header search now searches currently published People, Countries and Languages from one keyboard-friendly surface. `/` opens it globally outside editable controls, with Ctrl/Cmd+K as an alternate shortcut. Country search remains available from the local Natural Earth inventory even while mission datasets are gated.
+
+People profiles expose `Save for Prayer`. Saved people and up to 12 recent people/country/language visits are stored only in this browser under the versioned `unreached.personal.v1` payload. `#/saved` provides the local prayer list, recent exploration, direct profile/prayer links and clear/remove controls. No account, cloud sync, analytics event, prayer completion log, streak or score is added.
+
+See [`docs/SEARCH_DISCOVERY_PERSONALIZATION.md`](docs/SEARCH_DISCOVERY_PERSONALIZATION.md), [`docs/SEARCH_DISPLAY_RULES.md`](docs/SEARCH_DISPLAY_RULES.md), [`docs/PERSONALIZATION_PRIVACY.md`](docs/PERSONALIZATION_PRIVACY.md), and [`docs/U10_RELEASE_GATES.md`](docs/U10_RELEASE_GATES.md).
+
 ## V1 scope
 
 1. Interactive world mission map
@@ -148,6 +159,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U7:** `docs/CONTEXT_EDITORIAL_ARCHITECTURE.md`, `docs/WHY_UNREACHED_DISPLAY_RULES.md`, `docs/U7_RELEASE_GATES.md`
 - **U8:** `docs/PRAYER_EXPERIENCE.md`, `docs/PRAYER_DISPLAY_RULES.md`, `docs/U8_RELEASE_GATES.md`
 - **U9:** `docs/LANGUAGE_SCRIPTURE_ARCHITECTURE.md`, `docs/LANGUAGE_SCRIPTURE_DISPLAY_RULES.md`, `docs/U9_RELEASE_GATES.md`
+- **U10:** `docs/SEARCH_DISCOVERY_PERSONALIZATION.md`, `docs/SEARCH_DISPLAY_RULES.md`, `docs/PERSONALIZATION_PRIVACY.md`, `docs/U10_RELEASE_GATES.md`
 
 ## Development phases
 
@@ -161,7 +173,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U7 — Context & “Why Unreached?”** ✅
 - **U8 — Prayer Experience** ✅
 - **U9 — Languages & Scripture Integration** ✅
-- **U10 — Search, Discovery & Local Personalization**
+- **U10 — Search, Discovery & Local Personalization** ✅
 - **U11 — Release Hardening & Data Expansion**
 
 ## Product rule
