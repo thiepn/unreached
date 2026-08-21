@@ -1,14 +1,16 @@
 {
   "name": "unreached",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && npm run data:check && vite build",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
+    "data:check": "tsx scripts/data/check.ts",
+    "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
     "preview": "vite preview",
-    "check": "npm run typecheck && vite build"
+    "check": "npm run build"
   },
   "engines": {
     "node": ">=22.12.0"
@@ -17,10 +19,13 @@
     "@fontsource-variable/newsreader": "5.3.0",
     "@fontsource-variable/source-sans-3": "5.3.0",
     "lucide-preact": "1.33.0",
-    "preact": "10.29.8"
+    "preact": "10.29.8",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "2.10.6",
+    "@types/node": "22.20.1",
+    "tsx": "4.23.12",
     "typescript": "7.0.2",
     "vite": "8.2.2"
   }
