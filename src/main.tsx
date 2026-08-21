@@ -11,5 +11,6 @@ import "./styles/mission-map.css";
 import "./styles/countries.css";
 import "./styles/peoples.css";
 import "./styles/context.css";
+import "./styles/prayer.css";
 
 render(<App />, document.getElementById("app")!);
