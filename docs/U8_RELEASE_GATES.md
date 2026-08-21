@@ -1,7 +1,7 @@
 # U8 — Release Gates
 
 **Phase:** Prayer Experience  
-**Status:** implementation pending CI validation
+**Status:** code-complete and build-validated
 
 ## Prayer model
 
@@ -35,17 +35,19 @@
 - [x] Production runtime blocks fixture prayer datasets.
 - [x] U0 sensitive-person/location rules remain unchanged.
 
-## Validation required before U8 completion
+## Validation
 
-- [ ] application TypeScript check passes
-- [ ] script TypeScript check passes
-- [ ] U2–U7 checks still pass
-- [ ] U8 prayer schema/integrity check passes
-- [ ] U8 people/context cross-references pass
-- [ ] U8 deterministic daily selection check passes
-- [ ] U8 2/5/10-minute flow checks pass
-- [ ] U8 production status/release-gate check passes
-- [ ] Vite production build passes
+- [x] application TypeScript check passes
+- [x] script TypeScript check passes
+- [x] U2–U7 checks still pass
+- [x] U8 prayer schema/integrity check passes
+- [x] U8 people/context cross-references pass
+- [x] U8 deterministic daily selection check passes
+- [x] U8 2/5/10-minute flow checks pass
+- [x] U8 production status/release-gate check passes
+- [x] Vite production build passes
+
+GitHub Actions CI run #104 passed on 2026-08-22 for the complete U8 implementation head.
 
 ## Deferred
 
