@@ -6,6 +6,7 @@ export const RELIGION_NAMES: Readonly<Record<number, string>> = {
   4: "Ethnic Religions",
   5: "Hinduism",
   6: "Islam",
+  7: "Non-Religious",
   8: "Other / Smaller Religions",
   9: "Unknown",
 };
