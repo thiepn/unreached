@@ -1,5 +1,5 @@
 import { RELIGION_NAMES, type NormalizedDataset, type PeopleGroupInCountry, type ScriptureResources } from "../domain";
-import { buildCountryMissionSummaries } from "../visualization";
+import { buildCountryMissionSummaries } from "../visualization/aggregate";
 import { countryExplorerDatasetSchema, type CountryExplorerDataset, type CountryExplorerRecord } from "./types";
 
 function knownPopulation(record: PeopleGroupInCountry): number | null {
