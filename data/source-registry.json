@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-08-21",
+  "sources": [
+    {
+      "id": "joshua-project-api",
+      "name": "Joshua Project Data API",
+      "provider": "Joshua Project",
+      "canonicalUrl": "https://api.joshuaproject.net/",
+      "termsUrl": "https://api.joshuaproject.net/terms_of_use",
+      "contentTypes": [
+        "people_groups",
+        "countries",
+        "languages",
+        "mission_metrics",
+        "scripture_resource_indicators"
+      ],
+      "status": "conditional",
+      "commercialUse": false,
+      "publicRedistribution": "value-added use only; full static database scale requires written confirmation before release",
+      "cacheStatus": "conditional",
+      "attributionRequired": true,
+      "attributionText": "Data provided by Joshua Project",
+      "requirements": [
+        "non-commercial use",
+        "clear linked attribution on pages displaying Joshua Project content",
+        "do not directly replicate Joshua Project services or presentation",
+        "keep API credentials out of client code and repository",
+        "treat data as estimates rather than perfectly precise facts",
+        "support removal of cached/generated data if API access is terminated"
+      ],
+      "permissionGate": "Written confirmation required before a public build exposes a substantial portion of the Joshua Project database through static browser-accessible files.",
+      "termsReviewedAt": "2026-08-21"
+    },
+    {
+      "id": "joshua-project-photos",
+      "name": "Joshua Project People-Group Photos",
+      "provider": "Joshua Project / third-party rights holders",
+      "canonicalUrl": "https://joshuaproject.net/resources/media",
+      "contentTypes": ["images"],
+      "status": "per-item",
+      "commercialUse": null,
+      "publicRedistribution": "not assumed",
+      "cacheStatus": "not approved by default",
+      "attributionRequired": null,
+      "requirements": [
+        "verify the rights of each individual image",
+        "do not scrape or mirror the Joshua Project photo library"
+      ],
+      "termsReviewedAt": "2026-08-21"
+    },
+    {
+      "id": "natural-earth",
+      "name": "Natural Earth",
+      "provider": "Natural Earth",
+      "canonicalUrl": "https://www.naturalearthdata.com/",
+      "termsUrl": "https://www.naturalearthdata.com/about/terms-of-use/",
+      "contentTypes": ["vector_geography", "raster_geography"],
+      "status": "approved",
+      "commercialUse": true,
+      "publicRedistribution": "allowed",
+      "cacheStatus": "allowed",
+      "attributionRequired": false,
+      "attributionText": "Made with Natural Earth",
+      "requirements": [
+        "document any deliberate boundary modifications",
+        "retain awareness of disputed-boundary representation"
+      ],
+      "termsReviewedAt": "2026-08-21"
+    },
+    {
+      "id": "progress-bible-registered-data",
+      "name": "ProgressBible Registered User Data",
+      "provider": "SIL International / ProgressBible",
+      "canonicalUrl": "https://progress.bible/",
+      "termsUrl": "https://progress.bible/terms-of-use/",
+      "contentTypes": ["languages", "scripture_status", "translation_progress"],
+      "status": "permission-required",
+      "commercialUse": false,
+      "publicRedistribution": "not approved for product inclusion without written permission",
+      "cacheStatus": "not approved",
+      "attributionRequired": true,
+      "requirements": [
+        "do not ingest registered supplied data into Unreached without written permission",
+        "do not scrape the public website into a replacement dataset"
+      ],
+      "permissionGate": "Written permission explicitly covering inclusion in this public browser product is required.",
+      "termsReviewedAt": "2026-08-21"
+    },
+    {
+      "id": "wikimedia-commons",
+      "name": "Wikimedia Commons",
+      "provider": "individual media rights holders / Wikimedia Commons",
+      "canonicalUrl": "https://commons.wikimedia.org/",
+      "termsUrl": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
+      "contentTypes": ["images", "media"],
+      "status": "per-item",
+      "commercialUse": null,
+      "publicRedistribution": "depends on individual file license",
+      "cacheStatus": "depends on individual file license",
+      "attributionRequired": null,
+      "requirements": [
+        "verify the individual file license",
+        "record creator, source, license, license URL, attribution and modification status",
+        "satisfy ShareAlike obligations where applicable",
+        "consider personality and privacy rights independently of copyright"
+      ],
+      "termsReviewedAt": "2026-08-21"
+    },
+    {
+      "id": "ethnologue",
+      "name": "Ethnologue",
+      "provider": "SIL International",
+      "canonicalUrl": "https://www.ethnologue.com/",
+      "contentTypes": ["linguistic_data"],
+      "status": "permission-required",
+      "commercialUse": null,
+      "publicRedistribution": "not approved",
+      "cacheStatus": "not approved",
+      "attributionRequired": null,
+      "requirements": [
+        "do not scrape or bulk reproduce proprietary linguistic data",
+        "obtain a compatible license before dataset integration"
+      ],
+      "termsReviewedAt": "2026-08-21"
+    }
+  ]
+}
