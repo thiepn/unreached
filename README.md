@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U4 complete; U5 next
+- **Current phase:** U5 complete; U6 next
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 
 `npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
 
-Full production/data/map/visualization validation:
+Full production/data/map/visualization/country validation:
 
 ```bash
 npm run check
@@ -34,6 +34,7 @@ npm run data:check
 npm run geography:build
 npm run geography:check
 npm run visualization:check
+npm run country:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -46,6 +47,7 @@ Vite is configured for the `/unreached/` project path.
 - Zod-backed normalized mission-data schemas
 - five-layer country mission-visualization engine
 - population-coverage-aware derived metrics
+- dedicated country-intelligence dataset and stable ISO3 country routes
 - separate build-time data and geography pipelines
 - static-host-safe hash routing with shareable country, camera, and layer state
 - deterministic mission-data chunking with SHA-256 manifest metadata
@@ -70,6 +72,19 @@ Every layer has explicit missing-data semantics, a legend, methodology text, and
 The production browser currently does **not** receive real Joshua Project-derived mission records because the U0 redistribution permission gate remains unresolved. The engine is validated against clearly synthetic fixtures, and production runtime code refuses fixture datasets.
 
 See [`docs/MISSION_VISUALIZATION.md`](docs/MISSION_VISUALIZATION.md) and [`docs/U4_RELEASE_GATES.md`](docs/U4_RELEASE_GATES.md).
+
+## U5 country explorer
+
+Country exploration now has two stable browser routes:
+
+- `#/countries` — searchable country index based on Natural Earth geography
+- `#/countries/:ISO3` — country intelligence page
+
+Country pages can render geographic identity even while mission intelligence is release-gated. When publishable country data is available, the page exposes U4 mission metrics, country vs represented population, largest unreached peoples, languages, derived religious context, Scripture distribution, source IDs, and explicit population coverage. Map selections link into country profiles and country profiles link back to the same map area.
+
+The production browser currently does **not** receive real Joshua Project-derived country records. `public/data/countries/status.json` keeps that release gate explicit, and production code rejects fixture country datasets.
+
+See [`docs/COUNTRY_EXPLORER.md`](docs/COUNTRY_EXPLORER.md), [`docs/COUNTRY_DATA_DISPLAY_RULES.md`](docs/COUNTRY_DATA_DISPLAY_RULES.md), and [`docs/U5_RELEASE_GATES.md`](docs/U5_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -117,6 +132,12 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - [`docs/U4_RELEASE_GATES.md`](docs/U4_RELEASE_GATES.md)
 - [`public/data/mission/status.json`](public/data/mission/status.json)
 
+### U5
+- [`docs/COUNTRY_EXPLORER.md`](docs/COUNTRY_EXPLORER.md)
+- [`docs/COUNTRY_DATA_DISPLAY_RULES.md`](docs/COUNTRY_DATA_DISPLAY_RULES.md)
+- [`docs/U5_RELEASE_GATES.md`](docs/U5_RELEASE_GATES.md)
+- [`public/data/countries/status.json`](public/data/countries/status.json)
+
 ## Development phases
 
 - **U0 — Product Constitution, Definitions & Data Legality** ✅
@@ -124,7 +145,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U2 — Data Pipeline & Domain Model** ✅
 - **U3 — Global Map Foundation** ✅
 - **U4 — Mission Visualization Engine** ✅
-- **U5 — Country Explorer**
+- **U5 — Country Explorer** ✅
 - **U6 — People Group Explorer**
 - **U7 — Context & “Why Unreached?”**
 - **U8 — Prayer Experience**
