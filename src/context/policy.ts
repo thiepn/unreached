@@ -79,8 +79,8 @@ export function assertContextDatasetIntegrity(dataset: EditorialContextDataset, 
   }
 }
 
-export function assertContextMatchesPeople(dataset: EditorialContextDataset, people: Array<{ id: string; sourcePeopleId: number }>): void {
-  const peopleById = new Map(people.map((record) => [record.id, record.sourcePeopleId]));
+export function assertContextMatchesPeople(dataset: EditorialContextDataset, people: Array<{ peopleGroupId: string; sourcePeopleId: number }>): void {
+  const peopleById = new Map(people.map((record) => [record.peopleGroupId, record.sourcePeopleId]));
   for (const profile of dataset.profiles) {
     const sourcePeopleId = peopleById.get(profile.peopleGroupId);
     if (sourcePeopleId === undefined) throw new Error(`Editorial profile ${profile.peopleGroupId} has no canonical people record.`);
