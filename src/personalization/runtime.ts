@@ -30,7 +30,7 @@ function persistBrowserState(state: PersonalizationState): void {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     window.dispatchEvent(new Event(CHANGE_EVENT));
   } catch {
-    // Storage can be disabled or quota-limited. The current UI state still updates.
+    // Storage can be disabled or quota-limited. The current session state remains usable.
   }
 }
 
@@ -51,9 +51,11 @@ export function usePersonalization() {
   }, []);
 
   const apply = useCallback((update: (current: PersonalizationState) => PersonalizationState) => {
-    const next = update(readBrowserState());
-    setState(next);
-    persistBrowserState(next);
+    setState((current) => {
+      const next = update(current);
+      persistBrowserState(next);
+      return next;
+    });
   }, []);
 
   const toggleSavedPerson = useCallback((snapshot: Omit<SavedPersonSnapshot, "savedAt">) => {
