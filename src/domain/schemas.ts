@@ -64,7 +64,7 @@ export const countryIdSchema = z.string().regex(/^country:[A-Z]{3}$/);
 export const peopleGroupIdSchema = z.string().regex(/^people:[0-9]+$/);
 export const peopleGroupInCountryIdSchema = z.string().regex(/^people-country:[0-9]+:[A-Z]{3}$/);
 export const languageIdSchema = z.string().regex(/^language:[a-z]{3}$/);
-export const religionIdSchema = z.string().regex(/^religion:[1245689]$/);
+export const religionIdSchema = z.string().regex(/^religion:[12456789]$/);
 
 const importedEntitySchema = z.object({
   provenance: z.array(fieldProvenanceSchema).min(1),
@@ -84,6 +84,7 @@ export const religionSchema = importedEntitySchema.extend({
     z.literal(4),
     z.literal(5),
     z.literal(6),
+    z.literal(7),
     z.literal(8),
     z.literal(9),
   ]),
