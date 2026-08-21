@@ -44,7 +44,7 @@ for (let index = 0; index < 14; index += 1) {
 }
 if (state.recent.length !== 12) throw new Error("Recent exploration must be capped at twelve entries.");
 
-state = recordRecentVisit(state, { kind: "country", key: "fixture-13", label: "Updated Fixture", secondary: null, href: "#/countries/XZZ" }, new Date("2026-08-22T01:00:00Z"));
-if (state.recent[0]?.label !== "Updated Fixture" || state.recent.filter((item) => item.key === "fixture-13").length !== 1) throw new Error("Recent exploration deduplication failed.");
+state = recordRecentVisit(state, { kind: "language", key: "fixture-13", label: "Updated Fixture", secondary: null, href: "#/languages/qaa" }, new Date("2026-08-22T01:00:00Z"));
+if (state.recent[0]?.label !== "Updated Fixture" || state.recent.filter((item) => item.kind === "language" && item.key === "fixture-13").length !== 1) throw new Error("Recent exploration deduplication failed.");
 
 console.log("Search, discovery & local personalization validation passed.");
