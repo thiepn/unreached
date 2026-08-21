@@ -14,6 +14,7 @@ export interface RouteState {
   path: string;
   countryIso3: string | null;
   peopleSourceId: number | null;
+  prayerSourceId: number | null;
 }
 
 const ROUTES: Readonly<Record<string, RouteId>> = {
@@ -37,22 +38,32 @@ function normalizeHash(hash: string): string {
   return withSlash.replace(/\/+$/, "") || "/";
 }
 
+function positiveSourceId(value: string | undefined): number | null {
+  if (!value) return null;
+  const sourceId = Number(value);
+  return Number.isSafeInteger(sourceId) && sourceId > 0 ? sourceId : null;
+}
+
 function readRoute(): RouteState {
   const path = normalizeHash(window.location.hash);
   const countryMatch = path.match(/^\/countries\/([A-Za-z]{3})$/);
   if (countryMatch?.[1]) {
-    return { id: "countries", path, countryIso3: countryMatch[1].toUpperCase(), peopleSourceId: null };
+    return { id: "countries", path, countryIso3: countryMatch[1].toUpperCase(), peopleSourceId: null, prayerSourceId: null };
   }
   const peopleMatch = path.match(/^\/peoples\/([0-9]+)$/);
   if (peopleMatch?.[1]) {
-    const sourceId = Number(peopleMatch[1]);
-    return { id: "peoples", path, countryIso3: null, peopleSourceId: Number.isSafeInteger(sourceId) && sourceId > 0 ? sourceId : null };
+    return { id: "peoples", path, countryIso3: null, peopleSourceId: positiveSourceId(peopleMatch[1]), prayerSourceId: null };
+  }
+  const prayerMatch = path.match(/^\/pray\/([0-9]+)$/);
+  if (prayerMatch?.[1]) {
+    return { id: "pray", path, countryIso3: null, peopleSourceId: null, prayerSourceId: positiveSourceId(prayerMatch[1]) };
   }
   return {
     id: ROUTES[path] ?? "not-found",
     path,
     countryIso3: null,
     peopleSourceId: null,
+    prayerSourceId: null,
   };
 }
 
