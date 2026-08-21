@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U2 complete; U3 next
+- **Current phase:** U3 implementation complete; validation pending
 
 ## Local development
 
@@ -19,17 +19,20 @@ npm install
 npm run dev
 ```
 
-Full production/data validation:
+`npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
+
+Full production/data/map validation:
 
 ```bash
 npm run check
 ```
 
-Synthetic data-pipeline validation:
+Focused checks:
 
 ```bash
 npm run data:check
-npm run data:build:fixtures
+npm run geography:build
+npm run geography:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -37,32 +40,34 @@ Vite is configured for the `/unreached/` project path.
 ## Current architecture
 
 - Vite 8 + TypeScript 7 + Preact 10
+- MapLibre GL JS 6.5
+- Natural Earth v5.1.1 1:110m Admin-0 geography
 - Zod-backed normalized mission-data schemas
-- separate Node/TypeScript build-time data pipeline
-- static-host-safe hash routing
-- deterministic static-data chunking with SHA-256 manifest metadata
+- separate build-time data and geography pipelines
+- static-host-safe hash routing with shareable map query state
+- deterministic mission-data chunking with SHA-256 manifest metadata
 - machine-enforced source permissions
 - locally bundled Newsreader + Source Sans 3 typography
 - native CSS design-token system
 - GitHub Actions → GitHub Pages deployment
-- no backend, authentication, analytics SDK, or client-side source API keys
+- no backend, authentication, analytics SDK, client-side source API keys, or external map tile service
 
-## U2 data model
+## U3 map foundation
 
-Canonical entities:
+The Explore page now has a real interactive world map with:
 
-- Region
-- Country
-- PeopleGroup
-- PeopleGroupInCountry
-- Language
-- Religion
+- pan/zoom and keyboard map navigation
+- hover/click country-area selection
+- fit-to-selection and reset-to-world
+- URL-synced selected area and camera state
+- desktop country/area search and list
+- mobile map-first expandable bottom sheet
+- textual fallback when interactive rendering is unavailable
+- visible disclosure of Natural Earth's de facto boundary presentation
 
-Every imported entity can carry field-level provenance. Mission percentages distinguish unknown values from real zeroes, and source classifications are retained instead of silently recomputed.
+Mission data is deliberately **not** painted onto the map yet. U4 owns mission-data joins, choropleths, legends, and layers.
 
-Production browser data is **not** generated from Joshua Project in U2. The pipeline uses explicitly synthetic fixtures while the U0 full-scale publication permission gate remains pending.
-
-See [`docs/DATA_ARCHITECTURE.md`](docs/DATA_ARCHITECTURE.md), [`docs/JOSHUA_PROJECT_MAPPING.md`](docs/JOSHUA_PROJECT_MAPPING.md), and [`docs/U2_RELEASE_GATES.md`](docs/U2_RELEASE_GATES.md).
+See [`docs/MAP_ARCHITECTURE.md`](docs/MAP_ARCHITECTURE.md) and [`docs/U3_RELEASE_GATES.md`](docs/U3_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -81,7 +86,7 @@ See [`docs/DATA_ARCHITECTURE.md`](docs/DATA_ARCHITECTURE.md), [`docs/JOSHUA_PROJ
 
 V1 deliberately excludes accounts, social features, missionary job listings, agency directories, AI chat, donations, general Bible-reader functionality, and competitive/gamified prayer metrics.
 
-## Foundational documents
+## Foundation documents
 
 ### U0
 - [`docs/PROJECT_CONSTITUTION.md`](docs/PROJECT_CONSTITUTION.md)
@@ -100,12 +105,17 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - [`docs/JOSHUA_PROJECT_MAPPING.md`](docs/JOSHUA_PROJECT_MAPPING.md)
 - [`docs/U2_RELEASE_GATES.md`](docs/U2_RELEASE_GATES.md)
 
+### U3
+- [`docs/MAP_ARCHITECTURE.md`](docs/MAP_ARCHITECTURE.md)
+- [`docs/U3_RELEASE_GATES.md`](docs/U3_RELEASE_GATES.md)
+- [`data/geography-source.json`](data/geography-source.json)
+
 ## Development phases
 
 - **U0 — Product Constitution, Definitions & Data Legality** ✅
 - **U1 — Production Architecture & Design System** ✅
 - **U2 — Data Pipeline & Domain Model** ✅
-- **U3 — Global Map Foundation**
+- **U3 — Global Map Foundation** — validation pending
 - **U4 — Mission Visualization Engine**
 - **U5 — Country Explorer**
 - **U6 — People Group Explorer**
