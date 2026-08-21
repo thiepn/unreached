@@ -10,5 +10,6 @@ import "./styles/map.css";
 import "./styles/mission-map.css";
 import "./styles/countries.css";
 import "./styles/peoples.css";
+import "./styles/context.css";
 
 render(<App />, document.getElementById("app")!);
