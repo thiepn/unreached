@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "available": false,
+  "fixture": false,
+  "datasetUrl": null,
+  "reason": "Language and Scripture records are structurally ready, but source-derived browser publication remains gated by U0 source-permission rules. ProgressBible registered data and proprietary linguistic datasets are not bundled without written permission.",
+  "sourceIds": [],
+  "attributions": []
+}
