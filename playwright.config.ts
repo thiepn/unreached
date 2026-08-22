@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL?.trim();
+const baseURL = externalBaseURL ? externalBaseURL.replace(/\/?$/, "/") : "http://127.0.0.1:4173/unreached/";
+
 export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 30_000,
@@ -10,7 +13,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? [["line"], ["html", { outputFolder: "playwright-report", open: "never" }]] : "list",
   use: {
-    baseURL: "http://127.0.0.1:4173/unreached/",
+    baseURL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
@@ -21,10 +24,12 @@ export default defineConfig({
     { name: "mobile-chromium", use: { ...devices["Pixel 7"] } },
     { name: "mobile-webkit", use: { ...devices["iPhone 15"] } },
   ],
-  webServer: {
-    command: "npm run preview -- --host 127.0.0.1 --port 4173",
-    url: "http://127.0.0.1:4173/unreached/",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: externalBaseURL
+    ? undefined
+    : {
+        command: "npm run preview -- --host 127.0.0.1 --port 4173",
+        url: "http://127.0.0.1:4173/unreached/",
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
 });
