@@ -110,7 +110,13 @@ jobs:
           if (!html.includes("/unreached/")) throw new Error("Production HTML is missing /unreached/ scoped assets");
 
           const manifest = await (await get("site.webmanifest")).json();
-          if (manifest.name !== "Unreached") throw new Error("Unexpected production manifest");
+          if (manifest.name !== "Unreached — Explore. Understand. Pray.") {
+            throw new Error("Unexpected production manifest name");
+          }
+          if (manifest.short_name !== "Unreached") throw new Error("Unexpected production manifest short_name");
+          if (manifest.id !== "/unreached/") throw new Error("Unexpected production manifest id");
+          if (manifest.scope !== "/unreached/") throw new Error("Unexpected production manifest scope");
+          if (manifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest start_url");
 
           const gated = ["mission", "countries", "peoples", "context", "prayer", "languages"];
           for (const domain of gated) {
