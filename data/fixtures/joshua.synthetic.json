@@ -1,0 +1,73 @@
+{
+  "fixture": true,
+  "retrievedAt": "2026-08-21T18:55:00Z",
+  "pgic": [
+    {
+      "PeopleID3": 999001,
+      "PeopleID3ROG3": "999001XZ",
+      "PeopNameInCountry": "Example People",
+      "PeopNameAcrossCountries": "Example People",
+      "ISO3": "XZZ",
+      "Ctry": "Exampleland",
+      "RegionCode": 5,
+      "RegionName": "Central Asia",
+      "Population": 1250000,
+      "ROL3": "qaa",
+      "PrimaryLanguageName": "Example Language",
+      "RLG3": 6,
+      "PrimaryReligion": "Islam",
+      "PercentAdherents": 0.5,
+      "PercentEvangelical": 0.1,
+      "JPScale": 1,
+      "LeastReached": "Y",
+      "Frontier": "Y",
+      "BibleStatus": 3,
+      "PortionsYear": "2001",
+      "NTYear": null,
+      "BibleYear": null,
+      "HasAudioRecordings": "Y",
+      "HasJesusFilm": "N",
+      "LocationInCountry": "Synthetic fixture location used only for schema validation.",
+      "Latitude": 40.1,
+      "Longitude": 70.2
+    }
+  ],
+  "pgac": [
+    {
+      "PeopleID3": 999001,
+      "PeopleName": "Example People",
+      "AffinityBloc": "Example Affinity",
+      "PeopleCluster": "Example Cluster",
+      "PopulationPGAC": 1500000,
+      "ROL3PGAC": "qaa",
+      "RLG3PGAC": 6,
+      "PrimaryReligionPGAC": "Islam",
+      "PercentChristianPGAC": 0.5,
+      "PercentEvangelicalPGAC": 0.1,
+      "JPScalePGAC": 1,
+      "LeastReachedPGAC": "Y",
+      "FrontierPGAC": "Y"
+    }
+  ],
+  "languages": [
+    {
+      "ROL3": "qaa",
+      "Language": "Example Language",
+      "Status": "L",
+      "NbrCountries": 1,
+      "NbrPGICs": 1,
+      "RLG3": 6,
+      "PrimaryReligion": "Islam",
+      "PercentAdherents": 0.5,
+      "PercentEvangelical": 0.1,
+      "JPScale": 1,
+      "LeastReached": "Y",
+      "BibleStatus": 3,
+      "PortionsYear": "2001",
+      "NTYear": null,
+      "Bible": null,
+      "HasAudioRecordings": "Y",
+      "HasJesusFilm": "N"
+    }
+  ]
+}
