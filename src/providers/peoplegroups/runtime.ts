@@ -37,7 +37,14 @@ async function readCompleteCache(cache: PeopleGroupsPageCache, now: number): Pro
   const pages: CachedPeopleGroupsPage[] = [first];
   for (let page = 2; page <= first.totalPages; page += 1) {
     const cached = await cache.read(page);
-    if (!cached || cached.schemaVersion !== 1 || cached.totalPages !== first.totalPages || cached.totalRecords !== first.totalRecords) return null;
+    if (
+      !cached
+      || cached.schemaVersion !== 1
+      || cached.page !== page
+      || cached.totalPages !== first.totalPages
+      || cached.totalRecords !== first.totalRecords
+      || cached.storedAt !== first.storedAt
+    ) return null;
     pages.push(cached);
   }
   const oldestAge = Math.max(...pages.map((page) => cacheAgeMs(page, now)));
@@ -55,6 +62,8 @@ async function readValidatedCache(cache: PeopleGroupsPageCache, now: number): Pr
     const records = flattenValidated(cached.pages);
     const expectedRecords = cached.pages[0]?.totalRecords ?? null;
     if (expectedRecords !== null && records.length !== expectedRecords) return null;
+    const pgids = new Set(records.map((record) => record.PGID));
+    if (pgids.size !== records.length) return null;
     return { ...cached, records };
   } catch {
     return null;
@@ -83,23 +92,27 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
     try {
       let totalPages = 0;
       const loadedAt = new Date(now()).toISOString();
-      const writes: Promise<void>[] = [];
+      const pendingCachePages: CachedPeopleGroupsPage[] = [];
       const records = await client.fetchAll({
         signal: params.signal,
         onPage: (page) => {
           totalPages = page.totalPages;
           params.onProgress?.(page.page, page.totalPages);
-          writes.push(cache.write({
+          pendingCachePages.push({
             schemaVersion: 1,
             page: page.page,
             totalPages: page.totalPages,
             totalRecords: page.totalRecords,
             storedAt: loadedAt,
             records: page.records,
-          }));
+          });
         },
       });
-      await Promise.allSettled(writes);
+
+      // The live corpus is authoritative. Cache writes begin only after the entire
+      // provider snapshot has passed schema, pagination, count, and duplicate checks.
+      await Promise.allSettled(pendingCachePages.map((page) => cache.write(page)));
+
       return {
         records,
         source: "network",
