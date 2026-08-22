@@ -1,3 +1,4 @@
+import { type PeopleGroupsApiClient } from "../../../src/providers/peoplegroups/api.js";
 import { createMemoryPeopleGroupsCache } from "../../../src/providers/peoplegroups/cache.js";
 import { createPeopleGroupsCorpusLoader } from "../../../src/providers/peoplegroups/runtime.js";
 import type { PeopleGroupsApiRecord } from "../../../src/providers/peoplegroups/types.js";
@@ -16,13 +17,13 @@ function record(pgid: string, peid: number): PeopleGroupsApiRecord {
 const page1 = [record("PG000301", 301)];
 const page2 = [record("PG000302", 302)];
 let networkLoads = 0;
-const client = {
+const client: PeopleGroupsApiClient = {
   fetchPage: async () => { throw new Error("not used"); },
   fetchByPgid: async () => { throw new Error("not used"); },
-  fetchAll: async ({ onPage }: { onPage?: (page: { records: PeopleGroupsApiRecord[]; page: number; totalPages: number; totalRecords: number }) => void } = {}) => {
+  fetchAll: async (options = {}) => {
     networkLoads += 1;
-    onPage?.({ records: page1, page: 1, totalPages: 2, totalRecords: 2 });
-    onPage?.({ records: page2, page: 2, totalPages: 2, totalRecords: 2 });
+    options.onPage?.({ records: page1, page: 1, totalPages: 2, totalRecords: 2 });
+    options.onPage?.({ records: page2, page: 2, totalPages: 2, totalRecords: 2 });
     return [...page1, ...page2];
   },
 };
