@@ -1,7 +1,7 @@
 # U11 — Release Gates
 
 **Phase:** Release Hardening & Data Expansion  
-**Status:** implementation pending validation
+**Status:** code-complete and build/browser-validated
 
 ## Product completeness
 
@@ -35,18 +35,30 @@
 
 ## Automated release validation
 
-- [ ] application TypeScript passes
-- [ ] script TypeScript passes
-- [ ] U2–U10 validation chain passes
-- [ ] U11 release-policy check passes
-- [ ] Vite production build passes
-- [ ] generated-dist base-path/assets/size check passes
-- [ ] Chromium desktop Playwright smoke passes
-- [ ] Firefox desktop Playwright smoke passes
-- [ ] WebKit desktop Playwright smoke passes
-- [ ] Chromium mobile Playwright smoke passes
-- [ ] WebKit mobile Playwright smoke passes
-- [ ] no horizontal-overflow smoke regression on certified routes
+- [x] application TypeScript passes
+- [x] script TypeScript passes
+- [x] U2–U10 validation chain passes
+- [x] U11 release-policy check passes
+- [x] Vite production build passes
+- [x] generated-dist base-path/assets/size check passes
+- [x] Chromium desktop Playwright smoke passes
+- [x] Firefox desktop Playwright smoke passes
+- [x] WebKit desktop Playwright smoke passes
+- [x] Chromium mobile Playwright smoke passes
+- [x] WebKit mobile Playwright smoke passes
+- [x] no horizontal-overflow smoke regression on certified routes
+
+### Certification evidence
+
+The final U11 product commit before documentation freeze was `08271a514a00192ae4df2ad82a32247701f0e726`.
+
+GitHub Actions results for that commit:
+
+- Unreached CI — run `32539766554` — **success**
+- Browser Certification — run `32539766551` — **success**
+- Browser matrix — **30/30 Playwright cases passing** across Chromium, Firefox, WebKit, mobile Chromium and mobile WebKit
+
+The final mobile overflow defect was corrected at its source by fixing methodology-list grid placement rather than clipping page overflow.
 
 ## Deployment-only final certification
 
@@ -63,4 +75,4 @@ These gates cannot be honestly checked until the stacked PRs are integrated and 
 
 ## Promotion rule
 
-U11 may be declared **code-complete and build/browser-validated** when all automated gates pass. The product may be promoted to the V1 release candidate only after the deployment-only gates above pass on the integrated `main` build.
+U11 is **code-complete and build/browser-validated**. The product may be promoted to the V1 release candidate only after the deployment-only gates above pass on the integrated `main` build.
