@@ -25,6 +25,12 @@ export interface PeopleGroupsCorpusLoaderOptions {
   now?: () => number;
 }
 
+interface ValidatedCache {
+  pages: CachedPeopleGroupsPage[];
+  records: PeopleGroupsApiRecord[];
+  age: number;
+}
+
 async function readCompleteCache(cache: PeopleGroupsPageCache, now: number): Promise<{ pages: CachedPeopleGroupsPage[]; age: number } | null> {
   const first = await cache.read(1);
   if (!first || first.schemaVersion !== 1 || first.totalPages < 1) return null;
@@ -42,22 +48,34 @@ function flattenValidated(pages: CachedPeopleGroupsPage[]): PeopleGroupsApiRecor
   return pages.flatMap((page) => peopleGroupsApiPageSchema.parse(page.records));
 }
 
+async function readValidatedCache(cache: PeopleGroupsPageCache, now: number): Promise<ValidatedCache | null> {
+  try {
+    const cached = await readCompleteCache(cache, now);
+    if (!cached) return null;
+    const records = flattenValidated(cached.pages);
+    const expectedRecords = cached.pages[0]?.totalRecords ?? null;
+    if (expectedRecords !== null && records.length !== expectedRecords) return null;
+    return { ...cached, records };
+  } catch {
+    return null;
+  }
+}
+
 export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoaderOptions = {}) {
   const client = options.client ?? createPeopleGroupsApiClient();
   const cache = options.cache ?? createIndexedDbPeopleGroupsCache();
   const now = options.now ?? Date.now;
 
   async function load(params: { signal?: AbortSignal; forceRefresh?: boolean; onProgress?: (loadedPages: number, totalPages: number) => void } = {}): Promise<PeopleGroupsCorpusLoadResult> {
-    const cached = await readCompleteCache(cache, now());
+    const cached = await readValidatedCache(cache, now());
     if (!params.forceRefresh && cached && cached.age <= PEOPLE_GROUPS_CACHE_FRESH_MS) {
-      const records = flattenValidated(cached.pages);
       return {
-        records,
+        records: cached.records,
         source: "cache-fresh",
         stale: false,
         loadedAt: cached.pages[0]!.storedAt,
         totalPages: cached.pages.length,
-        totalRecords: records.length,
+        totalRecords: cached.records.length,
         warning: null,
       };
     }
@@ -81,7 +99,7 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
           }));
         },
       });
-      await Promise.all(writes);
+      await Promise.allSettled(writes);
       return {
         records,
         source: "network",
@@ -93,14 +111,13 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
       };
     } catch (error) {
       if (cached && cached.age <= PEOPLE_GROUPS_CACHE_STALE_MAX_MS) {
-        const records = flattenValidated(cached.pages);
         return {
-          records,
+          records: cached.records,
           source: "cache-stale",
           stale: true,
           loadedAt: cached.pages[0]!.storedAt,
           totalPages: cached.pages.length,
-          totalRecords: records.length,
+          totalRecords: cached.records.length,
           warning: "Live PeopleGroups.org data could not be refreshed. Showing a previously validated local cache that may be out of date.",
         };
       }
@@ -108,7 +125,15 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
     }
   }
 
-  return { load, clearCache: () => cache.clear() };
+  async function clearCache(): Promise<void> {
+    try {
+      await cache.clear();
+    } catch {
+      // Cache is an optimization only. Storage failures must not break runtime data access.
+    }
+  }
+
+  return { load, clearCache };
 }
 
 export type PeopleGroupsCorpusLoader = ReturnType<typeof createPeopleGroupsCorpusLoader>;
