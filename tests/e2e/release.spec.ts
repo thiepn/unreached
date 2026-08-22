@@ -56,6 +56,7 @@ test("interactive map reaches MapLibre load-ready without the rendering fallback
   const diagnostics = await map.evaluate((element) => ({
     ready: element.getAttribute("data-map-ready"),
     error: element.getAttribute("data-map-error"),
+    stack: element.getAttribute("data-map-error-stack"),
     className: element.className,
     canvasCount: element.querySelectorAll("canvas").length,
   }));
