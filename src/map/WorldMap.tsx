@@ -23,11 +23,15 @@ interface WorldMapProps {
   onSelect: (country: MapCountryFeature) => void;
   onHover: (country: MapCountryFeature | null) => void;
   onViewChange: (view: MapViewState) => void;
-  onError: (message: string) => void;
+  onError: (message: string | null) => void;
 }
 
 function reducedMotion(): boolean {
   return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+}
+
+function fatalRenderingError(message: string): boolean {
+  return /webgl|context lost|context creation|failed to initialize|could not start|worker.*(?:failed|error)/i.test(message);
 }
 
 function boundsFor(feature: MapCountryFeature): LngLatBounds {
@@ -150,6 +154,10 @@ export function WorldMap({
 
     const start = initialView ?? HOME_VIEW;
     let map: MapLibreMap;
+    let loaded = false;
+    delete container.dataset.mapReady;
+    delete container.dataset.mapError;
+    delete container.dataset.mapErrorStack;
 
     try {
       map = new MapLibreMap({
@@ -159,13 +167,22 @@ export function WorldMap({
         zoom: start.zoom,
         minZoom: 0.6,
         maxZoom: 7,
-        maxBounds: [[-180, -84], [180, 84]],
         renderWorldCopies: false,
         attributionControl: false,
         fadeDuration: reducedMotion() ? 0 : 180,
+        // This atlas uses basic 2D GeoJSON fills and lines. WebGL1 keeps the
+        // renderer compatible with browsers and devices where WebGL2 is not
+        // available, without sacrificing any map feature used here.
+        canvasContextAttributes: {
+          contextType: "webgl",
+          powerPreference: "default",
+        },
       });
     } catch (error: unknown) {
-      onErrorRef.current(error instanceof Error ? error.message : "The interactive map could not start.");
+      const message = error instanceof Error ? error.message : "The interactive map could not start.";
+      container.dataset.mapError = message;
+      if (error instanceof Error && error.stack) container.dataset.mapErrorStack = error.stack;
+      onErrorRef.current(message);
       return;
     }
 
@@ -188,6 +205,12 @@ export function WorldMap({
     };
 
     map.on("load", () => {
+      loaded = true;
+      delete container.dataset.mapError;
+      delete container.dataset.mapErrorStack;
+      container.dataset.mapReady = "true";
+      onErrorRef.current(null);
+
       const source = map.getSource("countries");
       if (source instanceof GeoJSONSource) source.setData(visualizationRef.current);
       const key = selectedKeyRef.current;
@@ -230,10 +253,33 @@ export function WorldMap({
 
     map.on("error", (event) => {
       const message = event.error instanceof Error ? event.error.message : "The map reported a rendering error.";
+      if (!loaded || fatalRenderingError(message)) {
+        container.dataset.mapError = message;
+        if (event.error instanceof Error && event.error.stack) container.dataset.mapErrorStack = event.error.stack;
+        onErrorRef.current(message);
+      } else {
+        console.warn("MapLibre reported a recoverable error after the map loaded:", event.error);
+      }
+    });
+
+    map.on("webglcontextlost", () => {
+      delete container.dataset.mapReady;
+      const message = "The browser lost the WebGL rendering context.";
+      container.dataset.mapError = message;
       onErrorRef.current(message);
     });
 
+    map.on("webglcontextrestored", () => {
+      delete container.dataset.mapError;
+      delete container.dataset.mapErrorStack;
+      container.dataset.mapReady = "true";
+      onErrorRef.current(null);
+    });
+
     return () => {
+      delete container.dataset.mapReady;
+      delete container.dataset.mapError;
+      delete container.dataset.mapErrorStack;
       mapRef.current = null;
       onHoverRef.current(null);
       map.remove();

@@ -45,6 +45,27 @@ test("root shell and primary navigation render", async ({ page }) => {
   await expectNoHorizontalOverflow(page);
 });
 
+test("interactive map reaches MapLibre load-ready without the rendering fallback", async ({ page }) => {
+  await page.goto("./#/", { waitUntil: "domcontentloaded" });
+  const map = page.locator(".world-map");
+
+  await expect.poll(async () => {
+    return map.evaluate((element) => element.getAttribute("data-map-ready") === "true" || Boolean(element.getAttribute("data-map-error")));
+  }, { timeout: 20_000 }).toBe(true);
+
+  const diagnostics = await map.evaluate((element) => ({
+    ready: element.getAttribute("data-map-ready"),
+    error: element.getAttribute("data-map-error"),
+    stack: element.getAttribute("data-map-error-stack"),
+    className: element.className,
+    canvasCount: element.querySelectorAll("canvas").length,
+  }));
+  expect(diagnostics.error, JSON.stringify(diagnostics, null, 2)).toBeNull();
+  expect(diagnostics.ready, JSON.stringify(diagnostics, null, 2)).toBe("true");
+  await expect(map.locator(".maplibregl-canvas")).toBeVisible();
+  await expect(page.locator(".map-render-warning")).toHaveCount(0);
+});
+
 test("country explorer remains useful while mission data is gated", async ({ page }) => {
   await page.goto("./#/countries");
   await expect(page.getByRole("heading", { name: "From nations to peoples." })).toBeVisible();

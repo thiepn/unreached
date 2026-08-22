@@ -1,6 +1,6 @@
 import { render } from "preact";
 import { setWorkerUrl } from "maplibre-gl";
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
 
 import { App } from "./app/App";
 import "@fontsource-variable/newsreader";
@@ -19,9 +19,9 @@ import "./styles/languages.css";
 import "./styles/discovery.css";
 import "./styles/about.css";
 
-// MapLibre GL JS v6 requires bundlers to provide an explicit worker URL.
-// Vite's ?worker&url pipeline emits a self-contained worker chunk whose path
-// respects the configured /unreached/ base in production.
+// MapLibre 5 ships a dedicated worker bundle for environments where an
+// inlined Blob worker is undesirable. Using that worker explicitly also keeps
+// Vite/Rolldown from rebundling the worker into the application scope.
 setWorkerUrl(maplibreWorkerUrl);
 
 render(<App />, document.getElementById("app")!);

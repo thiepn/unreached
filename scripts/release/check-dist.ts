@@ -19,8 +19,8 @@ async function size(path: string): Promise<number> {
 
 const assetsDir = resolve(dist, "assets");
 const assetNames = await readdir(assetsDir);
-if (!assetNames.some((name) => /maplibre-gl-worker/i.test(name))) {
-  throw new Error("Production dist is missing the bundled MapLibre GL JS worker required by MapLibre v6 + Vite.");
+if (!assetNames.some((name) => /maplibre-gl-csp-worker/i.test(name))) {
+  throw new Error("Production dist is missing the dedicated MapLibre worker asset.");
 }
 
 let largestJsGzip = 0;
@@ -39,4 +39,4 @@ if (geographyBytes > 5 * 1024 * 1024) throw new Error(`World geography unexpecte
 
 const total = await size(dist);
 if (total > 20 * 1024 * 1024) throw new Error(`Production dist unexpectedly exceeds 20 MiB (${total} bytes).`);
-console.log(`U11 production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip, MapLibre worker bundled.`);
+console.log(`U11 production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip, dedicated MapLibre worker bundled.`);
