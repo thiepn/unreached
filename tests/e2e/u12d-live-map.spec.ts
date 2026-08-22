@@ -10,18 +10,33 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByText("GSEC 0–3 population share", { exact: true }).first()).toBeVisible();
-  const search = page.locator("#desktop-country-search");
+
+  const desktopSearch = page.locator("#desktop-country-search");
+  const mobileSheet = page.locator(".mobile-map-sheet");
+  const search = await desktopSearch.isVisible()
+    ? desktopSearch
+    : page.locator("#mobile-country-search");
+
+  if (!(await desktopSearch.isVisible())) {
+    await mobileSheet.locator("summary").click();
+    await expect(search).toBeVisible();
+  }
+
   await search.fill("Benin");
-  await page.locator(".country-row", { hasText: "Benin" }).first().click();
+  await page.locator(".country-row:visible", { hasText: "Benin" }).first().click();
 
-  await expect(page.getByRole("heading", { name: "Benin" })).toBeVisible();
-  await expect(page.getByText("People contexts").first()).toBeVisible();
-  await expect(page.getByText("GSEC 0–3").first()).toBeVisible();
-  await expect(page.getByText("170K", { exact: true })).toBeVisible();
-  await expect(page.getByText(/people-group-in-country records returned by PeopleGroups\.org/i)).toBeVisible();
+  if (await desktopSearch.isVisible()) {
+    await expect(page.getByRole("heading", { name: "Benin" })).toBeVisible();
+    await expect(page.getByText("People contexts").first()).toBeVisible();
+    await expect(page.getByText("GSEC 0–3").first()).toBeVisible();
+    await expect(page.getByText("170K", { exact: true })).toBeVisible();
+    await expect(page.getByText(/people-group-in-country records returned by PeopleGroups\.org/i)).toBeVisible();
+  } else {
+    await expect(mobileSheet.getByText("Benin", { exact: true }).first()).toBeVisible();
+  }
 
-  await page.getByRole("radio", { name: "GSEC coverage" }).first().click();
-  await expect(page.getByText("100%", { exact: true }).first()).toBeVisible();
+  await page.getByRole("radio", { name: "GSEC coverage" }).filter({ visible: true }).first().click();
+  await expect(page.getByText("100%", { exact: true }).filter({ visible: true }).first()).toBeVisible();
 
   await expect(page.getByText(/Frontier/i)).toHaveCount(0);
   await expect(page.getByText(/JPScale/i)).toHaveCount(0);
