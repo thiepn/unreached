@@ -2,7 +2,7 @@
 
 **Phase:** Production Data Activation  
 **Current subphase:** U12A — Provider Foundation & Semantic Isolation  
-**Status:** implementation pending CI certification
+**Status:** build-certified; browser certification pending
 
 ## U12A — provider foundation
 
@@ -22,12 +22,21 @@
 - [x] External photo references remain non-redistributable by default.
 - [x] Source `UpdatedDate` and field-level provenance are retained.
 - [x] Fixture-based semantic regression check added to the production build chain.
-- [ ] application TypeScript passes on the U12A branch.
-- [ ] script TypeScript passes on the U12A branch.
-- [ ] full U2–U11 validation chain still passes.
-- [ ] U12 PeopleGroups.org semantic check passes.
-- [ ] Vite production build passes.
+- [x] application TypeScript passes on the U12A branch.
+- [x] script TypeScript passes on the U12A branch.
+- [x] full U2–U11 validation chain still passes.
+- [x] U12 PeopleGroups.org semantic check passes.
+- [x] Vite production build passes.
 - [ ] Browser Certification remains green.
+
+### Automated evidence
+
+Corrected U12A implementation head before this documentation update: `e3dd53676827b1064c11c5aff7fe9d61799a3d1d`.
+
+- Unreached CI — run `32592895772` / #235 — **success**
+- build job `97079354188` — **success**
+- `Typecheck, policy checks and production build` step — **success**
+- Browser Certification — run `32592895723` / #69 — pending when this evidence was recorded
 
 ## U12B — runtime / publication activation
 
@@ -65,6 +74,6 @@ After U12B activates a legally and technically valid source mode:
 
 ## Promotion rule
 
-U12A may merge when the existing release chain plus the new PeopleGroups.org semantic check is green.
+U12A may merge when the existing release chain plus the new PeopleGroups.org semantic check is green and Browser Certification remains green.
 
 **U12A does not authorize production data activation.** U12B must explicitly satisfy the source-mode, identity, methodology, reliability and publication gates before real PeopleGroups.org records are enabled in the public application.
