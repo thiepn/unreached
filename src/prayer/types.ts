@@ -78,6 +78,10 @@ export const prayerAvailabilitySchema = z.object({
   fixture: z.boolean(),
   datasetUrl: z.string().min(1).nullable(),
   reason: z.string().min(1).nullable(),
+  mode: z.enum(["static-dataset", "runtime-api"]).optional(),
+  sourceIds: z.array(z.string().min(1)).optional(),
+  templateVersion: z.string().min(1).optional(),
+  templateReviewedAt: dateSchema.optional(),
 }).strict();
 
 export type PrayerCategory = z.infer<typeof prayerCategorySchema>;
