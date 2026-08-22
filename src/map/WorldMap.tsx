@@ -23,11 +23,15 @@ interface WorldMapProps {
   onSelect: (country: MapCountryFeature) => void;
   onHover: (country: MapCountryFeature | null) => void;
   onViewChange: (view: MapViewState) => void;
-  onError: (message: string) => void;
+  onError: (message: string | null) => void;
 }
 
 function reducedMotion(): boolean {
   return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+}
+
+function fatalRenderingError(message: string): boolean {
+  return /webgl|context lost|context creation|failed to initialize|could not start|worker.*(?:failed|error)/i.test(message);
 }
 
 function boundsFor(feature: MapCountryFeature): LngLatBounds {
@@ -150,6 +154,8 @@ export function WorldMap({
 
     const start = initialView ?? HOME_VIEW;
     let map: MapLibreMap;
+    let loaded = false;
+    delete container.dataset.mapReady;
 
     try {
       map = new MapLibreMap({
@@ -188,6 +194,10 @@ export function WorldMap({
     };
 
     map.on("load", () => {
+      loaded = true;
+      container.dataset.mapReady = "true";
+      onErrorRef.current(null);
+
       const source = map.getSource("countries");
       if (source instanceof GeoJSONSource) source.setData(visualizationRef.current);
       const key = selectedKeyRef.current;
@@ -230,10 +240,25 @@ export function WorldMap({
 
     map.on("error", (event) => {
       const message = event.error instanceof Error ? event.error.message : "The map reported a rendering error.";
-      onErrorRef.current(message);
+      if (!loaded || fatalRenderingError(message)) {
+        onErrorRef.current(message);
+      } else {
+        console.warn("MapLibre reported a recoverable error after the map loaded:", event.error);
+      }
+    });
+
+    map.on("webglcontextlost", () => {
+      delete container.dataset.mapReady;
+      onErrorRef.current("The browser lost the WebGL rendering context.");
+    });
+
+    map.on("webglcontextrestored", () => {
+      container.dataset.mapReady = "true";
+      onErrorRef.current(null);
     });
 
     return () => {
+      delete container.dataset.mapReady;
       mapRef.current = null;
       onHoverRef.current(null);
       map.remove();
