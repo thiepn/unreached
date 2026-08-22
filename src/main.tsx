@@ -1,6 +1,4 @@
 import { render } from "preact";
-import { setWorkerUrl } from "maplibre-gl";
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 
 import { App } from "./app/App";
 import "@fontsource-variable/newsreader";
@@ -18,10 +16,5 @@ import "./styles/prayer.css";
 import "./styles/languages.css";
 import "./styles/discovery.css";
 import "./styles/about.css";
-
-// MapLibre GL JS v6 requires bundlers to provide an explicit worker URL.
-// Vite's ?worker&url pipeline emits a self-contained worker chunk whose path
-// respects the configured /unreached/ base in production.
-setWorkerUrl(maplibreWorkerUrl);
 
 render(<App />, document.getElementById("app")!);
