@@ -1,17 +1,11 @@
-import "@fontsource-variable/newsreader/wght.css";
-import "@fontsource-variable/source-sans-3/wght.css";
-
 import { render } from "preact";
-
 import { App } from "./app/App";
+import "@fontsource-variable/newsreader";
+import "@fontsource-variable/source-sans-3";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/app.css";
+import "./styles/map.css";
 
-const root = document.getElementById("app");
-
-if (!root) {
-  throw new Error("Unreached could not find the application root.");
-}
-
-render(<App />, root);
+render(<App />, document.getElementById("app")!);

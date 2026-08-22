@@ -4,7 +4,6 @@ dist/
 .env
 .env.*
 !.env.example
-data/generated-fixtures/
-data/raw-local/
 .DS_Store
 Thumbs.db
+/public/maps/world-countries.geojson
