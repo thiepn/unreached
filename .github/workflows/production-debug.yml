@@ -1,0 +1,36 @@
+name: Production Endpoint Diagnostic
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect production redirects, status and body
+        shell: bash
+        run: |
+          set +e
+          target="http://thiepn.dev/unreached/"
+          echo "TARGET=${target}"
+          echo "--- DNS ---"
+          getent ahosts thiepn.dev || true
+          echo "--- HEADERS / REDIRECTS ---"
+          curl --silent --show-error --location --dump-header /tmp/headers.txt --output /tmp/body.html --write-out 'http_code=%{http_code}\nurl_effective=%{url_effective}\ncontent_type=%{content_type}\nredirects=%{num_redirects}\n' "${target}"
+          code=$?
+          cat /tmp/headers.txt 2>/dev/null || true
+          echo "curl_exit=${code}"
+          echo "--- BODY PREVIEW ---"
+          head -c 1200 /tmp/body.html 2>/dev/null || true
+          echo
+          echo "--- HTTPS DIRECT ---"
+          curl --silent --show-error --location --output /tmp/https-body.html --write-out 'http_code=%{http_code}\nurl_effective=%{url_effective}\ncontent_type=%{content_type}\nredirects=%{num_redirects}\n' "https://thiepn.dev/unreached/"
+          echo "--- WWW HTTPS DIRECT ---"
+          curl --silent --show-error --location --output /tmp/www-body.html --write-out 'http_code=%{http_code}\nurl_effective=%{url_effective}\ncontent_type=%{content_type}\nredirects=%{num_redirects}\n' "https://www.thiepn.dev/unreached/"
+          echo "--- MARKERS ---"
+          printf 'root Unreached marker: '; grep -q 'Unreached' /tmp/body.html && echo yes || echo no
+          printf 'https Unreached marker: '; grep -q 'Unreached' /tmp/https-body.html && echo yes || echo no
+          printf 'www Unreached marker: '; grep -q 'Unreached' /tmp/www-body.html && echo yes || echo no
