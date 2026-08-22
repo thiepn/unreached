@@ -12,9 +12,9 @@ function nullable<T>(value: T | null | undefined): T | null {
   return value ?? null;
 }
 
-function reachClassification(value: string | null): RuntimePeopleContext["reach"]["classification"] {
-  if (value === null) return "unknown";
-  return value.trim().toLowerCase() === "less than 2%" ? "unreached" : "other";
+function reachClassification(gsec: number | null): RuntimePeopleContext["reach"]["classification"] {
+  if (gsec === null) return "unknown";
+  return gsec <= 3 ? "unreached" : "other";
 }
 
 function coordinatesFor(record: PeopleGroupsApiRecord) {
@@ -26,7 +26,7 @@ function coordinatesFor(record: PeopleGroupsApiRecord) {
 }
 
 export function toRuntimePeopleContext(record: PeopleGroupsApiRecord): RuntimePeopleContext {
-  const sourceValue = nullable(record.EvngLvl);
+  const gsec = nullable(record.GSEC);
   return runtimePeopleContextSchema.parse({
     provider: "peoplegroups-org",
     pgid: record.PGID,
@@ -52,11 +52,12 @@ export function toRuntimePeopleContext(record: PeopleGroupsApiRecord): RuntimePe
       displayName: nullable(record.RlgnDiv),
     },
     reach: {
-      classification: reachClassification(sourceValue),
-      methodology: "imb-evangelical-level-v1",
-      sourceValue,
-      rule: "EvngLvl 'Less than 2%' => unreached; other non-empty values => other; missing => unknown",
-      gsec: { code: nullable(record.GSEC), label: nullable(record.GSECbrf), description: nullable(record.GSEClng) },
+      classification: reachClassification(gsec),
+      methodology: "imb-gsec-v1",
+      sourceValue: gsec,
+      rule: "GSEC 0-3 => unreached; GSEC 4-6 => other; missing => unknown",
+      evangelicalLevel: nullable(record.EvngLvl),
+      gsec: { code: gsec, label: nullable(record.GSECbrf), description: nullable(record.GSEClng) },
       spi: { code: nullable(record.SPI), description: nullable(record.SPIdesc) },
       lpi: { code: nullable(record.LPI), name: nullable(record.LPIname), description: nullable(record.LPIdesc) },
       engagementStatus: nullable(record.EngStat),
@@ -111,7 +112,7 @@ function entityReach(contexts: RuntimePeopleContext[]): RuntimePeopleEntity["rea
       : otherContexts > 0
         ? "other-only"
         : "unknown";
-  return { classification, methodology: "imb-context-rollup-v1", unreachedContexts, otherContexts, unknownContexts };
+  return { classification, methodology: "imb-gsec-context-rollup-v1", unreachedContexts, otherContexts, unknownContexts };
 }
 
 export function buildRuntimePeopleEntities(records: PeopleGroupsApiRecord[]): RuntimePeopleEntity[] {
