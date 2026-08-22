@@ -36,6 +36,12 @@ jobs:
       - name: Run desktop and mobile browser certification
         run: npm run e2e
 
+      - name: Certify PeopleGroups.org browser CORS and API contract for U12B
+        if: github.event_name == 'pull_request' && github.head_ref == 'phase/u12b-real-data-runtime'
+        env:
+          PEOPLEGROUPS_LIVE_CHECK: "1"
+        run: npx playwright test tests/e2e/peoplegroups-live.spec.ts --project=chromium --workers=1
+
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v7
