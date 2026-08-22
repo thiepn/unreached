@@ -1,0 +1,19 @@
+{
+  "name": "Unreached — Explore. Understand. Pray.",
+  "short_name": "Unreached",
+  "description": "An interactive Christian world atlas for exploring unreached peoples, understanding their context, and praying for them.",
+  "id": "/unreached/",
+  "start_url": "/unreached/#/",
+  "scope": "/unreached/",
+  "display": "standalone",
+  "background_color": "#f4f0e6",
+  "theme_color": "#f4f0e6",
+  "icons": [
+    {
+      "src": "/unreached/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
