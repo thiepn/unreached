@@ -1,8 +1,8 @@
 # U12 — Production Data Activation Release Gates
 
 **Phase:** Production Data Activation  
-**Current subphase:** U12C — Visible Real-Data Integration  
-**Status:** U12A and U12B certified/merged; U12C implementation in certification
+**Current subphase:** U12D — Live Mission Visualization  
+**Status:** U12A–U12C merged; U12D implementation in certification
 
 ## U12A — Provider Foundation & Semantic Isolation
 
@@ -39,11 +39,10 @@
 
 - PR: #24 — **merged**
 - Merge commit: `93ca1a9a8edc8ed1c4f0e1e604ab73652fa3018d`
-- Pre-merge deterministic CI and browser/CORS certification passed.
 
 ## U12C — Visible Real-Data Integration
 
-**Status:** implementation complete on `phase/u12c-visible-real-data`; certification in progress.
+**Status:** complete and merged in PR #25.
 
 ### Product integration
 
@@ -66,30 +65,67 @@
 - [x] No person-by-person AI-generated factual or spiritual claims are created.
 - [x] 2/5/10-minute flows remain pacing aids with no score, streak, completion rank, or public activity record.
 
+### U12C merge evidence
+
+- PR: #25 — **merged**
+- Merge commit: `6868b19d6759215501ecf60bf3765eb67c0ad83b`
+- PeopleGroups live certification observed green on the accepted U12C head.
+- Post-merge documentation correction: PR #26, merge commit `a4e532c0e1ae41b532d96c276da635e7c6555f9d`.
+- The latest post-docs Pages production status was red and is treated as an open release-hardening item to re-certify during U12D rather than being silently ignored.
+
+## U12D — Live Mission Visualization
+
+**Status:** implementation complete on `phase/u12d-live-mission-visualization`; certification in progress.
+
+### Live atlas semantics
+
+- [x] Root mission atlas uses the shared PeopleGroups.org runtime corpus rather than the legacy static mission dataset loader.
+- [x] Natural Earth remains the geographic presentation layer.
+- [x] `GSEC 0–3 population share` uses only contexts with both known population and known GSEC in its denominator.
+- [x] `GSEC 0–3 context share` counts PGID country contexts with known GSEC.
+- [x] `GSEC coverage` measures source-field coverage rather than mission status.
+- [x] `Population estimate coverage` measures PGID-record population-field coverage rather than national census coverage.
+- [x] `People-group contexts` is a direct PGID country-context count, not a unique global PEID count.
+- [x] Missing population denominators remain no-data rather than becoming false zeroes.
+- [x] Map selection exposes the PeopleGroups.org country-context denominator.
+- [x] Old `?layer=unreached` URLs migrate safely to the new default layer.
+
+### Semantic exclusions
+
+- [x] Frontier is not inferred from PeopleGroups.org.
+- [x] Joshua Project JPScale is not inferred from PeopleGroups.org.
+- [x] Exact evangelical percentage layers are not fabricated from `EvngLvl` text.
+- [x] Raw Bible availability is not converted into a normalized Scripture-completeness map layer.
+- [x] Unknown GSEC remains visible and excluded from GSEC-known denominators.
+
 ### Publication state
 
+- [x] `mission` → `runtime-api`, active, no static dataset URL.
 - [x] `peoples` → `runtime-api`, active, no static dataset URL.
 - [x] `countries` → `runtime-api`, active, no static dataset URL.
 - [x] `prayer` → `runtime-api`, active, no static dataset URL.
-- [x] `mission`, `context`, and `languages` remain separately gated.
+- [x] `context` and `languages` remain separately gated.
 - [x] PeopleGroups.org `publicReleaseAllowed` and `browserRedistributionAllowed` remain false.
 - [x] PeopleGroups.org `runtimeReadAllowed` remains true.
+- [x] Dist certification forbids source-derived static datasets in Mission/People/Countries/Prayer runtime directories.
 
 ### Automated gates
 
-- [x] Deterministic visible-model test covers PEID/PGID/GSEC, population coverage, raw resource labels, filters, and prayer template invariants.
-- [x] Normal browser suite intercepts a valid PeopleGroups corpus so deterministic CI does not depend on provider uptime.
-- [x] Dedicated external PeopleGroups live certification remains separate.
-- [x] Pages deployment policy updated for runtime-active People/Countries/Prayer.
+- [x] Deterministic U12D visualization test covers population/context ratios, coverage, no-data semantics and all five live layers.
+- [x] Deterministic U12D test explicitly rejects Frontier, JPScale, normalized Scripture-completeness and fabricated evangelical-percentage leakage.
+- [x] Cross-browser U12D journey uses the intercepted PeopleGroups corpus and covers map → country selection → layer switch.
+- [x] Browser journey supports desktop and mobile map controls.
+- [x] Legacy static mission loader treats `runtime-api` as intentionally non-static rather than throwing.
 - [ ] Final branch TypeScript/production build green.
 - [ ] Full desktop/mobile Browser Certification green.
-- [ ] U12C end-to-end explorer → profile → country and search → save → prayer journeys green.
-- [ ] PR #25 merged.
+- [ ] U12D live-map end-to-end journey green on the final PR head.
+- [ ] PeopleGroups external live certification green on the final PR head.
+- [ ] PR merged.
 - [ ] Merged `unreached/pages-production` status green.
-- [ ] Merged `unreached/peoplegroups-live` status green from the production origin.
+- [ ] Merged `unreached/peoplegroups-live` status green from production origin.
 
-## U12C promotion rule
+## U12D promotion rule
 
-U12C may merge only when deterministic CI and the full browser matrix pass on the final PR head. After merge, production activation is certified only when both the Pages production status and the PeopleGroups live production-origin status are green.
+U12D may merge only when deterministic CI, the full browser matrix, and the live PeopleGroups contract pass on the final PR head. After merge, production activation is certified only when both `unreached/pages-production` and `unreached/peoplegroups-live` are green.
 
-A green U12C does **not** authorize a static PeopleGroups.org dataset mirror or third-party photo redistribution.
+A green U12D authorizes **direct runtime visualization only**. It does **not** authorize a static PeopleGroups.org database mirror, third-party photo redistribution, or semantic conversion into Joshua Project fields.
