@@ -27,7 +27,7 @@ for (const name of assetNames) {
   if (name.endsWith(".js")) largestJsGzip = Math.max(largestJsGzip, compressed);
   if (name.endsWith(".css")) largestCssGzip = Math.max(largestCssGzip, compressed);
 }
-if (largestJsGzip > 500 * 1024) throw new Error(`Largest JS chunk exceeds 500 KiB gzip (${largestJsGzip} bytes).`);
+if (largestJsGzip > 375 * 1024) throw new Error(`Largest JS chunk exceeds 375 KiB gzip (${largestJsGzip} bytes).`);
 if (largestCssGzip > 60 * 1024) throw new Error(`Largest CSS chunk exceeds 60 KiB gzip (${largestCssGzip} bytes).`);
 
 const geographyBytes = (await stat(resolve(dist, "maps/world-countries.geojson"))).size;
