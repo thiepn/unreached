@@ -25,12 +25,13 @@ test("country explorer remains useful while mission data is gated", async ({ pag
 test("global keyboard search finds geographic countries", async ({ page }) => {
   await page.goto("./#/countries");
   await page.keyboard.press("/");
-  await expect(page.getByRole("dialog", { name: "Search Unreached" })).toBeVisible();
-  const input = page.getByRole("searchbox", { name: "Search peoples, countries or languages" });
+  const dialog = page.getByRole("dialog", { name: "Search Unreached" });
+  await expect(dialog).toBeVisible();
+  const input = dialog.getByRole("searchbox", { name: "Search peoples, countries or languages" });
   await input.fill("Germany");
-  await expect(page.getByRole("link", { name: /Germany/ })).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Germany Europe", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog", { name: "Search Unreached" })).toBeHidden();
+  await expect(dialog).toBeHidden();
 });
 
 test("release transparency page contains definitions and permission state", async ({ page }) => {
@@ -50,5 +51,6 @@ test("saved page is private-browser local and empty-safe", async ({ page }) => {
 
 test("unknown routes fail visibly", async ({ page }) => {
   await page.goto("./#/this-route-does-not-exist");
-  await expect(page.getByText(/not found/i).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "This route is not on the map." })).toBeVisible();
+  await expect(page.getByText("404", { exact: true })).toBeVisible();
 });
