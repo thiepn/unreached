@@ -13,5 +13,6 @@ import "./styles/peoples.css";
 import "./styles/context.css";
 import "./styles/prayer.css";
 import "./styles/languages.css";
+import "./styles/discovery.css";
 
 render(<App />, document.getElementById("app")!);
