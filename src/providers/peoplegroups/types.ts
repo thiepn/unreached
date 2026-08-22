@@ -67,10 +67,10 @@ export const peopleGroupsApiPageSchema = z.array(peopleGroupsApiRecordSchema);
 export type PeopleGroupsApiRecord = z.infer<typeof peopleGroupsApiRecordSchema>;
 
 export const runtimeReachAssessmentSchema = z.object({
-  classification: z.enum(["unreached", "reached", "unknown"]),
+  classification: z.enum(["unreached", "other", "unknown"]),
   methodology: z.literal("imb-evangelical-level-v1"),
   sourceValue: z.string().nullable(),
-  rule: z.literal("EvngLvl 'Less than 2%' => unreached; other non-empty values => reached; missing => unknown"),
+  rule: z.literal("EvngLvl 'Less than 2%' => unreached; other non-empty values => other; missing => unknown"),
   gsec: z.object({ code: z.number().int().nonnegative().nullable(), label: z.string().nullable(), description: z.string().nullable() }),
   spi: z.object({ code: z.number().int().nonnegative().nullable(), description: z.string().nullable() }),
   lpi: z.object({ code: z.number().int().nonnegative().nullable(), name: z.string().nullable(), description: z.string().nullable() }),
@@ -113,10 +113,10 @@ export const runtimePeopleEntitySchema = z.object({
     aggregation: z.literal("sum-known-country-context-populations"),
   }),
   reach: z.object({
-    classification: z.enum(["unreached", "reached", "mixed", "unknown"]),
+    classification: z.enum(["unreached-only", "other-only", "mixed", "unknown"]),
     methodology: z.literal("imb-context-rollup-v1"),
     unreachedContexts: z.number().int().nonnegative(),
-    reachedContexts: z.number().int().nonnegative(),
+    otherContexts: z.number().int().nonnegative(),
     unknownContexts: z.number().int().nonnegative(),
   }),
   primaryLanguage: z.object({ iso6393: z.string().regex(/^[a-z]{3}$/).nullable(), name: z.string().nullable() }).nullable(),
@@ -129,7 +129,7 @@ export const runtimeCountrySummarySchema = z.object({
   name: z.string().min(1),
   peopleContextCount: z.number().int().nonnegative(),
   unreachedContextCount: z.number().int().nonnegative(),
-  reachedContextCount: z.number().int().nonnegative(),
+  otherContextCount: z.number().int().nonnegative(),
   unknownContextCount: z.number().int().nonnegative(),
   knownPopulation: z.number().int().nonnegative(),
   populationKnownContextCount: z.number().int().nonnegative(),
