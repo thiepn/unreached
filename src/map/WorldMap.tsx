@@ -156,6 +156,7 @@ export function WorldMap({
     let map: MapLibreMap;
     let loaded = false;
     delete container.dataset.mapReady;
+    delete container.dataset.mapError;
 
     try {
       map = new MapLibreMap({
@@ -171,7 +172,9 @@ export function WorldMap({
         fadeDuration: reducedMotion() ? 0 : 180,
       });
     } catch (error: unknown) {
-      onErrorRef.current(error instanceof Error ? error.message : "The interactive map could not start.");
+      const message = error instanceof Error ? error.message : "The interactive map could not start.";
+      container.dataset.mapError = message;
+      onErrorRef.current(message);
       return;
     }
 
@@ -195,6 +198,7 @@ export function WorldMap({
 
     map.on("load", () => {
       loaded = true;
+      delete container.dataset.mapError;
       container.dataset.mapReady = "true";
       onErrorRef.current(null);
 
@@ -241,6 +245,7 @@ export function WorldMap({
     map.on("error", (event) => {
       const message = event.error instanceof Error ? event.error.message : "The map reported a rendering error.";
       if (!loaded || fatalRenderingError(message)) {
+        container.dataset.mapError = message;
         onErrorRef.current(message);
       } else {
         console.warn("MapLibre reported a recoverable error after the map loaded:", event.error);
@@ -249,16 +254,20 @@ export function WorldMap({
 
     map.on("webglcontextlost", () => {
       delete container.dataset.mapReady;
-      onErrorRef.current("The browser lost the WebGL rendering context.");
+      const message = "The browser lost the WebGL rendering context.";
+      container.dataset.mapError = message;
+      onErrorRef.current(message);
     });
 
     map.on("webglcontextrestored", () => {
+      delete container.dataset.mapError;
       container.dataset.mapReady = "true";
       onErrorRef.current(null);
     });
 
     return () => {
       delete container.dataset.mapReady;
+      delete container.dataset.mapError;
       mapRef.current = null;
       onHoverRef.current(null);
       map.remove();
