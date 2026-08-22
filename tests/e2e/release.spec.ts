@@ -45,16 +45,11 @@ test("root shell and primary navigation render", async ({ page }) => {
   await expectNoHorizontalOverflow(page);
 });
 
-test("interactive map loads its bundled MapLibre worker without the rendering fallback", async ({ page }) => {
-  const workerResponse = page.waitForResponse(
-    (response) => /maplibre-gl-worker/i.test(new URL(response.url()).pathname),
-    { timeout: 20_000 },
-  );
-
+test("interactive map reaches MapLibre load-ready without the rendering fallback", async ({ page }) => {
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
-  const response = await workerResponse;
-  expect(response.status()).toBe(200);
-  await expect(page.locator(".world-map .maplibregl-canvas")).toBeVisible();
+  const map = page.locator(".world-map");
+  await expect(map).toHaveAttribute("data-map-ready", "true", { timeout: 20_000 });
+  await expect(map.locator(".maplibregl-canvas")).toBeVisible();
   await expect(page.locator(".map-render-warning")).toHaveCount(0);
 });
 
