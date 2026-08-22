@@ -1,5 +1,8 @@
 # U11 — Browser Certification
 
+**Automated status:** passed  
+**Certified product commit:** `08271a514a00192ae4df2ad82a32247701f0e726`
+
 ## Automated matrix
 
 The U11 Playwright workflow runs the production Vite build against five browser/device projects:
@@ -16,12 +19,27 @@ Automated smoke coverage includes:
 - `/unreached/` base-path correctness
 - country geography fallback while mission data is gated
 - `/` global-search keyboard shortcut
-- search dialog keyboard close
+- search dialog focus containment, keyboard close and focus restoration
 - geographic search results
 - release-transparency/About page
 - Saved empty-state safety
 - invalid-route handling
 - horizontal-overflow regression checks on tested pages/viewports
+
+## Automated certification result
+
+Final Browser Certification run `32539766551` completed successfully on 2026-08-22.
+
+- **30/30 Playwright cases passed**
+- Chromium desktop: pass
+- Firefox desktop: pass
+- WebKit desktop: pass
+- mobile Chromium: pass
+- mobile WebKit: pass
+- horizontal-overflow regression suite: pass
+- search focus containment/restoration: pass
+
+During hardening the suite exposed a real mobile About-page overflow. Diagnosis showed that the methodology list was unintentionally creating an implicit third CSS Grid column. The correction explicitly keeps the counter in column 1 and both text rows in column 2; overflow was not hidden or clipped as a workaround.
 
 ## Manual deployment matrix
 
@@ -56,4 +74,4 @@ After the stacked PRs are integrated and deployed, the release candidate must st
 
 ## Certification rule
 
-Automated Playwright success is required for U11 code completion. Real deployed smoke tests remain a release-candidate promotion gate; they are not silently claimed complete before the stacked branch is actually deployed.
+Automated Playwright certification for U11 is complete. Real deployed smoke tests remain a release-candidate promotion gate; they are not silently claimed complete before the stacked branch is actually deployed.
