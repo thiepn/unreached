@@ -1,1 +1,1 @@
-Country mission data is intentionally not published in U5. status.json is the browser release gate. Synthetic country data is used only by validation scripts and must never be presented as real-world mission statistics.
+U12C activates country mission context through direct PeopleGroups.org runtime API reads. This directory intentionally contains no static source-derived country dataset: status.json records the runtime publication mode, while synthetic country data remains validation-only and must never be presented as real-world mission statistics.
