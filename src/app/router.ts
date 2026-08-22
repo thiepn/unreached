@@ -12,6 +12,7 @@ export type RouteId =
 export interface RouteState {
   id: RouteId;
   path: string;
+  countryIso3: string | null;
 }
 
 const ROUTES: Readonly<Record<string, RouteId>> = {
@@ -37,9 +38,14 @@ function normalizeHash(hash: string): string {
 
 function readRoute(): RouteState {
   const path = normalizeHash(window.location.hash);
+  const countryMatch = path.match(/^\/countries\/([A-Za-z]{3})$/);
+  if (countryMatch?.[1]) {
+    return { id: "countries", path, countryIso3: countryMatch[1].toUpperCase() };
+  }
   return {
     id: ROUTES[path] ?? "not-found",
-    path
+    path,
+    countryIso3: null,
   };
 }
 

@@ -170,6 +170,7 @@ export function ExplorePage() {
     [countries, hoveredKey],
   );
   const selectedSummary = selected ? summaryForMapProperties(selected.properties, mission.countriesByIso3) : null;
+  const selectedRouteCode = selected ? (selected.properties.iso3 ?? selected.properties.adminA3) : null;
   const hoveredSummary = hovered ? summaryForMapProperties(hovered.properties, mission.countriesByIso3) : null;
   const visualizedGeography = useMemo(
     () => data ? buildMissionMapGeography(data, mission.dataset, activeLayer) : null,
@@ -255,6 +256,7 @@ export function ExplorePage() {
               <div><dt>Map code</dt><dd>{selected.properties.iso3 ?? selected.properties.adminA3 ?? "—"}</dd></div>
               {selected.properties.continent ? <div><dt>Continent</dt><dd>{selected.properties.continent}</dd></div> : null}
             </dl>
+            {selectedRouteCode && /^[A-Z]{3}$/.test(selectedRouteCode) ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Open country profile →</a> : null}
             {selected.properties.boundaryNote ? <p class="boundary-specific-note">{selected.properties.boundaryNote}</p> : null}
           </div>
         ) : null}
@@ -349,9 +351,12 @@ export function ExplorePage() {
             <MissionLegend activeLayer={activeLayer} />
             {!mission.loading && !missionAvailable ? <p class="mobile-data-note">Mission data publication is currently release-gated.</p> : null}
             {selected ? (
-              <div class="mobile-selection">
+              <div class="mobile-selection mobile-selection--country">
                 <span>{selectedSummary ? `${getMissionLayer(activeLayer).shortLabel}: ${formatLayerValue(selectedSummary, activeLayer)}` : selected.properties.iso3 ?? selected.properties.adminA3 ?? selected.properties.type}</span>
-                <button type="button" class="text-button" onClick={clearSelection}>Clear selection</button>
+                <div>
+                  {selectedRouteCode && /^[A-Z]{3}$/.test(selectedRouteCode) ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Profile</a> : null}
+                  <button type="button" class="text-button" onClick={clearSelection}>Clear</button>
+                </div>
               </div>
             ) : null}
             <CountryBrowser

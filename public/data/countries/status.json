@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "available": false,
+  "fixture": false,
+  "datasetUrl": null,
+  "reason": "Country mission records are release-gated until source-derived browser redistribution is explicitly approved. Geography remains available from Natural Earth.",
+  "sourceIds": [],
+  "attributions": []
+}
