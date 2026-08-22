@@ -14,9 +14,11 @@ for (const path of ["site.webmanifest", "icon.svg", "robots.txt", "maps/world-co
 for (const domain of ["countries", "peoples", "prayer"]) {
   const directory = resolve(dist, "data", domain);
   const entries = await readdir(directory);
-  if (entries.length !== 1 || entries[0] !== "status.json") {
-    throw new Error(`U12C ${domain} must publish only runtime status metadata; static source-derived dataset files are forbidden (${entries.join(", ")}).`);
+  const forbidden = entries.filter((entry) => entry !== "status.json" && entry !== "README.txt");
+  if (forbidden.length) {
+    throw new Error(`U12C ${domain} must not ship a static source-derived dataset (${forbidden.join(", ")}).`);
   }
+  if (!entries.includes("status.json")) throw new Error(`U12C ${domain} runtime status metadata is missing from dist.`);
   const status = JSON.parse(await readFile(resolve(directory, "status.json"), "utf8")) as {
     available?: unknown;
     fixture?: unknown;
@@ -56,4 +58,4 @@ if (geographyBytes > 5 * 1024 * 1024) throw new Error(`World geography unexpecte
 
 const total = await size(dist);
 if (total > 20 * 1024 * 1024) throw new Error(`Production dist unexpectedly exceeds 20 MiB (${total} bytes).`);
-console.log(`U12C production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only PeopleGroups status files, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
+console.log(`U12C production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only PeopleGroups status/data documentation, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
