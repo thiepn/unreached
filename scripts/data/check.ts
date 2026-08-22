@@ -12,12 +12,15 @@ function expectBlocked(action: () => void, label: string): void {
 const registry = await loadSourceRegistry();
 assertSourceUseAllowed(registry, "joshua-project-api", "development-ingestion");
 assertSourceUseAllowed(registry, "peoplegroups-org-api", "development-ingestion");
+assertSourceUseAllowed(registry, "peoplegroups-org-api", "runtime-read");
 assertSourceUseAllowed(registry, "natural-earth", "public-release");
+expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "runtime-read"), "Joshua Project runtime reads without explicit approval");
 expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "public-release"), "Joshua Project public release before permission");
 expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "browser-redistribution"), "Joshua Project browser redistribution before permission");
-expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "public-release"), "PeopleGroups.org public release before U12 activation review");
-expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "browser-redistribution"), "PeopleGroups.org static browser redistribution before explicit review");
+expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "public-release"), "PeopleGroups.org static public release");
+expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "browser-redistribution"), "PeopleGroups.org static browser redistribution");
 expectBlocked(() => assertSourceUseAllowed(registry, "progress-bible-registered-data", "development-ingestion"), "ProgressBible ingestion without permission");
+expectBlocked(() => assertSourceUseAllowed(registry, "progress-bible-registered-data", "runtime-read"), "ProgressBible runtime reads without permission");
 
 const { dataset, retrievedAt, sourceRecordCount } = await loadFixtureDataset();
 const issues = validateDatasetInvariants(dataset);
