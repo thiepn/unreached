@@ -22,16 +22,25 @@ test("country explorer remains useful while mission data is gated", async ({ pag
   await expectNoHorizontalOverflow(page);
 });
 
-test("global keyboard search finds geographic countries", async ({ page }) => {
+test("global keyboard search finds countries and contains/restores focus", async ({ page }) => {
   await page.goto("./#/countries");
+  const main = page.locator("#main-content");
+  await expect(main).toBeFocused();
   await page.keyboard.press("/");
   const dialog = page.getByRole("dialog", { name: "Search Unreached" });
   await expect(dialog).toBeVisible();
   const input = dialog.getByRole("searchbox", { name: "Search peoples, countries or languages" });
+  const close = dialog.getByRole("button", { name: "Close search" });
+  await expect(input).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(close).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(input).toBeFocused();
   await input.fill("Germany");
   await expect(dialog.getByRole("link", { name: "Germany Europe", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
+  await expect(main).toBeFocused();
 });
 
 test("release transparency page contains definitions and permission state", async ({ page }) => {
