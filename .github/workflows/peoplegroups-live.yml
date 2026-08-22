@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 jobs:
   live-browser:
@@ -38,3 +39,32 @@ jobs:
         env:
           PEOPLEGROUPS_LIVE_CHECK: "1"
         run: npx playwright test tests/e2e/peoplegroups-live.spec.ts --project=chromium --workers=1
+
+  report-live-status:
+    runs-on: ubuntu-latest
+    needs: live-browser
+    if: always()
+    permissions:
+      statuses: write
+    steps:
+      - name: Publish PeopleGroups live status
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LIVE_RESULT: ${{ needs.live-browser.result }}
+        run: |
+          set -euo pipefail
+          state="failure"
+          description="PeopleGroups.org browser CORS/API certification failed"
+          if [[ "${LIVE_RESULT}" == "success" ]]; then
+            state="success"
+            description="PeopleGroups.org browser CORS/API certification passed"
+          fi
+          payload=$(jq -nc --arg state "${state}" --arg description "${description}" '{state:$state,description:$description,context:"unreached/peoplegroups-live"}')
+          curl --fail-with-body --silent --show-error --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            --data "${payload}"
