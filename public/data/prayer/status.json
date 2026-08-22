@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "available": false,
+  "fixture": false,
+  "datasetUrl": null,
+  "reason": "Reviewed real-world prayer guides are not published in this build. U8 validates the prayer system with fictional fixtures only."
+}

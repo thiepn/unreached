@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U7 complete; U8 next
+- **Current phase:** U8 complete; U9 next
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 
 `npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
 
-Full production/data/map/visualization/country/people/context validation:
+Full production/data/map/visualization/country/people/context/prayer validation:
 
 ```bash
 npm run check
@@ -37,6 +37,7 @@ npm run visualization:check
 npm run country:check
 npm run people:check
 npm run context:check
+npm run prayer:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -51,17 +52,17 @@ Vite is configured for the `/unreached/` project path.
 - population-coverage-aware derived metrics
 - dedicated country-intelligence dataset and stable ISO3 country routes
 - canonical global people profiles with stable source-ID routes
-- country-context, language, religion, Scripture and provenance-aware people profiles
-- separate evidence-backed editorial context dataset for `Who are they?` and `Why Unreached?`
-- claim-level fact/synthesis/interpretation labels, citations, freshness and review rules
-- separate build-time data, geography and editorial-validation pipelines
-- static-host-safe hash routing with shareable country, people, camera and layer state
+- evidence-backed editorial context dataset for `Who are they?` and `Why Unreached?`
+- reviewed prayer-guide dataset joined to U6 people and U7 contextual claims
+- deterministic daily prayer selection and 2/5/10-minute focused-prayer flows
+- separate build-time data, geography, editorial and prayer-validation pipelines
+- static-host-safe hash routing with shareable country, people, prayer, camera and layer state
 - deterministic mission-data chunking with SHA-256 manifest metadata
-- machine-enforced source permissions and contextual publication gates
+- machine-enforced source permissions and publication gates
 - locally bundled Newsreader + Source Sans 3 typography
 - native CSS design-token system
 - GitHub Actions → GitHub Pages deployment
-- no backend, authentication, analytics SDK, client-side source API keys, or external map tile service
+- no backend, authentication, analytics SDK, client-side source API keys, external map tile service, prayer scoring or competitive spiritual gamification
 
 ## U4 mission visualization
 
@@ -79,12 +80,7 @@ See [`docs/COUNTRY_EXPLORER.md`](docs/COUNTRY_EXPLORER.md), [`docs/COUNTRY_DATA_
 
 ## U6 people-group explorer
 
-People exploration has:
-
-- `#/peoples` — typed search, filters and sorting across published people profiles
-- `#/peoples/:sourcePeopleId` — canonical global people-group profile
-
-Profiles separate the canonical global record from country-specific contexts, retain metric quality/unknown semantics, resolve language and religion, disclose the basis for Scripture status, expose source-taxonomy related groups with limitations, and provide field-level provenance. Country people tables link directly into global people profiles.
+People exploration has `#/peoples` discovery and `#/peoples/:sourcePeopleId` canonical global profiles. Profiles keep country contexts separate, preserve unknown/quality semantics, resolve language and religion, expose Scripture basis, source-taxonomy related groups and field-level provenance.
 
 The production browser currently does **not** receive real source-derived people records. `public/data/peoples/status.json` keeps the release gate explicit and production code rejects fixture datasets.
 
@@ -92,23 +88,26 @@ See [`docs/PEOPLE_GROUP_EXPLORER.md`](docs/PEOPLE_GROUP_EXPLORER.md), [`docs/PEO
 
 ## U7 contextual profiles & Why Unreached?
 
-U7 adds the explanatory layer without turning unsourced narrative into fact. Context remains a separate, versioned dataset joined to canonical U6 people profiles.
+U7 adds a separate contextual dataset joined to U6 people profiles. Material claims carry evidence level, fact/synthesis/interpretation kind, certainty, citations, temporal class, freshness dates where needed, sensitivity and review metadata. `Why Unreached?` is dimension-based rather than monocausal boilerplate.
 
-Every material contextual claim records:
-
-- evidence level A/B/C
-- fact, synthesis or interpretation kind
-- certainty
-- citations
-- stable/current temporal class
-- `asOf` and `reviewAfter` for current claims
-- sensitivity classification
-
-`Why Unreached?` is assembled only from evidenced dimensions such as church presence, language/media, social identity, geography, legal/political context, conflict/displacement, history and access gaps. Profiles are not required to fill every dimension. Published profiles fail validation when current claims are stale, Level B synthesis lacks multiple sources, restricted material is present, or the review checklist is incomplete.
-
-The production browser currently ships no real-world editorial profile dataset. `public/data/context/status.json` keeps that publication state explicit, while a fictional Example People profile validates the model and UI.
+The production browser ships no real-world editorial profile dataset by default. `public/data/context/status.json` keeps that publication state explicit.
 
 See [`docs/CONTEXT_EDITORIAL_ARCHITECTURE.md`](docs/CONTEXT_EDITORIAL_ARCHITECTURE.md), [`docs/WHY_UNREACHED_DISPLAY_RULES.md`](docs/WHY_UNREACHED_DISPLAY_RULES.md), and [`docs/U7_RELEASE_GATES.md`](docs/U7_RELEASE_GATES.md).
+
+## U8 prayer experience
+
+Prayer now has two stable routes:
+
+- `#/pray` — prayer hub, country scope and deterministic People to Pray for Today
+- `#/pray/:sourcePeopleId` — focused prayer guide
+
+Reviewed guides contain 4–7 prompts across at least four categories, including gospel and believers/church. Prompts explicitly distinguish biblical, contextual and mixed grounding; contextual factual assumptions reference U7 claims. Current prompts expire through `reviewAfter` dates. Scripture is stored as references and application purposes rather than copied verse text.
+
+Focused prayer offers optional 2/5/10-minute pacing with step navigation. It deliberately has no prayer score, XP, streak, leaderboard, completion target or public prayer log. People profiles link into focused prayer, while country pages link to prayer-ready peoples scoped to that country.
+
+The production browser currently ships no real-world prayer-guide dataset. `public/data/prayer/status.json` keeps that gate explicit and production blocks fixture data.
+
+See [`docs/PRAYER_EXPERIENCE.md`](docs/PRAYER_EXPERIENCE.md), [`docs/PRAYER_DISPLAY_RULES.md`](docs/PRAYER_DISPLAY_RULES.md), and [`docs/U8_RELEASE_GATES.md`](docs/U8_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -174,6 +173,12 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - [`docs/U7_RELEASE_GATES.md`](docs/U7_RELEASE_GATES.md)
 - [`public/data/context/status.json`](public/data/context/status.json)
 
+### U8
+- [`docs/PRAYER_EXPERIENCE.md`](docs/PRAYER_EXPERIENCE.md)
+- [`docs/PRAYER_DISPLAY_RULES.md`](docs/PRAYER_DISPLAY_RULES.md)
+- [`docs/U8_RELEASE_GATES.md`](docs/U8_RELEASE_GATES.md)
+- [`public/data/prayer/status.json`](public/data/prayer/status.json)
+
 ## Development phases
 
 - **U0 — Product Constitution, Definitions & Data Legality** ✅
@@ -184,7 +189,7 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - **U5 — Country Explorer** ✅
 - **U6 — People Group Explorer** ✅
 - **U7 — Context & “Why Unreached?”** ✅
-- **U8 — Prayer Experience**
+- **U8 — Prayer Experience** ✅
 - **U9 — Languages & Scripture Integration**
 - **U10 — Search, Discovery & Local Personalization**
 - **U11 — Release Hardening & Data Expansion**

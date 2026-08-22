@@ -5,6 +5,8 @@ import { ExplorePage } from "../pages/ExplorePage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { PeopleContextualPage } from "../pages/PeopleContextualPage";
 import { PeoplesPage } from "../pages/PeoplesPage";
+import { PrayPage } from "../pages/PrayPage";
+import { PrayerFocusPage } from "../pages/PrayerFocusPage";
 import { SectionPage } from "../pages/SectionPage";
 import { useHashRoute } from "./router";
 
@@ -24,7 +26,7 @@ export function App() {
       page = route.countryIso3 ? <CountryPage iso3={route.countryIso3} /> : <CountriesPage />;
       break;
     case "pray":
-      page = <SectionPage kind="pray" />;
+      page = route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />;
       break;
     case "saved":
       page = <SectionPage kind="saved" />;

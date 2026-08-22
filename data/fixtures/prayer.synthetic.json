@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "methodologyVersion": 1,
+  "fixture": true,
+  "generatedAt": "2026-08-21T22:20:00Z",
+  "profiles": [
+    {
+      "peopleGroupId": "people:999001",
+      "sourcePeopleId": 999001,
+      "peopleName": "Example People",
+      "countryIso3s": ["XZZ"],
+      "featuredDaily": true,
+      "whyPray": {
+        "summary": "Christians pray for the fictional Example People because the gospel is for every people and language, while the synthetic context also represents a limited local-language resource environment.",
+        "contextClaimIds": ["claim:example-access"],
+        "scriptureReferences": [
+          { "reference": "Revelation 7:9–10", "purpose": "Worship from every people and language" },
+          { "reference": "Romans 10:13–17", "purpose": "Hearing the message of Christ" }
+        ]
+      },
+      "prompts": [
+        {
+          "id": "prayer-prompt:example-gospel",
+          "category": "gospel",
+          "text": "Pray that people in this fictional community would have meaningful opportunities to hear, understand, and respond to the gospel of Jesus Christ.",
+          "grounding": "biblical",
+          "contextClaimIds": [],
+          "scriptureReferences": [{ "reference": "Romans 10:13–17", "purpose": "Hearing and believing the gospel" }],
+          "temporalClass": "stable",
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public"
+        },
+        {
+          "id": "prayer-prompt:example-believers",
+          "category": "believers",
+          "text": "Pray for any Christians connected to this fictional people to grow in faith, courage, holiness, fellowship, and love for their neighbors.",
+          "grounding": "biblical",
+          "contextClaimIds": [],
+          "scriptureReferences": [{ "reference": "Ephesians 3:14–21", "purpose": "Spiritual strength and maturity" }],
+          "temporalClass": "stable",
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "generalized"
+        },
+        {
+          "id": "prayer-prompt:example-church",
+          "category": "church",
+          "text": "Pray for healthy, locally rooted churches among the fictional Example People that are grounded in Scripture and equipped to disciple others faithfully.",
+          "grounding": "biblical",
+          "contextClaimIds": [],
+          "scriptureReferences": [{ "reference": "Acts 14:21–23", "purpose": "Strengthening disciples and local churches" }],
+          "temporalClass": "stable",
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public"
+        },
+        {
+          "id": "prayer-prompt:example-scripture",
+          "category": "scripture",
+          "text": "Pray for accurate, understandable Scripture and Christian resources in Example Language, reflecting the fictional fixture's intentionally incomplete resource status.",
+          "grounding": "mixed",
+          "contextClaimIds": ["claim:example-language"],
+          "scriptureReferences": [{ "reference": "2 Thessalonians 3:1", "purpose": "The word of the Lord spreading rapidly" }],
+          "temporalClass": "current",
+          "asOf": "2026-08-21",
+          "reviewAfter": "2027-02-21",
+          "sensitivity": "public"
+        },
+        {
+          "id": "prayer-prompt:example-workers",
+          "category": "workers",
+          "text": "Pray for wise and humble Christian workers who can serve with patience, cultural attentiveness, clarity, and long-term faithfulness in the fictional test context.",
+          "grounding": "mixed",
+          "contextClaimIds": ["claim:example-access"],
+          "scriptureReferences": [{ "reference": "Matthew 9:37–38", "purpose": "Workers for the harvest" }],
+          "temporalClass": "current",
+          "asOf": "2026-08-21",
+          "reviewAfter": "2027-02-21",
+          "sensitivity": "generalized"
+        },
+        {
+          "id": "prayer-prompt:example-community",
+          "category": "community",
+          "text": "Pray for peace, justice, strong families, protection of vulnerable people, and the flourishing of communities represented by this fictional people-group fixture.",
+          "grounding": "biblical",
+          "contextClaimIds": [],
+          "scriptureReferences": [{ "reference": "1 Timothy 2:1–4", "purpose": "Prayer for peaceful and godly life" }],
+          "temporalClass": "stable",
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public"
+        }
+      ],
+      "review": {
+        "status": "published",
+        "reviewedAt": "2026-08-21T22:20:00Z",
+        "reviewerRole": "Synthetic fixture validator",
+        "aiAssisted": true,
+        "checklist": {
+          "factualAssumptionsGrounded": true,
+          "scriptureAppliedAppropriately": true,
+          "sensitiveDataChecked": true,
+          "toneReviewed": true,
+          "noCompetitiveGamification": true,
+          "currentClaimsFresh": true
+        }
+      }
+    }
+  ]
+}
