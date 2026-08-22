@@ -4,7 +4,8 @@ async function expectNoHorizontalOverflow(page: import("@playwright/test").Page)
   const diagnostics = await page.evaluate(() => {
     const root = document.documentElement;
     const viewport = root.clientWidth;
-    const offenders = [...document.querySelectorAll<HTMLElement>("body *")]
+    const elements = [...document.querySelectorAll<HTMLElement>("body *")];
+    const offenders = elements
       .map((element) => {
         const rect = element.getBoundingClientRect();
         return {
@@ -19,7 +20,19 @@ async function expectNoHorizontalOverflow(page: import("@playwright/test").Page)
       .filter((item) => item.right > viewport + 1 || item.left < -1)
       .sort((a, b) => Math.max(b.right - viewport, -b.left) - Math.max(a.right - viewport, -a.left))
       .slice(0, 12);
-    return { overflow: root.scrollWidth - viewport, viewport, offenders };
+    const internalOverflow = elements
+      .map((element) => ({
+        tag: element.tagName.toLowerCase(),
+        className: typeof element.className === "string" ? element.className : "",
+        text: (element.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 100),
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth,
+        delta: element.scrollWidth - element.clientWidth,
+      }))
+      .filter((item) => item.delta > 1)
+      .sort((a, b) => b.delta - a.delta)
+      .slice(0, 16);
+    return { overflow: root.scrollWidth - viewport, viewport, rootScrollWidth: root.scrollWidth, offenders, internalOverflow };
   });
   expect(diagnostics.overflow, JSON.stringify(diagnostics, null, 2)).toBeLessThanOrEqual(1);
 }
