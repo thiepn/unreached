@@ -12,6 +12,10 @@ const nullableInteger = z.preprocess(
   (value) => value === null || value === undefined || value === "" ? null : Number(value),
   z.number().int().nonnegative().nullable(),
 );
+const nullableGsec = z.preprocess(
+  (value) => value === null || value === undefined || value === "" ? null : Number(value),
+  z.number().int().min(0).max(6).nullable(),
+);
 const nullableIso6393 = z.preprocess(
   (value) => value === null || value === undefined || value === "" ? null : String(value).trim().toLowerCase(),
   z.string().regex(/^[a-z]{3}$/).nullable(),
@@ -43,7 +47,7 @@ export const peopleGroupsApiRecordSchema = z.object({
   CongExst: nullableString.optional(),
   Plnting: nullableString.optional(),
   EngStat: nullableString.optional(),
-  GSEC: nullableInteger.optional(),
+  GSEC: nullableGsec.optional(),
   GSECbrf: nullableString.optional(),
   GSEClng: nullableString.optional(),
   SPI: nullableInteger.optional(),
@@ -68,10 +72,11 @@ export type PeopleGroupsApiRecord = z.infer<typeof peopleGroupsApiRecordSchema>;
 
 export const runtimeReachAssessmentSchema = z.object({
   classification: z.enum(["unreached", "other", "unknown"]),
-  methodology: z.literal("imb-evangelical-level-v1"),
-  sourceValue: z.string().nullable(),
-  rule: z.literal("EvngLvl 'Less than 2%' => unreached; other non-empty values => other; missing => unknown"),
-  gsec: z.object({ code: z.number().int().nonnegative().nullable(), label: z.string().nullable(), description: z.string().nullable() }),
+  methodology: z.literal("imb-gsec-v1"),
+  sourceValue: z.number().int().min(0).max(6).nullable(),
+  rule: z.literal("GSEC 0-3 => unreached; GSEC 4-6 => other; missing => unknown"),
+  evangelicalLevel: z.string().nullable(),
+  gsec: z.object({ code: z.number().int().min(0).max(6).nullable(), label: z.string().nullable(), description: z.string().nullable() }),
   spi: z.object({ code: z.number().int().nonnegative().nullable(), description: z.string().nullable() }),
   lpi: z.object({ code: z.number().int().nonnegative().nullable(), name: z.string().nullable(), description: z.string().nullable() }),
   engagementStatus: z.string().nullable(),
@@ -114,7 +119,7 @@ export const runtimePeopleEntitySchema = z.object({
   }),
   reach: z.object({
     classification: z.enum(["unreached-only", "other-only", "mixed", "unknown"]),
-    methodology: z.literal("imb-context-rollup-v1"),
+    methodology: z.literal("imb-gsec-context-rollup-v1"),
     unreachedContexts: z.number().int().nonnegative(),
     otherContexts: z.number().int().nonnegative(),
     unknownContexts: z.number().int().nonnegative(),
