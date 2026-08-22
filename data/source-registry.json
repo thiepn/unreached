@@ -47,6 +47,33 @@
       "termsReviewedAt": "2026-08-22"
     },
     {
+      "id": "peoplegroups-org-api",
+      "name": "PeopleGroups.org Public API",
+      "provider": "International Mission Board Global Research Department",
+      "canonicalUrl": "https://peoplegroups.org/using-the-api/",
+      "termsUrl": "https://peoplegroups.org/using-the-api/",
+      "contentTypes": ["people_groups", "countries", "languages", "religions", "mission_status", "resource_indicators", "editorial_descriptions"],
+      "status": "conditional",
+      "commercialUse": null,
+      "publicRedistribution": "public read-only API use in maps, prayer tools and research applications is explicitly invited; bulk/static redistribution terms are not yet explicit enough for a bundled mirror",
+      "cacheStatus": "development ingestion allowed; public bulk caching/mirroring remains gated pending an explicit redistribution review",
+      "attributionRequired": null,
+      "attributionText": "Data provided and maintained by the Global Research Department of the International Mission Board via PeopleGroups.org",
+      "developmentIngestionAllowed": true,
+      "publicReleaseAllowed": false,
+      "browserRedistributionAllowed": false,
+      "requirements": [
+        "treat the API as beta and tolerate schema or availability changes",
+        "preserve IMB GSEC, SPI and LPI semantics instead of mapping them to Joshua Project JPScale or Frontier fields",
+        "do not infer exact evangelical percentages from categorical evangelical-level labels",
+        "do not convert generic Bible availability into translation-completeness status without a documented mapping",
+        "do not bundle or mirror the complete dataset until static redistribution and caching terms are confirmed",
+        "do not reuse linked third-party photos unless each photo's rights are separately verified"
+      ],
+      "permissionGate": "Before any static browser bundle or durable public mirror is enabled, confirm redistribution and caching terms. Direct live API use requires a separate runtime, CORS, reliability and privacy review before production activation.",
+      "termsReviewedAt": "2026-08-22"
+    },
+    {
       "id": "natural-earth",
       "name": "Natural Earth",
       "provider": "Natural Earth",
@@ -118,6 +145,7 @@
       "publicReleaseAllowed": false,
       "browserRedistributionAllowed": false,
       "requirements": ["do not scrape or bulk reproduce proprietary linguistic data", "obtain a compatible license before dataset integration"],
+      "permissionGate": "Obtain a compatible license before any Ethnologue-derived dataset is integrated into this public product.",
       "termsReviewedAt": "2026-08-22"
     }
   ]
