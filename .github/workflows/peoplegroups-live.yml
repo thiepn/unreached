@@ -35,6 +35,9 @@ jobs:
       - name: Build application and runtime policy gates
         run: npm run build
 
+      - name: Validate complete live PeopleGroups corpus through production schemas
+        run: npm run peoplegroups:live-corpus-check
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
@@ -58,10 +61,10 @@ jobs:
         run: |
           set -euo pipefail
           state="failure"
-          description="PeopleGroups.org browser CORS/API certification failed"
+          description="PeopleGroups.org full-corpus/browser certification failed"
           if [[ "${LIVE_RESULT}" == "success" ]]; then
             state="success"
-            description="PeopleGroups.org browser CORS/API certification passed"
+            description="PeopleGroups.org full-corpus/browser certification passed"
           fi
           payload=$(jq -nc --arg state "${state}" --arg description "${description}" '{state:$state,description:$description,context:"unreached/peoplegroups-live"}')
           curl --fail-with-body --silent --show-error --location \
