@@ -1,7 +1,7 @@
 import { Bookmark, Clock3, Compass, Globe2, Languages, Trash2, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
-import { usePersonalization, type RecentVisitKind } from "../personalization";
+import { usePersonalization, type RecentVisitKind, type SavedPersonSnapshot } from "../personalization";
 
 function recentIcon(kind: RecentVisitKind) {
   if (kind === "country") return Globe2;
@@ -11,6 +11,15 @@ function recentIcon(kind: RecentVisitKind) {
 
 function dateLabel(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
+}
+
+function savedStatus(person: SavedPersonSnapshot): string {
+  if (person.frontier) return "Frontier";
+  if (person.classification === "unreached-only" || person.classification === "unreached") return "Unreached";
+  if (person.classification === "mixed") return "Mixed GSEC status";
+  if (person.classification === "other-only") return "Other GSEC status";
+  if (person.classification === "reached") return "Reached (legacy snapshot)";
+  return "Status unknown";
 }
 
 export function SavedPage() {
@@ -33,7 +42,7 @@ export function SavedPage() {
           <div class="saved-people-grid">
             {state.savedPeoples.map((person) => (
               <article class="saved-person-card" key={person.sourcePeopleId}>
-                <div class="saved-person-card__top"><span>{person.frontier ? "Frontier" : person.classification}</span><small>Saved {dateLabel(person.savedAt)}</small></div>
+                <div class="saved-person-card__top"><span>{savedStatus(person)}</span><small>Saved {dateLabel(person.savedAt)}</small></div>
                 <h3><a href={hrefFor(`/peoples/${person.sourcePeopleId}`)}>{person.name}</a></h3>
                 <p>{[person.largestCountryName, person.primaryLanguageName].filter(Boolean).join(" · ") || "Profile context unavailable"}</p>
                 <div class="saved-person-card__actions">
@@ -44,9 +53,9 @@ export function SavedPage() {
             ))}
           </div>
         ) : (
-          <div class="saved-empty"><Bookmark size={22} aria-hidden="true" /><div><strong>No peoples saved yet.</strong><p>Open a people profile and choose <em>Save for Prayer</em>.</p><a href={hrefFor("/peoples")}>Browse peoples</a></div></div>
+          <div class="saved-empty"><Bookmark size={22} aria-hidden="true" /><div><strong>No peoples saved yet.</strong><p>Open a live people profile and choose <em>Save for Prayer</em>.</p><a href={hrefFor("/peoples")}>Browse peoples</a></div></div>
         )}
-        <p class="saved-snapshot-note">Saved cards retain a small local snapshot for continuity. The live people profile remains authoritative when published data changes.</p>
+        <p class="saved-snapshot-note">Saved cards retain a small local snapshot for continuity. The live PeopleGroups.org profile remains authoritative when source data changes. Older pre-U12C snapshots remain readable but keep their historical classification wording.</p>
       </section>
 
       <section class="saved-section" aria-labelledby="recent-heading">
