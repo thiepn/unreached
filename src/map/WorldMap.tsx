@@ -171,6 +171,13 @@ export function WorldMap({
         renderWorldCopies: false,
         attributionControl: false,
         fadeDuration: reducedMotion() ? 0 : 180,
+        // The atlas only uses basic 2D GeoJSON fill/line rendering. Force
+        // WebGL1 so MapLibre 5 does not prefer a WebGL2 context that may be
+        // disabled or unreliable on Firefox, software GL and older devices.
+        canvasContextAttributes: {
+          contextType: "webgl",
+          powerPreference: "default",
+        },
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "The interactive map could not start.";
