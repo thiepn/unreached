@@ -65,21 +65,23 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
     try {
       let totalPages = 0;
       const loadedAt = new Date(now()).toISOString();
+      const writes: Promise<void>[] = [];
       const records = await client.fetchAll({
         signal: params.signal,
         onPage: (page) => {
           totalPages = page.totalPages;
           params.onProgress?.(page.page, page.totalPages);
-          void cache.write({
+          writes.push(cache.write({
             schemaVersion: 1,
             page: page.page,
             totalPages: page.totalPages,
             totalRecords: page.totalRecords,
             storedAt: loadedAt,
             records: page.records,
-          });
+          }));
         },
       });
+      await Promise.all(writes);
       return {
         records,
         source: "network",
