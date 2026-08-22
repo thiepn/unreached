@@ -167,13 +167,12 @@ export function WorldMap({
         zoom: start.zoom,
         minZoom: 0.6,
         maxZoom: 7,
-        maxBounds: [[-180, -84], [180, 84]],
         renderWorldCopies: false,
         attributionControl: false,
         fadeDuration: reducedMotion() ? 0 : 180,
-        // The atlas only uses basic 2D GeoJSON fill/line rendering. Force
-        // WebGL1 so MapLibre 5 does not prefer a WebGL2 context that may be
-        // disabled or unreliable on Firefox, software GL and older devices.
+        // This atlas uses basic 2D GeoJSON fills and lines. WebGL1 keeps the
+        // renderer compatible with browsers and devices where WebGL2 is not
+        // available, without sacrificing any map feature used here.
         canvasContextAttributes: {
           contextType: "webgl",
           powerPreference: "default",
