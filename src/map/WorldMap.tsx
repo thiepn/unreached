@@ -157,6 +157,7 @@ export function WorldMap({
     let loaded = false;
     delete container.dataset.mapReady;
     delete container.dataset.mapError;
+    delete container.dataset.mapErrorStack;
 
     try {
       map = new MapLibreMap({
@@ -174,6 +175,7 @@ export function WorldMap({
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "The interactive map could not start.";
       container.dataset.mapError = message;
+      if (error instanceof Error && error.stack) container.dataset.mapErrorStack = error.stack;
       onErrorRef.current(message);
       return;
     }
@@ -199,6 +201,7 @@ export function WorldMap({
     map.on("load", () => {
       loaded = true;
       delete container.dataset.mapError;
+      delete container.dataset.mapErrorStack;
       container.dataset.mapReady = "true";
       onErrorRef.current(null);
 
@@ -246,6 +249,7 @@ export function WorldMap({
       const message = event.error instanceof Error ? event.error.message : "The map reported a rendering error.";
       if (!loaded || fatalRenderingError(message)) {
         container.dataset.mapError = message;
+        if (event.error instanceof Error && event.error.stack) container.dataset.mapErrorStack = event.error.stack;
         onErrorRef.current(message);
       } else {
         console.warn("MapLibre reported a recoverable error after the map loaded:", event.error);
@@ -261,6 +265,7 @@ export function WorldMap({
 
     map.on("webglcontextrestored", () => {
       delete container.dataset.mapError;
+      delete container.dataset.mapErrorStack;
       container.dataset.mapReady = "true";
       onErrorRef.current(null);
     });
@@ -268,6 +273,7 @@ export function WorldMap({
     return () => {
       delete container.dataset.mapReady;
       delete container.dataset.mapError;
+      delete container.dataset.mapErrorStack;
       mapRef.current = null;
       onHoverRef.current(null);
       map.remove();
