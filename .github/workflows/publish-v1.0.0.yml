@@ -1,0 +1,38 @@
+name: Publish Unreached v1.0.0
+
+on:
+  push:
+    branches: ["release/publish-v1.0.0"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish certified v1.0.0 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: d2b5d67c2e999acec57d7d1ff94f765d1c5f52e1
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view v1.0.0 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "v1.0.0 already exists; verifying tag target"
+          else
+            gh release create v1.0.0 \
+              --repo "${GITHUB_REPOSITORY}" \
+              --target "${TARGET_SHA}" \
+              --title "Unreached v1.0.0" \
+              --notes $'First production release of Unreached — Explore. Understand. Pray.\n\nCertified release commit: `d2b5d67c2e999acec57d7d1ff94f765d1c5f52e1`.\n\nRelease certification includes full build/policy validation, Chromium/Firefox/WebKit desktop and mobile Playwright coverage, and live GitHub Pages production certification. Source-permission gates remain intentionally enforced; restricted mission datasets are not published in this release.'
+          fi
+
+          ref=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v1.0.0" --jq '.object.sha')
+          if [[ "${ref}" != "${TARGET_SHA}" ]]; then
+            echo "v1.0.0 points to ${ref}, expected ${TARGET_SHA}" >&2
+            exit 1
+          fi
+
+          gh release view v1.0.0 --repo "${GITHUB_REPOSITORY}" --json tagName,name,isDraft,isPrerelease,targetCommitish,url
