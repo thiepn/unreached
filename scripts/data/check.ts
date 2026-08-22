@@ -11,9 +11,12 @@ function expectBlocked(action: () => void, label: string): void {
 
 const registry = await loadSourceRegistry();
 assertSourceUseAllowed(registry, "joshua-project-api", "development-ingestion");
+assertSourceUseAllowed(registry, "peoplegroups-org-api", "development-ingestion");
 assertSourceUseAllowed(registry, "natural-earth", "public-release");
 expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "public-release"), "Joshua Project public release before permission");
 expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "browser-redistribution"), "Joshua Project browser redistribution before permission");
+expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "public-release"), "PeopleGroups.org public release before U12 activation review");
+expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "browser-redistribution"), "PeopleGroups.org static browser redistribution before explicit review");
 expectBlocked(() => assertSourceUseAllowed(registry, "progress-bible-registered-data", "development-ingestion"), "ProgressBible ingestion without permission");
 
 const { dataset, retrievedAt, sourceRecordCount } = await loadFixtureDataset();
@@ -44,4 +47,4 @@ const manifest = datasetManifestSchema.parse({
 });
 
 if (!manifest.fixture) throw new Error("Synthetic validation dataset must remain marked as fixture");
-console.log(`U2 data checks passed: ${sourceRecordCount} synthetic source records -> ${first.length} deterministic chunks.`);
+console.log(`U2/U12 source-policy checks passed: ${sourceRecordCount} synthetic source records -> ${first.length} deterministic chunks.`);
