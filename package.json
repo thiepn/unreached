@@ -1,17 +1,18 @@
 {
   "name": "unreached",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "predev": "npm run geography:build",
     "dev": "vite",
-    "build": "npm run typecheck && npm run data:check && npm run geography:build && npm run geography:check && vite build",
+    "build": "npm run typecheck && npm run data:check && npm run geography:build && npm run geography:check && npm run visualization:check && vite build",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "data:check": "tsx scripts/data/check.ts",
     "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
     "geography:build": "tsx scripts/geography/build-natural-earth.ts",
     "geography:check": "tsx scripts/geography/check.ts",
+    "visualization:check": "tsx scripts/visualization/check.ts",
     "preview": "vite preview",
     "check": "npm run build"
   },

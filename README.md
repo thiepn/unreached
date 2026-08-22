@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static web application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** U3 complete; U4 next
+- **Current phase:** U4 complete; U5 next
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 
 `npm run dev` generates the pinned Natural Earth map artifact before Vite starts.
 
-Full production/data/map validation:
+Full production/data/map/visualization validation:
 
 ```bash
 npm run check
@@ -33,6 +33,7 @@ Focused checks:
 npm run data:check
 npm run geography:build
 npm run geography:check
+npm run visualization:check
 ```
 
 Vite is configured for the `/unreached/` project path.
@@ -43,8 +44,10 @@ Vite is configured for the `/unreached/` project path.
 - MapLibre GL JS 6.5
 - Natural Earth v5.1.1 1:110m Admin-0 geography
 - Zod-backed normalized mission-data schemas
+- five-layer country mission-visualization engine
+- population-coverage-aware derived metrics
 - separate build-time data and geography pipelines
-- static-host-safe hash routing with shareable map query state
+- static-host-safe hash routing with shareable country, camera, and layer state
 - deterministic mission-data chunking with SHA-256 manifest metadata
 - machine-enforced source permissions
 - locally bundled Newsreader + Source Sans 3 typography
@@ -52,22 +55,21 @@ Vite is configured for the `/unreached/` project path.
 - GitHub Actions → GitHub Pages deployment
 - no backend, authentication, analytics SDK, client-side source API keys, or external map tile service
 
-## U3 map foundation
+## U4 mission visualization
 
-The Explore page now has a real interactive world map with:
+The map supports five mission lenses:
 
-- pan/zoom and keyboard map navigation
-- hover/click country-area selection
-- fit-to-selection and reset-to-world
-- URL-synced selected area and camera state
-- desktop country/area search and list
-- mobile map-first expandable bottom sheet
-- textual fallback when interactive rendering is unavailable
-- visible disclosure of Natural Earth's de facto boundary presentation
+1. Unreached population share
+2. Frontier population share
+3. Evangelical presence
+4. Primary religion
+5. Scripture availability
 
-Mission data is deliberately **not** painted onto the map yet. U4 owns mission-data joins, choropleths, legends, and layers.
+Every layer has explicit missing-data semantics, a legend, methodology text, and a textual country-list equivalent. Selected countries expose the active value plus population coverage.
 
-See [`docs/MAP_ARCHITECTURE.md`](docs/MAP_ARCHITECTURE.md) and [`docs/U3_RELEASE_GATES.md`](docs/U3_RELEASE_GATES.md).
+The production browser currently does **not** receive real Joshua Project-derived mission records because the U0 redistribution permission gate remains unresolved. The engine is validated against clearly synthetic fixtures, and production runtime code refuses fixture datasets.
+
+See [`docs/MISSION_VISUALIZATION.md`](docs/MISSION_VISUALIZATION.md) and [`docs/U4_RELEASE_GATES.md`](docs/U4_RELEASE_GATES.md).
 
 ## V1 scope
 
@@ -110,13 +112,18 @@ V1 deliberately excludes accounts, social features, missionary job listings, age
 - [`docs/U3_RELEASE_GATES.md`](docs/U3_RELEASE_GATES.md)
 - [`data/geography-source.json`](data/geography-source.json)
 
+### U4
+- [`docs/MISSION_VISUALIZATION.md`](docs/MISSION_VISUALIZATION.md)
+- [`docs/U4_RELEASE_GATES.md`](docs/U4_RELEASE_GATES.md)
+- [`public/data/mission/status.json`](public/data/mission/status.json)
+
 ## Development phases
 
 - **U0 — Product Constitution, Definitions & Data Legality** ✅
 - **U1 — Production Architecture & Design System** ✅
 - **U2 — Data Pipeline & Domain Model** ✅
 - **U3 — Global Map Foundation** ✅
-- **U4 — Mission Visualization Engine**
+- **U4 — Mission Visualization Engine** ✅
 - **U5 — Country Explorer**
 - **U6 — People Group Explorer**
 - **U7 — Context & “Why Unreached?”**
