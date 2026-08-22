@@ -1,9 +1,16 @@
 {
   "schemaVersion": 1,
-  "available": false,
+  "available": true,
   "fixture": false,
+  "mode": "runtime-api",
   "datasetUrl": null,
-  "reason": "PeopleGroups.org direct runtime transport is architected in U12B, but visible real-data publication remains disabled until U12C completes provider-neutral explorer, profile, search and prayer integration.",
-  "sourceIds": [],
-  "attributions": []
+  "reason": null,
+  "sourceIds": ["peoplegroups-org-api"],
+  "attributions": [
+    {
+      "sourceId": "peoplegroups-org-api",
+      "label": "PeopleGroups.org — IMB Global Research",
+      "url": "https://peoplegroups.org/"
+    }
+  ]
 }
