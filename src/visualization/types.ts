@@ -73,6 +73,7 @@ export const missionVisualizationAvailabilitySchema = z.object({
   schemaVersion: z.literal(1),
   available: z.boolean(),
   fixture: z.boolean(),
+  mode: z.enum(["static-dataset", "runtime-api"]).optional(),
   datasetUrl: z.string().min(1).nullable(),
   reason: z.string().min(1).nullable(),
   sourceIds: z.array(z.string().min(1)),
