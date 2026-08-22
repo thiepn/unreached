@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "data:check": "tsx scripts/data/check.ts",
     "peoplegroups:check": "tsx scripts/data/peoplegroups/check.ts",
-    "peoplegroups:runtime-check": "tsx scripts/data/peoplegroups/runtime-check.ts",
+    "peoplegroups:runtime-check": "tsx scripts/data/peoplegroups/runtime-check.ts && tsx scripts/data/peoplegroups/cache-check.ts",
     "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
     "geography:build": "tsx scripts/geography/build-natural-earth.ts",
     "geography:check": "tsx scripts/geography/check.ts",
