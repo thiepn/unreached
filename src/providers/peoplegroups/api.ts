@@ -42,6 +42,8 @@ async function requestJson(
   timeoutMs: number,
   outerSignal?: AbortSignal,
 ): Promise<Response> {
+  if (outerSignal?.aborted) throw outerSignal.reason ?? new DOMException("Aborted", "AbortError");
+
   const controller = new AbortController();
   const onAbort = () => controller.abort(outerSignal?.reason);
   outerSignal?.addEventListener("abort", onAbort, { once: true });
@@ -90,6 +92,7 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
 
     const parsed = peopleGroupsApiPageSchema.safeParse(json);
     if (!parsed.success) throw new PeopleGroupsApiError("PeopleGroups.org response no longer matches the certified schema.", "schema");
+    if (parsed.data.length > PEOPLE_GROUPS_PAGE_SIZE) throw new PeopleGroupsApiError(`PeopleGroups.org returned more than ${PEOPLE_GROUPS_PAGE_SIZE} records in one page.`, "bounds");
 
     const totalPages = positiveHeader(response.headers.get("X-WP-TotalPages")) ?? page;
     const totalRecords = positiveHeader(response.headers.get("X-WP-Total"));
@@ -111,6 +114,7 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
     }
     const parsed = peopleGroupsApiRecordSchema.safeParse(json);
     if (!parsed.success) throw new PeopleGroupsApiError("PeopleGroups.org record no longer matches the certified schema.", "schema");
+    if (parsed.data.PGID !== normalized) throw new PeopleGroupsApiError(`PeopleGroups.org returned ${parsed.data.PGID} for requested ${normalized}.`, "schema");
     return parsed.data;
   }
 
@@ -118,11 +122,20 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
     const first = await fetchPage(1, options.signal);
     options.onPage?.(first);
     const records = [...first.records];
+    const pgids = new Set(first.records.map((record) => record.PGID));
+    if (pgids.size !== first.records.length) throw new PeopleGroupsApiError("PeopleGroups.org returned duplicate PGIDs within the first page.", "schema");
 
     for (let page = 2; page <= first.totalPages; page += 1) {
       const next = await fetchPage(page, options.signal);
       if (next.totalPages !== first.totalPages) throw new PeopleGroupsApiError("PeopleGroups.org pagination changed during the same load.", "schema");
-      records.push(...next.records);
+      if (first.totalRecords !== null && next.totalRecords !== null && next.totalRecords !== first.totalRecords) {
+        throw new PeopleGroupsApiError("PeopleGroups.org total record count changed during the same load.", "schema");
+      }
+      for (const record of next.records) {
+        if (pgids.has(record.PGID)) throw new PeopleGroupsApiError(`PeopleGroups.org returned duplicate PGID ${record.PGID} across pages.`, "schema");
+        pgids.add(record.PGID);
+        records.push(record);
+      }
       options.onPage?.(next);
       if (records.length > PEOPLE_GROUPS_MAX_RECORDS) throw new PeopleGroupsApiError("PeopleGroups.org corpus exceeded the runtime record budget.", "bounds");
     }
