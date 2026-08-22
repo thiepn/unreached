@@ -1,12 +1,12 @@
 {
   "name": "unreached",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "scripts": {
     "predev": "npm run geography:build",
     "dev": "vite",
-    "build": "npm run typecheck && npm run data:check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run country:check && npm run people:check && vite build",
+    "build": "npm run typecheck && npm run data:check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run country:check && npm run people:check && npm run context:check && vite build",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "data:check": "tsx scripts/data/check.ts",
     "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
@@ -15,6 +15,7 @@
     "visualization:check": "tsx scripts/visualization/check.ts",
     "country:check": "tsx scripts/countries/check.ts",
     "people:check": "tsx scripts/peoples/check.ts",
+    "context:check": "tsx scripts/context/check.ts",
     "preview": "vite preview",
     "check": "npm run build"
   },
