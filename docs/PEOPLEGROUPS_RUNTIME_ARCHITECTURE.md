@@ -31,8 +31,9 @@ Runtime safeguards:
 - maximum 250 records per page;
 - maximum 100 pages;
 - maximum 25,000 records;
-- pagination consistency checks;
-- advertised-record-count consistency check;
+- pagination and advertised-record-count consistency checks;
+- duplicate `PGID` detection across the corpus;
+- single-record request/response `PGID` matching;
 - invalid JSON/schema drift fails closed;
 - no credentials or API keys are sent.
 
@@ -134,14 +135,16 @@ U12B therefore uses an origin-local IndexedDB page cache:
 - stale fallback window: 7 days;
 - cache is private to the user's browser/origin;
 - cache is not bundled with Unreached or exposed as a public dataset;
-- every cached page is revalidated through the runtime schema before use.
+- every cached page is revalidated through the runtime schema before use;
+- cache reads, writes and clears are best-effort only and can never become a prerequisite for live data access.
 
 Load policy:
 
-1. complete fresh cache → use immediately;
-2. no fresh cache → fetch live corpus and atomically record page metadata;
-3. live failure + validated cache younger than 7 days → show stale cache with an explicit warning;
-4. live failure + no acceptable cache → fail closed with an actionable unavailable state.
+1. complete validated fresh cache → use immediately;
+2. missing, corrupt or unavailable cache → fetch the live corpus;
+3. successful live corpus → return it even if browser storage rejects cache writes;
+4. live failure + previously validated cache younger than 7 days → show stale cache with an explicit warning;
+5. live failure + no acceptable cache → fail closed with an actionable unavailable state.
 
 ## Performance budgets
 
@@ -159,7 +162,9 @@ U12C should add measured real-browser timing/memory budgets once the actual peop
 
 ## CORS and live contract certification
 
-`tests/e2e/peoplegroups-live.spec.ts` is opt-in and runs in a dedicated workflow. It loads the Unreached browser origin and performs cross-origin `fetch()` calls to:
+`tests/e2e/peoplegroups-live.spec.ts` is opt-in. For PR #24 it runs inside the already-registered Browser Certification workflow; after merge a dedicated PeopleGroups Live Certification workflow continues checking the external contract independently of normal deterministic CI.
+
+The test loads the Unreached browser origin and performs cross-origin `fetch()` calls to:
 
 - one known PGID;
 - one paginated list request.
@@ -172,7 +177,7 @@ The test certifies:
 - exposed WordPress pagination headers;
 - a corpus size above 10,000 records.
 
-The external-data workflow is separate from ordinary deterministic CI so transient provider downtime does not redefine unrelated application correctness.
+Ongoing external-data certification is kept separate from ordinary deterministic CI so transient provider downtime does not redefine unrelated application correctness.
 
 ## U12C boundary
 
