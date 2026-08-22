@@ -11,6 +11,7 @@ import "./styles/base.css";
 import "./styles/app.css";
 import "./styles/map.css";
 import "./styles/mission-map.css";
+import "./styles/map-layout.css";
 import "./styles/countries.css";
 import "./styles/peoples.css";
 import "./styles/context.css";

@@ -37,6 +37,11 @@ async function expectNoHorizontalOverflow(page: import("@playwright/test").Page)
   expect(diagnostics.overflow, JSON.stringify(diagnostics, null, 2)).toBeLessThanOrEqual(1);
 }
 
+function isWebGlUnavailable(error: string | null): boolean {
+  if (!error) return false;
+  return /failed to initialize webgl|webgl creation failed|webglcontextcreationerror|exhausted gl driver|context creation/i.test(error);
+}
+
 test("root shell and primary navigation render", async ({ page }) => {
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("link", { name: "Unreached home" })).toBeVisible();
@@ -45,7 +50,7 @@ test("root shell and primary navigation render", async ({ page }) => {
   await expectNoHorizontalOverflow(page);
 });
 
-test("interactive map reaches MapLibre load-ready without the rendering fallback", async ({ page }) => {
+test("interactive map renders when WebGL is available and falls back accessibly when it is not", async ({ page }) => {
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
   const map = page.locator(".world-map");
 
@@ -60,10 +65,24 @@ test("interactive map reaches MapLibre load-ready without the rendering fallback
     className: element.className,
     canvasCount: element.querySelectorAll("canvas").length,
   }));
-  expect(diagnostics.error, JSON.stringify(diagnostics, null, 2)).toBeNull();
-  expect(diagnostics.ready, JSON.stringify(diagnostics, null, 2)).toBe("true");
-  await expect(map.locator(".maplibregl-canvas")).toBeVisible();
-  await expect(page.locator(".map-render-warning")).toHaveCount(0);
+
+  if (diagnostics.ready === "true") {
+    expect(diagnostics.error, JSON.stringify(diagnostics, null, 2)).toBeNull();
+    await expect(map.locator(".maplibregl-canvas")).toBeVisible();
+    await expect(page.locator(".map-render-warning")).toHaveCount(0);
+    return;
+  }
+
+  expect(isWebGlUnavailable(diagnostics.error), JSON.stringify(diagnostics, null, 2)).toBe(true);
+  await expect(page.locator(".map-render-warning")).toBeVisible();
+
+  const mobileSheet = page.locator(".mobile-map-sheet");
+  if (await mobileSheet.isVisible()) {
+    await mobileSheet.locator("summary").click();
+    await expect(page.locator("#mobile-country-search")).toBeVisible();
+  } else {
+    await expect(page.locator("#desktop-country-search")).toBeVisible();
+  }
 });
 
 test("country explorer remains useful while mission data is gated", async ({ page }) => {

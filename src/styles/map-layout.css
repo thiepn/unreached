@@ -1,0 +1,37 @@
+@media (min-width: 761px) {
+  .explore-panel--map {
+    height: calc(100dvh - var(--header-height));
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .explore-panel--map .country-index,
+  .explore-panel--map .country-index[open] {
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+
+  .explore-panel--map .country-index[open] {
+    display: block;
+  }
+
+  .explore-panel--map .country-browser {
+    height: clamp(12rem, 30dvh, 22rem);
+    min-height: 12rem;
+    max-height: 22rem;
+    flex: none;
+    overflow: hidden;
+  }
+
+  .explore-panel--map .country-list {
+    min-height: 0;
+  }
+
+  .explore-panel--map .map-source-stack,
+  .explore-panel--map .boundary-note {
+    flex: 0 0 auto;
+  }
+}
