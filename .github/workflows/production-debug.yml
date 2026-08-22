@@ -10,21 +10,22 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect production redirects, status and body
+      - name: Inspect production redirects, status and policy endpoints
         shell: bash
         run: |
           set +e
           target="http://thiepn.dev/unreached/"
+          base="http://thiepn.dev/unreached/"
           echo "TARGET=${target}"
           echo "--- DNS ---"
           getent ahosts thiepn.dev || true
-          echo "--- HEADERS / REDIRECTS ---"
+          echo "--- ROOT HEADERS / REDIRECTS ---"
           curl --silent --show-error --location --dump-header /tmp/headers.txt --output /tmp/body.html --write-out 'http_code=%{http_code}\nurl_effective=%{url_effective}\ncontent_type=%{content_type}\nredirects=%{num_redirects}\n' "${target}"
           code=$?
           cat /tmp/headers.txt 2>/dev/null || true
           echo "curl_exit=${code}"
-          echo "--- BODY PREVIEW ---"
-          head -c 1200 /tmp/body.html 2>/dev/null || true
+          echo "--- ROOT BODY PREVIEW ---"
+          head -c 900 /tmp/body.html 2>/dev/null || true
           echo
           echo "--- HTTPS DIRECT ---"
           curl --silent --show-error --location --output /tmp/https-body.html --write-out 'http_code=%{http_code}\nurl_effective=%{url_effective}\ncontent_type=%{content_type}\nredirects=%{num_redirects}\n' "https://thiepn.dev/unreached/"
@@ -34,3 +35,19 @@ jobs:
           printf 'root Unreached marker: '; grep -q 'Unreached' /tmp/body.html && echo yes || echo no
           printf 'https Unreached marker: '; grep -q 'Unreached' /tmp/https-body.html && echo yes || echo no
           printf 'www Unreached marker: '; grep -q 'Unreached' /tmp/www-body.html && echo yes || echo no
+
+          echo "--- MANIFEST ---"
+          curl --silent --show-error --location --write-out '\nhttp_code=%{http_code} url_effective=%{url_effective} content_type=%{content_type}\n' "${base}site.webmanifest" || true
+
+          echo "--- GATED STATUS ENDPOINTS ---"
+          for domain in mission countries peoples context prayer languages; do
+            echo "### ${domain}"
+            curl --silent --show-error --location --write-out '\nhttp_code=%{http_code} url_effective=%{url_effective} content_type=%{content_type}\n' "${base}data/${domain}/status.json" || true
+          done
+
+          echo "--- BUILT ASSET REFERENCES ---"
+          grep -oE '/unreached/assets/[^" ]+' /tmp/body.html | head -n 10 || true
+          for asset in $(grep -oE '/unreached/assets/[^" ]+' /tmp/body.html | head -n 3); do
+            echo "### ${asset}"
+            curl --silent --show-error --location --output /dev/null --write-out 'http_code=%{http_code} url_effective=%{url_effective} content_type=%{content_type}\n' "http://thiepn.dev${asset}" || true
+          done
