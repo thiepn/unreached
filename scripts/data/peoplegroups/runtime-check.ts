@@ -53,8 +53,8 @@ function record(overrides: Partial<PeopleGroupsApiRecord> = {}): PeopleGroupsApi
   };
 }
 
-const page1 = [record(), record({ PEID: 200, PGID: "PG000200", NmDisp: "Second People", Pop: null, EvngLvl: null })];
-const page2 = [record({ PGID: "PG000101", ISOalpha3: "NGA", Ctry: "Nigeria", Pop: 500, EvngLvl: "2% or more", UpdatedDate: "2026-08-01T00:00:00.000Z" })];
+const page1 = [record(), record({ PEID: 200, PGID: "PG000200", NmDisp: "Second People", Pop: null, EvngLvl: null, GSEC: null })];
+const page2 = [record({ PGID: "PG000101", ISOalpha3: "NGA", Ctry: "Nigeria", Pop: 500, EvngLvl: "2% or more", GSEC: 5, UpdatedDate: "2026-08-01T00:00:00.000Z" })];
 
 const fakeFetch: typeof fetch = async (input) => {
   const url = new URL(typeof input === "string" ? input : input instanceof URL ? input : input.url);
@@ -80,16 +80,18 @@ const first = entities.find((entity) => entity.peid === 100);
 if (!first) throw new Error("PEID 100 entity missing.");
 if (first.contexts.length !== 2) throw new Error("PGID country contexts were not preserved beneath PEID identity.");
 if (first.population.knownValue !== 1500 || !first.population.complete) throw new Error("Known country-context population rollup is incorrect.");
-if (first.reach.classification !== "mixed") throw new Error(`Expected mixed reach rollup, received ${first.reach.classification}.`);
+if (first.reach.classification !== "mixed") throw new Error(`Expected mixed GSEC reach rollup, received ${first.reach.classification}.`);
+if (first.contexts[0]?.reach.methodology !== "imb-gsec-v1") throw new Error("Context reach methodology must remain source-native GSEC.");
 if (first.routeKey !== 100 || first.id !== "people-entity:peoplegroups:100") throw new Error("Provider-qualified identity or route key changed.");
 if (first.sourceUpdatedAt !== "2026-08-01T00:00:00.000Z") throw new Error("Entity freshness must retain the newest source context timestamp.");
 
 const second = entities.find((entity) => entity.peid === 200);
 if (!second || second.population.complete || second.population.knownContextCount !== 0) throw new Error("Unknown population coverage must remain incomplete rather than becoming zero.");
+if (second.reach.classification !== "unknown") throw new Error("Missing GSEC must remain unknown rather than being inferred from another field.");
 
 const countries = buildRuntimeCountrySummaries(all);
 const benin = countries.find((country) => country.iso3 === "BEN");
-if (!benin || benin.peopleContextCount !== 2 || benin.unreachedContextCount !== 1 || benin.unknownContextCount !== 1) throw new Error("Country denominator/reach aggregation is incorrect.");
+if (!benin || benin.peopleContextCount !== 2 || benin.unreachedContextCount !== 1 || benin.unknownContextCount !== 1) throw new Error("Country denominator/GSEC reach aggregation is incorrect.");
 if (benin.populationCoverageComplete) throw new Error("Country population coverage must report incomplete when one context is unknown.");
 if (!benin.denominator.includes("people-group-in-country")) throw new Error("Country summary denominator must remain explicit.");
 
@@ -132,6 +134,18 @@ try {
   driftBlocked = error instanceof PeopleGroupsApiError && error.code === "schema";
 }
 if (!driftBlocked) throw new Error("PeopleGroups API schema drift must fail closed.");
+
+const invalidGsecFetch: typeof fetch = async () => new Response(JSON.stringify([record({ GSEC: 7 })]), {
+  status: 200,
+  headers: { "Content-Type": "application/json", "X-WP-Total": "1", "X-WP-TotalPages": "1" },
+});
+let invalidGsecBlocked = false;
+try {
+  await createPeopleGroupsApiClient({ fetchImpl: invalidGsecFetch }).fetchAll();
+} catch (error) {
+  invalidGsecBlocked = error instanceof PeopleGroupsApiError && error.code === "schema";
+}
+if (!invalidGsecBlocked) throw new Error("Unknown GSEC levels must fail closed instead of being assigned reach semantics.");
 
 const duplicateFetch: typeof fetch = async (input) => {
   const url = new URL(typeof input === "string" ? input : input instanceof URL ? input : input.url);
