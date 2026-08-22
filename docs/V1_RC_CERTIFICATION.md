@@ -2,32 +2,42 @@
 
 **Product:** Unreached  
 **Candidate branch:** `main`  
-**Integrated candidate before production deployment trigger:** `a7c4539f1993037400156d180ca0eb59845bf001`  
-**Certification state:** production deployment validation pending
+**Certification mechanism:** commit status `unreached/pages-production`  
+**Certification state:** candidate until the production status on the merged `main` commit is `success`
 
 ## Integrated engineering status
 
 - [x] U0–U11 integrated into `main` in dependency order.
-- [x] RC workflow hardening merged so integrated `main` pushes run full CI and browser certification.
-- [x] Full build/policy validation passed on the RC workflow patch.
-- [x] Chromium desktop Playwright certification passed.
-- [x] Firefox desktop Playwright certification passed.
-- [x] WebKit desktop Playwright certification passed.
-- [x] Chromium mobile/touch Playwright certification passed.
-- [x] WebKit mobile/touch Playwright certification passed.
+- [x] Integrated `main` pushes run full build/policy CI.
+- [x] Integrated `main` pushes run Chromium, Firefox, WebKit, mobile Chromium and mobile WebKit certification.
 - [x] GitHub Pages is enabled for the repository.
+- [x] Production workflow builds from `main` only.
+- [x] Production workflow preserves the source-permission gates established in U0–U11.
 
-## Production certification gates
+## Production certification contract
 
-The following gates are evaluated only after this certification record is merged and triggers a fresh `main` deployment with Pages already enabled.
+After GitHub Pages deploys a `main` commit, the workflow must verify the deployed artifact itself before that commit is accepted as a release candidate.
 
-- [ ] GitHub Pages deployment workflow completes successfully.
-- [ ] production `/unreached/` entry point serves the integrated candidate.
-- [ ] production asset paths remain `/unreached/` scoped and load successfully.
-- [ ] production shell and primary routes load without deployment-specific failures.
-- [ ] production source/permission disclosures match the approved release policy.
-- [ ] no synthetic or gated source dataset is exposed by the production build.
+The live certification job verifies:
+
+- the deployed Pages entry point becomes reachable;
+- deployed HTML identifies Unreached and retains `/unreached/`-scoped asset paths;
+- the production web manifest loads and identifies the application;
+- mission, country, people, context, prayer and language publication status files remain non-fixture and release-gated;
+- the complete Playwright release suite passes against the deployed URL in Chromium desktop, Firefox desktop, WebKit desktop, mobile Chromium and mobile WebKit;
+- release transparency, Saved empty state, invalid-route behavior, keyboard search focus handling and horizontal-overflow checks pass on the deployed site.
+
+## Machine-verifiable result
+
+The Pages workflow publishes exactly one status context on the deployed commit:
+
+`unreached/pages-production`
+
+- `success` means Pages deployment and live production browser certification both passed.
+- `failure` means the deployed commit must not be certified or promoted.
+
+`V1_RC_CERTIFIED` may be issued only for a `main` commit whose `unreached/pages-production` status is `success` and whose normal integrated CI/browser gates have already passed for the same source tree.
 
 ## Promotion rule
 
-`V1_RC_CERTIFIED` may be issued only after every production gate above is verified. Promotion to `v1.0.0` occurs only from the accepted certified RC; certification must not weaken the source-permission gates established in U0–U11.
+Promotion to `v1.0.0` must point to the accepted certified RC commit without altering the application tree. Source-permission gates remain in force after promotion; unavailable licensed datasets must not be enabled merely to complete the release.
