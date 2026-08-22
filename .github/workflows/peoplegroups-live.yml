@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "phase/u12b-real-data-runtime"
+      - "phase/u12c-visible-real-data"
   workflow_dispatch:
 
 permissions:
