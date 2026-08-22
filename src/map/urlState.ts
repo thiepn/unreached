@@ -1,10 +1,10 @@
-import { missionLayerIdSchema, type MissionLayerId } from "../visualization/types";
+import { liveMissionLayerIdSchema, type LiveMissionLayerId } from "../visualization/liveTypes";
 import type { MapViewState } from "./types";
 
 export interface MapUrlState {
   country: string | null;
   view: MapViewState | null;
-  layer: MissionLayerId;
+  layer: LiveMissionLayerId;
 }
 
 function hashParts(): { path: string; params: URLSearchParams } {
@@ -26,9 +26,10 @@ function parseView(raw: string | null): MapViewState | null {
   return { longitude, latitude, zoom };
 }
 
-function parseLayer(raw: string | null): MissionLayerId {
-  const parsed = missionLayerIdSchema.safeParse(raw);
-  return parsed.success ? parsed.data : "unreached";
+function parseLayer(raw: string | null): LiveMissionLayerId {
+  if (raw === "unreached") return "unreached-population";
+  const parsed = liveMissionLayerIdSchema.safeParse(raw);
+  return parsed.success ? parsed.data : "unreached-population";
 }
 
 export function readMapUrlState(): MapUrlState {
@@ -52,7 +53,7 @@ export function replaceMapUrlState(state: MapUrlState): void {
     params.delete("view");
   }
 
-  if (state.layer !== "unreached") params.set("layer", state.layer);
+  if (state.layer !== "unreached-population") params.set("layer", state.layer);
   else params.delete("layer");
 
   const query = params.toString();
