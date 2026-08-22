@@ -14,6 +14,7 @@ export const sourceEntrySchema = z.object({
   attributionRequired: z.boolean().nullable(),
   attributionText: z.string().min(1).optional(),
   developmentIngestionAllowed: z.boolean(),
+  runtimeReadAllowed: z.boolean().default(false),
   publicReleaseAllowed: z.boolean(),
   browserRedistributionAllowed: z.boolean(),
   requirements: z.array(z.string().min(1)),
@@ -28,7 +29,7 @@ export const sourceRegistrySchema = z.object({
 });
 
 export type SourceRegistry = z.infer<typeof sourceRegistrySchema>;
-export type SourceUseMode = "development-ingestion" | "public-release" | "browser-redistribution";
+export type SourceUseMode = "development-ingestion" | "runtime-read" | "public-release" | "browser-redistribution";
 
 export function assertSourceUseAllowed(registry: SourceRegistry, sourceId: string, mode: SourceUseMode): void {
   const source = registry.sources.find((item) => item.id === sourceId);
@@ -36,9 +37,11 @@ export function assertSourceUseAllowed(registry: SourceRegistry, sourceId: strin
 
   const allowed = mode === "development-ingestion"
     ? source.developmentIngestionAllowed
-    : mode === "public-release"
-      ? source.publicReleaseAllowed
-      : source.browserRedistributionAllowed;
+    : mode === "runtime-read"
+      ? source.runtimeReadAllowed
+      : mode === "public-release"
+        ? source.publicReleaseAllowed
+        : source.browserRedistributionAllowed;
 
   if (!allowed) {
     throw new Error(`Source ${sourceId} is not approved for ${mode}. Status: ${source.status}`);
