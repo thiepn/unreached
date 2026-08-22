@@ -1,6 +1,7 @@
 import {
   PEOPLE_GROUPS_CACHE_FRESH_MS,
   createMemoryPeopleGroupsCache,
+  type PeopleGroupsPageCache,
 } from "../../../src/providers/peoplegroups/cache.js";
 import { createPeopleGroupsApiClient, PeopleGroupsApiError } from "../../../src/providers/peoplegroups/api.js";
 import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities } from "../../../src/providers/peoplegroups/model.js";
@@ -110,6 +111,16 @@ const staleLoader = createPeopleGroupsCorpusLoader({ client: failingClient, cach
 const stale = await staleLoader.load();
 if (stale.source !== "cache-stale" || !stale.stale || !stale.warning) throw new Error("A recent validated cache must provide an explicit stale fallback during API failure.");
 
+const brokenCache: PeopleGroupsPageCache = {
+  read: async () => { throw new Error("storage unavailable"); },
+  write: async () => { throw new Error("storage unavailable"); },
+  clear: async () => { throw new Error("storage unavailable"); },
+};
+const storageIndependentLoader = createPeopleGroupsCorpusLoader({ client, cache: brokenCache, now: () => now });
+const storageIndependent = await storageIndependentLoader.load();
+if (storageIndependent.source !== "network" || storageIndependent.records.length !== 3) throw new Error("Healthy network data must remain usable when browser storage is unavailable.");
+await storageIndependentLoader.clearCache();
+
 const schemaDriftFetch: typeof fetch = async () => new Response(JSON.stringify([{ PGID: "BROKEN" }]), {
   status: 200,
   headers: { "Content-Type": "application/json", "X-WP-Total": "1", "X-WP-TotalPages": "1" },
@@ -121,5 +132,22 @@ try {
   driftBlocked = error instanceof PeopleGroupsApiError && error.code === "schema";
 }
 if (!driftBlocked) throw new Error("PeopleGroups API schema drift must fail closed.");
+
+const duplicateFetch: typeof fetch = async (input) => {
+  const url = new URL(typeof input === "string" ? input : input instanceof URL ? input : input.url);
+  const page = Number(url.searchParams.get("page") ?? "1");
+  const body = page === 1 ? [record()] : [record()];
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json", "X-WP-Total": "2", "X-WP-TotalPages": "2" },
+  });
+};
+let duplicateBlocked = false;
+try {
+  await createPeopleGroupsApiClient({ fetchImpl: duplicateFetch }).fetchAll();
+} catch (error) {
+  duplicateBlocked = error instanceof PeopleGroupsApiError && error.code === "schema";
+}
+if (!duplicateBlocked) throw new Error("Duplicate PGIDs across provider pages must fail closed.");
 
 console.log("U12B PeopleGroups runtime architecture checks passed.");
