@@ -2,7 +2,7 @@
 
 **Phase:** Production Data Activation  
 **Current subphase:** U12A — Provider Foundation & Semantic Isolation  
-**Status:** build-certified; browser certification pending
+**Status:** U12A certified; production data activation remains gated
 
 ## U12A — provider foundation
 
@@ -27,16 +27,18 @@
 - [x] full U2–U11 validation chain still passes.
 - [x] U12 PeopleGroups.org semantic check passes.
 - [x] Vite production build passes.
-- [ ] Browser Certification remains green.
+- [x] Browser Certification remains green.
 
 ### Automated evidence
 
-Corrected U12A implementation head before this documentation update: `e3dd53676827b1064c11c5aff7fe9d61799a3d1d`.
+Certified U12A implementation head before this documentation-only certification commit: `c822bcab6329efa9b9007ed925fe5c7de178e862`.
 
-- Unreached CI — run `32592895772` / #235 — **success**
-- build job `97079354188` — **success**
-- `Typecheck, policy checks and production build` step — **success**
-- Browser Certification — run `32592895723` / #69 — pending when this evidence was recorded
+- Unreached CI — run `32592963634` / #237 — **success**
+- Browser Certification — run `32592963625` / #70 — **success**
+- Browser build release candidate — **success**
+- Desktop and mobile Playwright certification — **success**
+
+The final documentation-only head must remain green before merge.
 
 ## U12B — runtime / publication activation
 
