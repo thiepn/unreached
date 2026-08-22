@@ -31,6 +31,7 @@ Runtime safeguards:
 - maximum 250 records per page;
 - maximum 100 pages;
 - maximum 25,000 records;
+- GSEC constrained to its documented 0–6 range;
 - pagination and advertised-record-count consistency checks;
 - duplicate `PGID` detection across the corpus;
 - single-record request/response `PGID` matching;
@@ -56,27 +57,27 @@ This deliberately avoids pretending PeopleGroups.org PEIDs are Joshua Project Pe
 
 ## Reach / mission semantics
 
-U12B does not convert IMB data to Joshua Project methodology.
+U12B does not convert IMB data to Joshua Project methodology. It uses PeopleGroups.org's own GSEC framework for the one neutral reach label required by the runtime.
 
 Context records retain:
 
-- `EvngLvl`
 - GSEC code, label and description
+- `EvngLvl` source text
 - SPI code and description
 - LPI code, name and description
 - engagement status
 - church-planting status
 - congregation status
 
-The only source-neutral U12B derivation is deliberately narrow:
+PeopleGroups.org's GSEC framework identifies levels 0–3 as unreached. U12B therefore derives only:
 
-- `EvngLvl = Less than 2%` → `unreached`
-- another non-empty `EvngLvl` → `other`
-- missing `EvngLvl` → `unknown`
+- GSEC 0–3 → `unreached`
+- GSEC 4–6 → `other`
+- missing GSEC → `unknown`
 
-`other` is intentionally not renamed `reached`; U12B does not claim more than the source rule proves.
+`other` is intentionally not renamed `reached`; U12B does not claim more than the source classification requires. A new GSEC value outside 0–6 fails schema validation rather than being assigned semantics automatically.
 
-A PEID entity rolls its contexts up as `unreached-only`, `other-only`, `mixed`, or `unknown`. The underlying context values remain available and are not replaced by the rollup.
+A PEID entity rolls its contexts up as `unreached-only`, `other-only`, `mixed`, or `unknown`. The underlying GSEC and country-context values remain available and are not replaced by the rollup.
 
 ## Population aggregation
 
@@ -164,16 +165,11 @@ U12C should add measured real-browser timing/memory budgets once the actual peop
 
 `tests/e2e/peoplegroups-live.spec.ts` is opt-in. For PR #24 it runs inside the already-registered Browser Certification workflow; after merge a dedicated PeopleGroups Live Certification workflow continues checking the external contract independently of normal deterministic CI.
 
-The test loads the Unreached browser origin and performs cross-origin `fetch()` calls to:
-
-- one known PGID;
-- one paginated list request.
-
-The test certifies:
+The test loads the Unreached browser origin, fetches one current list record, then uses that returned `PGID` to test the single-record endpoint. It certifies:
 
 - browser CORS access;
 - HTTP success;
-- core identity fields;
+- current core identity fields;
 - exposed WordPress pagination headers;
 - a corpus size above 10,000 records.
 
