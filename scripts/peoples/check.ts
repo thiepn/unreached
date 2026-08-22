@@ -42,8 +42,11 @@ if (filterPeopleProfiles(peoples.peoples, { ...base, query: "missing" }).length 
 
 const statusRaw = JSON.parse(await readFile(resolve(process.cwd(), "public/data/peoples/status.json"), "utf8")) as unknown;
 const status = peopleExplorerAvailabilitySchema.parse(statusRaw);
-if (status.available) throw new Error("U6 production people data must remain unavailable until publication permission is granted.");
+const runtimeStatus = statusRaw as { mode?: unknown; sourceIds?: unknown };
+if (!status.available) throw new Error("U12C production people runtime must be active.");
 if (status.fixture) throw new Error("Production people status must not advertise fixture data.");
-if (status.datasetUrl !== null) throw new Error("Unavailable production people status must not expose a dataset URL.");
+if (status.datasetUrl !== null) throw new Error("Runtime people publication must not expose a static dataset URL.");
+if (runtimeStatus.mode !== "runtime-api") throw new Error("Production people status must declare runtime-api mode.");
+if (!Array.isArray(runtimeStatus.sourceIds) || !runtimeStatus.sourceIds.includes("peoplegroups-org-api")) throw new Error("Production people runtime must identify PeopleGroups.org as its source.");
 
-console.log("People Group Explorer validation passed.");
+console.log("People Group Explorer validation passed, including U12C runtime publication mode.");

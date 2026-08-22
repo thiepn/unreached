@@ -19,26 +19,51 @@ const manifest = await readJson<{ start_url: string; scope: string; icons: Array
 if (manifest.start_url !== "/unreached/#/" || manifest.scope !== "/unreached/") throw new Error("Web manifest is not scoped to /unreached/.");
 if (!manifest.icons.some((icon) => icon.src === "/unreached/icon.svg")) throw new Error("Web manifest icon missing.");
 
-const gatedStatusFiles = [
-  "public/data/mission/status.json",
-  "public/data/countries/status.json",
-  "public/data/peoples/status.json",
-  "public/data/context/status.json",
-  "public/data/prayer/status.json",
-  "public/data/languages/status.json",
-];
-for (const path of gatedStatusFiles) {
-  const status = await readJson<{ available: boolean; fixture: boolean; datasetUrl: string | null }>(path);
-  if (status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${path} violates the production publication gate.`);
+interface PublicationStatus {
+  available: boolean;
+  fixture: boolean;
+  datasetUrl: string | null;
+  mode?: string;
+  sourceIds?: string[];
+  templateVersion?: string;
+  templateReviewedAt?: string;
 }
 
-const registry = await readJson<{ reviewedAt: string; sources: Array<{ id: string; publicReleaseAllowed: boolean; browserRedistributionAllowed: boolean }> }>("data/source-registry.json");
-if (registry.reviewedAt !== "2026-08-22") throw new Error("Source registry must carry the U11 release review date.");
+for (const domain of ["mission", "context", "languages"]) {
+  const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
+  if (status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${domain} must remain production-gated until a compatible source mode is certified.`);
+}
+
+for (const domain of ["countries", "peoples", "prayer"]) {
+  const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
+  if (!status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${domain} must be active through runtime API mode without a bundled dataset.`);
+  if (status.mode !== "runtime-api") throw new Error(`${domain} must declare runtime-api publication mode.`);
+  if (!status.sourceIds?.includes("peoplegroups-org-api")) throw new Error(`${domain} must identify PeopleGroups.org as the runtime source.`);
+}
+
+const prayerStatus = await readJson<PublicationStatus>("public/data/prayer/status.json");
+if (prayerStatus.templateVersion !== "u12c-v1" || prayerStatus.templateReviewedAt !== "2026-08-22") {
+  throw new Error("U12C prayer template certification metadata is missing or stale.");
+}
+
+const registry = await readJson<{
+  reviewedAt: string;
+  sources: Array<{
+    id: string;
+    runtimeReadAllowed?: boolean;
+    publicReleaseAllowed: boolean;
+    browserRedistributionAllowed: boolean;
+  }>;
+}>("data/source-registry.json");
+if (registry.reviewedAt !== "2026-08-22") throw new Error("Source registry must carry the current release review date.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 for (const id of ["joshua-project-api", "progress-bible-registered-data", "ethnologue"]) {
   const source = byId.get(id);
-  if (!source || source.publicReleaseAllowed || source.browserRedistributionAllowed) throw new Error(`${id} must remain release-gated.`);
+  if (!source || source.runtimeReadAllowed || source.publicReleaseAllowed || source.browserRedistributionAllowed) throw new Error(`${id} must remain unavailable to the public runtime and static release.`);
 }
+const peopleGroups = byId.get("peoplegroups-org-api");
+if (!peopleGroups?.runtimeReadAllowed) throw new Error("PeopleGroups.org runtime reads must remain approved for U12C.");
+if (peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) throw new Error("PeopleGroups.org static public release/redistribution must remain blocked.");
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed) throw new Error("Natural Earth must remain approved for public geographic distribution.");
 
@@ -46,4 +71,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("U11 release-policy and metadata checks passed.");
+console.log("U12C release-policy checks passed: People/Countries/Prayer runtime-active, static PeopleGroups redistribution still blocked.");

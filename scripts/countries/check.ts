@@ -23,8 +23,11 @@ if (country.mission.unreachedShare !== 100) throw new Error("Country mission sum
 
 const statusRaw = JSON.parse(await readFile(resolve(process.cwd(), "public/data/countries/status.json"), "utf8")) as unknown;
 const status = countryExplorerAvailabilitySchema.parse(statusRaw);
-if (status.available) throw new Error("U5 production country data must remain unavailable until publication permission is granted.");
+const runtimeStatus = statusRaw as { mode?: unknown; sourceIds?: unknown };
+if (!status.available) throw new Error("U12C production country runtime must be active.");
 if (status.fixture) throw new Error("Production country status must not advertise fixture data.");
-if (status.datasetUrl !== null) throw new Error("Unavailable production country status must not expose a dataset URL.");
+if (status.datasetUrl !== null) throw new Error("Runtime country publication must not expose a static dataset URL.");
+if (runtimeStatus.mode !== "runtime-api") throw new Error("Production country status must declare runtime-api mode.");
+if (!Array.isArray(runtimeStatus.sourceIds) || !runtimeStatus.sourceIds.includes("peoplegroups-org-api")) throw new Error("Production country runtime must identify PeopleGroups.org as its source.");
 
-console.log("Country Explorer validation passed.");
+console.log("Country Explorer validation passed, including U12C runtime publication mode.");

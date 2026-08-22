@@ -21,11 +21,11 @@ export function usePrayerExperience(): PrayerState & { profilesBySourceId: Map<n
         return prayerAvailabilitySchema.parse(await response.json() as unknown);
       })
       .then(async (status) => {
-        if (!status.available) {
+        if (!status.available || status.mode === "runtime-api") {
           setState({ status, dataset: null, loading: false, error: null });
           return;
         }
-        if (!status.datasetUrl) throw new Error("Prayer status is available but has no dataset URL.");
+        if (!status.datasetUrl) throw new Error("Prayer static-dataset status is available but has no dataset URL.");
         if (status.fixture && !import.meta.env.DEV) throw new Error("A fixture prayer dataset was blocked from production.");
         const datasetUrl = status.datasetUrl.startsWith("http") ? status.datasetUrl : `${import.meta.env.BASE_URL}${status.datasetUrl.replace(/^\//, "")}`;
         const response = await fetch(datasetUrl, { signal: controller.signal, cache: "force-cache" });

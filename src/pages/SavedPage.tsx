@@ -1,7 +1,7 @@
 import { Bookmark, Clock3, Compass, Globe2, Languages, Trash2, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
-import { usePersonalization, type RecentVisitKind } from "../personalization";
+import { usePersonalization, type RecentVisitKind, type SavedPersonSnapshot } from "../personalization";
 
 function recentIcon(kind: RecentVisitKind) {
   if (kind === "country") return Globe2;
@@ -13,6 +13,22 @@ function dateLabel(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
 }
 
+function savedStatus(person: SavedPersonSnapshot): string {
+  if (person.frontier) return "Frontier";
+  if (person.classification === "unreached-only" || person.classification === "unreached") return "Unreached";
+  if (person.classification === "mixed") return "Mixed GSEC status";
+  if (person.classification === "other-only") return "Other GSEC status";
+  if (person.classification === "reached") return "Reached (legacy snapshot)";
+  return "Status unknown";
+}
+
+function prayerEligible(person: SavedPersonSnapshot): boolean {
+  return Boolean(person.frontier)
+    || person.classification === "unreached"
+    || person.classification === "unreached-only"
+    || person.classification === "mixed";
+}
+
 export function SavedPage() {
   const { state, removeSaved, clearRecent } = usePersonalization();
 
@@ -20,33 +36,33 @@ export function SavedPage() {
     <section class="saved-page">
       <header class="saved-hero">
         <div>
-          <div class="eyebrow">Local prayer list</div>
-          <h1 class="display-title">Saved for Prayer</h1>
+          <div class="eyebrow">Local saved list</div>
+          <h1 class="display-title">Saved peoples</h1>
           <p class="lead">Your saved peoples and recent exploration stay on this browser. Unreached does not require an account or upload this activity.</p>
         </div>
         <Bookmark size={30} aria-hidden="true" />
       </header>
 
       <section class="saved-section" aria-labelledby="saved-peoples-heading">
-        <div class="saved-section__heading"><div><span class="eyebrow">Prayer list</span><h2 id="saved-peoples-heading">Saved peoples</h2></div><span>{state.savedPeoples.length}</span></div>
+        <div class="saved-section__heading"><div><span class="eyebrow">Profiles</span><h2 id="saved-peoples-heading">Saved peoples</h2></div><span>{state.savedPeoples.length}</span></div>
         {state.savedPeoples.length ? (
           <div class="saved-people-grid">
             {state.savedPeoples.map((person) => (
               <article class="saved-person-card" key={person.sourcePeopleId}>
-                <div class="saved-person-card__top"><span>{person.frontier ? "Frontier" : person.classification}</span><small>Saved {dateLabel(person.savedAt)}</small></div>
+                <div class="saved-person-card__top"><span>{savedStatus(person)}</span><small>Saved {dateLabel(person.savedAt)}</small></div>
                 <h3><a href={hrefFor(`/peoples/${person.sourcePeopleId}`)}>{person.name}</a></h3>
                 <p>{[person.largestCountryName, person.primaryLanguageName].filter(Boolean).join(" · ") || "Profile context unavailable"}</p>
                 <div class="saved-person-card__actions">
-                  <a href={hrefFor(`/pray/${person.sourcePeopleId}`)}><Compass size={15} aria-hidden="true" /> Pray</a>
+                  {prayerEligible(person) ? <a href={hrefFor(`/pray/${person.sourcePeopleId}`)}><Compass size={15} aria-hidden="true" /> Pray</a> : null}
                   <button type="button" onClick={() => removeSaved(person.sourcePeopleId)}><Trash2 size={15} aria-hidden="true" /> Remove</button>
                 </div>
               </article>
             ))}
           </div>
         ) : (
-          <div class="saved-empty"><Bookmark size={22} aria-hidden="true" /><div><strong>No peoples saved yet.</strong><p>Open a people profile and choose <em>Save for Prayer</em>.</p><a href={hrefFor("/peoples")}>Browse peoples</a></div></div>
+          <div class="saved-empty"><Bookmark size={22} aria-hidden="true" /><div><strong>No peoples saved yet.</strong><p>Open a live people profile and save it locally for later exploration or prayer.</p><a href={hrefFor("/peoples")}>Browse peoples</a></div></div>
         )}
-        <p class="saved-snapshot-note">Saved cards retain a small local snapshot for continuity. The live people profile remains authoritative when published data changes.</p>
+        <p class="saved-snapshot-note">Saved cards retain a small local snapshot for continuity. The live PeopleGroups.org profile remains authoritative when source data changes. Focused prayer is offered only for current/legacy snapshots that indicate an unreached context. Older pre-U12C snapshots remain readable.</p>
       </section>
 
       <section class="saved-section" aria-labelledby="recent-heading">

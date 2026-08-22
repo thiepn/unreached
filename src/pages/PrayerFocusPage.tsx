@@ -1,8 +1,15 @@
-import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Clock, Compass } from "lucide-preact";
+import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Clock, Compass, Database, RefreshCw } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
-import { prayerFlow, usePrayerExperience, type PrayerCategory } from "../prayer";
+import {
+  LIVE_PRAYER_TEMPLATE_REVIEW,
+  buildLivePrayerProfile,
+  isLivePrayerEligible,
+  livePrayerFlow,
+  useLivePrayerExperience,
+  type PrayerCategory,
+} from "../prayer";
 
 type PrayerMinutes = 2 | 5 | 10;
 
@@ -11,22 +18,25 @@ function categoryLabel(category: PrayerCategory): string {
 }
 
 export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const prayer = usePrayerExperience();
+  const prayer = useLivePrayerExperience();
   const [minutes, setMinutes] = useState<PrayerMinutes>(5);
   const [activeIndex, setActiveIndex] = useState(0);
-  const profile = prayer.profilesBySourceId.get(sourcePeopleId) ?? null;
-  const flow = useMemo(() => profile ? prayerFlow(profile, minutes) : [], [profile, minutes]);
+  const entity = prayer.peopleByRouteKey.get(sourcePeopleId) ?? null;
+  const profile = entity && isLivePrayerEligible(entity) ? buildLivePrayerProfile(entity) : null;
+  const flow = useMemo(() => profile ? livePrayerFlow(profile, minutes) : [], [profile, minutes]);
   const activePrompt = flow[activeIndex] ?? null;
 
   useEffect(() => setActiveIndex(0), [minutes, sourcePeopleId]);
 
-  if (prayer.loading) return <section class="prayer-focus prayer-state" role="status">Loading prayer guide…</section>;
-  if (!prayer.dataset) {
+  if (prayer.loading) return <section class="prayer-focus prayer-state" role="status">Loading live prayer guide{prayer.progress ? `… ${prayer.progress.loadedPages}/${prayer.progress.totalPages}` : "…"}</section>;
+  if (prayer.error) {
     return (
       <section class="prayer-focus prayer-focus--state">
+        <Database size={24} aria-hidden="true" />
         <div class="eyebrow">Focused prayer</div>
-        <h1 class="display-title">Prayer guide unavailable in this build.</h1>
-        <p>{prayer.error ?? prayer.status?.reason ?? "Reviewed prayer content remains publication-gated."}</p>
+        <h1 class="display-title">Live prayer guide unavailable.</h1>
+        <p>{prayer.error}</p>
+        <button type="button" class="people-reset-filters" onClick={prayer.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
         <a class="inline-link" href={hrefFor("/pray")}><ArrowLeft size={16} aria-hidden="true" /> Back to Prayer</a>
       </section>
     );
@@ -36,7 +46,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
       <section class="prayer-focus prayer-focus--state">
         <div class="eyebrow">Focused prayer</div>
         <h1 class="display-title">Prayer guide not found.</h1>
-        <p>No published prayer-ready profile matches source people ID <strong>{sourcePeopleId}</strong>.</p>
+        <p>No current GSEC 0–3 PeopleGroups.org context matches PEID <strong>{sourcePeopleId}</strong>.</p>
         <a class="inline-link" href={hrefFor("/pray")}><ArrowLeft size={16} aria-hidden="true" /> Back to Prayer</a>
       </section>
     );
@@ -47,11 +57,13 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
     <article class="prayer-focus">
       <nav class="prayer-focus__back" aria-label="Prayer navigation"><a href={hrefFor("/pray")}><ArrowLeft size={15} aria-hidden="true" /> Prayer</a><span>/</span><a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>{profile.peopleName}</a></nav>
 
+      {prayer.warning ? <div class="prayer-release-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{prayer.warning}</p></div></div> : null}
+
       <header class="prayer-focus__hero">
         <div>
           <div class="eyebrow">Focused prayer</div>
           <h1 class="display-title">Pray for {profile.peopleName}</h1>
-          <p>{profile.whyPray.summary}</p>
+          <p>{profile.whyPray}</p>
         </div>
         <Compass size={32} aria-hidden="true" />
       </header>
@@ -76,7 +88,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
             {activePrompt.scriptureReferences.map((scripture) => <div key={`${activePrompt.id}-${scripture.reference}`}><strong>{scripture.reference}</strong><span>{scripture.purpose}</span></div>)}
           </div>
         ) : null}
-        {activePrompt.temporalClass === "current" && activePrompt.asOf ? <p class="prayer-freshness">Context reviewed as of {activePrompt.asOf}.</p> : null}
+        {activePrompt.sourceGrounding ? <p class="prayer-freshness">Source grounding: {activePrompt.sourceGrounding}</p> : null}
       </section>
 
       <div class="prayer-focus__controls">
@@ -90,7 +102,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
       </div>
 
       <footer class="prayer-focus__footer">
-        <p>There is no prayer score, streak, public activity record, or spiritual completion metric.</p>
+        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} is fixed and release-certified. Runtime facts come from the current PeopleGroups.org record. There is no prayer score, streak, public activity record, or spiritual completion metric.</p>
         <a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>Return to the people profile</a>
       </footer>
     </article>

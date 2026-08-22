@@ -1,12 +1,13 @@
 import { ArrowUpRight, Clock3, Globe2, Languages, Search, UsersRound, X } from "lucide-preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
-import { useCountryExplorer } from "../countries";
+import { useLiveCountryExplorer } from "../countries";
 import { buildSearchDocuments, searchDocuments, type SearchDomain } from "../discovery/search";
 import { useLanguageExplorer } from "../languages";
 import { useWorldGeography } from "../map/geography";
-import { usePeopleExplorer } from "../peoples";
+import { useLivePeopleExplorer } from "../peoples";
 import { usePersonalization } from "../personalization";
+import { entityTaxonomy } from "../providers/peoplegroups";
 
 function domainIcon(domain: SearchDomain) {
   if (domain === "country") return Globe2;
@@ -22,33 +23,29 @@ function domainLabel(domain: SearchDomain): string {
 
 const FOCUSABLE_SELECTOR = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
-export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+function OpenSearchDialog({ onClose }: { onClose: () => void }) {
   const dialogRef = useRef<HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const peoples = usePeopleExplorer();
-  const countries = useCountryExplorer();
+  const peoples = useLivePeopleExplorer();
+  const countries = useLiveCountryExplorer();
   const languages = useLanguageExplorer();
   const geography = useWorldGeography();
   const personalization = usePersonalization();
 
   useEffect(() => {
-    if (!open) return;
     previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setQuery("");
-    setActiveIndex(0);
     const id = window.requestAnimationFrame(() => inputRef.current?.focus());
     return () => {
       window.cancelAnimationFrame(id);
       previousFocusRef.current?.focus({ preventScroll: true });
       previousFocusRef.current = null;
     };
-  }, [open]);
+  }, []);
 
   useEffect(() => {
-    if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -73,28 +70,30 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+  }, [onClose]);
 
   const documents = useMemo(() => {
-    const countryRecords = countries.countriesByIso3;
     const geographicCountries = geography.countries.flatMap((feature) => {
       const rawIso = feature.properties.iso3 || feature.properties.adminA3;
       const iso3 = typeof rawIso === "string" ? rawIso.toUpperCase() : "";
       if (!/^[A-Z]{3}$/.test(iso3)) return [];
-      const record = countryRecords.get(iso3);
+      const record = countries.countriesByIso3.get(iso3);
       return [{ iso3, name: record?.name ?? feature.properties.name, regionName: record?.regionName ?? feature.properties.continent ?? null }];
     });
 
     return buildSearchDocuments({
-      peoples: (peoples.dataset?.peoples ?? []).map((people) => ({
-        sourcePeopleId: people.sourcePeopleId,
-        name: people.name,
-        primaryLanguageName: people.primaryLanguage?.name ?? null,
-        primaryReligionName: people.primaryReligion?.name ?? null,
-        largestCountryName: people.largestCountry?.name ?? null,
-        cluster: people.cluster,
-        affinityBloc: people.affinityBloc,
-      })),
+      peoples: peoples.peoples.map((people) => {
+        const taxonomy = entityTaxonomy(people);
+        return {
+          sourcePeopleId: people.routeKey,
+          name: people.displayName,
+          primaryLanguageName: people.primaryLanguage?.name ?? null,
+          primaryReligionName: people.primaryReligion?.name ?? null,
+          largestCountryName: people.contexts[0]?.country.name ?? null,
+          cluster: taxonomy.peopleCluster,
+          affinityBloc: taxonomy.affinityBloc,
+        };
+      }),
       countries: geographicCountries,
       languages: (languages.dataset?.languages ?? []).map((language) => ({
         iso6393: language.iso6393,
@@ -105,19 +104,20 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         peopleNames: language.peoples.map((people) => people.name),
       })),
     });
-  }, [countries.countriesByIso3, geography.countries, peoples.dataset, languages.dataset]);
+  }, [countries.countriesByIso3, geography.countries, peoples.peoples, languages.dataset]);
 
   const results = useMemo(() => searchDocuments(documents, query, 18), [documents, query]);
   const grouped = useMemo(() => (["people", "country", "language"] as const).map((domain) => ({ domain, results: results.filter((result) => result.domain === domain) })).filter((group) => group.results.length), [results]);
 
   useEffect(() => setActiveIndex(0), [query]);
 
-  if (!open) return null;
-
   const activate = (href: string) => {
     onClose();
     window.location.hash = href.replace(/^#/, "");
   };
+
+  const loadingSource = peoples.loading || countries.loading;
+  const sourceError = peoples.error ?? countries.error;
 
   return (
     <div class="search-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) onClose(); }}>
@@ -150,6 +150,9 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <div class="search-dialog__body">
+          {loadingSource ? <p class="search-empty">Loading live PeopleGroups.org search records{peoples.progress ? `… ${peoples.progress.loadedPages}/${peoples.progress.totalPages}` : "…"}</p> : null}
+          {sourceError ? <p class="search-empty">Live people/country search is temporarily unavailable: {sourceError}</p> : null}
+
           {!query.trim() ? (
             <section class="search-recents" aria-labelledby="search-recent-heading">
               <div class="search-section-label" id="search-recent-heading"><Clock3 size={14} aria-hidden="true" /> Recent exploration</div>
@@ -184,13 +187,18 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                 </section>
               ))}
             </div>
-          ) : (
-            <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No published result matches “{query}”.</strong><p>Country geography remains searchable from Natural Earth. People and language results appear as their approved datasets are published.</p></div>
-          )}
+          ) : query.trim() && !loadingSource ? (
+            <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No current result matches “{query}”.</strong><p>People and country results come from the live PeopleGroups.org runtime corpus; country geography remains sourced from Natural Earth.</p></div>
+          ) : null}
         </div>
 
-        <footer class="search-dialog__footer"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span>Search reflects currently published datasets.</span></footer>
+        <footer class="search-dialog__footer"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span>People/country search uses the current runtime corpus.</span></footer>
       </section>
     </div>
   );
+}
+
+export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+  return <OpenSearchDialog onClose={onClose} />;
 }

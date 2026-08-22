@@ -1,130 +1,116 @@
-import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, Languages, Link2, MapPinned, UsersRound } from "lucide-preact";
+import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, Languages, Link2, MapPinned, RefreshCw, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
 import {
-  formatBooleanAvailability,
-  formatDataQuality,
   formatPeopleCount,
-  formatPeoplePercent,
-  formatPeopleScripture,
-  usePeopleExplorer,
-  type PeopleCountryContext,
-  type PeopleGroupProfile,
+  livePeopleStatusClass,
+  livePeopleStatusLabel,
+  useLivePeopleExplorer,
 } from "../peoples";
+import {
+  PEOPLE_GROUPS_ATTRIBUTION,
+  entityEditorialContext,
+  entityGsecRange,
+  entityResourceBreakdown,
+  entityTaxonomy,
+  relatedRuntimePeople,
+  type RuntimePeopleContext,
+  type RuntimePeopleEntity,
+} from "../providers/peoplegroups";
 
-function statusLabel(record: PeopleGroupProfile): string {
-  if (record.mission.frontier === true) return "Frontier";
-  if (record.mission.classification === "unreached") return "Unreached";
-  if (record.mission.classification === "reached") return "Reached";
-  return "Status unknown";
-}
-
-function statusClass(record: PeopleGroupProfile): string {
-  if (record.mission.frontier === true) return "frontier";
-  return record.mission.classification;
-}
-
-function scriptureBasis(record: PeopleGroupProfile): string {
-  if (record.scripture.basis === "primary-language") return "Primary-language record";
-  if (record.scripture.basis === "country-record") return "Country-specific source record";
-  return "No Scripture basis available";
-}
-
-function localStatus(context: PeopleCountryContext): string {
-  if (context.mission.frontier === true) return "Frontier";
-  if (context.mission.classification === "unreached") return "Unreached";
-  if (context.mission.classification === "reached") return "Reached";
+function localStatus(context: RuntimePeopleContext): string {
+  if (context.reach.classification === "unreached") return "Unreached";
+  if (context.reach.classification === "other") return "Other GSEC status";
   return "Unknown";
 }
 
-function PeopleMetrics({ record }: { record: PeopleGroupProfile }) {
+function gsecLabel(context: RuntimePeopleContext): string {
+  const code = context.reach.gsec.code;
+  if (code === null) return "Unknown";
+  return context.reach.gsec.label ? `${code} · ${context.reach.gsec.label}` : String(code);
+}
+
+function sourceDate(value: string | null): string {
+  if (!value) return "Not supplied";
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
+}
+
+function PeopleMetrics({ record }: { record: RuntimePeopleEntity }) {
+  const gsec = entityGsecRange(record);
   return (
     <div class="people-metric-grid" aria-label="People-group overview">
-      <div class="people-metric"><span>Global population</span><strong>{formatPeopleCount(record.globalPopulation.value)}</strong><small>{formatDataQuality(record.globalPopulation.quality)}</small></div>
-      <div class="people-metric"><span>Christian adherents</span><strong>{formatPeoplePercent(record.mission.percentChristian.value)}</strong><small>{formatDataQuality(record.mission.percentChristian.quality)}</small></div>
-      <div class="people-metric"><span>Evangelical</span><strong>{formatPeoplePercent(record.mission.percentEvangelical.value)}</strong><small>{formatDataQuality(record.mission.percentEvangelical.quality)}</small></div>
-      <div class="people-metric"><span>Gospel-access status</span><strong>{statusLabel(record)}</strong><small>Source classification retained</small></div>
-      <div class="people-metric"><span>Primary religion</span><strong>{record.primaryReligion?.name ?? "Unknown"}</strong><small>Source people-group classification</small></div>
-      <div class="people-metric"><span>Primary language</span><strong>{record.primaryLanguage?.name ?? "Unknown"}</strong><small>{record.primaryLanguage?.iso6393 ?? "No ISO 639-3 code"}</small></div>
-      <div class="people-metric"><span>Scripture</span><strong>{formatPeopleScripture(record.scripture.bibleStatus)}</strong><small>{scriptureBasis(record)}</small></div>
-      <div class="people-metric"><span>Country contexts</span><strong>{record.countryCount}</strong><small>{record.largestCountry ? `Largest: ${record.largestCountry.name}` : "Largest context unknown"}</small></div>
+      <div class="people-metric"><span>Known population</span><strong>{formatPeopleCount(record.population.knownValue)}</strong><small>{record.population.complete ? "All country contexts have a population estimate" : `Partial sum · ${record.population.knownContextCount}/${record.population.totalContextCount} contexts known`}</small></div>
+      <div class="people-metric"><span>GSEC range</span><strong>{gsec ? (gsec.min === gsec.max ? gsec.min : `${gsec.min}–${gsec.max}`) : "Unknown"}</strong><small>{gsec ? `${gsec.knownContexts}/${record.contexts.length} contexts classified` : "No GSEC value reported"}</small></div>
+      <div class="people-metric"><span>Reach rollup</span><strong>{livePeopleStatusLabel(record)}</strong><small>Derived only from IMB GSEC country contexts</small></div>
+      <div class="people-metric"><span>Country contexts</span><strong>{record.contexts.length}</strong><small>{record.countries.map((country) => country.name).slice(0, 3).join(" · ")}{record.countries.length > 3 ? " …" : ""}</small></div>
+      <div class="people-metric"><span>Primary religion</span><strong>{record.primaryReligion?.name ?? "Unknown"}</strong><small>Most common source context label</small></div>
+      <div class="people-metric"><span>Primary language</span><strong>{record.primaryLanguage?.name ?? "Unknown"}</strong><small>{record.primaryLanguage?.iso6393 ?? "ISO 639-3 not supplied"}</small></div>
+      <div class="people-metric"><span>PEID</span><strong>{record.peid}</strong><small>PeopleGroups.org entity identity</small></div>
+      <div class="people-metric"><span>Source updated</span><strong>{sourceDate(record.sourceUpdatedAt)}</strong><small>Newest timestamp among country contexts</small></div>
     </div>
   );
 }
 
-function CountryContexts({ record }: { record: PeopleGroupProfile }) {
+function CountryContexts({ record }: { record: RuntimePeopleEntity }) {
   return (
     <section class="people-section" aria-labelledby="people-countries-heading">
       <div class="people-section__heading"><div><span class="eyebrow">Where they live</span><h2 id="people-countries-heading">Country contexts</h2></div><MapPinned size={21} aria-hidden="true" /></div>
-      <p class="people-section__intro">Country rows are source-specific contexts for this global people group. Location text is shown when supplied; precise source coordinates are not exposed here.</p>
-      {record.countries.length ? (
-        <div class="people-country-table-wrap">
-          <table class="people-country-table">
-            <thead><tr><th>Country</th><th>Population</th><th>Religion</th><th>Language</th><th>Evangelical</th><th>Scripture</th><th>Status</th></tr></thead>
-            <tbody>
-              {record.countries.map((context) => (
-                <tr key={context.id}>
-                  <th scope="row">
-                    <a href={hrefFor(`/countries/${context.iso3}`)}>{context.countryName}</a>
-                    {context.nameInCountry !== record.name ? <small>Listed locally as {context.nameInCountry}</small> : null}
-                    {context.locationText ? <small>{context.locationText}</small> : null}
-                    <a class="people-map-context-link" href={`#/?country=${encodeURIComponent(context.iso3)}`}>Map <ArrowUpRight size={12} aria-hidden="true" /></a>
-                  </th>
-                  <td>{formatPeopleCount(context.population.value)}<small>{formatDataQuality(context.population.quality)}</small></td>
-                  <td>{context.primaryReligionName ?? "Unknown"}</td>
-                  <td>{context.primaryLanguageName ?? "Unknown"}</td>
-                  <td>{formatPeoplePercent(context.mission.percentEvangelical.value)}</td>
-                  <td>{formatPeopleScripture(context.scripture.bibleStatus)}</td>
-                  <td><span class={`people-local-status people-local-status--${context.mission.frontier ? "frontier" : context.mission.classification}`}>{localStatus(context)}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : <p class="people-empty">No country-specific source records are available for this global people group.</p>}
+      <p class="people-section__intro">Each row is a PeopleGroups.org PGID record for this PEID. Population is an estimate for that country context; GSEC and resource fields retain the provider’s own labels.</p>
+      <div class="people-country-table-wrap">
+        <table class="people-country-table">
+          <thead><tr><th>Country</th><th>Population</th><th>Religion</th><th>Language</th><th>GSEC</th><th>Evangelical level</th><th>Bible</th><th>Engagement</th></tr></thead>
+          <tbody>
+            {record.contexts.map((context) => (
+              <tr key={context.pgid}>
+                <th scope="row">
+                  <a href={hrefFor(`/countries/${context.country.iso3}`)}>{context.country.name}</a>
+                  {context.displayName !== record.displayName ? <small>Listed as {context.displayName}</small> : null}
+                  <small>PGID {context.pgid}</small>
+                  <a class="people-map-context-link" href={`#/?country=${encodeURIComponent(context.country.iso3)}`}>Map <ArrowUpRight size={12} aria-hidden="true" /></a>
+                </th>
+                <td>{formatPeopleCount(context.population.value)}<small>Estimated</small></td>
+                <td>{context.religion.name ?? context.religion.displayName ?? "Unknown"}</td>
+                <td>{context.language.name ?? context.language.iso6393 ?? "Unknown"}</td>
+                <td><span class={`people-local-status people-local-status--${context.reach.classification === "unreached" ? "unreached" : context.reach.classification === "other" ? "reached" : "unknown"}`}>{gsecLabel(context)}</span><small>{localStatus(context)}</small></td>
+                <td>{context.reach.evangelicalLevel ?? "Unknown"}</td>
+                <td>{context.resources.bibleAvailability ?? "Unknown"}</td>
+                <td>{context.reach.engagementStatus ?? "Unknown"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
 
-function SourceDisclosure({ record, attributions }: { record: PeopleGroupProfile; attributions: Array<{ sourceId: string; label: string; url: string }> }) {
-  const provenance = [
-    ...record.provenance.map((item) => ({ scope: "Global people record", ...item })),
-    ...(record.primaryLanguage?.provenance.map((item) => ({ scope: "Primary language", ...item })) ?? []),
-    ...(record.primaryReligion?.provenance.map((item) => ({ scope: "Primary religion", ...item })) ?? []),
-    ...record.countries.flatMap((country) => country.provenance.map((item) => ({ scope: `Country: ${country.countryName}`, ...item }))),
-  ];
-
+function SourceDisclosure({ record, loadedAt, stale }: { record: RuntimePeopleEntity; loadedAt: string | null; stale: boolean }) {
   return (
     <section class="people-section people-sources" aria-labelledby="people-sources-heading">
-      <div class="people-section__heading"><div><span class="eyebrow">Transparency</span><h2 id="people-sources-heading">Sources & provenance</h2></div><Link2 size={20} aria-hidden="true" /></div>
-      <p class="people-section__intro">Displayed facts retain source identifiers and field-level provenance. A transformation note describes normalized or derived values when applicable.</p>
-      <div class="people-source-ids"><strong>Source IDs</strong><span>{record.sourceIds.length ? record.sourceIds.join(" · ") : "None supplied"}</span></div>
-      {attributions.map((attribution) => <a class="people-source-link" href={attribution.url} target="_blank" rel="noreferrer" key={attribution.sourceId}>{attribution.label} <ArrowUpRight size={13} aria-hidden="true" /></a>)}
-      <details class="people-provenance-details">
-        <summary>View field provenance ({provenance.length})</summary>
-        <div class="people-provenance-table-wrap">
-          <table class="people-provenance-table">
-            <thead><tr><th>Scope</th><th>Field</th><th>Source field</th><th>Record</th><th>Retrieved</th><th>Transformation</th></tr></thead>
-            <tbody>{provenance.map((item, index) => <tr key={`${item.scope}-${item.field}-${item.sourceRecordId}-${index}`}><td>{item.scope}</td><td>{item.field}</td><td>{item.sourceField}</td><td>{item.sourceRecordId}</td><td>{new Date(item.retrievedAt).toLocaleDateString("en")}</td><td>{item.transformation ?? "Direct normalization"}</td></tr>)}</tbody>
-          </table>
-        </div>
-      </details>
+      <div class="people-section__heading"><div><span class="eyebrow">Transparency</span><h2 id="people-sources-heading">Sources & methodology</h2></div><Link2 size={20} aria-hidden="true" /></div>
+      <p class="people-section__intro">This profile is assembled at runtime from PeopleGroups.org. PEID is the cross-country people identity; PGIDs remain visible as country-context records. Unreached status is derived only from IMB GSEC 0–3.</p>
+      <div class="people-source-ids"><strong>Identity</strong><span>PEID {record.peid} · {record.contexts.length} PGID records</span></div>
+      <div class="people-source-ids"><strong>Runtime load</strong><span>{loadedAt ? sourceDate(loadedAt) : "Unknown"}{stale ? " · cached/stale fallback" : ""}</span></div>
+      <div class="people-source-ids"><strong>Newest source update</strong><span>{sourceDate(record.sourceUpdatedAt)}</span></div>
+      <a class="people-source-link" href={PEOPLE_GROUPS_ATTRIBUTION.url} target="_blank" rel="noreferrer">{PEOPLE_GROUPS_ATTRIBUTION.label} <ArrowUpRight size={13} aria-hidden="true" /></a>
+      <p class="people-basis-note">Population sums include only known country-context estimates. “Other GSEC status” is intentionally not renamed “reached.” Bible and Jesus Film values are provider availability labels, not translation-completeness claims.</p>
     </section>
   );
 }
 
 export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const explorer = usePeopleExplorer();
-  const record = explorer.peopleBySourceId.get(sourcePeopleId) ?? null;
+  const explorer = useLivePeopleExplorer();
+  const record = explorer.peopleByRouteKey.get(sourcePeopleId) ?? null;
 
-  if (explorer.loading) return <section class="people-profile people-profile--state" role="status">Loading people-group data…</section>;
-  if (!explorer.dataset) {
+  if (explorer.loading) return <section class="people-profile people-profile--state" role="status">Loading live people-group data{explorer.progress ? `… ${explorer.progress.loadedPages}/${explorer.progress.totalPages}` : "…"}</section>;
+  if (explorer.error) {
     return (
       <section class="people-profile people-profile--state">
+        <Database size={24} aria-hidden="true" />
         <div class="eyebrow">People Group Explorer</div>
-        <h1 class="display-title">People profile unavailable in this build.</h1>
-        <p>{explorer.error ?? explorer.status?.reason ?? "Source-derived people-group records remain release-gated."}</p>
-        <p class="people-profile-id">Requested source people ID: {sourcePeopleId}</p>
+        <h1 class="display-title">Live people profile unavailable.</h1>
+        <p>{explorer.error}</p>
+        <button type="button" class="people-reset-filters" onClick={explorer.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
         <a class="inline-link" href={hrefFor("/peoples")}><ArrowLeft size={16} aria-hidden="true" /> Back to peoples</a>
       </section>
     );
@@ -134,23 +120,31 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
       <section class="people-profile people-profile--state">
         <div class="eyebrow">People Group Explorer</div>
         <h1 class="display-title">People group not found.</h1>
-        <p>No published global people-group record matches source ID <strong>{sourcePeopleId}</strong>.</p>
+        <p>No current PeopleGroups.org PEID matches <strong>{sourcePeopleId}</strong>.</p>
         <a class="inline-link" href={hrefFor("/peoples")}><ArrowLeft size={16} aria-hidden="true" /> Back to peoples</a>
       </section>
     );
   }
 
+  const taxonomy = entityTaxonomy(record);
+  const resources = entityResourceBreakdown(record);
+  const editorial = entityEditorialContext(record);
+  const related = relatedRuntimePeople(record, explorer.peoples);
+  const largestContext = record.contexts[0] ?? null;
+
   return (
     <article class="people-profile">
-      <nav class="people-breadcrumb" aria-label="Breadcrumb"><a href={hrefFor("/peoples")}><ArrowLeft size={15} aria-hidden="true" /> Peoples</a><span>/</span><span aria-current="page">{record.name}</span></nav>
+      <nav class="people-breadcrumb" aria-label="Breadcrumb"><a href={hrefFor("/peoples")}><ArrowLeft size={15} aria-hidden="true" /> Peoples</a><span>/</span><span aria-current="page">{record.displayName}</span></nav>
+
+      {explorer.warning ? <div class="people-data-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{explorer.warning}</p></div></div> : null}
 
       <header class="people-profile-hero">
         <div>
-          <div class="eyebrow">{record.cluster ?? record.affinityBloc ?? "Global people group"}</div>
-          <div class="people-profile-title-line"><h1 class="display-title">{record.name}</h1><span class={`people-status people-status--${statusClass(record)}`}>{statusLabel(record)}</span></div>
-          <p class="people-profile-subtitle">{record.largestCountry ? `${record.largestCountry.name} · ` : ""}{record.primaryLanguage?.name ?? "Language unknown"} · {record.primaryReligion?.name ?? "Religion unknown"}</p>
+          <div class="eyebrow">{taxonomy.peopleCluster ?? taxonomy.affinityBloc ?? "PeopleGroups.org people entity"}</div>
+          <div class="people-profile-title-line"><h1 class="display-title">{record.displayName}</h1><span class={`people-status people-status--${livePeopleStatusClass(record)}`}>{livePeopleStatusLabel(record)}</span></div>
+          <p class="people-profile-subtitle">{largestContext ? `${largestContext.country.name} · ` : ""}{record.primaryLanguage?.name ?? "Language unknown"} · {record.primaryReligion?.name ?? "Religion unknown"}</p>
         </div>
-        {record.largestCountry ? <a class="people-country-cta" href={hrefFor(`/countries/${record.largestCountry.iso3}`)}>Largest country context <ArrowUpRight size={17} aria-hidden="true" /></a> : null}
+        {largestContext ? <a class="people-country-cta" href={hrefFor(`/countries/${largestContext.country.iso3}`)}>Largest known country context <ArrowUpRight size={17} aria-hidden="true" /></a> : null}
       </header>
 
       <PeopleMetrics record={record} />
@@ -159,37 +153,42 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
         <main class="people-profile-main">
           <CountryContexts record={record} />
 
+          {editorial.length ? (
+            <section class="people-section" aria-labelledby="people-source-context-heading">
+              <div class="people-section__heading"><div><span class="eyebrow">Provider context</span><h2 id="people-source-context-heading">Source descriptions</h2></div><Globe2 size={21} aria-hidden="true" /></div>
+              <p class="people-section__intro">The following text is supplied by PeopleGroups.org and is shown as attributed source material, not rewritten as an Unreached editorial claim.</p>
+              {editorial.slice(0, 4).map((item) => <div class="people-source-ids" key={item.pgid}><strong>{item.countryName} · {item.pgid}</strong><span>{item.peopleDescription ?? item.locationDescription}</span></div>)}
+            </section>
+          ) : null}
+
           <section class="people-section" aria-labelledby="people-related-heading">
             <div class="people-section__heading"><div><span class="eyebrow">Source taxonomy</span><h2 id="people-related-heading">Related peoples</h2></div><UsersRound size={21} aria-hidden="true" /></div>
-            <p class="people-section__intro">Relationships below reflect shared source cluster or affinity-bloc classifications. They do not assert precise ethnographic, genetic, political or self-identity relationships.</p>
-            {record.relatedPeople.length ? <div class="people-related-grid">{record.relatedPeople.map((related) => <a href={hrefFor(`/peoples/${related.sourcePeopleId}`)} class="people-related-card" key={related.peopleGroupId}><span>{related.relationship === "same-cluster" ? "Same source cluster" : "Same affinity bloc"}</span><strong>{related.name}</strong><small>{formatPeopleCount(related.globalPopulation.value)} · {related.frontier ? "Frontier" : related.classification}</small></a>)}</div> : <p class="people-empty">No related groups are available from the current source taxonomy.</p>}
+            <p class="people-section__intro">These links mean only that PeopleGroups.org places the records in the same source cluster or affinity bloc.</p>
+            {related.length ? <div class="people-related-grid">{related.map((item) => <a href={hrefFor(`/peoples/${item.entity.routeKey}`)} class="people-related-card" key={item.entity.id}><span>{item.relationship === "same-cluster" ? "Same source cluster" : "Same affinity bloc"}</span><strong>{item.entity.displayName}</strong><small>{formatPeopleCount(item.entity.population.knownValue)} known population · {livePeopleStatusLabel(item.entity)}</small></a>)}</div> : <p class="people-empty">No related groups are available from the current source taxonomy.</p>}
           </section>
 
-          <SourceDisclosure record={record} attributions={explorer.status?.attributions ?? []} />
+          <SourceDisclosure record={record} loadedAt={explorer.loadedAt} stale={explorer.stale} />
         </main>
 
         <aside class="people-profile-rail">
           <section class="people-section" aria-labelledby="people-language-heading">
             <div class="people-section__heading"><div><span class="eyebrow">Language</span><h2 id="people-language-heading">Primary language</h2></div><Languages size={20} aria-hidden="true" /></div>
-            {record.primaryLanguage ? <dl class="people-fact-list"><div><dt>Language</dt><dd>{record.primaryLanguage.name}</dd></div><div><dt>ISO 639-3</dt><dd>{record.primaryLanguage.iso6393}</dd></div><div><dt>Status</dt><dd>{record.primaryLanguage.status.replaceAll("-", " ")}</dd></div></dl> : <p class="people-empty">Primary language unknown.</p>}
+            <dl class="people-fact-list"><div><dt>Language</dt><dd>{record.primaryLanguage?.name ?? "Unknown"}</dd></div><div><dt>ISO 639-3</dt><dd>{record.primaryLanguage?.iso6393 ?? "Unknown"}</dd></div></dl>
+            <p class="people-basis-note">Primary language is the most common source-context label for this PEID, not a claim that every community uses only one language.</p>
           </section>
 
           <section class="people-section" aria-labelledby="people-scripture-heading">
-            <div class="people-section__heading"><div><span class="eyebrow">Resources</span><h2 id="people-scripture-heading">Scripture & media</h2></div><BookOpen size={20} aria-hidden="true" /></div>
-            <dl class="people-fact-list">
-              <div><dt>Bible status</dt><dd>{formatPeopleScripture(record.scripture.bibleStatus)}</dd></div>
-              <div><dt>Audio</dt><dd>{formatBooleanAvailability(record.scripture.hasAudioRecordings)}</dd></div>
-              <div><dt>Jesus Film</dt><dd>{formatBooleanAvailability(record.scripture.hasJesusFilm)}</dd></div>
-              {record.scripture.portionsYear ? <div><dt>Portions year</dt><dd>{record.scripture.portionsYear}</dd></div> : null}
-              {record.scripture.newTestamentYear ? <div><dt>NT year</dt><dd>{record.scripture.newTestamentYear}</dd></div> : null}
-              {record.scripture.bibleYear ? <div><dt>Bible year</dt><dd>{record.scripture.bibleYear}</dd></div> : null}
-            </dl>
-            <p class="people-basis-note">Basis: {scriptureBasis(record)}.</p>
+            <div class="people-section__heading"><div><span class="eyebrow">Resources</span><h2 id="people-scripture-heading">Bible & media availability</h2></div><BookOpen size={20} aria-hidden="true" /></div>
+            <div class="country-compact-list">
+              {resources.bible.map((item) => <div key={`bible:${item.status}`}><strong>Bible: {item.status}</strong><span>{item.contextCount} {item.contextCount === 1 ? "context" : "contexts"}</span></div>)}
+              {resources.jesusFilm.map((item) => <div key={`jesus:${item.status}`}><strong>Jesus Film: {item.status}</strong><span>{item.contextCount} {item.contextCount === 1 ? "context" : "contexts"}</span></div>)}
+            </div>
+            <p class="people-basis-note">Labels are displayed verbatim as source availability descriptors; Unreached does not translate them into Scripture-completeness categories.</p>
           </section>
 
           <section class="people-section" aria-labelledby="people-taxonomy-heading">
             <div class="people-section__heading"><div><span class="eyebrow">Classification</span><h2 id="people-taxonomy-heading">Taxonomy</h2></div><Globe2 size={20} aria-hidden="true" /></div>
-            <dl class="people-fact-list"><div><dt>Affinity bloc</dt><dd>{record.affinityBloc ?? "Unknown"}</dd></div><div><dt>People cluster</dt><dd>{record.cluster ?? "Unknown"}</dd></div><div><dt>Source people ID</dt><dd>{record.sourcePeopleId}</dd></div><div><dt>JP scale</dt><dd>{record.mission.jpScale ?? "Unknown"}</dd></div></dl>
+            <dl class="people-fact-list"><div><dt>Affinity bloc</dt><dd>{taxonomy.affinityBloc ?? "Unknown"}</dd></div><div><dt>People cluster</dt><dd>{taxonomy.peopleCluster ?? "Unknown"}</dd></div><div><dt>People name</dt><dd>{taxonomy.peopleName ?? "Unknown"}</dd></div><div><dt>Ethnographic group</dt><dd>{taxonomy.ethnographicGroup ?? "Unknown"}</dd></div><div><dt>PEID</dt><dd>{record.peid}</dd></div></dl>
           </section>
         </aside>
       </div>

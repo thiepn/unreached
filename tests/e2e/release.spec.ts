@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { installPeopleGroupsFixture } from "./peoplegroups-fixture";
+
 async function expectNoHorizontalOverflow(page: import("@playwright/test").Page) {
   const diagnostics = await page.evaluate(() => {
     const root = document.documentElement;
@@ -41,6 +43,10 @@ function isWebGlUnavailable(error: string | null): boolean {
   if (!error) return false;
   return /failed to initialize webgl|webgl creation failed|webglcontextcreationerror|exhausted gl driver|context creation/i.test(error);
 }
+
+test.beforeEach(async ({ page }) => {
+  await installPeopleGroupsFixture(page);
+});
 
 test("root shell and primary navigation render", async ({ page }) => {
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
@@ -85,7 +91,7 @@ test("interactive map renders when WebGL is available and falls back accessibly 
   }
 });
 
-test("country explorer remains useful while mission data is gated", async ({ page }) => {
+test("country explorer remains useful with runtime mission data", async ({ page }) => {
   await page.goto("./#/countries");
   await expect(page.getByRole("heading", { name: "From nations to peoples." })).toBeVisible();
   const input = page.getByPlaceholder("Search country, code or continent");

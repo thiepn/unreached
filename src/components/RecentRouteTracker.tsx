@@ -1,37 +1,37 @@
 import { useEffect } from "preact/hooks";
 
 import { hrefFor, type RouteState } from "../app/router";
-import { useCountryExplorer } from "../countries";
+import { useLiveCountryExplorer } from "../countries";
 import { useLanguageExplorer } from "../languages";
 import { useWorldGeography } from "../map/geography";
-import { usePeopleExplorer } from "../peoples";
+import { useLivePeopleExplorer } from "../peoples";
 import { usePersonalization } from "../personalization";
 
 function PeopleRecentTracker({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const peoples = usePeopleExplorer();
+  const peoples = useLivePeopleExplorer();
   const { recordRecent } = usePersonalization();
-  const people = peoples.peopleBySourceId.get(sourcePeopleId) ?? null;
+  const people = peoples.peopleByRouteKey.get(sourcePeopleId) ?? null;
   useEffect(() => {
     if (!people) return;
     recordRecent({
       kind: "people",
-      key: String(people.sourcePeopleId),
-      label: people.name,
-      secondary: [people.largestCountry?.name, people.primaryLanguage?.name].filter(Boolean).join(" · ") || null,
-      href: hrefFor(`/peoples/${people.sourcePeopleId}`),
+      key: String(people.routeKey),
+      label: people.displayName,
+      secondary: [people.contexts[0]?.country.name, people.primaryLanguage?.name].filter(Boolean).join(" · ") || null,
+      href: hrefFor(`/peoples/${people.routeKey}`),
     });
   }, [people, recordRecent]);
   return null;
 }
 
 function CountryRecentTracker({ iso3 }: { iso3: string }) {
-  const countries = useCountryExplorer();
+  const countries = useLiveCountryExplorer();
   const geography = useWorldGeography();
   const { recordRecent } = usePersonalization();
   const country = countries.countriesByIso3.get(iso3) ?? null;
   const feature = geography.countries.find((item) => item.properties.iso3 === iso3 || item.properties.adminA3 === iso3) ?? null;
   const label = country?.name ?? feature?.properties.name ?? null;
-  const secondary = country?.regionName ?? feature?.properties.continent ?? null;
+  const secondary = country?.subregionName ?? country?.regionName ?? feature?.properties.continent ?? null;
   useEffect(() => {
     if (!label) return;
     recordRecent({ kind: "country", key: iso3, label, secondary, href: hrefFor(`/countries/${iso3}`) });

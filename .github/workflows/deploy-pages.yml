@@ -110,20 +110,32 @@ jobs:
           if (!html.includes("/unreached/")) throw new Error("Production HTML is missing /unreached/ scoped assets");
 
           const manifest = await (await get("site.webmanifest")).json();
-          if (manifest.name !== "Unreached — Explore. Understand. Pray.") {
-            throw new Error("Unexpected production manifest name");
-          }
+          if (manifest.name !== "Unreached — Explore. Understand. Pray.") throw new Error("Unexpected production manifest name");
           if (manifest.short_name !== "Unreached") throw new Error("Unexpected production manifest short_name");
           if (manifest.id !== "/unreached/") throw new Error("Unexpected production manifest id");
           if (manifest.scope !== "/unreached/") throw new Error("Unexpected production manifest scope");
           if (manifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest start_url");
 
-          const gated = ["mission", "countries", "peoples", "context", "prayer", "languages"];
-          for (const domain of gated) {
+          for (const domain of ["mission", "context", "languages"]) {
             const status = await (await get(`data/${domain}/status.json`)).json();
-            if (status.available !== false || status.fixture !== false) {
-              throw new Error(`Production ${domain} status violates release gate`);
+            if (status.available !== false || status.fixture !== false || status.datasetUrl !== null) {
+              throw new Error(`Production ${domain} status violates remaining release gate`);
             }
+          }
+
+          for (const domain of ["countries", "peoples", "prayer"]) {
+            const status = await (await get(`data/${domain}/status.json`)).json();
+            if (status.available !== true || status.fixture !== false || status.datasetUrl !== null || status.mode !== "runtime-api") {
+              throw new Error(`Production ${domain} runtime publication status is invalid`);
+            }
+            if (!Array.isArray(status.sourceIds) || !status.sourceIds.includes("peoplegroups-org-api")) {
+              throw new Error(`Production ${domain} status does not identify PeopleGroups.org`);
+            }
+          }
+
+          const prayer = await (await get("data/prayer/status.json")).json();
+          if (prayer.templateVersion !== "u12c-v1" || prayer.templateReviewedAt !== "2026-08-22") {
+            throw new Error("Production prayer template certification metadata is invalid");
           }
           NODE
 

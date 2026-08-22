@@ -1,7 +1,11 @@
 {
   "schemaVersion": 1,
-  "available": false,
+  "available": true,
   "fixture": false,
+  "mode": "runtime-api",
   "datasetUrl": null,
-  "reason": "Reviewed real-world prayer guides are not published in this build. U8 validates the prayer system with fictional fixtures only."
+  "reason": null,
+  "sourceIds": ["peoplegroups-org-api"],
+  "templateVersion": "u12c-v1",
+  "templateReviewedAt": "2026-08-22"
 }
