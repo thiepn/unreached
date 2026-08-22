@@ -51,7 +51,6 @@
       "name": "PeopleGroups.org Public API",
       "provider": "International Mission Board Global Research Department",
       "canonicalUrl": "https://peoplegroups.org/using-the-api/",
-      "termsUrl": "https://peoplegroups.org/using-the-api/",
       "contentTypes": ["people_groups", "countries", "languages", "religions", "mission_status", "resource_indicators", "editorial_descriptions"],
       "status": "conditional",
       "commercialUse": null,
@@ -145,7 +144,6 @@
       "publicReleaseAllowed": false,
       "browserRedistributionAllowed": false,
       "requirements": ["do not scrape or bulk reproduce proprietary linguistic data", "obtain a compatible license before dataset integration"],
-      "permissionGate": "Obtain a compatible license before any Ethnologue-derived dataset is integrated into this public product.",
       "termsReviewedAt": "2026-08-22"
     }
   ]
