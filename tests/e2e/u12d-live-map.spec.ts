@@ -9,23 +9,23 @@ test.beforeEach(async ({ page }) => {
 test("mission atlas renders source-native PeopleGroups layers and country context", async ({ page }) => {
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
 
-  await expect(page.getByText("GSEC 0–3 population share", { exact: true }).first()).toBeVisible();
-
   const desktopSearch = page.locator("#desktop-country-search");
   const mobileSheet = page.locator(".mobile-map-sheet");
-  const search = await desktopSearch.isVisible()
-    ? desktopSearch
-    : page.locator("#mobile-country-search");
+  const desktop = await desktopSearch.isVisible();
+  const search = desktop ? desktopSearch : page.locator("#mobile-country-search");
 
-  if (!(await desktopSearch.isVisible())) {
+  if (desktop) {
+    await expect(page.getByText("GSEC 0–3 population share", { exact: true }).filter({ visible: true }).first()).toBeVisible();
+  } else {
     await mobileSheet.locator("summary").click();
     await expect(search).toBeVisible();
+    await expect(mobileSheet.getByText("GSEC 0–3 population share", { exact: true }).filter({ visible: true }).first()).toBeVisible();
   }
 
   await search.fill("Benin");
   await page.locator(".country-row:visible", { hasText: "Benin" }).first().click();
 
-  if (await desktopSearch.isVisible()) {
+  if (desktop) {
     await expect(page.getByRole("heading", { name: "Benin" })).toBeVisible();
     await expect(page.getByText("People contexts").first()).toBeVisible();
     await expect(page.getByText("GSEC 0–3").first()).toBeVisible();
