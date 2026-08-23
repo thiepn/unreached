@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await installPeopleGroupsFixture(page);
 });
 
-test("live people and country surfaces preserve PEID, PGID and GSEC semantics", async ({ page }) => {
+test("live people and country surfaces preserve one-record PEID, PGID and GSEC semantics", async ({ page }) => {
   await page.goto("./#/peoples");
   await expect(page.getByRole("heading", { name: "Meet the peoples behind the map." })).toBeVisible();
   const peopleLink = page.getByRole("link", { name: new RegExp(VISIBLE_TEST_PEOPLE) }).first();
@@ -15,13 +15,16 @@ test("live people and country surfaces preserve PEID, PGID and GSEC semantics", 
 
   await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
   await expect(page.getByText(`PEID ${VISIBLE_TEST_PEID}`, { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("PGID PG910001", { exact: true })).toBeVisible();
-  await expect(page.getByText("PGID PG910002", { exact: true })).toBeVisible();
-  await expect(page.getByText("Mixed GSEC status", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("2–5", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText(/Partial sum/).first()).toBeVisible();
-  await expect(page.getByText("Available", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/PEID 910001 · PGID PG910001/)).toBeVisible();
+  await expect(page.getByText("Unreached", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("2", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/PeopleGroups.org estimate for Benin/)).toBeVisible();
+  await expect(page.getByText("Bible: Available", { exact: true })).toBeVisible();
+  await expect(page.getByText(/one PGID country-context record for this PEID/)).toBeVisible();
+  await expect(page.getByText(/does not treat PEID as a cross-country grouping key/)).toBeVisible();
 
+  await expect(page.getByText("PGID PG910002", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Mixed GSEC status", { exact: true })).toHaveCount(0);
   await expect(page.getByText("JP scale", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Christian adherents", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Frontier", { exact: true })).toHaveCount(0);
@@ -41,7 +44,7 @@ test("live people can be searched, saved locally and opened in certified prayer 
   const dialog = page.getByRole("dialog", { name: "Search Unreached" });
   const search = dialog.getByRole("searchbox", { name: "Search peoples, countries or languages" });
   await search.fill(String(VISIBLE_TEST_PEID));
-  const result = dialog.getByRole("link", { name: new RegExp(VISIBLE_TEST_PEOPLE) });
+  const result = dialog.getByRole("link", { name: new RegExp(VISIBLE_TEST_PEOPLE) }).first();
   await expect(result).toBeVisible({ timeout: 15_000 });
   await result.click();
 
@@ -52,11 +55,12 @@ test("live people can be searched, saved locally and opened in certified prayer 
 
   await page.goto("./#/saved");
   await expect(page.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
-  await expect(page.getByText("Mixed GSEC status", { exact: true })).toBeVisible();
+  await expect(page.getByText("Unreached", { exact: true })).toBeVisible();
 
   await page.goto(`./#/pray/${VISIBLE_TEST_PEID}`);
   await expect(page.getByRole("heading", { name: `Pray for ${VISIBLE_TEST_PEOPLE}` })).toBeVisible();
   await expect(page.getByText(/GSEC 0–3/).first()).toBeVisible();
+  await expect(page.getByText(/Benin/).first()).toBeVisible();
   await expect(page.getByText(/Template u12c-v1 is fixed and release-certified/)).toBeVisible();
   await expect(page.getByText(/good news of Jesus Christ/)).toBeVisible();
   await expect(page.getByText(/prayer score/i)).toBeVisible();
