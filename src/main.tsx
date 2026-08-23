@@ -19,5 +19,6 @@ import "./styles/u12e-languages.css";
 import "./styles/discovery.css";
 import "./styles/about.css";
 import "./styles/v101-hotfix.css";
+import "./styles/v11.css";
 
 render(<App />, document.getElementById("app")!);
