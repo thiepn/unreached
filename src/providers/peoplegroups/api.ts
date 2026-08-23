@@ -5,6 +5,7 @@ export const PEOPLE_GROUPS_PAGE_SIZE = 250;
 export const PEOPLE_GROUPS_MAX_PAGES = 100;
 export const PEOPLE_GROUPS_MAX_RECORDS = 25_000;
 export const PEOPLE_GROUPS_REQUEST_TIMEOUT_MS = 10_000;
+export const PEOPLE_GROUPS_FETCH_CONCURRENCY = 6;
 
 export class PeopleGroupsApiError extends Error {
   constructor(
@@ -118,6 +119,19 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
     return parsed.data;
   }
 
+  function acceptPage(first: PeopleGroupsPage, next: PeopleGroupsPage, records: PeopleGroupsApiRecord[], pgids: Set<string>): void {
+    if (next.totalPages !== first.totalPages) throw new PeopleGroupsApiError("PeopleGroups.org pagination changed during the same load.", "schema");
+    if (first.totalRecords !== null && next.totalRecords !== null && next.totalRecords !== first.totalRecords) {
+      throw new PeopleGroupsApiError("PeopleGroups.org total record count changed during the same load.", "schema");
+    }
+    for (const record of next.records) {
+      if (pgids.has(record.PGID)) throw new PeopleGroupsApiError(`PeopleGroups.org returned duplicate PGID ${record.PGID} across pages.`, "schema");
+      pgids.add(record.PGID);
+      records.push(record);
+    }
+    if (records.length > PEOPLE_GROUPS_MAX_RECORDS) throw new PeopleGroupsApiError("PeopleGroups.org corpus exceeded the runtime record budget.", "bounds");
+  }
+
   async function fetchAll(options: { signal?: AbortSignal; onPage?: (page: PeopleGroupsPage) => void } = {}): Promise<PeopleGroupsApiRecord[]> {
     const first = await fetchPage(1, options.signal);
     options.onPage?.(first);
@@ -125,19 +139,21 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
     const pgids = new Set(first.records.map((record) => record.PGID));
     if (pgids.size !== first.records.length) throw new PeopleGroupsApiError("PeopleGroups.org returned duplicate PGIDs within the first page.", "schema");
 
-    for (let page = 2; page <= first.totalPages; page += 1) {
-      const next = await fetchPage(page, options.signal);
-      if (next.totalPages !== first.totalPages) throw new PeopleGroupsApiError("PeopleGroups.org pagination changed during the same load.", "schema");
-      if (first.totalRecords !== null && next.totalRecords !== null && next.totalRecords !== first.totalRecords) {
-        throw new PeopleGroupsApiError("PeopleGroups.org total record count changed during the same load.", "schema");
+    // The corpus is dozens of pages in production. Fetch independent pages in
+    // small bounded batches instead of serially waiting for every network RTT.
+    // Validation and progress publication are still applied in page order so
+    // the fail-closed snapshot contract remains deterministic.
+    for (let start = 2; start <= first.totalPages; start += PEOPLE_GROUPS_FETCH_CONCURRENCY) {
+      const pageNumbers = Array.from(
+        { length: Math.min(PEOPLE_GROUPS_FETCH_CONCURRENCY, first.totalPages - start + 1) },
+        (_, index) => start + index,
+      );
+      const batch = await Promise.all(pageNumbers.map((page) => fetchPage(page, options.signal)));
+      batch.sort((a, b) => a.page - b.page);
+      for (const next of batch) {
+        acceptPage(first, next, records, pgids);
+        options.onPage?.(next);
       }
-      for (const record of next.records) {
-        if (pgids.has(record.PGID)) throw new PeopleGroupsApiError(`PeopleGroups.org returned duplicate PGID ${record.PGID} across pages.`, "schema");
-        pgids.add(record.PGID);
-        records.push(record);
-      }
-      options.onPage?.(next);
-      if (records.length > PEOPLE_GROUPS_MAX_RECORDS) throw new PeopleGroupsApiError("PeopleGroups.org corpus exceeded the runtime record budget.", "bounds");
     }
 
     if (first.totalRecords !== null && records.length !== first.totalRecords) {
