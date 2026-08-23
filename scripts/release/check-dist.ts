@@ -11,14 +11,14 @@ for (const path of ["site.webmanifest", "icon.svg", "robots.txt", "maps/world-co
   await stat(resolve(dist, path));
 }
 
-for (const domain of ["mission", "countries", "peoples", "prayer"]) {
+for (const domain of ["mission", "countries", "peoples", "prayer", "languages"]) {
   const directory = resolve(dist, "data", domain);
   const entries = await readdir(directory);
   const forbidden = entries.filter((entry) => entry !== "status.json" && entry !== "README.txt");
   if (forbidden.length) {
-    throw new Error(`U12D ${domain} must not ship a static source-derived dataset (${forbidden.join(", ")}).`);
+    throw new Error(`U12E ${domain} must not ship a static source-derived dataset (${forbidden.join(", ")}).`);
   }
-  if (!entries.includes("status.json")) throw new Error(`U12D ${domain} runtime status metadata is missing from dist.`);
+  if (!entries.includes("status.json")) throw new Error(`U12E ${domain} runtime status metadata is missing from dist.`);
   const status = JSON.parse(await readFile(resolve(directory, "status.json"), "utf8")) as {
     available?: unknown;
     fixture?: unknown;
@@ -26,7 +26,7 @@ for (const domain of ["mission", "countries", "peoples", "prayer"]) {
     datasetUrl?: unknown;
   };
   if (status.available !== true || status.fixture !== false || status.mode !== "runtime-api" || status.datasetUrl !== null) {
-    throw new Error(`U12D ${domain} dist status does not declare runtime-api publication safely.`);
+    throw new Error(`U12E ${domain} dist status does not declare runtime-api publication safely.`);
   }
 }
 
@@ -58,4 +58,4 @@ if (geographyBytes > 5 * 1024 * 1024) throw new Error(`World geography unexpecte
 
 const total = await size(dist);
 if (total > 20 * 1024 * 1024) throw new Error(`Production dist unexpectedly exceeds 20 MiB (${total} bytes).`);
-console.log(`U12D production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only mission/PeopleGroups status metadata, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
+console.log(`U12E production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only mission/PeopleGroups/language status metadata, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
