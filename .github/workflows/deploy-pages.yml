@@ -116,14 +116,12 @@ jobs:
           if (manifest.scope !== "/unreached/") throw new Error("Unexpected production manifest scope");
           if (manifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest start_url");
 
-          for (const domain of ["context", "languages"]) {
-            const status = await (await get(`data/${domain}/status.json`)).json();
-            if (status.available !== false || status.fixture !== false || status.datasetUrl !== null) {
-              throw new Error(`Production ${domain} status violates remaining release gate`);
-            }
+          const context = await (await get("data/context/status.json")).json();
+          if (context.available !== false || context.fixture !== false || context.datasetUrl !== null) {
+            throw new Error("Production context status violates remaining release gate");
           }
 
-          for (const domain of ["mission", "countries", "peoples", "prayer"]) {
+          for (const domain of ["mission", "countries", "peoples", "prayer", "languages"]) {
             const status = await (await get(`data/${domain}/status.json`)).json();
             if (status.available !== true || status.fixture !== false || status.datasetUrl !== null || status.mode !== "runtime-api") {
               throw new Error(`Production ${domain} runtime publication status is invalid`);
