@@ -50,23 +50,24 @@ test("primary navigation emphasizes Explore, Peoples and Pray while Browse keeps
   const browse = primary.getByRole("button", { name: "Browse", exact: true });
   await expect(browse).toBeVisible();
   await browse.click();
+  await expect(page.locator(".browse-menu__panel")).toBeVisible();
   await expect(page.getByRole("link", { name: /Countries/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Languages/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Search people, countries and languages" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
-test("tablet and small-laptop widths keep the simplified primary navigation and Browse sheet", async ({ page }) => {
+test("tablet and small-laptop widths keep compact desktop navigation without duplicate mobile Browse UI", async ({ page }) => {
   await page.setViewportSize({ width: 820, height: 900 });
   await page.goto("./#/countries");
-  const primary = page.getByRole("navigation", { name: "Primary navigation" }).filter({ visible: true }).first();
+  const primary = page.locator(".desktop-nav");
+  await expect(primary).toBeVisible();
   for (const label of ["Explore", "Peoples", "Pray"]) await expect(primary.getByRole("link", { name: label, exact: true })).toBeVisible();
   const browse = primary.getByRole("button", { name: "Browse", exact: true });
-  await expect(browse).toBeVisible();
   await browse.click();
-  const sheet = page.locator(".mobile-browse-sheet");
-  await expect(sheet).toBeVisible();
-  await expect(sheet.getByRole("link", { name: /Languages/ })).toBeVisible();
+  await expect(page.locator(".browse-menu__panel")).toBeVisible();
+  await expect(page.locator(".mobile-browse-sheet")).toBeHidden();
+  await expect(page.getByRole("button", { name: "Search people, countries and languages" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
