@@ -117,8 +117,23 @@ jobs:
           if (manifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest start_url");
 
           const context = await (await get("data/context/status.json")).json();
-          if (context.available !== false || context.fixture !== false || context.datasetUrl !== null) {
-            throw new Error("Production context status violates remaining release gate");
+          if (context.available !== true || context.fixture !== false || context.mode !== "reviewed-editorial" || context.datasetUrl !== "data/context/editorial.v2.json") {
+            throw new Error("Production context status violates U12F reviewed-editorial contract");
+          }
+          if (!Number.isInteger(context.profileCount) || context.profileCount < 1 || context.identityProvider !== "peoplegroups-org") {
+            throw new Error("Production context identity/profile metadata is invalid");
+          }
+          const editorial = await (await get(context.datasetUrl)).json();
+          if (editorial.schemaVersion !== 2 || editorial.fixture !== false || !Array.isArray(editorial.profiles) || editorial.profiles.length !== context.profileCount) {
+            throw new Error("Production editorial context dataset does not match status metadata");
+          }
+          for (const profile of editorial.profiles) {
+            if (profile.peopleEntityId !== `people-entity:peoplegroups:${profile.peid}` || profile.identity?.targetPeid !== profile.peid || profile.identity?.numericCoincidenceUsed !== false) {
+              throw new Error(`Editorial context identity contract failed for PEID ${profile.peid}`);
+            }
+            if (profile.review?.status !== "published" || profile.review?.checklist?.identityMatchChecked !== true) {
+              throw new Error(`Editorial context review contract failed for PEID ${profile.peid}`);
+            }
           }
 
           for (const domain of ["mission", "countries", "peoples", "prayer", "languages"]) {
