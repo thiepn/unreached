@@ -4,12 +4,20 @@ import {
   LngLatBounds,
   Map as MapLibreMap,
   NavigationControl,
+  setWorkerUrl,
   type StyleSpecification,
 } from "maplibre-gl";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
 import { useEffect, useRef } from "preact/hooks";
 
 import type { MissionMapGeography } from "../visualization";
 import type { MapCountryFeature, MapViewState, WorldGeography } from "./types";
+
+// Keep the dedicated CSP-safe worker, but configure it only when the lazy
+// Explore/WorldMap chunk is actually requested. This prevents MapLibre from
+// inflating the application bootstrap bundle on Peoples, Countries, Languages,
+// Prayer, Saved, and About routes.
+setWorkerUrl(maplibreWorkerUrl);
 
 const HOME_VIEW: MapViewState = { longitude: 10, latitude: 18, zoom: 1.15 };
 const NONE_FILTER_KEY = "__unreached-none__";
@@ -170,9 +178,6 @@ export function WorldMap({
         renderWorldCopies: false,
         attributionControl: false,
         fadeDuration: reducedMotion() ? 0 : 180,
-        // This atlas uses basic 2D GeoJSON fills and lines. WebGL1 keeps the
-        // renderer compatible with browsers and devices where WebGL2 is not
-        // available, without sacrificing any map feature used here.
         canvasContextAttributes: {
           contextType: "webgl",
           powerPreference: "default",
@@ -190,6 +195,14 @@ export function WorldMap({
     map.addControl(new NavigationControl({ showCompass: false, showZoom: true }), "top-right");
     map.addControl(new AttributionControl({ compact: true }), "bottom-right");
 
+    // MapLibre measures the container during construction. Responsive shell
+    // changes, mobile browser chrome, font loading, and orientation changes can
+    // alter that size later; explicitly resize whenever the map host changes.
+    const resizeObserver = typeof ResizeObserver === "undefined"
+      ? null
+      : new ResizeObserver(() => map.resize());
+    resizeObserver?.observe(container);
+
     const findCountry = (key: string): MapCountryFeature | undefined => geography.features.find((feature) => feature.properties.mapKey === key);
 
     const fitCountry = (key: string): void => {
@@ -206,6 +219,7 @@ export function WorldMap({
 
     map.on("load", () => {
       loaded = true;
+      map.resize();
       delete container.dataset.mapError;
       delete container.dataset.mapErrorStack;
       container.dataset.mapReady = "true";
@@ -270,6 +284,7 @@ export function WorldMap({
     });
 
     map.on("webglcontextrestored", () => {
+      map.resize();
       delete container.dataset.mapError;
       delete container.dataset.mapErrorStack;
       container.dataset.mapReady = "true";
@@ -277,6 +292,7 @@ export function WorldMap({
     });
 
     return () => {
+      resizeObserver?.disconnect();
       delete container.dataset.mapReady;
       delete container.dataset.mapError;
       delete container.dataset.mapErrorStack;
