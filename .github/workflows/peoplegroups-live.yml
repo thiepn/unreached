@@ -69,7 +69,8 @@ jobs:
             state="success"
             description="PeopleGroups.org full-corpus/browser and editorial PEID certification passed"
           fi
-          payload=$(jq -nc --arg state "${state}" --arg description "${description}" '{state:$state,description:$description,context:"unreached/peoplegroups-live"}')
+          target="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          payload=$(jq -nc --arg state "${state}" --arg target "${target}" --arg description "${description}" '{state:$state,target_url:$target,description:$description,context:"unreached/peoplegroups-live"}')
           curl --fail-with-body --silent --show-error --location \
             --request POST \
             --header "Accept: application/vnd.github+json" \
