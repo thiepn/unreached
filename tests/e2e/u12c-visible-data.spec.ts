@@ -54,8 +54,9 @@ test("live people can be searched, saved locally and opened in certified prayer 
   await expect(page.getByRole("button", { name: "Remove from saved" })).toBeVisible();
 
   await page.goto("./#/saved");
-  await expect(page.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
-  await expect(page.getByText("Unreached", { exact: true })).toBeVisible();
+  const savedCard = page.locator("article.saved-person-card").filter({ has: page.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true }) });
+  await expect(savedCard).toBeVisible();
+  await expect(savedCard.getByText("Unreached", { exact: true })).toBeVisible();
 
   await page.goto(`./#/pray/${VISIBLE_TEST_PEID}`);
   await expect(page.getByRole("heading", { name: `Pray for ${VISIBLE_TEST_PEOPLE}` })).toBeVisible();
