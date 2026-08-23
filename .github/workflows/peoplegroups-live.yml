@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Fast editorial PEID/PGID identity preflight
+        run: npm run peoplegroups:editorial-identity-live-check
+
       - name: Build application and runtime policy gates
         run: npm run build
 
