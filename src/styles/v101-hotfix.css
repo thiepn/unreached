@@ -98,6 +98,46 @@
   padding-inline: 0.65rem;
 }
 
+/* app.css previously hid desktop navigation below 1040px but did not show
+   mobile navigation until 760px, leaving tablets and small laptops with no
+   primary navigation. Keep a compact textual top navigation in that range. */
+@media (min-width: 761px) and (max-width: 1040px) {
+  .site-header {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    padding-inline: var(--space-4);
+  }
+
+  .desktop-nav {
+    display: flex;
+    justify-self: center;
+    min-width: 0;
+  }
+
+  .desktop-nav .nav-link {
+    gap: 0;
+    padding-inline: 0.46rem;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+
+  .desktop-nav .nav-link svg {
+    display: none;
+  }
+
+  .brand {
+    gap: var(--space-2);
+  }
+
+  .brand-word {
+    font-size: 1.25rem;
+  }
+
+  .header-actions {
+    gap: var(--space-1);
+  }
+}
+
 @media (max-width: 760px) {
   .header-actions .search-action {
     display: inline-grid !important;
