@@ -8,7 +8,7 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** **U12E — Live Language & Resource Integration**
+- **Current phase:** **U12F — Reviewed Editorial Context Migration & Activation**
 
 ## Real-data architecture
 
@@ -21,6 +21,8 @@ The public application reads the provider's read-only API directly from the brow
 - **PEID** is the canonical cross-country people entity used by live people routes.
 - Every **PGID** is preserved as its own country-context record.
 - Valid PeopleGroups.org **ROL / ISO 639-3** values identify live language records.
+- Reviewed editorial context is attached only through an explicitly certified PEID identity mapping with provider PEID/PGID, name, country and language evidence.
+- Legacy numeric IDs are never treated as PEIDs merely because the numbers happen to match.
 - IMB **GSEC** remains source-native:
   - GSEC 0–3 → `unreached`
   - GSEC 4–6 → `other`
@@ -39,11 +41,11 @@ The public application reads the provider's read-only API directly from the brow
 | Countries | Natural Earth geography + live PeopleGroups.org runtime records |
 | Languages & resources | Live PeopleGroups.org ISO 639-3 + raw resource fields |
 | Prayer | Live people subjects + fixed release-certified prayer template |
-| Reviewed editorial context dataset | Still separately gated |
+| Reviewed editorial context | Reviewed PEID-native authored profiles with intentionally partial coverage |
 | ProgressBible translation-progress data | Permission-gated and not used |
 | Ethnologue proprietary taxonomy | Permission-gated and not used |
 
-PeopleGroups.org runtime reads are policy-approved independently from static redistribution. Static public dataset mirroring and third-party people-photo reuse remain blocked unless separately authorized.
+PeopleGroups.org runtime reads are policy-approved independently from static redistribution. The reviewed editorial layer publishes authored claims and source links rather than a static mirror of the provider database. Third-party people-photo reuse remains blocked unless separately authorized.
 
 ## Live product surfaces
 
@@ -81,6 +83,29 @@ Every layer preserves no-data states. Population/context denominators are shown 
 - PeopleGroups.org source taxonomy
 - attributed provider descriptions
 - source update dates and methodology notes
+- a reviewed contextual article when one has passed the U12F publication gate
+
+### Reviewed Editorial Context
+
+The U7 editorial model is now migrated to schema v2 and uses PeopleGroups PEIDs as its production identity.
+
+A published contextual profile carries:
+
+- the target PEID and canonical `people-entity:peoplegroups:<PEID>` identity
+- one or more verified PGID anchors
+- country and ISO 639-3 identity anchors
+- explicit identity-match evidence
+- source-cited factual claims
+- multi-source synthesis where needed
+- clearly labeled interpretation when appropriate
+- current-claim `asOf` and `reviewAfter` dates
+- sensitivity and editorial-review metadata
+
+Publication fails closed when the target PEID, PGID, country, language or verified name no longer matches the current PeopleGroups.org corpus. A legacy ID may be retained only as migration provenance and cannot establish identity by numeric coincidence.
+
+Coverage is intentionally partial. People without a reviewed contextual article retain their complete live source profile and receive a clear “not yet published” state rather than generic AI-generated cultural, religious or spiritual filler.
+
+The first U12F production profile is **Fon / PeopleGroups PEID 14343**. It demonstrates the reviewed publication path while broader contextual coverage remains an editorial expansion task.
 
 ### Country Explorer
 
@@ -143,7 +168,7 @@ The runtime includes:
 - 7-day explicit stale fallback window
 - best-effort cache behavior so browser-storage failure cannot block a healthy live API
 
-The normal browser suite uses a deterministic intercepted provider corpus. A separate **PeopleGroups Live Certification** workflow tests the full real corpus plus browser CORS/API behavior so provider uptime does not redefine unrelated application correctness.
+The normal browser suite uses a deterministic intercepted provider corpus. A separate **PeopleGroups Live Certification** workflow tests the full real corpus plus browser CORS/API behavior and now also validates every published editorial PEID/PGID/country/language identity mapping against the current source corpus.
 
 ## Local development
 
@@ -172,6 +197,7 @@ npm run visualization:check
 npm run visualization:live-check
 npm run country:check
 npm run people:check
+npm run context:check
 npm run prayer:check
 npm run language:check
 npm run discovery:check
@@ -203,7 +229,7 @@ Vite is configured for the `/unreached/` project path.
 - **U4 — Mission Visualization Engine** ✅
 - **U5 — Country Explorer** ✅
 - **U6 — People Group Explorer** ✅
-- **U7 — Context & Why Unreached?** ✅ architecture/review system; production editorial dataset still separately gated
+- **U7 — Context & Why Unreached?** ✅ architecture/review system; production identity/publication migration continued in U12F
 - **U8 — Prayer Experience** ✅
 - **U9 — Languages & Scripture Integration** ✅ architecture; legacy publication dataset superseded by U12E runtime semantics
 - **U10 — Search, Discovery & Local Personalization** ✅
@@ -212,10 +238,11 @@ Vite is configured for the `/unreached/` project path.
 - **U12B — Real Data Runtime Architecture** ✅
 - **U12C — Visible Real-Data Integration** ✅
 - **U12D — Live Mission Visualization** ✅
-- **U12E — Live Language & Resource Integration** 🚧 implementation/certification
+- **U12E — Live Language & Resource Integration** ✅ production-certified
+- **U12F — Reviewed Editorial Context Migration & Activation** 🚧 implementation/certification
 
 See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md`](docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md) for the current data/publication contract.
 
 ## Product rule
 
-A feature belongs only if it directly strengthens **Explore → Understand → Pray** while preserving source meaning, uncertainty, and user privacy.
+A feature belongs only if it directly strengthens **Explore → Understand → Pray** while preserving source meaning, uncertainty, editorial provenance, and user privacy.
