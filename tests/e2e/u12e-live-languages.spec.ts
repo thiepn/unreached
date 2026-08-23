@@ -22,8 +22,9 @@ test("live language explorer preserves raw PeopleGroups resource semantics", asy
   await expect(page.getByText("120K", { exact: true })).toBeVisible();
   await expect(page.getByText(/1\/2 contexts report population/)).toBeVisible();
   await expect(page.getByText("Bible source labels", { exact: true })).toBeVisible();
-  await expect(page.getByText("Available", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("Unknown", { exact: true }).first()).toBeVisible();
+  const bibleBreakdown = page.locator(".language-resource-breakdown").first();
+  await expect(bibleBreakdown.getByText("Available", { exact: true })).toBeVisible();
+  await expect(bibleBreakdown.getByText("Unknown", { exact: true })).toBeVisible();
   await expect(page.getByText(/PGID country-context records reporting this ISO 639-3 language/)).toBeVisible();
 
   await expect(page.getByText(/Complete Bible/i)).toHaveCount(0);
