@@ -2,13 +2,11 @@ import { expect, test } from "@playwright/test";
 
 import { installPeopleGroupsFixture } from "./peoplegroups-fixture";
 
-test.beforeEach(async ({ page }) => {
-  await installPeopleGroupsFixture(page);
-});
+test.beforeEach(async ({ page }) => { await installPeopleGroupsFixture(page); });
 
 test("live language explorer preserves raw PeopleGroups resource semantics", async ({ page }) => {
   await page.goto("./#/languages");
-  await expect(page.getByRole("heading", { name: "Explore languages and resources." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Explore languages." })).toBeVisible();
 
   const fon = page.getByRole("link", { name: /Fon/ }).first();
   await expect(fon).toBeVisible({ timeout: 15_000 });
