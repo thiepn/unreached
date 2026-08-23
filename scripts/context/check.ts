@@ -19,6 +19,7 @@ const runtimePeople = buildRuntimePeopleEntities([
     Pop: 120000,
     ROL: "fon",
     Lang: "Fon",
+    PplNm: "Browser Test People",
     Rlgn: "Traditional Religion",
     GSEC: 2,
     Bible: "Available",
@@ -26,7 +27,7 @@ const runtimePeople = buildRuntimePeopleEntities([
     UpdatedDate: "2026-08-22T00:00:00Z"
   }),
   peopleGroupsApiRecordSchema.parse({
-    PEID: 910001,
+    PEID: 910002,
     PGID: "PG910002",
     NmDisp: "Browser Test People",
     ISOalpha3: "NGA",
@@ -34,6 +35,7 @@ const runtimePeople = buildRuntimePeopleEntities([
     Pop: null,
     ROL: "fon",
     Lang: "Fon",
+    PplNm: "Browser Test People",
     Rlgn: "Traditional Religion",
     GSEC: 5,
     Bible: "Unknown",
@@ -73,7 +75,7 @@ const productionRaw = JSON.parse(await readFile(resolve(process.cwd(), "public/d
 const production = editorialContextDatasetSchema.parse(productionRaw);
 assertContextDatasetIntegrity(production, new Date("2026-08-23T22:00:00Z"));
 if (production.fixture) throw new Error("Production editorial context must never be fixture data.");
-if (production.profiles.length < 1) throw new Error("U12F must publish at least one reviewed PEID-native editorial profile.");
+if (production.profiles.length < 1) throw new Error("U12F must publish at least one reviewed source-record editorial profile.");
 for (const published of production.profiles) {
   if (published.review.status !== "published") throw new Error(`${published.peopleEntityId} is not publication-reviewed.`);
   if (published.identity.numericCoincidenceUsed !== false) throw new Error(`${published.peopleEntityId} relies on numeric coincidence.`);
@@ -85,6 +87,6 @@ if (!status.available || status.fixture) throw new Error("U12F production editor
 if (status.mode !== "reviewed-editorial") throw new Error("U12F production editorial context must use reviewed-editorial mode.");
 if (status.datasetUrl !== "data/context/editorial.v2.json") throw new Error("U12F editorial dataset URL is not canonical.");
 if (status.profileCount !== production.profiles.length) throw new Error("U12F status profile count does not match the publication dataset.");
-if (status.identityProvider !== "peoplegroups-org") throw new Error("U12F editorial identities must be anchored to PeopleGroups.org PEIDs.");
+if (status.identityProvider !== "peoplegroups-org") throw new Error("U12F editorial identities must be anchored to current PeopleGroups.org PEID/PGID records.");
 
-console.log(`U12F contextual editorial validation passed: ${production.profiles.length} reviewed PEID profile(s), explicit identity evidence, no numeric-coincidence migration.`);
+console.log(`U12F contextual editorial validation passed: ${production.profiles.length} reviewed source-record profile(s), explicit PEID/PGID identity evidence, no numeric-coincidence migration.`);
