@@ -1,182 +1,241 @@
-# U12B — PeopleGroups.org Real-Data Runtime Architecture
+# PeopleGroups.org Real-Data Runtime Architecture
 
 **Provider:** PeopleGroups.org / IMB Global Research  
 **Transport:** direct read-only browser API  
 **API base:** `https://peoplegroups.org/wp-json/pg/v1`  
-**Static dataset mirror:** disabled
+**Static dataset mirror:** disabled  
+**Identity contract last live-certified:** 23 August 2026
 
-## Production transport decision
+> **U12F correction to the original U12B design:** the original architecture assumed that one `PEID` grouped multiple country-specific `PGID` records. Complete live-corpus certification disproved that assumption for the current API. This document records the corrected production contract.
 
-U12B selects direct browser reads as the only approved production transport for PeopleGroups.org.
+## Production transport
 
-The provider explicitly documents the API as free, public and read-only, requires no account or API key, invites maps, prayer tools and research applications, and publishes browser-style JavaScript `fetch` examples including full pagination. This is materially different from copying the provider database into Unreached's public static files.
+PeopleGroups.org is used through direct public read-only browser API requests. The provider requires no account or client API key for this API. Unreached does not copy the provider corpus into public static application files.
 
-The source policy therefore distinguishes four operations:
+The source policy distinguishes:
 
-1. development ingestion
-2. direct runtime read
-3. public static release
-4. browser redistribution
+1. development ingestion;
+2. direct runtime read;
+3. public static release;
+4. browser redistribution.
 
-PeopleGroups.org is approved for (1) and (2). It remains blocked for (3) and (4).
+PeopleGroups.org is approved for (1) and (2). Static database mirroring remains blocked for (3) and (4).
 
-## Beta contract
+## Beta / untrusted-input contract
 
-PeopleGroups.org labels the API beta and warns that it may change without warning. U12B treats every response as untrusted external input.
+The API is treated as mutable external input.
 
-Runtime safeguards:
+Runtime safeguards include:
 
 - Zod validation on every record/page;
 - 10-second per-request timeout;
 - maximum 250 records per page;
-- maximum 100 pages;
-- maximum 25,000 records;
-- GSEC constrained to its documented 0–6 range;
+- maximum 100 pages / 25,000 records;
+- GSEC constrained to 0–6;
 - pagination and advertised-record-count consistency checks;
-- duplicate `PGID` detection across the corpus;
+- duplicate `PGID` detection;
+- duplicate `PEID` rejection under the current certified identity contract;
 - single-record request/response `PGID` matching;
 - invalid JSON/schema drift fails closed;
 - no credentials or API keys are sent.
 
-The application must never silently reinterpret a changed provider schema.
+The application never silently reinterprets provider schema drift.
 
-## Identity
+## Current identity contract
 
-PeopleGroups.org provides two identity layers:
+The complete production corpus was audited on **23 August 2026**. The audit found:
 
-- `PGID`: one people-group record in a country/context;
-- `PEID`: the people entity used to relate records across countries.
+- **12,370 PGID records**;
+- **12,370 PEID values**;
+- **0 PEIDs with more than one PGID**;
+- **0 PEIDs spanning more than one country**;
+- **12,370 / 12,370 PGID numeric suffixes equal their PEID**.
 
-U12B canonical runtime identity is:
+The current application therefore treats:
+
+- `PGID` as the people-group-in-country source-record identifier;
+- `PEID` as the provider's numeric entity field paired one-to-one with that PGID in the certified current corpus;
+- the numeric PEID as the existing public route key for backward compatibility, **not** as a cross-country aggregation key.
+
+Canonical compatibility identity remains:
 
 `people-entity:peoplegroups:<PEID>`
 
-Public-route migration key is the numeric `PEID`. Every `PGID` remains preserved below the PEID entity as a country context.
+but each such runtime wrapper contains **exactly one** PGID context and one country.
 
-This deliberately avoids pretending PeopleGroups.org PEIDs are Joshua Project PeopleID3 identifiers. Provider-qualified internal IDs prevent future collisions if multiple sources coexist.
+If a future API corpus contains duplicate PEIDs, the current runtime fails closed. That change must be researched and explicitly modeled rather than automatically recreating the former cross-country rollup assumption.
+
+### Cross-country relationships
+
+Cross-country related records use explicit source taxonomy instead of PEID aggregation:
+
+1. matching `PplNm` / ROP3 people name;
+2. same PeopleGroups people cluster;
+3. same affinity bloc.
+
+These are relationship signals only. Even matching ROP3 people names do not cause records, populations, GSEC values, religion labels, or resources to be collapsed into one synthetic global entity.
 
 ## Reach / mission semantics
 
-U12B does not convert IMB data to Joshua Project methodology. It uses PeopleGroups.org's own GSEC framework for the one neutral reach label required by the runtime.
+Unreached does not convert IMB data into Joshua Project methodology.
 
-Context records retain:
+Each PGID record retains:
 
-- GSEC code, label and description
-- `EvngLvl` source text
-- SPI code and description
-- LPI code, name and description
-- engagement status
-- church-planting status
-- congregation status
+- GSEC code, label and description;
+- `EvngLvl` source text;
+- SPI code and description;
+- LPI code, name and description;
+- engagement status;
+- church-planting status;
+- congregation status.
 
-PeopleGroups.org's GSEC framework identifies levels 0–3 as unreached. U12B therefore derives only:
+The runtime derives only:
 
-- GSEC 0–3 → `unreached`
-- GSEC 4–6 → `other`
-- missing GSEC → `unknown`
+- GSEC 0–3 → `unreached`;
+- GSEC 4–6 → `other`;
+- missing GSEC → `unknown`.
 
-`other` is intentionally not renamed `reached`; U12B does not claim more than the source classification requires. A new GSEC value outside 0–6 fails schema validation rather than being assigned semantics automatically.
+`other` is intentionally not renamed `reached`. A GSEC value outside 0–6 fails validation.
 
-A PEID entity rolls its contexts up as `unreached-only`, `other-only`, `mixed`, or `unknown`. The underlying GSEC and country-context values remain available and are not replaced by the rollup.
+The compatibility wrapper exposes `unreached-only`, `other-only`, or `unknown` for its single record. The former `mixed` PEID rollup is no longer generated by current runtime data; old locally saved snapshots may still retain that historical value for backward compatibility.
 
-## Population aggregation
+## Population semantics
 
-People-group population is a country-context estimate.
+People-group population is a source estimate for one people-group-in-country record.
 
-PEID population uses:
+Current people-profile population semantics are:
 
-`sum-known-country-context-populations`
+`single-pgid-population-estimate`
 
-Every rollup also exposes:
+The value is either:
 
-- known population value;
-- known context count;
-- total context count;
-- whether coverage is complete.
+- the source estimate for that PGID; or
+- unknown when no estimate is reported.
 
-Unknown populations are never converted to zero. If one context lacks population, the displayed sum is explicitly partial.
+There is no cross-country PEID population sum.
+
+Country and language surfaces may legitimately aggregate multiple PGID records. Those aggregates disclose their record denominator and population-field coverage and are not presented as census totals.
 
 Country summaries use the denominator:
 
 `people-group-in-country records returned by PeopleGroups.org`
 
-They expose context count, unreached/other/unknown counts, known population, and population coverage. They are not described as percentages of all people or all residents unless a later methodology supplies a valid denominator.
+## Language and religion
 
-## Language and religion normalization
-
-U12B uses only source-backed identifiers/labels:
+Only source-backed identifiers/labels are used:
 
 - `ROL` is retained only when syntactically valid ISO 639-3;
-- language name/family remain PeopleGroups.org source values;
+- language name/family remain PeopleGroups.org values;
 - religion code/name remain PeopleGroups.org values.
 
-U12B does not import Ethnologue taxonomy or manufacture compatibility with Joshua Project religion codes.
+A people profile reports the language and religion fields from its one PGID record. No “most common PEID context” inference is necessary under the current identity contract.
 
-For a multi-country PEID entity, a primary language/religion is a deterministic most-common context label, used as a discovery convenience rather than a claim of exclusive identity.
+Language pages aggregate PGID records sharing an ISO 639-3 code. Same-named people in different countries remain distinct source records.
 
-## Editorial text
+Ethnologue proprietary taxonomy is not imported, and Joshua Project religion/people identifiers are not fabricated.
+
+## Resource fields
+
+PeopleGroups.org `Bible`, `Jesus`, and `ResTot` values remain source fields.
+
+They are not converted into:
+
+- translation needed;
+- portions;
+- New Testament;
+- complete Bible;
+- distribution/access/comprehension claims.
+
+Language-level resource summaries are distributions across PGID source records, with explicit field coverage.
+
+## Provider editorial text
 
 `PeopleDesc` and `LocationDesc` are tagged `source-attributed-only`.
 
-They may later be displayed only as clearly attributed provider text or passed through the U7 editorial review process. They are not automatically treated as Unreached-authored cultural/historical claims.
+They may be displayed as attributed provider text. They are not automatically promoted into Unreached-authored cultural or historical claims.
+
+The separate U12F reviewed editorial layer requires claim-level citations, freshness/sensitivity review, and exact source-record identity evidence before publication.
+
+## Reviewed editorial identity
+
+A published reviewed-context profile stores:
+
+- target PEID;
+- PGID anchor(s);
+- verified source name;
+- country ISO3 anchor(s);
+- language ISO 639-3 anchor(s);
+- explicit match evidence;
+- verification timestamp;
+- optional legacy ID only as migration provenance.
+
+Identity is checked against live PeopleGroups data. Numeric coincidence with a legacy ID is forbidden.
+
+The first production-reviewed profile is anchored to:
+
+- **Fon of Benin**
+- PEID **12319**
+- PGID **PG012319**
+- country **BEN**
+- language **fon**
 
 ## Images
 
-Runtime records intentionally do not include provider photo URLs in the public model.
+Runtime records intentionally do not publish provider photo URLs.
 
-U12A may retain photo references in private staging for rights review, but U12B does not download, cache, proxy or render third-party people-group images. Image rights remain per-item gated.
+Third-party people images remain separately rights-gated. The runtime does not download, cache, proxy, or render them without a compatible per-item rights decision.
 
 ## Browser cache
 
-Direct API use would otherwise require roughly 50 requests for 12,000+ records at the provider's maximum 250 records/page.
-
-U12B therefore uses an origin-local IndexedDB page cache:
+Direct API use requires many requests for the 12,000+ record corpus. Unreached uses an origin-local IndexedDB cache:
 
 - fresh window: 24 hours;
 - stale fallback window: 7 days;
-- cache is private to the user's browser/origin;
-- cache is not bundled with Unreached or exposed as a public dataset;
-- every cached page is revalidated through the runtime schema before use;
-- cache reads, writes and clears are best-effort only and can never become a prerequisite for live data access.
+- private to the user's browser/origin;
+- not bundled or exposed as a public dataset;
+- cached records revalidated through runtime schemas;
+- reads/writes/clears are best-effort only.
 
 Load policy:
 
 1. complete validated fresh cache → use immediately;
-2. missing, corrupt or unavailable cache → fetch the live corpus;
-3. successful live corpus → return it even if browser storage rejects cache writes;
-4. live failure + previously validated cache younger than 7 days → show stale cache with an explicit warning;
-5. live failure + no acceptable cache → fail closed with an actionable unavailable state.
+2. missing/corrupt/unavailable cache → fetch live corpus;
+3. successful live corpus → return it even if cache write fails;
+4. live failure + validated cache younger than 7 days → explicit stale fallback;
+5. live failure + no acceptable cache → fail closed.
 
-## Performance budgets
+## Performance / distribution budgets
 
-Runtime guardrails:
-
-- no API request before a real-data surface asks for the corpus;
-- maximum 250 records per request;
+- no large API request before a real-data surface requests the shared corpus;
+- maximum 250 records/request;
 - maximum 100 pages / 25,000 records;
-- page progress callback available to UI integration;
-- no raw PeopleGroups.org corpus in `dist/`;
-- no third-party images in the corpus cache;
-- IndexedDB rather than `localStorage` for the large record set.
+- one shared application-session corpus store;
+- no raw PeopleGroups corpus in `dist/`;
+- no third-party images in corpus cache;
+- IndexedDB instead of `localStorage` for the large record set.
 
-U12C should add measured real-browser timing/memory budgets once the actual people explorer consumes this runtime.
+## Live certification
 
-## CORS and live contract certification
+Normal CI is deterministic. External provider availability and source semantics are certified separately.
 
-`tests/e2e/peoplegroups-live.spec.ts` is opt-in. For PR #24 it runs inside the already-registered Browser Certification workflow; after merge a dedicated PeopleGroups Live Certification workflow continues checking the external contract independently of normal deterministic CI.
+The **PeopleGroups Live Certification** workflow performs:
 
-The test loads the Unreached browser origin, fetches one current list record, then uses that returned `PGID` to test the single-record endpoint. It certifies:
+1. fast individual PGID checks for every reviewed editorial identity;
+2. full corpus schema/pagination validation;
+3. full-corpus PEID/PGID identity audit;
+4. validation that all reviewed editorial mappings still match current records;
+5. browser CORS/API contract certification.
 
-- browser CORS access;
-- HTTP success;
-- current core identity fields;
-- exposed WordPress pagination headers;
-- a corpus size above 10,000 records.
+Custom commit status:
 
-Ongoing external-data certification is kept separate from ordinary deterministic CI so transient provider downtime does not redefine unrelated application correctness.
+`unreached/peoplegroups-live`
 
-## U12C boundary
+The status links to its Actions run for diagnostics.
 
-U12B establishes and certifies the runtime architecture. It does not yet replace the existing U6 Joshua-shaped UI model or turn `public/data/peoples/status.json` to available.
+Provider downtime therefore does not redefine unrelated deterministic application correctness, while a real provider identity/schema change still blocks release.
 
-U12C is responsible for integrating the provider-neutral runtime entities into the visible product, migrating filters/cards/profile pages/search/Saved/prayer surfaces, and only then activating public real-data availability.
+## Historical phase note
+
+U12B established the runtime transport/cache/security architecture. U12C–E integrated its original people wrapper into visible surfaces. U12F's complete-corpus audit discovered that the original cross-country PEID interpretation was incorrect for the current API and reconstructed those visible/runtime semantics without changing stable route URLs unnecessarily.
+
+Future changes to the PeopleGroups identity model must be driven by current provider evidence and live certification, not by assumptions inherited from another people-group database.
