@@ -20,6 +20,7 @@ import "./styles/languages.css";
 import "./styles/u12e-languages.css";
 import "./styles/discovery.css";
 import "./styles/about.css";
+import "./styles/v101-hotfix.css";
 
 // MapLibre 5 ships a dedicated worker bundle for environments where an
 // inlined Blob worker is undesirable. Using that worker explicitly also keeps
