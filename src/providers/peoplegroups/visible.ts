@@ -41,7 +41,7 @@ export interface VisibleCountryRecord {
 
 export interface RelatedRuntimePeople {
   entity: RuntimePeopleEntity;
-  relationship: "same-cluster" | "same-affinity-bloc";
+  relationship: "same-rop3-name" | "same-cluster" | "same-affinity-bloc";
 }
 
 function normalized(value: string): string {
@@ -167,11 +167,12 @@ export function entityTaxonomy(entity: RuntimePeopleEntity): {
   peopleName: string | null;
   ethnographicGroup: string | null;
 } {
+  const context = entity.contexts[0];
   return {
-    affinityBloc: mostCommonString(entity.contexts.map((context) => context.taxonomy.affinityBloc)),
-    peopleCluster: mostCommonString(entity.contexts.map((context) => context.taxonomy.peopleCluster)),
-    peopleName: mostCommonString(entity.contexts.map((context) => context.taxonomy.peopleName)),
-    ethnographicGroup: mostCommonString(entity.contexts.map((context) => context.taxonomy.ethnographicGroup)),
+    affinityBloc: context?.taxonomy.affinityBloc ?? null,
+    peopleCluster: context?.taxonomy.peopleCluster ?? null,
+    peopleName: context?.taxonomy.peopleName ?? null,
+    ethnographicGroup: context?.taxonomy.ethnographicGroup ?? null,
   };
 }
 
@@ -207,22 +208,25 @@ export function relatedRuntimePeople(
   limit = 12,
 ): RelatedRuntimePeople[] {
   const taxonomy = entityTaxonomy(entity);
+  const rop3Name = taxonomy.peopleName ? normalized(taxonomy.peopleName) : null;
   const cluster = taxonomy.peopleCluster ? normalized(taxonomy.peopleCluster) : null;
   const affinity = taxonomy.affinityBloc ? normalized(taxonomy.affinityBloc) : null;
-  if (!cluster && !affinity) return [];
+  if (!rop3Name && !cluster && !affinity) return [];
 
   return entities
     .filter((candidate) => candidate.peid !== entity.peid)
     .flatMap((candidate): RelatedRuntimePeople[] => {
       const candidateTaxonomy = entityTaxonomy(candidate);
+      const candidateRop3Name = candidateTaxonomy.peopleName ? normalized(candidateTaxonomy.peopleName) : null;
       const candidateCluster = candidateTaxonomy.peopleCluster ? normalized(candidateTaxonomy.peopleCluster) : null;
       const candidateAffinity = candidateTaxonomy.affinityBloc ? normalized(candidateTaxonomy.affinityBloc) : null;
+      if (rop3Name && candidateRop3Name === rop3Name) return [{ entity: candidate, relationship: "same-rop3-name" }];
       if (cluster && candidateCluster === cluster) return [{ entity: candidate, relationship: "same-cluster" }];
       if (affinity && candidateAffinity === affinity) return [{ entity: candidate, relationship: "same-affinity-bloc" }];
       return [];
     })
     .sort((a, b) => {
-      const relationRank = (value: RelatedRuntimePeople["relationship"]) => value === "same-cluster" ? 0 : 1;
+      const relationRank = (value: RelatedRuntimePeople["relationship"]) => value === "same-rop3-name" ? 0 : value === "same-cluster" ? 1 : 2;
       return relationRank(a.relationship) - relationRank(b.relationship)
         || b.entity.population.knownValue - a.entity.population.knownValue
         || a.entity.displayName.localeCompare(b.entity.displayName, "en");
