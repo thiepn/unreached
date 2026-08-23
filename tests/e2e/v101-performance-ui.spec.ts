@@ -78,6 +78,18 @@ test("primary navigation exposes Languages and Search on every viewport", async 
   await expectNoHorizontalOverflow(page);
 });
 
+test("tablet and small-laptop widths keep visible primary navigation", async ({ page }) => {
+  await page.setViewportSize({ width: 820, height: 900 });
+  await page.goto("./#/countries");
+  const primary = page.getByRole("navigation", { name: "Primary navigation" }).first();
+  await expect(primary).toBeVisible();
+  for (const label of ["Explore", "Peoples", "Countries", "Languages", "Pray", "About"]) {
+    await expect(primary.getByRole("link", { name: label, exact: true })).toBeVisible();
+  }
+  await expect(page.getByRole("button", { name: "Search people, countries and languages" })).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+});
+
 test("People Explorer bounds the initial DOM and progressively reveals results", async ({ page }) => {
   await page.goto("./#/peoples");
   await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
