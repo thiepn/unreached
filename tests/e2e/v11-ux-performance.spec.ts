@@ -10,17 +10,21 @@ const records = [{
   PplNm: VISIBLE_TEST_PEOPLE, UpdatedDate: "2026-08-24T00:00:00.000Z",
 }];
 
-test("opening global Search is instant and does not load the remote corpus until a query is typed", async ({ page }) => {
-  let providerRequests = 0;
+async function installSingleRecordCorpus(page: import("@playwright/test").Page, onRequest?: () => void) {
   await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
-    providerRequests += 1;
+    onRequest?.();
     await route.fulfill({ status: 200, contentType: "application/json", headers: {
       "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "X-WP-Total, X-WP-TotalPages",
       "X-WP-Total": "1", "X-WP-TotalPages": "1",
     }, body: JSON.stringify(records) });
   });
+}
 
-  await page.goto("./#/countries");
+test("opening global Search is instant and does not load the remote corpus until a query is typed", async ({ page }) => {
+  let providerRequests = 0;
+  await installSingleRecordCorpus(page, () => { providerRequests += 1; });
+
+  await page.goto("./#/about");
   await page.keyboard.press("/");
   const dialog = page.getByRole("dialog", { name: "Search Unreached" });
   await expect(dialog).toBeVisible();
@@ -35,13 +39,7 @@ test("opening global Search is instant and does not load the remote corpus until
 });
 
 test("people profile makes prayer primary while keeping deep source detail opt-in", async ({ page }) => {
-  await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
-    await route.fulfill({ status: 200, contentType: "application/json", headers: {
-      "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "X-WP-Total, X-WP-TotalPages",
-      "X-WP-Total": "1", "X-WP-TotalPages": "1",
-    }, body: JSON.stringify(records) });
-  });
-
+  await installSingleRecordCorpus(page);
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
   await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole("link", { name: /Pray now/ })).toBeVisible();
@@ -51,12 +49,7 @@ test("people profile makes prayer primary while keeping deep source detail opt-i
 });
 
 test("country index is progressively bounded", async ({ page }) => {
-  await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
-    await route.fulfill({ status: 200, contentType: "application/json", headers: {
-      "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "X-WP-Total, X-WP-TotalPages",
-      "X-WP-Total": "1", "X-WP-TotalPages": "1",
-    }, body: JSON.stringify(records) });
-  });
+  await installSingleRecordCorpus(page);
   await page.goto("./#/countries");
   await expect(page.getByRole("heading", { name: "Find a country." })).toBeVisible();
   await expect(page.locator(".country-card")).toHaveCount(48);
