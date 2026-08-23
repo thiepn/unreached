@@ -8,167 +8,128 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** **U12F — Reviewed Editorial Context Migration & Identity Correction**
+- **Version:** **1.0.0**
+- **Release state:** **U12 production-data activation complete and release-certified**
 
-## Real-data architecture
+## Release status
 
-U12 uses **PeopleGroups.org / IMB Global Research** as the production people-group runtime source. The public application reads the provider's read-only API directly from the browser; Unreached does **not** ship a bundled mirror of the PeopleGroups.org corpus.
+The v1.0.0 application is production-ready. U0–U12F are implemented, the live site is deployed, and the final U12 data boundary is closed.
 
-### Identity and methodology
+The U12F production baseline was merged in PR #30 as `80c38901e1bfcc0de1eb94fc369de474b07d9771`. That exact main-branch commit received green post-merge `unreached/pages-production` and `unreached/peoplegroups-live` statuses. The final closure pass keeps deterministic CI, full desktop/mobile browser certification, live PeopleGroups full-corpus checks, and deployed Pages certification as release gates.
 
-A full live-corpus audit on **23 August 2026** established the current API identity behavior used by this release:
+See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
-- 12,370 **PGIDs**
-- 12,370 **PEIDs**
-- zero PEIDs attached to more than one PGID
-- zero PEIDs spanning more than one country
-- every current PGID numeric suffix equals its PEID
+## Production data architecture
+
+U12 uses **PeopleGroups.org / IMB Global Research** as the production people-group runtime source. The browser reads the provider's public read-only API directly. Unreached does **not** ship a bundled mirror of the PeopleGroups.org corpus.
+
+A complete live-corpus audit on **23 August 2026** established the source identity contract used by this release:
+
+- 12,370 PGID records
+- 12,370 PEID values
+- 0 PEIDs attached to more than one PGID
+- 0 PEIDs spanning more than one country
+- 12,370/12,370 PGID numeric suffixes equal their PEID
 
 Accordingly:
 
-- **PGID** is treated as the PeopleGroups.org people-group-in-country source record identifier.
-- **PEID** remains the provider's numeric entity field and the compatibility key used by existing Unreached routes, but it is **not** treated as a cross-country grouping key.
-- Every current runtime people profile contains exactly one PEID/PGID country-context record.
-- Duplicate PEIDs fail closed because they would violate the certified current-provider contract.
-- Cross-country related records use explicit source taxonomy, prioritizing **`PplNm` / ROP3 people name**, followed by source cluster and affinity bloc. They are never manufactured by PEID aggregation.
-- Valid PeopleGroups.org **ROL / ISO 639-3** values identify live language records.
-- Reviewed editorial context is attached only through explicitly certified PEID + PGID + name + country + language evidence.
-- Legacy numeric IDs are never treated as PEIDs merely because the numbers happen to match.
-- IMB **GSEC** remains source-native:
-  - GSEC 0–3 → `unreached`
-  - GSEC 4–6 → `other`
-  - missing → `unknown`
-- `other` is deliberately not renamed `reached`.
-- Joshua Project `JPScale`, `Frontier`, and exact evangelical percentages are not fabricated from IMB fields.
-- Bible and Jesus Film fields remain raw source availability labels rather than translation-completeness claims.
-- Unknown values remain unknown rather than being silently converted to zero.
+- **PGID** identifies one PeopleGroups.org people-group-in-country source record.
+- **PEID** remains the provider numeric field and compatibility route key, but is **not** treated as a cross-country grouping key.
+- Every current people route resolves to one PEID/PGID source record.
+- Duplicate PEIDs fail closed under the certified current-provider contract.
+- Related records across countries use explicit source taxonomy, prioritizing `PplNm` / ROP3 people name, then cluster and affinity bloc.
+- Matching taxonomy never merges population, GSEC, religion or resources into a synthetic global record.
+- Valid source ROL / ISO 639-3 values identify language records.
+- Reviewed editorial context attaches only through explicitly verified PEID + PGID + name + country + language evidence.
+- Legacy numeric IDs never establish PEID identity by numeric coincidence.
 
-### Production publication modes
+### Mission and resource semantics
 
-| Domain | Production state |
+IMB **GSEC** remains source-native:
+
+- GSEC 0–3 → `unreached`
+- GSEC 4–6 → `other`
+- missing → `unknown`
+
+`other` is deliberately not renamed `reached`. Unreached does not fabricate Joshua Project `JPScale`, `Frontier`, exact evangelical percentages, or normalized Scripture-completeness claims from incompatible IMB fields. Bible, Jesus Film and resource values remain raw source labels with explicit coverage. Unknown values stay unknown rather than becoming zero.
+
+## Production surfaces
+
+| Domain | Production mode |
 | --- | --- |
-| Mission atlas | Natural Earth geography + live PeopleGroups.org PGID country-context aggregation |
-| Peoples | One live PeopleGroups.org PEID/PGID source record per route |
-| Countries | Natural Earth geography + live PeopleGroups.org country-context records |
-| Languages & resources | Live PeopleGroups.org ISO 639-3 aggregation over PGID source records + raw resource fields |
+| Mission Atlas | Natural Earth geography + live PeopleGroups.org source-record aggregation |
+| Peoples | One live PEID/PGID source record per route |
+| Countries | Natural Earth geography + live country-context records |
+| Languages & resources | Live ISO 639-3 aggregation over individual source records + raw resource fields |
 | Prayer | One live GSEC 0–3 source record + fixed release-certified prayer template |
-| Reviewed editorial context | Reviewed source-record-authored profiles with intentionally partial coverage |
+| Reviewed editorial context | Separately authored, reviewed source-record profiles with intentionally partial coverage |
 | ProgressBible translation-progress data | Permission-gated and not used |
 | Ethnologue proprietary taxonomy | Permission-gated and not used |
+| Third-party people photos | Not redistributed without separate authorization |
 
-PeopleGroups.org runtime reads are policy-approved independently from static redistribution. The reviewed editorial layer publishes authored claims and source links rather than a static mirror of the provider database. Third-party people-photo reuse remains blocked unless separately authorized.
+## Mission Atlas
 
-## Live product surfaces
+The root atlas uses five source-safe layers:
 
-### Mission Atlas
+1. **GSEC 0–3 population share** among records with known population and known GSEC.
+2. **GSEC 0–3 context share** among records with known GSEC.
+3. **GSEC coverage** across represented source records.
+4. **Population estimate coverage** across represented source records.
+5. **People-group contexts** as a direct PGID source-record count.
 
-The root map uses the shared PeopleGroups.org runtime corpus. Its production layers are intentionally limited to source-native or narrowly derived measures:
+No-data remains no-data. These denominators are PeopleGroups source records, not national census statistics.
 
-- **GSEC 0–3 population share** — among PGID records with both known population and known GSEC
-- **GSEC 0–3 context share** — among PGID records with known GSEC
-- **GSEC coverage** — share of represented PGID records with a reported GSEC value
-- **Population estimate coverage** — share of represented PGID records with a population estimate
-- **People-group contexts** — direct count of PeopleGroups.org PGID country-context records
+## People Explorer
 
-Every layer preserves no-data states. Population/context denominators are explicit and are not presented as national census statistics. The atlas does not infer Frontier, JPScale, normalized Scripture completeness, or an evangelical percentage from incompatible fields.
+`#/peoples` supports source-aware search/filtering by GSEC, country, language, religion, Bible label, population, PEID, PGID and text.
 
-### People Explorer
+`#/peoples/:PEID` displays one source record with:
 
-`#/peoples` searches and filters current PeopleGroups.org people-group-in-country records by:
-
-- source-native GSEC status
-- country
-- source-backed language and religion
-- raw Bible availability label
-- source population estimate
-- PEID / PGID / people / country text search
-
-`#/peoples/:PEID` keeps the existing numeric route for compatibility but displays one current PEID/PGID record only:
-
-- PEID and PGID source identity
+- PEID / PGID identity
 - country
 - population estimate when reported
-- GSEC and evangelical-level source text
-- language and religion source labels
+- GSEC and source evangelical-level text
+- language and religion labels
 - Bible / Jesus Film availability
-- engagement and church-planting fields where reported
-- PeopleGroups.org taxonomy, including `PplNm` / ROP3 people name
+- engagement / church-planting fields when reported
+- source taxonomy
 - attributed provider descriptions
-- source update date and methodology notes
-- reviewed contextual article when one has passed the U12F publication gate
+- source update and methodology information
+- reviewed editorial context when that profile has passed publication gates
 
-Related records across countries are shown only from explicit source taxonomy. Matching ROP3 people names rank above shared cluster or affinity-bloc relationships.
+People without reviewed editorial context keep the live source profile and a clear unpublished-context state. Unreached does not generate generic cultural or spiritual filler.
 
-### Reviewed Editorial Context
+The first U12F reviewed production profile is **Fon of Benin — PEID 12319 / PG012319 / BEN / fon**.
 
-The U7 editorial model is migrated to schema v2 and attaches to a **specific current PeopleGroups source record**, not an inferred global PEID aggregate.
+## Countries
 
-A published contextual profile carries:
+`#/countries` and `#/countries/:ISO3` combine Natural Earth geography with live PeopleGroups source records. Population and religion/language summaries identify known-value coverage and are not presented as national census totals.
 
-- target PEID and canonical `people-entity:peoplegroups:<PEID>` route identity
-- verified PGID anchor(s)
-- country and ISO 639-3 identity anchors
-- verified people name
-- explicit identity-match evidence
-- source-cited factual claims
-- multi-source synthesis where needed
-- clearly labeled interpretation where appropriate
-- current-claim `asOf` and `reviewAfter` dates
-- sensitivity and editorial-review metadata
+## Languages & resources
 
-Publication fails closed when PEID, PGID, country, language or verified name no longer matches the current PeopleGroups.org corpus. A legacy ID may be retained only as migration provenance and cannot establish identity by numeric coincidence.
+`#/languages` groups the shared runtime corpus by valid source ROL / ISO 639-3 values.
 
-Coverage is intentionally partial. Records without a reviewed contextual article retain their live source profile and receive a clear unpublished state rather than generic AI-generated cultural, religious or spiritual filler.
+Language pages show source name/family, source-record and country counts, represented known population with coverage, GSEC breakdown, people links, raw Bible/Jesus/resource distributions, source freshness and an explicit source-record denominator.
 
-The first U12F production profile is **Fon of Benin — PEID 12319 / PG012319**. The live API record, human-readable PeopleGroups profile, resource material and external historical sources are kept distinct and cited claim-by-claim.
+Same-named people records in different countries remain separate. Generic Bible availability is never converted into `translation-needed`, `portions`, `New Testament`, or `complete Bible` milestones.
 
-### Country Explorer
+## Prayer
 
-`#/countries` and `#/countries/:ISO3` combine Natural Earth geography with PeopleGroups.org people-group-in-country records.
+`#/pray` uses current source records whose own GSEC is 0–3. Prayer wording comes from fixed release-certified template **`u12c-v1`** and interpolates only the selected record's source-backed people, country, identity, GSEC and resource fields.
 
-Country aggregation explicitly identifies its denominator. Represented population and religion/language shares are based only on source records with known values; they are not presented as national census statistics.
+Focused prayer retains 2/5/10-minute pacing without scores, streaks, leaderboards, public activity, or fabricated person-level spiritual claims.
 
-### Languages & Resources
-
-`#/languages` groups the shared runtime corpus by valid PeopleGroups.org `ROL` / ISO 639-3 code.
-
-`#/languages/:ISO6393` displays:
-
-- source-reported language name and family
-- number of PEID/PGID people-group records reporting the ISO code
-- country count
-- represented population with population-field coverage
-- GSEC 0–3 / 4–6 / unknown record counts
-- links to each separate people-group-in-country record
-- raw Bible availability-label distribution
-- raw Jesus Film availability-label distribution
-- raw total-resource-field coverage and values
-- source load date and newest provider update date
-- explicit denominator: PeopleGroups.org PGID country-context records reporting that ISO 639-3 language
-
-Same-named people records in multiple countries remain separate records. The language surface does **not** infer `translation-needed`, `portions`, `New Testament`, or `complete Bible` from PeopleGroups.org's generic Bible-availability field. ProgressBible registered translation-progress data and Ethnologue proprietary taxonomy remain excluded without compatible permission.
-
-### Prayer
-
-`#/pray` uses current PeopleGroups.org records whose own GSEC value is 0–3 as prayer subjects.
-
-Prayer wording comes from fixed release-certified template **`u12c-v1`**. Runtime interpolation is limited to the selected source record's people name, country, PEID/PGID, GSEC, and resource fields. Same-named records in other countries are not silently merged into the prayer profile, and Unreached does not generate arbitrary person-by-person factual or spiritual claims.
-
-Focused prayer keeps the existing 2/5/10-minute pacing modes without scores, streaks, leaderboards, completion ranks, or public prayer activity.
-
-### Search, Saved, and Recent
+## Search, Saved and Recent
 
 - `/` or `Ctrl/Cmd+K` opens global search.
-- Opening search lazily loads the shared live people/country/language runtime corpus; the closed dialog does not trigger a large source download.
-- Current GSEC 0–3 people-group records can be saved locally for prayer.
-- People, country and language recent visits remain browser-local under `unreached.personal.v1`.
-- Legacy saved snapshots remain readable after the identity correction; legacy `mixed` state is retained only as backward-compatible snapshot metadata.
+- Live people/country/language data is loaded lazily when discovery surfaces need it.
+- GSEC 0–3 records can be saved locally for prayer.
+- Recent people/country/language visits remain browser-local.
+- Legacy saved snapshots remain readable after the U12F identity correction.
 
 ## Runtime reliability
 
-PeopleGroups.org responses are treated as untrusted external input.
-
-The runtime includes:
+PeopleGroups responses are treated as untrusted external input. Runtime protections include:
 
 - Zod validation
 - 10-second per-request timeout
@@ -176,16 +137,33 @@ The runtime includes:
 - maximum 100 pages / 25,000 records
 - pagination and advertised-count consistency checks
 - duplicate PGID detection
-- duplicate PEID rejection under the current certified identity contract
+- duplicate PEID rejection under the current certified contract
 - GSEC 0–6 bounds
-- fail-closed schema drift handling
+- fail-closed schema-drift handling
 - one shared application-session corpus store
 - origin-local IndexedDB cache
 - 24-hour fresh cache window
 - 7-day explicit stale fallback window
-- best-effort cache behavior so browser-storage failure cannot block a healthy live API
+- best-effort cache behavior so storage failure cannot block a healthy live API
 
-The normal browser suite uses a deterministic intercepted provider corpus that follows the current one-PEID/one-PGID contract. A separate **PeopleGroups Live Certification** workflow checks individual editorial anchors, the complete real corpus, and browser CORS/API behavior. It also verifies every published editorial PEID/PGID/country/language identity mapping against current provider data.
+The normal browser suite uses deterministic provider fixtures. An independent PeopleGroups Live Certification workflow validates editorial anchors, the complete external corpus, current identity assumptions, and browser API/CORS behavior.
+
+## Release certification
+
+Release branches are first-class certification targets. A release candidate must pass:
+
+- TypeScript and production build
+- deterministic data/policy checks
+- PeopleGroups runtime, visible-data and cache checks
+- geography and mission-visualization checks
+- country, people, context, prayer, language and discovery checks
+- production distribution checks
+- Chromium, Firefox and WebKit desktop/browser journeys
+- mobile Chromium and mobile WebKit journeys
+- live PeopleGroups editorial identity preflight
+- complete live PeopleGroups corpus audit
+- browser API/CORS contract
+- post-merge GitHub Pages production certification
 
 ## Local development
 
@@ -202,7 +180,7 @@ Full production validation:
 npm run check
 ```
 
-Important focused checks:
+Focused checks:
 
 ```bash
 npm run data:check
@@ -226,7 +204,7 @@ npm run e2e
 
 Vite is configured for the `/unreached/` project path.
 
-## Current stack
+## Stack
 
 - Vite 8
 - TypeScript 7
@@ -248,20 +226,19 @@ Vite is configured for the `/unreached/` project path.
 - **U4 — Mission Visualization Engine** ✅
 - **U5 — Country Explorer** ✅
 - **U6 — People Group Explorer** ✅
-- **U7 — Context & Why Unreached?** ✅ architecture/review system; production migration completed through U12F
+- **U7 — Context & Why Unreached?** ✅
 - **U8 — Prayer Experience** ✅
-- **U9 — Languages & Scripture Integration** ✅ architecture; legacy publication dataset superseded by U12E runtime semantics
+- **U9 — Languages & Scripture Integration** ✅
 - **U10 — Search, Discovery & Local Personalization** ✅
 - **U11 — Release Hardening & Data Expansion** ✅
 - **U12A — Provider Foundation & Semantic Isolation** ✅
-- **U12B — Real Data Runtime Architecture** ✅ with PEID semantics corrected by U12F live-corpus certification
-- **U12C — Visible Real-Data Integration** ✅ with people-record semantics corrected by U12F
+- **U12B — Real Data Runtime Architecture** ✅
+- **U12C — Visible Real-Data Integration** ✅
 - **U12D — Live Mission Visualization** ✅
-- **U12E — Live Language & Resource Integration** ✅ production-certified; people-record terminology corrected by U12F
-- **U12F — Reviewed Editorial Context Migration & Identity Correction** 🚧 implementation/certification
-
-See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md`](docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md) for the data/publication contract.
+- **U12E — Live Language & Resource Integration** ✅
+- **U12F — Reviewed Editorial Context Migration & Identity Correction** ✅ production-certified
+- **U12 — Production Data Activation** ✅ complete
 
 ## Product rule
 
-A feature belongs only if it directly strengthens **Explore → Understand → Pray** while preserving source meaning, uncertainty, editorial provenance, and user privacy.
+A feature belongs only if it directly strengthens **Explore → Understand → Pray** while preserving source meaning, uncertainty, editorial provenance and user privacy.

@@ -9,6 +9,7 @@ on:
       - "phase/u12d-live-mission-visualization"
       - "phase/u12e-live-language-resources"
       - "phase/u12f-editorial-context"
+      - "release/**"
   workflow_dispatch:
 
 permissions:
