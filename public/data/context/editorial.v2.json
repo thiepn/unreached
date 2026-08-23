@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 2,
+  "fixture": false,
+  "generatedAt": "2026-08-23T20:00:00Z",
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-fon-peid",
+      "sourceId": "peoplegroups-peid-14343",
+      "title": "PeopleGroups.org — Fon (PEID 14343)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/Explore/GroupDetails.aspx?peid=14343",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-23T20:00:00Z",
+      "locator": "PEID, language, country relationships and source classification"
+    },
+    {
+      "id": "ctx-source:peoplegroups-fon-benin",
+      "sourceId": "peoplegroups-pgid-PG012319",
+      "title": "PeopleGroups.org — Fon of Benin (PGID PG012319)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012319/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-23T20:00:00Z",
+      "locator": "Fast facts, GSEC, language and resource sections"
+    },
+    {
+      "id": "ctx-source:peoplegroups-fon-media",
+      "sourceId": "peoplegroups-media-fon",
+      "title": "PeopleGroups.org — Media Resources for Fon",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/media-resources/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-23T20:00:00Z",
+      "locator": "Fon (fon) resource listings"
+    },
+    {
+      "id": "ctx-source:unesco-abomey",
+      "sourceId": "unesco-whc-323",
+      "title": "Royal Palaces of Abomey",
+      "publisher": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/323/",
+      "sourceType": "international-organization",
+      "publicationDate": null,
+      "accessedAt": "2026-08-23T20:00:00Z",
+      "locator": "Outstanding Universal Value and criteria iii–iv"
+    }
+  ],
+  "profiles": [
+    {
+      "peopleEntityId": "people-entity:peoplegroups:14343",
+      "peid": 14343,
+      "identity": {
+        "provider": "peoplegroups-org",
+        "origin": "peid-native",
+        "targetPeid": 14343,
+        "verifiedPeopleName": "Fon",
+        "pgidAnchors": ["PG012319"],
+        "countryIso3Anchors": ["BEN"],
+        "languageIso6393Anchors": ["fon"],
+        "matchEvidence": ["provider-peid", "provider-pgid", "name", "country", "language"],
+        "legacyPeopleGroupId": null,
+        "legacySourcePeopleId": null,
+        "numericCoincidenceUsed": false,
+        "verifiedAt": "2026-08-23T20:00:00Z"
+      },
+      "whoTheyAre": {
+        "summary": "The Fon are a West African ethnolinguistic people with a major population context in Benin and a historical relationship to the Kingdom of Dahomey and Abomey.",
+        "claimIds": ["claim:fon-identity", "claim:fon-history"]
+      },
+      "religionAndCommunity": {
+        "summary": "Religion fields in mission datasets are aggregate classifications for country contexts. They should not be read as statements about every individual's belief or practice.",
+        "claimIds": ["claim:fon-religion-context"]
+      },
+      "whyUnreachedIntro": "This profile limits its explanation to documented access and mission-status evidence. It does not infer spiritual resistance from Fon culture, ethnicity, or religion.",
+      "whyUnreached": [
+        {
+          "dimension": "church-presence",
+          "heading": "Current mission-status evidence",
+          "summary": "The current Benin country context carries a source-native GSEC indicator below the evangelical threshold used by PeopleGroups.org.",
+          "claimIds": ["claim:fon-gsec-benin"]
+        },
+        {
+          "dimension": "language-media",
+          "heading": "Language resources are present",
+          "summary": "Fon-language Bible and film resources are documented, so this profile does not treat total absence of translated media as the explanation for the group's current mission status.",
+          "claimIds": ["claim:fon-resources"]
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim:fon-identity",
+          "dimension": "identity",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "stable",
+          "text": "PeopleGroups.org identifies PEID 14343 as Fon, reports Fon (fon) as the language, and links that people identity with country contexts including Benin, Gabon, Ghana and Togo.",
+          "citationIds": ["ctx-source:peoplegroups-fon-peid"],
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:fon-history",
+          "dimension": "history",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "stable",
+          "text": "UNESCO describes the Royal Palaces of Abomey as major material testimony to the Kingdom of Dahomey and states that the palaces reflect Aja-Fon culture; the kingdom developed from the mid-seventeenth century and its royal sequence continued into 1900.",
+          "citationIds": ["ctx-source:unesco-abomey"],
+          "asOf": null,
+          "reviewAfter": null,
+          "sensitivity": "public",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:fon-religion-context",
+          "dimension": "religion-community",
+          "kind": "synthesis",
+          "evidenceLevel": "B",
+          "certainty": "medium",
+          "temporalClass": "current",
+          "text": "PeopleGroups country contexts for the Fon use differing aggregate primary-religion labels; the Benin profile currently reports Protestantism while the PEID 14343 Togo profile reports African Traditional Religion. These fields should therefore not be generalized to every Fon person.",
+          "citationIds": ["ctx-source:peoplegroups-fon-benin", "ctx-source:peoplegroups-fon-peid"],
+          "asOf": "2026-08-23",
+          "reviewAfter": "2027-02-23",
+          "sensitivity": "generalized",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:fon-gsec-benin",
+          "dimension": "church-presence",
+          "kind": "fact",
+          "evidenceLevel": "A",
+          "certainty": "high",
+          "temporalClass": "current",
+          "text": "The PeopleGroups.org Fon of Benin profile reports GSEC 1 with the source label 'Less than 2% Evangelical, No Active CP Activity.' Unreached treats this only as a provider status for that country context, not as a statement about every individual or every Fon community.",
+          "citationIds": ["ctx-source:peoplegroups-fon-benin"],
+          "asOf": "2026-08-23",
+          "reviewAfter": "2027-02-23",
+          "sensitivity": "generalized",
+          "interpretationNote": null
+        },
+        {
+          "id": "claim:fon-resources",
+          "dimension": "language-media",
+          "kind": "synthesis",
+          "evidenceLevel": "B",
+          "certainty": "medium",
+          "temporalClass": "current",
+          "text": "PeopleGroups.org lists Bible and Jesus Film resources associated with Fon (fon). The available evidence therefore does not support describing the Fon as having no local-language Christian media resources.",
+          "citationIds": ["ctx-source:peoplegroups-fon-benin", "ctx-source:peoplegroups-fon-media"],
+          "asOf": "2026-08-23",
+          "reviewAfter": "2027-02-23",
+          "sensitivity": "public",
+          "interpretationNote": null
+        }
+      ],
+      "sourceIds": [
+        "ctx-source:peoplegroups-fon-peid",
+        "ctx-source:peoplegroups-fon-benin",
+        "ctx-source:peoplegroups-fon-media",
+        "ctx-source:unesco-abomey"
+      ],
+      "review": {
+        "status": "published",
+        "qualityTier": 3,
+        "aiAssisted": true,
+        "reviewedAt": "2026-08-23T20:00:00Z",
+        "reviewerRole": "Release-maintainer evidence review",
+        "checklist": {
+          "namingChecked": true,
+          "materialClaimsCited": true,
+          "currentClaimsFresh": true,
+          "noStereotypeShortcuts": true,
+          "religionNuanced": true,
+          "sensitiveDataChecked": true,
+          "sourceLicensingChecked": true,
+          "identityMatchChecked": true
+        }
+      }
+    }
+  ]
+}
