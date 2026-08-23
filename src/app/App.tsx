@@ -1,18 +1,30 @@
+import { lazy, Suspense } from "preact/compat";
+
 import { AppShell } from "../components/AppShell";
 import { RecentRouteTracker } from "../components/RecentRouteTracker";
-import { AboutPage } from "../pages/AboutPage";
-import { CountriesPage } from "../pages/CountriesPage";
-import { CountryPage } from "../pages/CountryPage";
-import { ExplorePage } from "../pages/ExplorePage";
-import { LanguagePage } from "../pages/LanguagePage";
-import { LanguagesPage } from "../pages/LanguagesPage";
-import { NotFoundPage } from "../pages/NotFoundPage";
-import { PeopleContextualPage } from "../pages/PeopleContextualPage";
-import { PeoplesPage } from "../pages/PeoplesPage";
-import { PrayPage } from "../pages/PrayPage";
-import { PrayerFocusPage } from "../pages/PrayerFocusPage";
-import { SavedPage } from "../pages/SavedPage";
 import { useHashRoute } from "./router";
+
+const AboutPage = lazy(() => import("../pages/AboutPage").then((module) => ({ default: module.AboutPage })));
+const CountriesPage = lazy(() => import("../pages/CountriesPage").then((module) => ({ default: module.CountriesPage })));
+const CountryPage = lazy(() => import("../pages/CountryPage").then((module) => ({ default: module.CountryPage })));
+const ExplorePage = lazy(() => import("../pages/ExplorePage").then((module) => ({ default: module.ExplorePage })));
+const LanguagePage = lazy(() => import("../pages/LanguagePage").then((module) => ({ default: module.LanguagePage })));
+const LanguagesPage = lazy(() => import("../pages/LanguagesPage").then((module) => ({ default: module.LanguagesPage })));
+const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((module) => ({ default: module.NotFoundPage })));
+const PeopleContextualPage = lazy(() => import("../pages/PeopleContextualPage").then((module) => ({ default: module.PeopleContextualPage })));
+const PeoplesPage = lazy(() => import("../pages/PeoplesPage").then((module) => ({ default: module.PeoplesPage })));
+const PrayPage = lazy(() => import("../pages/PrayPage").then((module) => ({ default: module.PrayPage })));
+const PrayerFocusPage = lazy(() => import("../pages/PrayerFocusPage").then((module) => ({ default: module.PrayerFocusPage })));
+const SavedPage = lazy(() => import("../pages/SavedPage").then((module) => ({ default: module.SavedPage })));
+
+function RouteFallback() {
+  return (
+    <div class="route-loading" role="status">
+      <span class="loading-pulse" aria-hidden="true" />
+      <strong>Opening this section…</strong>
+    </div>
+  );
+}
 
 export function App() {
   const route = useHashRoute();
@@ -29,5 +41,10 @@ export function App() {
     default: page = <NotFoundPage />;
   }
 
-  return <AppShell activeRoute={route.id}><RecentRouteTracker route={route} />{page}</AppShell>;
+  return (
+    <AppShell activeRoute={route.id}>
+      <RecentRouteTracker route={route} />
+      <Suspense fallback={<RouteFallback />}>{page}</Suspense>
+    </AppShell>
+  );
 }

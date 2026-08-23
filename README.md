@@ -8,14 +8,27 @@ Unreached is a browser-based Christian world atlas for discovering unreached peo
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.0.0**
-- **Release state:** **U12 production-data activation complete and release-certified**
+- **Version:** **1.0.1**
+- **Release state:** **U12 production-data activation complete; v1.0.1 usability/performance hotfix release**
 
 ## Release status
 
-The v1.0.0 application is production-ready. U0–U12F are implemented, the live site is deployed, and the final U12 data boundary is closed.
+U0–U12F are implemented and production-certified. **v1.0.1** is the first post-release repair pass, focused on real user-facing loading, navigation, and rendering defects rather than new mission/data semantics.
 
-The U12F production baseline was merged in PR #30 as `80c38901e1bfcc0de1eb94fc369de474b07d9771`. That exact main-branch commit received green post-merge `unreached/pages-production` and `unreached/peoplegroups-live` statuses. The final closure pass keeps deterministic CI, full desktop/mobile browser certification, live PeopleGroups full-corpus checks, and deployed Pages certification as release gates.
+v1.0.1 improves the application by:
+
+- fetching the multi-page PeopleGroups runtime corpus in bounded concurrent batches instead of serial page-by-page waits;
+- reading validated IndexedDB cache pages concurrently on repeat visits;
+- code-splitting route surfaces so non-map routes no longer download the MapLibre application engine at startup;
+- keeping the dedicated MapLibre worker while loading it only with the Explore route;
+- limiting People Explorer to 48 initially rendered cards and Languages to 60, with progressive disclosure instead of huge DOM trees;
+- exposing Languages in primary navigation and restoring Search on mobile;
+- restoring legacy design-token aliases that previously caused borders, surfaces, typography, and muted text to disappear on Languages, Prayer, Search, Saved, About, and map UI;
+- resizing the map when its responsive container changes to prevent clipped or blank rendering;
+- hardening long-content wrapping and horizontal-overflow behavior;
+- simplifying People and Language discovery copy and collapsing advanced People filters by default.
+
+The U12F production-data baseline remains unchanged: its source identity, semantic, legal, editorial, and live-provider gates are preserved.
 
 See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
@@ -81,7 +94,7 @@ No-data remains no-data. These denominators are PeopleGroups source records, not
 
 ## People Explorer
 
-`#/peoples` supports source-aware search/filtering by GSEC, country, language, religion, Bible label, population, PEID, PGID and text.
+`#/peoples` supports source-aware search/filtering by GSEC, country, language, religion, Bible label, population, PEID, PGID and text. Large result sets render progressively rather than mounting the entire corpus at once.
 
 `#/peoples/:PEID` displays one source record with:
 
@@ -107,7 +120,7 @@ The first U12F reviewed production profile is **Fon of Benin — PEID 12319 / PG
 
 ## Languages & resources
 
-`#/languages` groups the shared runtime corpus by valid source ROL / ISO 639-3 values.
+`#/languages` groups the shared runtime corpus by valid source ROL / ISO 639-3 values and is available directly from primary navigation. Large results render progressively.
 
 Language pages show source name/family, source-record and country counts, represented known population with coverage, GSEC breakdown, people links, raw Bible/Jesus/resource distributions, source freshness and an explicit source-record denominator.
 
@@ -121,7 +134,7 @@ Focused prayer retains 2/5/10-minute pacing without scores, streaks, leaderboard
 
 ## Search, Saved and Recent
 
-- `/` or `Ctrl/Cmd+K` opens global search.
+- `/` or `Ctrl/Cmd+K` opens global search; the Search action is also visible on mobile.
 - Live people/country/language data is loaded lazily when discovery surfaces need it.
 - GSEC 0–3 records can be saved locally for prayer.
 - Recent people/country/language visits remain browser-local.
@@ -135,6 +148,7 @@ PeopleGroups responses are treated as untrusted external input. Runtime protecti
 - 10-second per-request timeout
 - maximum 250 records/page
 - maximum 100 pages / 25,000 records
+- bounded six-page network concurrency after the first validated page
 - pagination and advertised-count consistency checks
 - duplicate PGID detection
 - duplicate PEID rejection under the current certified contract
@@ -142,6 +156,7 @@ PeopleGroups responses are treated as untrusted external input. Runtime protecti
 - fail-closed schema-drift handling
 - one shared application-session corpus store
 - origin-local IndexedDB cache
+- concurrent validated cache-page reads
 - 24-hour fresh cache window
 - 7-day explicit stale fallback window
 - best-effort cache behavior so storage failure cannot block a healthy live API
@@ -164,6 +179,8 @@ Release branches are first-class certification targets. A release candidate must
 - complete live PeopleGroups corpus audit
 - browser API/CORS contract
 - post-merge GitHub Pages production certification
+
+v1.0.1 additionally certifies bounded People/Language DOM rendering, Search/Languages navigation visibility, restored computed design styles, and horizontal-overflow behavior across desktop and mobile viewports.
 
 ## Local development
 
@@ -238,6 +255,7 @@ Vite is configured for the `/unreached/` project path.
 - **U12E — Live Language & Resource Integration** ✅
 - **U12F — Reviewed Editorial Context Migration & Identity Correction** ✅ production-certified
 - **U12 — Production Data Activation** ✅ complete
+- **v1.0.1 — Performance, Navigation & Rendering Repair** 🚧 release certification
 
 ## Product rule
 

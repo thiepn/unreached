@@ -34,19 +34,28 @@ interface ValidatedCache {
 async function readCompleteCache(cache: PeopleGroupsPageCache, now: number): Promise<{ pages: CachedPeopleGroupsPage[]; age: number } | null> {
   const first = await cache.read(1);
   if (!first || first.schemaVersion !== 1 || first.totalPages < 1) return null;
+
+  // IndexedDB page reads are independent. Reading the remaining snapshot pages
+  // concurrently avoids dozens of serialized transactions on repeat visits.
+  const remaining = first.totalPages > 1
+    ? await Promise.all(Array.from({ length: first.totalPages - 1 }, (_, index) => cache.read(index + 2)))
+    : [];
   const pages: CachedPeopleGroupsPage[] = [first];
-  for (let page = 2; page <= first.totalPages; page += 1) {
-    const cached = await cache.read(page);
+
+  for (let index = 0; index < remaining.length; index += 1) {
+    const pageNumber = index + 2;
+    const cached = remaining[index];
     if (
       !cached
       || cached.schemaVersion !== 1
-      || cached.page !== page
+      || cached.page !== pageNumber
       || cached.totalPages !== first.totalPages
       || cached.totalRecords !== first.totalRecords
       || cached.storedAt !== first.storedAt
     ) return null;
     pages.push(cached);
   }
+
   const oldestAge = Math.max(...pages.map((page) => cacheAgeMs(page, now)));
   return { pages, age: oldestAge };
 }

@@ -1,0 +1,181 @@
+.site-shell {
+  overflow-x: clip;
+}
+
+.route-loading {
+  min-height: calc(100dvh - var(--header-height));
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: var(--ink-1);
+}
+
+.loading-pulse {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--forest-700);
+  animation: loading-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes loading-pulse {
+  from { opacity: 0.32; transform: scale(0.82); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.people-index-state--loading {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+
+.people-index-state--loading small {
+  color: var(--ink-2);
+}
+
+.result-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+}
+
+.result-load-more button {
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--forest-700);
+  background: var(--paper-0);
+  color: var(--forest-700);
+  font: inherit;
+  font-weight: 750;
+}
+
+.result-load-more button:hover,
+.result-load-more button:focus-visible {
+  background: var(--forest-100);
+}
+
+.people-card,
+.language-card,
+.saved-person-card,
+.search-result-row,
+.search-recent-row {
+  min-width: 0;
+}
+
+.people-card__countries,
+.language-card h2,
+.language-card__top span,
+.language-card dt,
+.language-card dd,
+.prayer-card,
+.saved-person-card,
+.about-page,
+.search-dialog {
+  overflow-wrap: anywhere;
+}
+
+.language-card__top span {
+  min-width: 0;
+}
+
+.language-card__top span:last-child {
+  text-align: right;
+}
+
+.desktop-nav {
+  gap: 0;
+}
+
+.desktop-nav .nav-link {
+  padding-inline: 0.65rem;
+}
+
+/* app.css previously hid desktop navigation below 1040px but did not show
+   mobile navigation until 760px, leaving tablets and small laptops with no
+   primary navigation. Keep a compact textual top navigation in that range. */
+@media (min-width: 761px) and (max-width: 1040px) {
+  .site-header {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    padding-inline: var(--space-4);
+  }
+
+  .desktop-nav {
+    display: flex;
+    justify-self: center;
+    min-width: 0;
+  }
+
+  .desktop-nav .nav-link {
+    gap: 0;
+    padding-inline: 0.46rem;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+
+  .desktop-nav .nav-link svg {
+    display: none;
+  }
+
+  .brand {
+    gap: var(--space-2);
+  }
+
+  .brand-word {
+    font-size: 1.25rem;
+  }
+
+  .header-actions {
+    gap: var(--space-1);
+  }
+}
+
+@media (max-width: 760px) {
+  .header-actions .search-action {
+    display: inline-grid !important;
+  }
+
+  .header-actions {
+    gap: var(--space-1);
+  }
+
+  .mobile-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .mobile-nav .nav-link {
+    min-width: 0;
+    padding-inline: 0.1rem;
+    font-size: 0.66rem;
+  }
+
+  .mobile-nav .nav-link span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .result-load-more {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .result-load-more button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-pulse {
+    animation: none;
+  }
+}
