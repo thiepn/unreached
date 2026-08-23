@@ -28,11 +28,11 @@ export function useMissionVisualization(): MissionVisualizationState & { countri
         return missionVisualizationAvailabilitySchema.parse(await response.json() as unknown);
       })
       .then(async (status) => {
-        if (!status.available) {
+        if (!status.available || status.mode === "runtime-api") {
           setState({ status, dataset: null, loading: false, error: null });
           return;
         }
-        if (!status.datasetUrl) throw new Error("Mission-data status is available but has no dataset URL.");
+        if (!status.datasetUrl) throw new Error("Static mission-data status is available but has no dataset URL.");
         if (status.fixture && !import.meta.env.DEV) throw new Error("A fixture mission dataset was blocked from the production application.");
         const datasetUrl = status.datasetUrl.startsWith("http") ? status.datasetUrl : `${import.meta.env.BASE_URL}${status.datasetUrl.replace(/^\//, "")}`;
         const response = await fetch(datasetUrl, { signal: controller.signal, cache: "force-cache" });

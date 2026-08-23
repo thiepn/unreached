@@ -6,6 +6,7 @@ on:
       - main
       - "phase/u12b-real-data-runtime"
       - "phase/u12c-visible-real-data"
+      - "phase/u12d-live-mission-visualization"
   workflow_dispatch:
 
 permissions:

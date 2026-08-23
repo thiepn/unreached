@@ -29,12 +29,12 @@ interface PublicationStatus {
   templateReviewedAt?: string;
 }
 
-for (const domain of ["mission", "context", "languages"]) {
+for (const domain of ["context", "languages"]) {
   const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
   if (status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${domain} must remain production-gated until a compatible source mode is certified.`);
 }
 
-for (const domain of ["countries", "peoples", "prayer"]) {
+for (const domain of ["mission", "countries", "peoples", "prayer"]) {
   const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
   if (!status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${domain} must be active through runtime API mode without a bundled dataset.`);
   if (status.mode !== "runtime-api") throw new Error(`${domain} must declare runtime-api publication mode.`);
@@ -43,7 +43,7 @@ for (const domain of ["countries", "peoples", "prayer"]) {
 
 const prayerStatus = await readJson<PublicationStatus>("public/data/prayer/status.json");
 if (prayerStatus.templateVersion !== "u12c-v1" || prayerStatus.templateReviewedAt !== "2026-08-22") {
-  throw new Error("U12C prayer template certification metadata is missing or stale.");
+  throw new Error("Prayer template certification metadata is missing or stale.");
 }
 
 const registry = await readJson<{
@@ -62,7 +62,7 @@ for (const id of ["joshua-project-api", "progress-bible-registered-data", "ethno
   if (!source || source.runtimeReadAllowed || source.publicReleaseAllowed || source.browserRedistributionAllowed) throw new Error(`${id} must remain unavailable to the public runtime and static release.`);
 }
 const peopleGroups = byId.get("peoplegroups-org-api");
-if (!peopleGroups?.runtimeReadAllowed) throw new Error("PeopleGroups.org runtime reads must remain approved for U12C.");
+if (!peopleGroups?.runtimeReadAllowed) throw new Error("PeopleGroups.org runtime reads must remain approved.");
 if (peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) throw new Error("PeopleGroups.org static public release/redistribution must remain blocked.");
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed) throw new Error("Natural Earth must remain approved for public geographic distribution.");
@@ -71,4 +71,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("U12C release-policy checks passed: People/Countries/Prayer runtime-active, static PeopleGroups redistribution still blocked.");
+console.log("U12D release-policy checks passed: Mission/People/Countries/Prayer runtime-active; Context/Languages remain gated; static PeopleGroups redistribution remains blocked.");

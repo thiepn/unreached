@@ -45,7 +45,7 @@ function PeopleMetrics({ record }: { record: RuntimePeopleEntity }) {
       <div class="people-metric"><span>Country contexts</span><strong>{record.contexts.length}</strong><small>{record.countries.map((country) => country.name).slice(0, 3).join(" · ")}{record.countries.length > 3 ? " …" : ""}</small></div>
       <div class="people-metric"><span>Primary religion</span><strong>{record.primaryReligion?.name ?? "Unknown"}</strong><small>Most common source context label</small></div>
       <div class="people-metric"><span>Primary language</span><strong>{record.primaryLanguage?.name ?? "Unknown"}</strong><small>{record.primaryLanguage?.iso6393 ?? "ISO 639-3 not supplied"}</small></div>
-      <div class="people-metric"><span>PEID</span><strong>{record.peid}</strong><small>PeopleGroups.org entity identity</small></div>
+      <div class="people-metric"><span>Source identity</span><strong>PEID {record.peid}</strong><small>PeopleGroups.org cross-country entity identity</small></div>
       <div class="people-metric"><span>Source updated</span><strong>{sourceDate(record.sourceUpdatedAt)}</strong><small>Newest timestamp among country contexts</small></div>
     </div>
   );

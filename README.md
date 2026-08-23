@@ -2,13 +2,13 @@
 
 **Explore the peoples. Understand their world. Pray for the nations.**
 
-Unreached is a browser-based Christian world atlas for discovering unreached peoples, exploring country and language context, and praying with source-aware information.
+Unreached is a browser-based Christian world atlas for discovering unreached peoples, exploring country and mission context, and praying with source-aware information.
 
 - **Live site:** https://www.thiepn.dev/unreached/
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** **U12C — Visible Real-Data Integration**
+- **Current phase:** **U12D — Live Mission Visualization**
 
 ## Real-data architecture
 
@@ -33,16 +33,28 @@ The public application reads the provider's read-only API directly from the brow
 
 | Domain | Production state |
 | --- | --- |
+| Mission atlas | Natural Earth geography + live PeopleGroups.org runtime aggregation |
 | Peoples | Live PeopleGroups.org runtime API |
 | Countries | Natural Earth geography + live PeopleGroups.org runtime records |
 | Prayer | Live people subjects + fixed release-certified prayer template |
-| Mission visualization layers | Still separately gated |
 | Editorial context dataset | Still separately gated |
 | Language/Scripture dataset | Still separately gated |
 
 PeopleGroups.org runtime reads are policy-approved independently from static redistribution. Static public dataset mirroring and third-party people-photo reuse remain blocked unless separately authorized.
 
 ## Live product surfaces
+
+### Mission Atlas
+
+The root map uses the same shared PeopleGroups.org corpus as the other live product surfaces. Its production layers are intentionally limited to source-native or narrowly derived measures:
+
+- **GSEC 0–3 population share** — among PGID contexts that have both known population and known GSEC
+- **GSEC 0–3 context share** — among PGID contexts with known GSEC
+- **GSEC coverage** — share of represented PGID contexts with a reported GSEC value
+- **Population estimate coverage** — share of represented PGID contexts with a population estimate
+- **People-group contexts** — direct count of PeopleGroups.org PGID country-context records
+
+Every layer preserves no-data states. Population/context denominators are shown explicitly and are not presented as national census statistics. The live atlas does not infer Frontier, JPScale, normalized Scripture completeness, or an evangelical percentage from incompatible fields.
 
 ### People Explorer
 
@@ -85,7 +97,7 @@ Focused prayer keeps the existing 2/5/10-minute pacing modes without scores, str
 
 - `/` or `Ctrl/Cmd+K` opens global search.
 - Opening search lazily loads the live people/country runtime corpus; the closed dialog does not trigger a large source download.
-- PEID people profiles can be saved locally for prayer.
+- PEID people profiles can be saved locally for prayer when they contain a GSEC 0–3 context.
 - Saved snapshots and recent visits remain browser-local under `unreached.personal.v1`.
 - Legacy saved snapshots remain readable after the PEID migration.
 
@@ -134,6 +146,8 @@ npm run peoplegroups:check
 npm run peoplegroups:runtime-check
 npm run peoplegroups:visible-check
 npm run geography:check
+npm run visualization:check
+npm run visualization:live-check
 npm run country:check
 npm run people:check
 npm run prayer:check
@@ -173,7 +187,8 @@ Vite is configured for the `/unreached/` project path.
 - **U11 — Release Hardening & Data Expansion** ✅
 - **U12A — Provider Foundation & Semantic Isolation** ✅
 - **U12B — Real Data Runtime Architecture** ✅
-- **U12C — Visible Real-Data Integration** 🚧 certification in progress
+- **U12C — Visible Real-Data Integration** ✅
+- **U12D — Live Mission Visualization** 🚧 certification in progress
 
 See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md`](docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md) for the current data/publication contract.
 
