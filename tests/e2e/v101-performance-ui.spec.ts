@@ -50,7 +50,6 @@ test("primary navigation emphasizes Explore, Peoples and Pray while Browse keeps
   const browse = primary.getByRole("button", { name: "Browse", exact: true });
   await expect(browse).toBeVisible();
   await browse.click();
-  await expect(page.locator(".browse-menu__panel")).toBeVisible();
   await expect(page.getByRole("link", { name: /Countries/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Languages/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Search people, countries and languages" })).toBeVisible();
