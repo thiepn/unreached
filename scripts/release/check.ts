@@ -29,12 +29,10 @@ interface PublicationStatus {
   templateReviewedAt?: string;
 }
 
-for (const domain of ["context", "languages"]) {
-  const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
-  if (status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${domain} must remain production-gated until a compatible source mode is certified.`);
-}
+const contextStatus = await readJson<PublicationStatus>("public/data/context/status.json");
+if (contextStatus.available || contextStatus.fixture || contextStatus.datasetUrl !== null) throw new Error("context must remain production-gated until a compatible reviewed editorial source mode is certified.");
 
-for (const domain of ["mission", "countries", "peoples", "prayer"]) {
+for (const domain of ["mission", "countries", "peoples", "prayer", "languages"]) {
   const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
   if (!status.available || status.fixture || status.datasetUrl !== null) throw new Error(`${domain} must be active through runtime API mode without a bundled dataset.`);
   if (status.mode !== "runtime-api") throw new Error(`${domain} must declare runtime-api publication mode.`);
@@ -71,4 +69,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("U12D release-policy checks passed: Mission/People/Countries/Prayer runtime-active; Context/Languages remain gated; static PeopleGroups redistribution remains blocked.");
+console.log("U12E release-policy checks passed: Mission/People/Countries/Prayer/Languages runtime-active; Context remains gated; static PeopleGroups redistribution remains blocked.");

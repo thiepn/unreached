@@ -2,7 +2,7 @@ import { useEffect } from "preact/hooks";
 
 import { hrefFor, type RouteState } from "../app/router";
 import { useLiveCountryExplorer } from "../countries";
-import { useLanguageExplorer } from "../languages";
+import { useLiveLanguageExplorer } from "../languages";
 import { useWorldGeography } from "../map/geography";
 import { useLivePeopleExplorer } from "../peoples";
 import { usePersonalization } from "../personalization";
@@ -40,7 +40,7 @@ function CountryRecentTracker({ iso3 }: { iso3: string }) {
 }
 
 function LanguageRecentTracker({ iso6393 }: { iso6393: string }) {
-  const languages = useLanguageExplorer();
+  const languages = useLiveLanguageExplorer();
   const { recordRecent } = usePersonalization();
   const language = languages.languagesByIso.get(iso6393) ?? null;
   useEffect(() => {
@@ -49,7 +49,7 @@ function LanguageRecentTracker({ iso6393 }: { iso6393: string }) {
       kind: "language",
       key: language.iso6393,
       label: language.name,
-      secondary: `${language.iso6393} · ${language.peopleGroupCount} people groups`,
+      secondary: `${language.iso6393} · ${language.peopleEntityCount} people entities`,
       href: hrefFor(`/languages/${language.iso6393}`),
     });
   }, [language, recordRecent]);

@@ -2,13 +2,13 @@
 
 **Explore the peoples. Understand their world. Pray for the nations.**
 
-Unreached is a browser-based Christian world atlas for discovering unreached peoples, exploring country and mission context, and praying with source-aware information.
+Unreached is a browser-based Christian world atlas for discovering unreached peoples, exploring country, language and mission context, and praying with source-aware information.
 
 - **Live site:** https://www.thiepn.dev/unreached/
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Current phase:** **U12D — Live Mission Visualization**
+- **Current phase:** **U12E — Live Language & Resource Integration**
 
 ## Real-data architecture
 
@@ -20,6 +20,7 @@ The public application reads the provider's read-only API directly from the brow
 
 - **PEID** is the canonical cross-country people entity used by live people routes.
 - Every **PGID** is preserved as its own country-context record.
+- Valid PeopleGroups.org **ROL / ISO 639-3** values identify live language records.
 - IMB **GSEC** remains source-native:
   - GSEC 0–3 → `unreached`
   - GSEC 4–6 → `other`
@@ -36,9 +37,11 @@ The public application reads the provider's read-only API directly from the brow
 | Mission atlas | Natural Earth geography + live PeopleGroups.org runtime aggregation |
 | Peoples | Live PeopleGroups.org runtime API |
 | Countries | Natural Earth geography + live PeopleGroups.org runtime records |
+| Languages & resources | Live PeopleGroups.org ISO 639-3 + raw resource fields |
 | Prayer | Live people subjects + fixed release-certified prayer template |
-| Editorial context dataset | Still separately gated |
-| Language/Scripture dataset | Still separately gated |
+| Reviewed editorial context dataset | Still separately gated |
+| ProgressBible translation-progress data | Permission-gated and not used |
+| Ethnologue proprietary taxonomy | Permission-gated and not used |
 
 PeopleGroups.org runtime reads are policy-approved independently from static redistribution. Static public dataset mirroring and third-party people-photo reuse remain blocked unless separately authorized.
 
@@ -85,6 +88,25 @@ Every layer preserves no-data states. Population/context denominators are shown 
 
 Country aggregation explicitly identifies its denominator. Represented population and religion/language shares are based only on the source contexts with known values; they are not presented as national census statistics.
 
+### Languages & Resources
+
+`#/languages` groups the shared runtime corpus by valid PeopleGroups.org `ROL` / ISO 639-3 code. It can search and filter by language, people, country, GSEC context, and raw Bible availability label.
+
+`#/languages/:ISO6393` displays:
+
+- source-reported language name and family
+- unique PEIDs and PGID country contexts using that ISO code
+- represented population with population-field coverage
+- GSEC 0–3 / 4–6 / unknown context counts
+- country and people relationships
+- raw Bible availability-label distribution
+- raw Jesus Film availability-label distribution
+- raw total-resource-field coverage and values
+- source load date and newest provider update date
+- the explicit denominator: PeopleGroups.org PGID country-context records reporting that ISO 639-3 language
+
+The language surface deliberately does **not** infer `translation-needed`, `portions`, `New Testament`, or `complete Bible` from PeopleGroups.org's generic Bible-availability field. ProgressBible registered translation-progress data and Ethnologue proprietary taxonomy remain excluded without compatible permission.
+
 ### Prayer
 
 `#/pray` uses current PEIDs with at least one GSEC 0–3 country context as prayer subjects.
@@ -96,9 +118,9 @@ Focused prayer keeps the existing 2/5/10-minute pacing modes without scores, str
 ### Search, Saved, and Recent
 
 - `/` or `Ctrl/Cmd+K` opens global search.
-- Opening search lazily loads the live people/country runtime corpus; the closed dialog does not trigger a large source download.
+- Opening search lazily loads the shared live people/country/language runtime corpus; the closed dialog does not trigger a large source download.
 - PEID people profiles can be saved locally for prayer when they contain a GSEC 0–3 context.
-- Saved snapshots and recent visits remain browser-local under `unreached.personal.v1`.
+- People, country and language recent visits remain browser-local under `unreached.personal.v1`.
 - Legacy saved snapshots remain readable after the PEID migration.
 
 ## Runtime reliability
@@ -121,7 +143,7 @@ The runtime includes:
 - 7-day explicit stale fallback window
 - best-effort cache behavior so browser-storage failure cannot block a healthy live API
 
-The normal browser suite uses a deterministic intercepted provider corpus. A separate **PeopleGroups Live Certification** workflow tests real browser CORS/API behavior so provider uptime does not redefine unrelated application correctness.
+The normal browser suite uses a deterministic intercepted provider corpus. A separate **PeopleGroups Live Certification** workflow tests the full real corpus plus browser CORS/API behavior so provider uptime does not redefine unrelated application correctness.
 
 ## Local development
 
@@ -151,6 +173,7 @@ npm run visualization:live-check
 npm run country:check
 npm run people:check
 npm run prayer:check
+npm run language:check
 npm run discovery:check
 npm run release:check
 npm run e2e
@@ -180,15 +203,16 @@ Vite is configured for the `/unreached/` project path.
 - **U4 — Mission Visualization Engine** ✅
 - **U5 — Country Explorer** ✅
 - **U6 — People Group Explorer** ✅
-- **U7 — Context & Why Unreached?** ✅
+- **U7 — Context & Why Unreached?** ✅ architecture/review system; production editorial dataset still separately gated
 - **U8 — Prayer Experience** ✅
-- **U9 — Languages & Scripture Integration** ✅
+- **U9 — Languages & Scripture Integration** ✅ architecture; legacy publication dataset superseded by U12E runtime semantics
 - **U10 — Search, Discovery & Local Personalization** ✅
 - **U11 — Release Hardening & Data Expansion** ✅
 - **U12A — Provider Foundation & Semantic Isolation** ✅
 - **U12B — Real Data Runtime Architecture** ✅
 - **U12C — Visible Real-Data Integration** ✅
-- **U12D — Live Mission Visualization** 🚧 certification in progress
+- **U12D — Live Mission Visualization** ✅
+- **U12E — Live Language & Resource Integration** 🚧 implementation/certification
 
 See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md`](docs/PEOPLEGROUPS_RUNTIME_ARCHITECTURE.md) for the current data/publication contract.
 

@@ -17,6 +17,7 @@ import "./styles/peoples.css";
 import "./styles/context.css";
 import "./styles/prayer.css";
 import "./styles/languages.css";
+import "./styles/u12e-languages.css";
 import "./styles/discovery.css";
 import "./styles/about.css";
 

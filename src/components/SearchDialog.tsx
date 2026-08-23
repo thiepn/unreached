@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import { useLiveCountryExplorer } from "../countries";
 import { buildSearchDocuments, searchDocuments, type SearchDomain } from "../discovery/search";
-import { useLanguageExplorer } from "../languages";
+import { useLiveLanguageExplorer } from "../languages";
 import { useWorldGeography } from "../map/geography";
 import { useLivePeopleExplorer } from "../peoples";
 import { usePersonalization } from "../personalization";
@@ -31,7 +31,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const peoples = useLivePeopleExplorer();
   const countries = useLiveCountryExplorer();
-  const languages = useLanguageExplorer();
+  const languages = useLiveLanguageExplorer();
   const geography = useWorldGeography();
   const personalization = usePersonalization();
 
@@ -95,16 +95,16 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
         };
       }),
       countries: geographicCountries,
-      languages: (languages.dataset?.languages ?? []).map((language) => ({
+      languages: languages.languages.map((language) => ({
         iso6393: language.iso6393,
         name: language.name,
         familyName: language.familyName,
-        branchName: language.branchName,
+        branchName: null,
         countryNames: language.countries.map((country) => country.name),
         peopleNames: language.peoples.map((people) => people.name),
       })),
     });
-  }, [countries.countriesByIso3, geography.countries, peoples.peoples, languages.dataset]);
+  }, [countries.countriesByIso3, geography.countries, peoples.peoples, languages.languages]);
 
   const results = useMemo(() => searchDocuments(documents, query, 18), [documents, query]);
   const grouped = useMemo(() => (["people", "country", "language"] as const).map((domain) => ({ domain, results: results.filter((result) => result.domain === domain) })).filter((group) => group.results.length), [results]);
@@ -116,8 +116,8 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
     window.location.hash = href.replace(/^#/, "");
   };
 
-  const loadingSource = peoples.loading || countries.loading;
-  const sourceError = peoples.error ?? countries.error;
+  const loadingSource = peoples.loading || countries.loading || languages.loading;
+  const sourceError = peoples.error ?? countries.error ?? languages.error;
 
   return (
     <div class="search-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) onClose(); }}>
@@ -151,7 +151,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
 
         <div class="search-dialog__body">
           {loadingSource ? <p class="search-empty">Loading live PeopleGroups.org search records{peoples.progress ? `… ${peoples.progress.loadedPages}/${peoples.progress.totalPages}` : "…"}</p> : null}
-          {sourceError ? <p class="search-empty">Live people/country search is temporarily unavailable: {sourceError}</p> : null}
+          {sourceError ? <p class="search-empty">Live people, country, and language search is temporarily unavailable: {sourceError}</p> : null}
 
           {!query.trim() ? (
             <section class="search-recents" aria-labelledby="search-recent-heading">
@@ -188,11 +188,11 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
               ))}
             </div>
           ) : query.trim() && !loadingSource ? (
-            <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No current result matches “{query}”.</strong><p>People and country results come from the live PeopleGroups.org runtime corpus; country geography remains sourced from Natural Earth.</p></div>
+            <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No current result matches “{query}”.</strong><p>People, country, and language results come from the live PeopleGroups.org runtime corpus; country geography remains sourced from Natural Earth.</p></div>
           ) : null}
         </div>
 
-        <footer class="search-dialog__footer"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span>People/country search uses the current runtime corpus.</span></footer>
+        <footer class="search-dialog__footer"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span>People, country, and language search uses the current runtime corpus.</span></footer>
       </section>
     </div>
   );
