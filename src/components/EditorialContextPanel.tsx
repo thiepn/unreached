@@ -43,7 +43,7 @@ export function EditorialContextPanel({ peid }: { peid: number }) {
     return (
       <section class="context-state" aria-label="Editorial context status">
         <BookOpenText size={20} aria-hidden="true" />
-        <div><strong>Reviewed context not yet published for this PEID</strong><p>{context.error ?? context.status?.reason ?? "The live source profile remains available, but a reviewed contextual article has not yet been released for this people entity."}</p></div>
+        <div><strong>Reviewed context not yet published for this source record</strong><p>{context.error ?? context.status?.reason ?? "The live source profile remains available, but a reviewed contextual article has not yet been released for this PEID/PGID record."}</p></div>
       </section>
     );
   }
@@ -59,9 +59,9 @@ export function EditorialContextPanel({ peid }: { peid: number }) {
       </header>
 
       <div class="context-identity-note" aria-label="Editorial identity verification">
-        <strong>PEID identity verified</strong>
+        <strong>Source-record identity verified</strong>
         <span>PeopleGroups PEID {profile.peid} · {identity.pgidAnchors.join(", ")} · {identity.countryIso3Anchors.join(", ")} · {identity.languageIso6393Anchors.join(", ")}</span>
-        <small>This article is attached through explicit provider identity evidence. Legacy numeric IDs are never treated as PEIDs by coincidence.</small>
+        <small>This article is attached through explicit PEID, PGID, country, language and name evidence. The current API's PEID/PGID pairing is treated as a country-context record identity, not a cross-country grouping key; legacy numeric IDs are never matched by coincidence.</small>
       </div>
 
       <div class="context-editorial__grid">
