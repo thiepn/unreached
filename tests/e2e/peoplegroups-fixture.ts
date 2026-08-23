@@ -2,6 +2,8 @@ import type { Page } from "@playwright/test";
 
 export const VISIBLE_TEST_PEID = 910001;
 export const VISIBLE_TEST_PEOPLE = "Browser Test People";
+export const RELATED_TEST_PEID = 910002;
+export const UNCOVERED_TEST_PEID = 910003;
 
 const records = [
   {
@@ -46,7 +48,7 @@ const records = [
     UpdatedDate: "2026-08-21T00:00:00.000Z"
   },
   {
-    PEID: VISIBLE_TEST_PEID,
+    PEID: RELATED_TEST_PEID,
     PGID: "PG910002",
     NmDisp: VISIBLE_TEST_PEOPLE,
     ISOalpha3: "NGA",
@@ -56,6 +58,7 @@ const records = [
     Pop: null,
     ROL: "fon",
     Lang: "Fon",
+    LangFamily: "Niger-Congo",
     ROR: "R6",
     Rlgn: "Traditional Religion",
     EvngLvl: "5% to 10%",
@@ -65,10 +68,11 @@ const records = [
     Jesus: "Available",
     Affbloc: "Sub-Saharan African Peoples",
     PplClstr: "Browser Test Cluster",
+    PplNm: VISIBLE_TEST_PEOPLE,
     UpdatedDate: "2026-08-22T00:00:00.000Z"
   },
   {
-    PEID: 910002,
+    PEID: UNCOVERED_TEST_PEID,
     PGID: "PG910003",
     NmDisp: "Second Browser People",
     ISOalpha3: "BEN",
@@ -87,6 +91,7 @@ const records = [
     Jesus: "Not Available",
     Affbloc: "Sub-Saharan African Peoples",
     PplClstr: "Second Browser Cluster",
+    PplNm: "Second Browser People",
     UpdatedDate: "2026-08-20T00:00:00.000Z"
   }
 ];
