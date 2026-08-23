@@ -12,6 +12,7 @@
     "peoplegroups:check": "tsx scripts/data/peoplegroups/check.ts",
     "peoplegroups:runtime-check": "tsx scripts/data/peoplegroups/runtime-check.ts && tsx scripts/data/peoplegroups/cache-check.ts",
     "peoplegroups:visible-check": "tsx scripts/data/peoplegroups/visible-check.ts",
+    "peoplegroups:editorial-identity-live-check": "tsx scripts/data/peoplegroups/editorial-identity-live-check.ts",
     "peoplegroups:live-corpus-check": "tsx scripts/data/peoplegroups/live-corpus-check.ts",
     "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
     "geography:build": "tsx scripts/geography/build-natural-earth.ts",
