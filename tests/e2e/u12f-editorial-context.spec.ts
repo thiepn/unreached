@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { expect, test } from "@playwright/test";
 
-import { installPeopleGroupsFixture, VISIBLE_TEST_PEID } from "./peoplegroups-fixture";
+import { installPeopleGroupsFixture, UNCOVERED_TEST_PEID, VISIBLE_TEST_PEID } from "./peoplegroups-fixture";
 
 const fixture = JSON.parse(await readFile(resolve(process.cwd(), "data/fixtures/context.synthetic.json"), "utf8")) as { profiles: unknown[] };
 
@@ -38,14 +38,15 @@ test.beforeEach(async ({ page }) => {
   await installEditorialFixture(page);
 });
 
-test("reviewed editorial context attaches to an explicitly verified live PEID", async ({ page }) => {
+test("reviewed editorial context attaches to an explicitly verified live PEID/PGID source record", async ({ page }) => {
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
 
   await expect(page.getByRole("heading", { name: "Browser Test People", exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole("heading", { name: "Understand their world.", exact: true })).toBeVisible();
-  await expect(page.getByText("PEID identity verified", { exact: true })).toBeVisible();
+  await expect(page.getByText("Source-record identity verified", { exact: true })).toBeVisible();
   await expect(page.getByText(/PeopleGroups PEID 910001 · PG910001 · BEN · fon/)).toBeVisible();
-  await expect(page.getByText(/Legacy numeric IDs are never treated as PEIDs by coincidence/)).toBeVisible();
+  await expect(page.getByText(/not a cross-country grouping key/)).toBeVisible();
+  await expect(page.getByText(/legacy numeric IDs are never matched by coincidence/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Who are they?", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Why are they unreached?", exact: true })).toBeVisible();
   await expect(page.getByText("Evidence synthesis", { exact: true }).first()).toBeVisible();
@@ -53,10 +54,10 @@ test("reviewed editorial context attaches to an explicitly verified live PEID", 
   await expect(page.locator('a[href="#/peoples/999001"]')).toHaveCount(0);
 });
 
-test("people without reviewed editorial content keep their live source profile without fabricated filler", async ({ page }) => {
-  await page.goto("./#/peoples/910002");
+test("people records without reviewed editorial content keep their live source profile without fabricated filler", async ({ page }) => {
+  await page.goto(`./#/peoples/${UNCOVERED_TEST_PEID}`);
 
   await expect(page.getByRole("heading", { name: "Second Browser People", exact: true })).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText("Reviewed context not yet published for this PEID", { exact: true })).toBeVisible();
+  await expect(page.getByText("Reviewed context not yet published for this source record", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Understand their world.", exact: true })).toHaveCount(0);
 });
