@@ -2,9 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { installPeopleGroupsFixture, VISIBLE_TEST_PEID, VISIBLE_TEST_PEOPLE } from "./peoplegroups-fixture";
 
-test.beforeEach(async ({ page }) => {
-  await installPeopleGroupsFixture(page);
-});
+test.beforeEach(async ({ page }) => { await installPeopleGroupsFixture(page); });
 
 test("live people and country surfaces preserve one-record PEID, PGID and GSEC semantics", async ({ page }) => {
   await page.goto("./#/peoples");
@@ -14,14 +12,18 @@ test("live people and country surfaces preserve one-record PEID, PGID and GSEC s
   await peopleLink.click();
 
   await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
-  await expect(page.getByText(`PEID ${VISIBLE_TEST_PEID}`, { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(new RegExp(`PEID ${VISIBLE_TEST_PEID}`)).first()).toBeVisible();
   await expect(page.getByText(/PEID 910001 · PGID PG910001/)).toBeVisible();
   await expect(page.getByText("Unreached", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("2", { exact: true }).first()).toBeVisible();
   await expect(page.getByText(/PeopleGroups.org estimate for Benin/)).toBeVisible();
   await expect(page.getByText("Bible: Available", { exact: true })).toBeVisible();
   await expect(page.getByText(/one PGID country-context record for this PEID/)).toBeVisible();
-  await expect(page.getByText(/does not treat PEID as a cross-country grouping key/)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Pray now/ })).toBeVisible();
+
+  const sourceDetails = page.locator(".people-disclosure").filter({ hasText: "Sources, taxonomy & methodology" });
+  await sourceDetails.locator("summary").click();
+  await expect(sourceDetails.getByText(/does not treat PEID as a cross-country grouping key/)).toBeVisible();
 
   await expect(page.getByText("PGID PG910002", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Mixed GSEC status", { exact: true })).toHaveCount(0);
@@ -48,7 +50,7 @@ test("live people can be searched, saved locally and opened in certified prayer 
   await expect(result).toBeVisible({ timeout: 15_000 });
   await result.click();
 
-  const save = page.getByRole("button", { name: "Save for Prayer" });
+  const save = page.getByRole("button", { name: "Save for later" });
   await expect(save).toBeVisible();
   await save.click();
   await expect(page.getByRole("button", { name: "Remove from saved" })).toBeVisible();
