@@ -70,7 +70,7 @@ export function PeoplesPage() {
         <div>
           <div class="eyebrow">People Group Explorer</div>
           <h1 id="peoples-title" class="display-title">Meet the peoples behind the map.</h1>
-          <p class="lead">Browse live PeopleGroups.org records by people entity, then inspect each country context without converting IMB methodology into incompatible Joshua Project fields.</p>
+          <p class="lead">Browse live PeopleGroups.org people-group-in-country records. Each PEID route represents the single PGID record returned by the current API; cross-country relationships are shown only through explicit source taxonomy.</p>
         </div>
         <div class="peoples-hero__mark" aria-hidden="true"><UsersRound size={35} /></div>
       </header>
@@ -119,7 +119,7 @@ export function PeoplesPage() {
           <details class="people-filter-panel" open>
             <summary><Filter size={17} aria-hidden="true" /> Filters</summary>
             <div class="people-filter-grid">
-              <label>Status<select value={filters.status} onChange={(event) => update("status", event.currentTarget.value as LivePeopleFilterState["status"])}><option value="all">All statuses</option><option value="unreached-only">Unreached in all classified contexts</option><option value="mixed">Mixed GSEC status</option><option value="other-only">Other GSEC status</option><option value="unknown">Unknown</option></select></label>
+              <label>Status<select value={filters.status} onChange={(event) => update("status", event.currentTarget.value as LivePeopleFilterState["status"])}><option value="all">All statuses</option><option value="unreached-only">GSEC 0–3</option><option value="other-only">GSEC 4–6</option><option value="unknown">GSEC unknown</option></select></label>
               <label>Country<select value={filters.countryIso3} onChange={(event) => update("countryIso3", event.currentTarget.value)}><option value="">All countries</option>{options.countries.map(([iso3, name]) => <option value={iso3} key={iso3}>{name}</option>)}</select></label>
               <label>Religion<select value={filters.religion} onChange={(event) => update("religion", event.currentTarget.value)}><option value="">All religions</option>{options.religions.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
               <label>Language<select value={filters.language} onChange={(event) => update("language", event.currentTarget.value)}><option value="">All languages</option>{options.languages.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
@@ -129,7 +129,7 @@ export function PeoplesPage() {
             <button class="people-reset-filters" type="button" onClick={() => setFilters(DEFAULT_FILTERS)}>Reset filters</button>
           </details>
 
-          <div class="people-result-count" aria-live="polite">{results.length} of {explorer.peoples.length} people entities · {explorer.totalRecords} country-context records</div>
+          <div class="people-result-count" aria-live="polite">{results.length} of {explorer.peoples.length} people-group records · {explorer.totalRecords} PGID country-context records</div>
 
           {results.length ? (
             <div class="people-card-grid">
@@ -138,6 +138,7 @@ export function PeoplesPage() {
                 const gsec = entityGsecRange(people);
                 const resources = entityResourceBreakdown(people);
                 const bible = resources.bible[0]?.status ?? "Unknown";
+                const context = people.contexts[0]!;
                 return (
                   <a class="people-card" href={hrefFor(`/peoples/${people.routeKey}`)} key={people.id}>
                     <div class="people-card__head">
@@ -147,15 +148,15 @@ export function PeoplesPage() {
                       </div>
                       <ArrowRight size={18} aria-hidden="true" />
                     </div>
-                    <p class="people-card__taxonomy">{taxonomy.peopleCluster ?? taxonomy.affinityBloc ?? "People group"}</p>
-                    <div class="people-card__population"><strong>{formatPeopleCount(people.population.knownValue)}</strong><span>{people.population.complete ? "Estimated population across all contexts" : `Partial estimated sum · ${people.population.knownContextCount}/${people.population.totalContextCount} contexts known`}</span></div>
+                    <p class="people-card__taxonomy">{taxonomy.peopleName ?? taxonomy.peopleCluster ?? taxonomy.affinityBloc ?? "People group"}</p>
+                    <div class="people-card__population"><strong>{people.population.complete ? formatPeopleCount(people.population.knownValue) : "Unknown"}</strong><span>{people.population.complete ? `Estimated population · ${context.country.name}` : `Population estimate not reported · ${context.country.name}`}</span></div>
                     <dl class="people-card__facts">
                       <div><dt>Religion</dt><dd>{people.primaryReligion?.name ?? "Unknown"}</dd></div>
                       <div><dt>Language</dt><dd>{people.primaryLanguage?.name ?? "Unknown"}</dd></div>
-                      <div><dt>GSEC</dt><dd>{gsec ? (gsec.min === gsec.max ? String(gsec.min) : `${gsec.min}–${gsec.max}`) : "Unknown"}</dd></div>
+                      <div><dt>GSEC</dt><dd>{gsec ? String(gsec.min) : "Unknown"}</dd></div>
                       <div><dt>Bible</dt><dd>{bible}</dd></div>
                     </dl>
-                    <span class="people-card__countries">PEID {people.peid} · {people.contexts.length} {people.contexts.length === 1 ? "country context" : "country contexts"}</span>
+                    <span class="people-card__countries">PEID {people.peid} · {context.pgid} · {context.country.name}</span>
                   </a>
                 );
               })}
