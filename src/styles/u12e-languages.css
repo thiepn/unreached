@@ -1,0 +1,44 @@
+.language-resource-subheading {
+  margin: 1rem 0 0.45rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.language-resource-breakdown {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.language-resource-breakdown li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.language-resource-breakdown strong {
+  font-size: 0.86rem;
+}
+
+.language-resource-breakdown span {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  text-align: right;
+}
+
+@media (max-width: 620px) {
+  .language-resource-breakdown li {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .language-resource-breakdown span {
+    text-align: left;
+  }
+}
