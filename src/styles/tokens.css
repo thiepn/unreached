@@ -49,4 +49,17 @@
   --duration-fast: 120ms;
   --duration-medium: 220ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Compatibility aliases for U8–U10 surfaces that predate the canonical
+     U11 design-token names. Keeping these aliases in one place prevents
+     invalid var() declarations from silently dropping borders, backgrounds,
+     text colours, and typography on Prayer, Languages, Search, Saved, and
+     About while those styles are migrated incrementally. */
+  --font-body: var(--font-ui);
+  --font-display: var(--font-editorial);
+  --surface-base: var(--paper-1);
+  --surface-raised: var(--paper-0);
+  --text-muted: var(--ink-2);
+  --border-subtle: var(--line);
+  --border-strong: color-mix(in srgb, var(--ink-0) 28%, var(--line));
 }
