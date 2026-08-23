@@ -1,8 +1,8 @@
 # U12 — Production Data Activation Release Gates
 
 **Phase:** Production Data Activation  
-**Current subphase:** U12E — Live Language & Resource Integration  
-**Status:** U12A–U12D complete and production-certified; U12E implementation in certification
+**Current subphase:** U12F — Reviewed Editorial Context Migration & Activation  
+**Status:** U12A–U12E complete and production-certified; U12F implementation in certification
 
 ## U12A — Provider Foundation & Semantic Isolation
 
@@ -97,7 +97,7 @@
 
 ## U12E — Live Language & Resource Integration
 
-**Status:** implementation on `phase/u12e-live-language-resources`; certification in progress.
+**Status:** complete, merged, and production-certified.
 
 ### Runtime language identity
 
@@ -125,7 +125,7 @@
 - [x] ProgressBible registered translation-progress data remains excluded without written permission.
 - [x] Ethnologue proprietary linguistic data remains excluded without a compatible license.
 
-### Product integration
+### Product integration and certification
 
 - [x] `#/languages` uses live runtime records and exposes query, GSEC-context, raw Bible-label, and sorting controls.
 - [x] `#/languages/:ISO6393` exposes source identity, people/country relationships, population coverage, GSEC counts, raw resource-label distributions, load date, update date, and denominator.
@@ -135,23 +135,91 @@
 - [x] Source/loading/error/stale-cache states are visible on language surfaces.
 - [x] `public/data/languages/status.json` declares `runtime-api`, PeopleGroups source, and no static dataset URL.
 - [x] Production dist policy forbids a source-derived static language corpus.
+- [x] Deterministic live-language aggregation and semantic-exclusion tests pass.
+- [x] Live language explorer/profile and global-search browser journeys pass.
+- [x] Final branch TypeScript/production build passed.
+- [x] Full desktop/mobile Browser Certification passed.
+- [x] PeopleGroups full-corpus/browser live certification passed.
+- [x] PR #29 merged.
+- [x] Merged `unreached/pages-production` status is green.
+- [x] Merged `unreached/peoplegroups-live` status is green.
 
-### Deterministic and browser gates
+### U12E merge evidence
 
-- [x] Deterministic live-language aggregation test covers ISO grouping, PEID/country counts, partial population, GSEC, raw Bible/Jesus labels, resource-count fields, relationships, filters, denominator, and source freshness.
-- [x] Deterministic test rejects `complete-bible`, `new-testament`, `translation-needed`, Frontier and JPScale leakage from the live model.
-- [x] Browser journey covers live language explorer → profile and verifies partial-population/resource-label semantics.
-- [x] Global-search browser journey covers ISO language search → live profile.
+- PR #29 — **U12E — live language & resource integration**
+- Final PR head: `d2b435ae874bdf7234819450a96b777ed96485f0`
+- Squash merge commit: `a3783a1ce2bf0551b387ec8efabf92a09043d988`
+- Final production statuses on the merge commit:
+  - `unreached/pages-production` → success
+  - `unreached/peoplegroups-live` → success
+
+## U12F — Reviewed Editorial Context Migration & Activation
+
+**Status:** implementation on `phase/u12f-editorial-context`; certification in progress.
+
+### PEID-native editorial identity
+
+- [x] Editorial context schema upgraded to v2 with canonical `people-entity:peoplegroups:<PEID>` identity.
+- [x] Each profile stores an explicit target PEID and PeopleGroups identity-provider declaration.
+- [x] Published identity evidence requires provider PEID and PGID evidence, plus reviewed name/country/language anchors.
+- [x] Legacy IDs may survive only as migration provenance.
+- [x] `numericCoincidenceUsed` is structurally fixed to `false`; an old numeric ID cannot establish a new PEID mapping by coincidence.
+- [x] PEID-native profiles cannot pretend to carry legacy provenance.
+- [x] Live-corpus certification verifies PEID, PGID, country, language and verified-name anchors against the current PeopleGroups runtime model.
+
+### Editorial integrity
+
+- [x] U7 evidence levels A/B/C remain intact.
+- [x] Level B synthesis still requires at least two distinct sources.
+- [x] Level C remains labeled interpretation, cannot claim high certainty, and requires an interpretation note.
+- [x] Current claims require `asOf` and `reviewAfter` dates.
+- [x] Published profiles fail when current claims become stale.
+- [x] Restricted material cannot be published.
+- [x] Existing anti-stereotype shortcut language remains prohibited.
+- [x] Publication review checklist now explicitly includes `identityMatchChecked`.
+- [x] Missing reviewed context remains missing; no AI-generated filler is substituted.
+
+### First reviewed production publication
+
+- [x] `public/data/context/editorial.v2.json` is non-fixture and separately authored from the live PeopleGroups database.
+- [x] First production profile is Fon / PeopleGroups PEID 14343.
+- [x] Fon identity is anchored to PeopleGroups PEID/PGID/country/language evidence rather than number coincidence.
+- [x] Fon historical context is source-cited independently.
+- [x] Religion treatment is explicitly aggregate/contextual rather than generalized to every individual.
+- [x] Why-unreached material distinguishes current source mission status from language/media availability and does not claim that translated resources are absent when sources report resources.
+- [x] Production status uses `reviewed-editorial`, schema v2, explicit profile count, and PeopleGroups identity provider.
+- [x] Reviewed editorial publication does not authorize a static PeopleGroups database mirror.
+
+### Product integration
+
+- [x] People PEID profiles render reviewed editorial context when a certified profile exists.
+- [x] Editorial UI exposes the verified PEID/PGID/country/language identity basis.
+- [x] Claim-level citations, evidence labels, freshness and review metadata remain visible.
+- [x] Profiles without reviewed context retain the live source profile and show a clear unpublished-context state.
+- [x] About/methodology explains partial editorial coverage and identity-proof requirements.
+
+### Deterministic, browser, release and deployment gates
+
+- [x] Synthetic migration test deliberately migrates legacy `people:999001` to different PEID `910001`.
+- [x] Deterministic test rejects a deliberately incorrect PGID identity anchor.
+- [x] Context release check requires active reviewed-editorial v2 publication.
+- [x] Dist gate allows only certified reviewed context files while runtime PeopleGroups domains remain static-corpus-free.
+- [x] PeopleGroups live workflow validates every production editorial identity against the current full provider corpus.
+- [x] Browser journey verifies a reviewed PEID article renders with identity evidence and no legacy route leakage.
+- [x] Browser journey verifies a PEID without editorial coverage receives no fabricated article.
+- [x] Pages production workflow validates deployed editorial schema, profile count, identity contract and review state.
 - [ ] Final branch TypeScript/production build green.
 - [ ] Full desktop/mobile Browser Certification green.
-- [ ] U12E language journeys green on the final PR head.
-- [ ] PeopleGroups full-corpus/browser live certification green on the final PR head.
+- [ ] U12F editorial browser journeys green on final PR head.
+- [ ] PeopleGroups full-corpus/browser + editorial identity certification green on final PR head.
 - [ ] PR merged.
 - [ ] Merged `unreached/pages-production` status green.
 - [ ] Merged `unreached/peoplegroups-live` status green.
 
-## Remaining production-data boundary after U12E
+## U12 completion boundary after U12F
 
-The separately reviewed **editorial-context dataset** remains gated. Its current U7 integrity model is intentionally claim-by-claim, evidence-level-aware, freshness-aware, sensitivity-aware, and bound to legacy `people:<sourcePeopleId>` records. It must not be attached to PeopleGroups PEIDs by numeric coincidence. A later phase must design and certify an explicit PEID migration/review process before that editorial layer can be reactivated.
+A green U12F completes the planned **production-data activation** boundary: mission, people, countries, languages/resources, prayer and reviewed editorial context all have production-safe publication modes. Editorial context coverage remains intentionally partial and can expand profile-by-profile without weakening the release gate.
 
-A green U12E authorizes **direct runtime language/resource aggregation from PeopleGroups.org only**. It does not authorize a static PeopleGroups.org database mirror, ProgressBible redistribution, Ethnologue reuse, third-party photo redistribution, or semantic conversion into incompatible Scripture/mission taxonomies.
+U12F still does **not** authorize a PeopleGroups.org static database mirror, ProgressBible redistribution, Ethnologue reuse, third-party photo redistribution, or semantic conversion into incompatible Scripture/mission taxonomies.
+
+After U12F is merged and production-certified, U12 should receive a final whole-system closure/certification pass before the project moves into a new product-development cycle focused on broader reviewed context coverage, UX/product depth, performance and further source-safe exploration.
