@@ -1,5 +1,5 @@
 import { ArrowRight, Database, Filter, RefreshCw, Search, UsersRound } from "lucide-preact";
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
 import {
@@ -11,6 +11,8 @@ import {
   type LivePeopleFilterState,
 } from "../peoples";
 import { entityGsecRange, entityResourceBreakdown, entityTaxonomy } from "../providers/peoplegroups";
+
+const PEOPLE_PAGE_SIZE = 48;
 
 const DEFAULT_FILTERS: LivePeopleFilterState = {
   query: "",
@@ -24,13 +26,14 @@ const DEFAULT_FILTERS: LivePeopleFilterState = {
 };
 
 function loadingLabel(loadedPages: number | undefined, totalPages: number | undefined): string {
-  if (!loadedPages || !totalPages) return "Loading live people-group data…";
-  return `Loading live people-group data… ${loadedPages} of ${totalPages} pages`;
+  if (!loadedPages || !totalPages) return "Loading current people-group records…";
+  return `Loading current people-group records… ${loadedPages} of ${totalPages} source pages`;
 }
 
 export function PeoplesPage() {
   const explorer = useLivePeopleExplorer();
   const [filters, setFilters] = useState<LivePeopleFilterState>(DEFAULT_FILTERS);
+  const [visibleCount, setVisibleCount] = useState(PEOPLE_PAGE_SIZE);
 
   const options = useMemo(() => {
     const countries = new Map<string, string>();
@@ -62,6 +65,11 @@ export function PeoplesPage() {
   }, [explorer.peoples]);
 
   const results = useMemo(() => filterLivePeople(explorer.peoples, filters), [explorer.peoples, filters]);
+  const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
+  const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0].filter(Boolean).length;
+
+  useEffect(() => setVisibleCount(PEOPLE_PAGE_SIZE), [filters]);
+
   const update = <K extends keyof LivePeopleFilterState>(key: K, value: LivePeopleFilterState[K]) => setFilters((current) => ({ ...current, [key]: value }));
 
   return (
@@ -69,8 +77,8 @@ export function PeoplesPage() {
       <header class="peoples-hero">
         <div>
           <div class="eyebrow">People Group Explorer</div>
-          <h1 id="peoples-title" class="display-title">Meet the peoples behind the map.</h1>
-          <p class="lead">Browse live PeopleGroups.org people-group-in-country records. Each PEID route represents the single PGID record returned by the current API; cross-country relationships are shown only through explicit source taxonomy.</p>
+          <h1 id="peoples-title" class="display-title">Find a people group.</h1>
+          <p class="lead">Search by people, country, language or religion, then open a profile to understand the source record and pray with grounded information.</p>
         </div>
         <div class="peoples-hero__mark" aria-hidden="true"><UsersRound size={35} /></div>
       </header>
@@ -82,7 +90,13 @@ export function PeoplesPage() {
         </div>
       ) : null}
 
-      {explorer.loading ? <div class="people-index-state" role="status">{loadingLabel(explorer.progress?.loadedPages, explorer.progress?.totalPages)}</div> : null}
+      {explorer.loading && !explorer.ready ? (
+        <div class="people-index-state people-index-state--loading" role="status">
+          <span class="loading-pulse" aria-hidden="true" />
+          <strong>{loadingLabel(explorer.progress?.loadedPages, explorer.progress?.totalPages)}</strong>
+          <small>The page stays usable while the current PeopleGroups.org corpus is prepared.</small>
+        </div>
+      ) : null}
 
       {!explorer.loading && explorer.error ? (
         <div class="people-data-notice" role="alert">
@@ -102,7 +116,7 @@ export function PeoplesPage() {
                 type="search"
                 value={filters.query}
                 onInput={(event) => update("query", event.currentTarget.value)}
-                placeholder="Search people, PEID, PGID, country, language or religion"
+                placeholder="Search people, country, language, religion, PEID or PGID"
                 autoComplete="off"
               />
             </label>
@@ -116,8 +130,8 @@ export function PeoplesPage() {
             </div>
           </div>
 
-          <details class="people-filter-panel" open>
-            <summary><Filter size={17} aria-hidden="true" /> Filters</summary>
+          <details class="people-filter-panel">
+            <summary><Filter size={17} aria-hidden="true" /> More filters{activeFilterCount ? ` · ${activeFilterCount} active` : ""}</summary>
             <div class="people-filter-grid">
               <label>Status<select value={filters.status} onChange={(event) => update("status", event.currentTarget.value as LivePeopleFilterState["status"])}><option value="all">All statuses</option><option value="unreached-only">GSEC 0–3</option><option value="other-only">GSEC 4–6</option><option value="unknown">GSEC unknown</option></select></label>
               <label>Country<select value={filters.countryIso3} onChange={(event) => update("countryIso3", event.currentTarget.value)}><option value="">All countries</option>{options.countries.map(([iso3, name]) => <option value={iso3} key={iso3}>{name}</option>)}</select></label>
@@ -129,38 +143,50 @@ export function PeoplesPage() {
             <button class="people-reset-filters" type="button" onClick={() => setFilters(DEFAULT_FILTERS)}>Reset filters</button>
           </details>
 
-          <div class="people-result-count" aria-live="polite">{results.length} of {explorer.peoples.length} people-group records · {explorer.totalRecords} PGID country-context records</div>
+          <div class="people-result-count" aria-live="polite">
+            Showing {Math.min(visibleResults.length, results.length)} of {results.length} matching records · {explorer.peoples.length} total
+          </div>
 
           {results.length ? (
-            <div class="people-card-grid">
-              {results.map((people) => {
-                const taxonomy = entityTaxonomy(people);
-                const gsec = entityGsecRange(people);
-                const resources = entityResourceBreakdown(people);
-                const bible = resources.bible[0]?.status ?? "Unknown";
-                const context = people.contexts[0]!;
-                return (
-                  <a class="people-card" href={hrefFor(`/peoples/${people.routeKey}`)} key={people.id}>
-                    <div class="people-card__head">
-                      <div>
-                        <span class={`people-status people-status--${livePeopleStatusClass(people)}`}>{livePeopleStatusLabel(people)}</span>
-                        <h2>{people.displayName}</h2>
+            <>
+              <div class="people-card-grid">
+                {visibleResults.map((people) => {
+                  const taxonomy = entityTaxonomy(people);
+                  const gsec = entityGsecRange(people);
+                  const resources = entityResourceBreakdown(people);
+                  const bible = resources.bible[0]?.status ?? "Unknown";
+                  const context = people.contexts[0]!;
+                  return (
+                    <a class="people-card" href={hrefFor(`/peoples/${people.routeKey}`)} key={people.id}>
+                      <div class="people-card__head">
+                        <div>
+                          <span class={`people-status people-status--${livePeopleStatusClass(people)}`}>{livePeopleStatusLabel(people)}</span>
+                          <h2>{people.displayName}</h2>
+                        </div>
+                        <ArrowRight size={18} aria-hidden="true" />
                       </div>
-                      <ArrowRight size={18} aria-hidden="true" />
-                    </div>
-                    <p class="people-card__taxonomy">{taxonomy.peopleName ?? taxonomy.peopleCluster ?? taxonomy.affinityBloc ?? "People group"}</p>
-                    <div class="people-card__population"><strong>{people.population.complete ? formatPeopleCount(people.population.knownValue) : "Unknown"}</strong><span>{people.population.complete ? `Estimated population · ${context.country.name}` : `Population estimate not reported · ${context.country.name}`}</span></div>
-                    <dl class="people-card__facts">
-                      <div><dt>Religion</dt><dd>{people.primaryReligion?.name ?? "Unknown"}</dd></div>
-                      <div><dt>Language</dt><dd>{people.primaryLanguage?.name ?? "Unknown"}</dd></div>
-                      <div><dt>GSEC</dt><dd>{gsec ? String(gsec.min) : "Unknown"}</dd></div>
-                      <div><dt>Bible</dt><dd>{bible}</dd></div>
-                    </dl>
-                    <span class="people-card__countries">PEID {people.peid} · {context.pgid} · {context.country.name}</span>
-                  </a>
-                );
-              })}
-            </div>
+                      <p class="people-card__taxonomy">{taxonomy.peopleName ?? taxonomy.peopleCluster ?? taxonomy.affinityBloc ?? "People group"}</p>
+                      <div class="people-card__population"><strong>{people.population.complete ? formatPeopleCount(people.population.knownValue) : "Unknown"}</strong><span>{people.population.complete ? `Estimated population · ${context.country.name}` : `Population estimate not reported · ${context.country.name}`}</span></div>
+                      <dl class="people-card__facts">
+                        <div><dt>Religion</dt><dd>{people.primaryReligion?.name ?? "Unknown"}</dd></div>
+                        <div><dt>Language</dt><dd>{people.primaryLanguage?.name ?? "Unknown"}</dd></div>
+                        <div><dt>GSEC</dt><dd>{gsec ? String(gsec.min) : "Unknown"}</dd></div>
+                        <div><dt>Bible</dt><dd>{bible}</dd></div>
+                      </dl>
+                      <span class="people-card__countries">PEID {people.peid} · {context.pgid} · {context.country.name}</span>
+                    </a>
+                  );
+                })}
+              </div>
+              {visibleResults.length < results.length ? (
+                <div class="result-load-more">
+                  <button type="button" onClick={() => setVisibleCount((count) => Math.min(count + PEOPLE_PAGE_SIZE, results.length))}>
+                    Show {Math.min(PEOPLE_PAGE_SIZE, results.length - visibleResults.length)} more
+                  </button>
+                  <span>{results.length - visibleResults.length} remaining</span>
+                </div>
+              ) : null}
+            </>
           ) : <div class="people-index-empty">No people groups match the current filters.</div>}
         </>
       ) : null}
