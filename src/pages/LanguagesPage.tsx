@@ -1,5 +1,5 @@
 import { BookOpen, Database, Languages, Search } from "lucide-preact";
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
 import {
@@ -9,6 +9,8 @@ import {
   useLiveLanguageExplorer,
   type LiveLanguageFilterState,
 } from "../languages";
+
+const LANGUAGE_PAGE_SIZE = 60;
 
 const initialFilters: LiveLanguageFilterState = {
   query: "",
@@ -20,15 +22,19 @@ const initialFilters: LiveLanguageFilterState = {
 export function LanguagesPage() {
   const explorer = useLiveLanguageExplorer();
   const [filters, setFilters] = useState<LiveLanguageFilterState>(initialFilters);
+  const [visibleCount, setVisibleCount] = useState(LANGUAGE_PAGE_SIZE);
   const records = useMemo(() => filterLiveLanguages(explorer.languages, filters), [explorer.languages, filters]);
+  const visibleRecords = useMemo(() => records.slice(0, visibleCount), [records, visibleCount]);
+
+  useEffect(() => setVisibleCount(LANGUAGE_PAGE_SIZE), [filters]);
 
   return (
-    <section class="languages-page">
+    <section class="languages-page" aria-labelledby="languages-title">
       <header class="languages-hero">
         <div>
           <div class="eyebrow">Languages & Resources</div>
-          <h1 class="display-title">Follow gospel access through the languages people report.</h1>
-          <p class="lead">Explore ISO 639-3 languages represented in current PeopleGroups.org people-group-in-country records, together with source-native Bible and Jesus Film availability labels. Unknown remains distinct from unavailable.</p>
+          <h1 id="languages-title" class="display-title">Explore languages and resources.</h1>
+          <p class="lead">See which languages appear in the mission data, where they are represented, and which Bible and Jesus Film resource labels PeopleGroups.org reports.</p>
         </div>
         <div class="languages-hero__mark" aria-hidden="true"><Languages size={28} /></div>
       </header>
@@ -36,7 +42,7 @@ export function LanguagesPage() {
       {explorer.loading && !explorer.ready ? (
         <div class="languages-release-notice" role="status">
           <Database size={20} aria-hidden="true" />
-          <div><strong>Loading live language records</strong><p>{explorer.progress ? `PeopleGroups.org page ${explorer.progress.loadedPages} of ${explorer.progress.totalPages}.` : "Reading the shared PeopleGroups.org runtime corpus."}</p></div>
+          <div><strong>Loading current language records</strong><p>{explorer.progress ? `Source page ${explorer.progress.loadedPages} of ${explorer.progress.totalPages}.` : "Preparing the shared mission dataset."}</p></div>
         </div>
       ) : null}
 
@@ -50,7 +56,7 @@ export function LanguagesPage() {
       {explorer.warning ? (
         <div class="languages-release-notice" role="note">
           <Database size={20} aria-hidden="true" />
-          <div><strong>{explorer.stale ? "Using stale cached language records" : "Language source notice"}</strong><p>{explorer.warning}</p></div>
+          <div><strong>{explorer.stale ? "Using cached language records" : "Language source notice"}</strong><p>{explorer.warning}</p></div>
         </div>
       ) : null}
 
@@ -58,14 +64,14 @@ export function LanguagesPage() {
         <>
           <div class="language-filters" aria-label="Language filters">
             <label class="language-search"><Search size={17} aria-hidden="true" /><span class="sr-only">Search languages</span><input value={filters.query} onInput={(event) => setFilters({ ...filters, query: event.currentTarget.value })} placeholder="Search language, ISO code, people or country" /></label>
-            <label><span>GSEC context</span><select value={filters.reach} onChange={(event) => setFilters({ ...filters, reach: event.currentTarget.value as LiveLanguageFilterState["reach"] })}><option value="all">All languages</option><option value="has-unreached">Has GSEC 0–3 context</option><option value="no-unreached">No GSEC 0–3 context</option><option value="unknown-only">GSEC entirely unknown</option></select></label>
-            <label><span>Bible source label</span><select value={filters.bible} onChange={(event) => setFilters({ ...filters, bible: event.currentTarget.value })}><option value="all">Any reported label</option>{explorer.bibleLabels.map((label) => <option value={label} key={label}>{label}</option>)}</select></label>
+            <label><span>Mission context</span><select value={filters.reach} onChange={(event) => setFilters({ ...filters, reach: event.currentTarget.value as LiveLanguageFilterState["reach"] })}><option value="all">All languages</option><option value="has-unreached">Has GSEC 0–3 context</option><option value="no-unreached">No GSEC 0–3 context</option><option value="unknown-only">GSEC entirely unknown</option></select></label>
+            <label><span>Bible label</span><select value={filters.bible} onChange={(event) => setFilters({ ...filters, bible: event.currentTarget.value })}><option value="all">Any reported label</option>{explorer.bibleLabels.map((label) => <option value={label} key={label}>{label}</option>)}</select></label>
             <label><span>Sort</span><select value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.currentTarget.value as LiveLanguageFilterState["sort"] })}><option value="name">Alphabetical</option><option value="people-count-desc">Most people-group records</option><option value="represented-population-desc">Largest represented population</option><option value="unreached-contexts-desc">Most GSEC 0–3 contexts</option></select></label>
           </div>
 
-          <div class="language-results-heading"><strong>{records.length} {records.length === 1 ? "language" : "languages"}</strong><span>{explorer.languages.length} current ISO-coded languages</span></div>
+          <div class="language-results-heading" aria-live="polite"><strong>Showing {visibleRecords.length} of {records.length} matching languages</strong><span>{explorer.languages.length} current ISO-coded languages total</span></div>
           <div class="language-card-grid">
-            {records.map((record) => (
+            {visibleRecords.map((record) => (
               <a class="language-card" href={hrefFor(`/languages/${record.iso6393}`)} key={record.id}>
                 <div class="language-card__top"><span>{record.iso6393.toUpperCase()}</span><span>{record.familyName ?? "Family not reported"}</span></div>
                 <h2>{record.name}</h2>
@@ -75,10 +81,16 @@ export function LanguagesPage() {
             ))}
           </div>
           {!records.length ? <p class="language-empty">No current language records match these filters.</p> : null}
+          {visibleRecords.length < records.length ? (
+            <div class="result-load-more">
+              <button type="button" onClick={() => setVisibleCount((count) => Math.min(count + LANGUAGE_PAGE_SIZE, records.length))}>Show {Math.min(LANGUAGE_PAGE_SIZE, records.length - visibleRecords.length)} more</button>
+              <span>{records.length - visibleRecords.length} remaining</span>
+            </div>
+          ) : null}
         </>
       ) : null}
 
-      <aside class="language-method-note"><strong>What these resource labels mean</strong><p>PeopleGroups.org reports language, Bible availability, Jesus Film availability and total resource indicators on people-group-in-country records. In the current certified API corpus each PEID is one-to-one with one PGID record; Unreached therefore counts these as source records rather than cross-country people entities. Resource labels are preserved rather than translated into “portions,” “New Testament,” or “complete Bible,” and represented population is a sum of known PGID estimates rather than a language census.</p></aside>
+      <aside class="language-method-note"><strong>How to read the resource data</strong><p>These are source-reported availability labels, not a Bible-translation completeness scale. Population figures are sums of known people-group record estimates, not a language census.</p></aside>
     </section>
   );
 }
