@@ -5,6 +5,7 @@ import {
   Compass,
   Globe2,
   Info,
+  Languages,
   Map,
   Search,
   UsersRound
@@ -29,9 +30,12 @@ const primaryNav: NavItem[] = [
   { id: "explore", label: "Explore", path: "/", icon: Map },
   { id: "peoples", label: "Peoples", path: "/peoples", icon: UsersRound },
   { id: "countries", label: "Countries", path: "/countries", icon: Globe2 },
+  { id: "languages", label: "Languages", path: "/languages", icon: Languages },
   { id: "pray", label: "Pray", path: "/pray", icon: Compass },
   { id: "about", label: "About", path: "/about", icon: Info }
 ];
+
+const mobileNav = primaryNav.filter((item) => item.id !== "about");
 
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;
@@ -116,7 +120,7 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
       </main>
 
       <nav class="mobile-nav" aria-label="Primary navigation">
-        {primaryNav.slice(0, 4).map((item) => (
+        {mobileNav.map((item) => (
           <NavLink key={item.id} item={item} active={activeRoute === item.id} />
         ))}
       </nav>
