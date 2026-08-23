@@ -1,3 +1,8 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
+import { assertContextDatasetIntegrity, assertContextMatchesRuntimePeople } from "../../../src/context/policy.js";
+import { editorialContextDatasetSchema } from "../../../src/context/types.js";
 import { createPeopleGroupsApiClient } from "../../../src/providers/peoplegroups/api.js";
 import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities } from "../../../src/providers/peoplegroups/model.js";
 
@@ -32,4 +37,10 @@ const newestSourceUpdate = records
   .filter((value): value is string => Boolean(value))
   .sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null;
 
+const editorialRaw = JSON.parse(await readFile(resolve(process.cwd(), "public/data/context/editorial.v2.json"), "utf8")) as unknown;
+const editorial = editorialContextDatasetSchema.parse(editorialRaw);
+assertContextDatasetIntegrity(editorial);
+assertContextMatchesRuntimePeople(editorial, entities);
+
 console.log(`Full live PeopleGroups.org corpus certified: ${records.length} PGIDs, ${entities.length} PEIDs, ${countries.length} countries, ${unreachedContexts} GSEC 0–3 contexts, newest source update ${newestSourceUpdate ?? "unknown"}.`);
+console.log(`U12F live editorial identity certification passed for ${editorial.profiles.length} published PEID profile(s).`);
