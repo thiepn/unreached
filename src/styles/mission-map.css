@@ -203,18 +203,32 @@
 
 @media (max-width: 760px) {
   .mission-layer-selector--compact {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 0 0 auto;
     margin-top: var(--space-3);
     overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
   }
   .mission-layer-selector--compact button {
+    flex: 0 0 5rem;
     min-width: 5rem;
     border-right: 1px solid var(--line);
     border-bottom: 0;
     text-align: center;
   }
+  .mission-layer-selector--compact button:nth-child(2n) { border-right: 1px solid var(--line); }
   .mission-layer-selector--compact button:last-child { border-right: 0; }
-  .mobile-map-sheet .mission-legend { padding-bottom: var(--space-2); border-bottom: 1px solid var(--line); }
+  .mobile-map-sheet .mission-legend {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--line);
+  }
   .mobile-map-sheet .mission-legend__heading span,
   .mobile-map-sheet .mission-methodology { display: none; }
   .mobile-map-sheet .mission-legend__items { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--space-1); }
