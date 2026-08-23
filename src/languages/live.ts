@@ -184,6 +184,16 @@ export function buildLiveLanguageRecords(contexts: RuntimePeopleContext[]): Live
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+const languageRecordCache = new WeakMap<RuntimePeopleContext[], LiveLanguageRecord[]>();
+
+function cachedLiveLanguageRecords(contexts: RuntimePeopleContext[]): LiveLanguageRecord[] {
+  const cached = languageRecordCache.get(contexts);
+  if (cached) return cached;
+  const records = buildLiveLanguageRecords(contexts);
+  languageRecordCache.set(contexts, records);
+  return records;
+}
+
 export function filterLiveLanguages(records: LiveLanguageRecord[], state: LiveLanguageFilterState): LiveLanguageRecord[] {
   const query = state.query.trim().toLocaleLowerCase("en");
   return records.filter((record) => {
@@ -220,7 +230,7 @@ export function rawResourceSummary(items: LiveLanguageBreakdownItem[], knownCont
 
 export function useLiveLanguageExplorer(enabled = true) {
   const runtime = usePeopleGroupsRuntimeStore(enabled);
-  const languages = useMemo(() => buildLiveLanguageRecords(runtime.contexts), [runtime.contexts]);
+  const languages = useMemo(() => cachedLiveLanguageRecords(runtime.contexts), [runtime.contexts]);
   const languagesByIso = useMemo(() => new Map(languages.map((language) => [language.iso6393, language])), [languages]);
   const bibleLabels = useMemo(() => [...new Set(languages.flatMap((language) => language.bible.breakdown.map((item) => item.label)))].sort(), [languages]);
   return { ...runtime, languages, languagesByIso, bibleLabels };
