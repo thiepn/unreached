@@ -17,7 +17,7 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
   if (desktop) {
     await expect(page.getByText("GSEC 0–3 population share", { exact: true }).filter({ visible: true }).first()).toBeVisible();
   } else {
-    await mobileSheet.locator("summary").click();
+    await mobileSheet.locator("summary").first().click();
     await expect(search).toBeVisible();
     await expect(mobileSheet.getByText("GSEC 0–3 population share", { exact: true }).filter({ visible: true }).first()).toBeVisible();
   }
