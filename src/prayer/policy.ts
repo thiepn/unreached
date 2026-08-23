@@ -22,7 +22,10 @@ function assertReview(profile: PrayerProfile): void {
 }
 
 function contextProfileFor(dataset: EditorialContextDataset, profile: PrayerProfile): PeopleContextProfile | null {
-  return dataset.profiles.find((item) => item.peopleGroupId === profile.peopleGroupId) ?? null;
+  return dataset.profiles.find((item) =>
+    item.identity.legacyPeopleGroupId === profile.peopleGroupId
+    && item.identity.legacySourcePeopleId === profile.sourcePeopleId
+  ) ?? null;
 }
 
 function assertContextReferences(profile: PrayerProfile, context: PeopleContextProfile | null): void {
@@ -31,7 +34,7 @@ function assertContextReferences(profile: PrayerProfile, context: PeopleContextP
     ...profile.prompts.flatMap((prompt) => prompt.contextClaimIds),
   ];
   if (!referenced.length) return;
-  if (!context) throw new Error(`${profile.peopleGroupId} prayer guide references context claims but has no U7 contextual profile.`);
+  if (!context) throw new Error(`${profile.peopleGroupId} prayer guide references context claims but has no explicitly migrated contextual profile.`);
   const claimIds = new Set(context.claims.map((claim) => claim.id));
   for (const claimId of referenced) {
     if (!claimIds.has(claimId)) throw new Error(`${profile.peopleGroupId} prayer guide references missing contextual claim ${claimId}.`);
