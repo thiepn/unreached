@@ -1,5 +1,6 @@
-import { Bookmark, BookmarkCheck } from "lucide-preact";
+import { ArrowRight, Bookmark, BookmarkCheck } from "lucide-preact";
 
+import { hrefFor } from "../app/router";
 import { useLivePeopleExplorer } from "../peoples";
 import { isPersonSaved, usePersonalization } from "../personalization";
 
@@ -14,33 +15,34 @@ export function ProfileLocalActions({ sourcePeopleId }: { sourcePeopleId: number
   const Icon = saved ? BookmarkCheck : Bookmark;
 
   return (
-    <section class="profile-local-actions" aria-label="Local saved list">
+    <section class="profile-local-actions" aria-label="Profile actions">
       <div>
-        <span class="eyebrow">This browser</span>
-        <strong>{saved ? "Saved locally" : prayerEligible ? "Keep this people in prayer" : "Keep this profile in view"}</strong>
-        <p>{saved
-          ? "This PEID snapshot is stored only in this browser; the live profile remains authoritative."
-          : prayerEligible
-            ? "Save this people locally so you can return to the profile or focused prayer later."
-            : "Save this profile locally for later reference. Focused prayer guides are reserved for PEIDs with at least one current GSEC 0–3 context."}</p>
+        <span class="eyebrow">Next step</span>
+        <strong>{prayerEligible ? "Understand, then pray." : "Keep this profile for reference."}</strong>
+        <p>{prayerEligible
+          ? "Open the focused prayer guide now, or save this people locally for another time."
+          : "This current source record is not eligible for the GSEC 0–3 focused prayer flow, but you can save the profile locally."}</p>
       </div>
-      <button
-        type="button"
-        class={`profile-save-button${saved ? " is-saved" : ""}`}
-        aria-pressed={saved}
-        onClick={() => personalization.toggleSavedPerson({
-          sourcePeopleId: record.routeKey,
-          peopleGroupId: record.id,
-          name: record.displayName,
-          largestCountryName: record.contexts[0]?.country.name ?? null,
-          primaryLanguageName: record.primaryLanguage?.name ?? null,
-          classification: record.reach.classification,
-          frontier: null,
-        })}
-      >
-        <Icon size={17} aria-hidden="true" />
-        {saved ? "Remove from saved" : prayerEligible ? "Save for Prayer" : "Save profile"}
-      </button>
+      <div class="profile-local-actions__buttons">
+        {prayerEligible ? <a class="profile-pray-button" href={hrefFor(`/pray/${sourcePeopleId}`)}>Pray now <ArrowRight size={17} aria-hidden="true" /></a> : null}
+        <button
+          type="button"
+          class={`profile-save-button${saved ? " is-saved" : ""}`}
+          aria-pressed={saved}
+          onClick={() => personalization.toggleSavedPerson({
+            sourcePeopleId: record.routeKey,
+            peopleGroupId: record.id,
+            name: record.displayName,
+            largestCountryName: record.contexts[0]?.country.name ?? null,
+            primaryLanguageName: record.primaryLanguage?.name ?? null,
+            classification: record.reach.classification,
+            frontier: null,
+          })}
+        >
+          <Icon size={17} aria-hidden="true" />
+          {saved ? "Remove from saved" : prayerEligible ? "Save for later" : "Save profile"}
+        </button>
+      </div>
     </section>
   );
 }
