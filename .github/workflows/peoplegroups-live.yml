@@ -8,6 +8,7 @@ on:
       - "phase/u12c-visible-real-data"
       - "phase/u12d-live-mission-visualization"
       - "phase/u12e-live-language-resources"
+      - "phase/u12f-editorial-context"
   workflow_dispatch:
 
 permissions:
@@ -37,7 +38,7 @@ jobs:
       - name: Build application and runtime policy gates
         run: npm run build
 
-      - name: Validate complete live PeopleGroups corpus through production schemas
+      - name: Validate complete live PeopleGroups corpus and editorial PEID mappings
         run: npm run peoplegroups:live-corpus-check
 
       - name: Install Chromium
@@ -66,7 +67,7 @@ jobs:
           description="PeopleGroups.org full-corpus/browser certification failed"
           if [[ "${LIVE_RESULT}" == "success" ]]; then
             state="success"
-            description="PeopleGroups.org full-corpus/browser certification passed"
+            description="PeopleGroups.org full-corpus/browser and editorial PEID certification passed"
           fi
           payload=$(jq -nc --arg state "${state}" --arg description "${description}" '{state:$state,description:$description,context:"unreached/peoplegroups-live"}')
           curl --fail-with-body --silent --show-error --location \
