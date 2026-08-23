@@ -1,7 +1,10 @@
 {
-  "schemaVersion": 1,
-  "available": false,
+  "schemaVersion": 2,
+  "available": true,
   "fixture": false,
-  "datasetUrl": null,
-  "reason": "No reviewed real-world editorial context profiles are published in this build. U7 validates the editorial system with synthetic content only."
+  "mode": "reviewed-editorial",
+  "datasetUrl": "data/context/editorial.v2.json",
+  "reason": null,
+  "profileCount": 1,
+  "identityProvider": "peoplegroups-org"
 }

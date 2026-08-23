@@ -8,6 +8,7 @@ on:
       - "phase/u12c-visible-real-data"
       - "phase/u12d-live-mission-visualization"
       - "phase/u12e-live-language-resources"
+      - "phase/u12f-editorial-context"
   workflow_dispatch:
 
 permissions:
@@ -34,10 +35,13 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Fast editorial PEID/PGID identity preflight
+        run: npm run peoplegroups:editorial-identity-live-check
+
       - name: Build application and runtime policy gates
         run: npm run build
 
-      - name: Validate complete live PeopleGroups corpus through production schemas
+      - name: Validate complete live PeopleGroups corpus and editorial PEID mappings
         run: npm run peoplegroups:live-corpus-check
 
       - name: Install Chromium
@@ -66,9 +70,10 @@ jobs:
           description="PeopleGroups.org full-corpus/browser certification failed"
           if [[ "${LIVE_RESULT}" == "success" ]]; then
             state="success"
-            description="PeopleGroups.org full-corpus/browser certification passed"
+            description="PeopleGroups.org full-corpus/browser and editorial PEID certification passed"
           fi
-          payload=$(jq -nc --arg state "${state}" --arg description "${description}" '{state:$state,description:$description,context:"unreached/peoplegroups-live"}')
+          target="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          payload=$(jq -nc --arg state "${state}" --arg target "${target}" --arg description "${description}" '{state:$state,target_url:$target,description:$description,context:"unreached/peoplegroups-live"}')
           curl --fail-with-body --silent --show-error --location \
             --request POST \
             --header "Accept: application/vnd.github+json" \

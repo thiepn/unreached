@@ -39,6 +39,18 @@
 .context-editorial__header h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 520; }
 .context-review-badge { display: inline-flex; gap: var(--space-2); align-items: center; border: 1px solid var(--forest-700); padding: .5rem .75rem; color: var(--forest-700); font-weight: 650; text-transform: capitalize; }
 
+.context-identity-note {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  border-left: 3px solid var(--forest-700);
+  background: var(--paper-1);
+}
+.context-identity-note strong { color: var(--ink-0); }
+.context-identity-note span { color: var(--ink-1); font-variant-numeric: tabular-nums; }
+.context-identity-note small { color: var(--ink-2); line-height: 1.45; }
+
 .context-editorial__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); margin-top: var(--space-8); }
 .context-section { border: 1px solid var(--line); padding: var(--space-6); background: var(--paper-0); }
 .context-section__heading { justify-content: flex-start; }

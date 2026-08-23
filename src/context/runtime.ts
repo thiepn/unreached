@@ -16,7 +16,7 @@ interface EditorialContextState {
   error: string | null;
 }
 
-export function useEditorialContext(): EditorialContextState & { profilesBySourceId: Map<number, PeopleContextProfile> } {
+export function useEditorialContext(): EditorialContextState & { profilesByPeid: Map<number, PeopleContextProfile> } {
   const [state, setState] = useState<EditorialContextState>({ status: null, dataset: null, loading: true, error: null });
 
   useEffect(() => {
@@ -33,6 +33,7 @@ export function useEditorialContext(): EditorialContextState & { profilesBySourc
           setState({ status, dataset: null, loading: false, error: null });
           return;
         }
+        if (status.mode !== "reviewed-editorial") throw new Error("Editorial context is available with an uncertified publication mode.");
         if (!status.datasetUrl) throw new Error("Editorial-context status is available but has no dataset URL.");
         if (status.fixture && !import.meta.env.DEV) throw new Error("A fixture editorial dataset was blocked from production.");
         const datasetUrl = status.datasetUrl.startsWith("http") ? status.datasetUrl : `${import.meta.env.BASE_URL}${status.datasetUrl.replace(/^\//, "")}`;
@@ -41,6 +42,7 @@ export function useEditorialContext(): EditorialContextState & { profilesBySourc
         const dataset = editorialContextDatasetSchema.parse(await response.json() as unknown);
         if (dataset.fixture && !import.meta.env.DEV) throw new Error("A fixture editorial dataset was blocked from production.");
         assertContextDatasetIntegrity(dataset);
+        if (dataset.profiles.length !== status.profileCount) throw new Error("Editorial-context status profile count does not match the published dataset.");
         setState({ status, dataset, loading: false, error: null });
       })
       .catch((error: unknown) => {
@@ -51,6 +53,6 @@ export function useEditorialContext(): EditorialContextState & { profilesBySourc
     return () => controller.abort();
   }, []);
 
-  const profilesBySourceId = useMemo(() => new Map((state.dataset?.profiles ?? []).map((profile) => [profile.sourcePeopleId, profile])), [state.dataset]);
-  return { ...state, profilesBySourceId };
+  const profilesByPeid = useMemo(() => new Map((state.dataset?.profiles ?? []).map((profile) => [profile.peid, profile])), [state.dataset]);
+  return { ...state, profilesByPeid };
 }

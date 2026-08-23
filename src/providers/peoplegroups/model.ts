@@ -84,76 +84,59 @@ export function toRuntimePeopleContext(record: PeopleGroupsApiRecord): RuntimePe
   });
 }
 
-function mostCommon<T>(values: T[], key: (value: T) => string): T | null {
-  if (!values.length) return null;
-  const counts = new Map<string, { count: number; value: T }>();
-  for (const value of values) {
-    const itemKey = key(value);
-    const current = counts.get(itemKey);
-    counts.set(itemKey, { count: (current?.count ?? 0) + 1, value });
+function singleRecordReach(context: RuntimePeopleContext): RuntimePeopleEntity["reach"] {
+  if (context.reach.classification === "unreached") {
+    return { classification: "unreached-only", methodology: "imb-gsec-single-record-v1", unreachedContexts: 1, otherContexts: 0, unknownContexts: 0 };
   }
-  return [...counts.values()].sort((a, b) => b.count - a.count || key(a.value).localeCompare(key(b.value), "en"))[0]?.value ?? null;
+  if (context.reach.classification === "other") {
+    return { classification: "other-only", methodology: "imb-gsec-single-record-v1", unreachedContexts: 0, otherContexts: 1, unknownContexts: 0 };
+  }
+  return { classification: "unknown", methodology: "imb-gsec-single-record-v1", unreachedContexts: 0, otherContexts: 0, unknownContexts: 1 };
 }
 
-function newestTimestamp(values: Array<string | null>): string | null {
-  return values
-    .filter((value): value is string => value !== null)
-    .sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null;
-}
-
-function entityReach(contexts: RuntimePeopleContext[]): RuntimePeopleEntity["reach"] {
-  const unreachedContexts = contexts.filter((item) => item.reach.classification === "unreached").length;
-  const otherContexts = contexts.filter((item) => item.reach.classification === "other").length;
-  const unknownContexts = contexts.length - unreachedContexts - otherContexts;
-  const classification = unreachedContexts > 0 && otherContexts > 0
-    ? "mixed"
-    : unreachedContexts > 0
-      ? "unreached-only"
-      : otherContexts > 0
-        ? "other-only"
-        : "unknown";
-  return { classification, methodology: "imb-gsec-context-rollup-v1", unreachedContexts, otherContexts, unknownContexts };
-}
-
+/**
+ * Build one compatibility entity per PeopleGroups API record.
+ *
+ * Do not group records by PEID. Complete live-corpus certification on
+ * 2026-08-23 found PEID and PGID to be 1:1 across all 12,370 records, with no
+ * PEID spanning countries. Cross-country associations are source-taxonomy
+ * relationships (for example PplNm / ROP3 people name), not PEID rollups.
+ */
 export function buildRuntimePeopleEntities(records: PeopleGroupsApiRecord[]): RuntimePeopleEntity[] {
-  const contexts = records.map(toRuntimePeopleContext);
-  const byPeid = new Map<number, RuntimePeopleContext[]>();
-  for (const context of contexts) {
-    const group = byPeid.get(context.peid) ?? [];
-    group.push(context);
-    byPeid.set(context.peid, group);
-  }
+  const seenPeids = new Set<number>();
+  const seenPgids = new Set<string>();
 
-  return [...byPeid.entries()].map(([peid, group]) => {
-    const ordered = [...group].sort((a, b) => (b.population.value ?? -1) - (a.population.value ?? -1) || a.country.name.localeCompare(b.country.name, "en"));
-    const known = ordered.filter((context) => context.population.value !== null);
-    const languageCandidates = ordered
-      .filter((context) => context.language.iso6393 !== null || context.language.name !== null)
-      .map((context) => ({ iso6393: context.language.iso6393, name: context.language.name }));
-    const religionCandidates = ordered
-      .filter((context) => context.religion.code !== null || context.religion.name !== null)
-      .map((context) => ({ code: context.religion.code, name: context.religion.name }));
+  return records.map((record) => {
+    if (seenPeids.has(record.PEID)) throw new Error(`PeopleGroups runtime received duplicate PEID ${record.PEID}; current certified semantics require one PEID per PGID record.`);
+    if (seenPgids.has(record.PGID)) throw new Error(`PeopleGroups runtime received duplicate PGID ${record.PGID}.`);
+    seenPeids.add(record.PEID);
+    seenPgids.add(record.PGID);
 
+    const context = toRuntimePeopleContext(record);
+    const populationKnown = context.population.value !== null;
     return runtimePeopleEntitySchema.parse({
-      id: `people-entity:peoplegroups:${peid}`,
+      id: `people-entity:peoplegroups:${context.peid}`,
       provider: "peoplegroups-org",
-      peid,
-      routeKey: peid,
-      displayName: ordered[0]!.displayName,
-      contexts: ordered,
-      countries: [...new Map(ordered.map((context) => [context.country.iso3, { iso3: context.country.iso3, name: context.country.name }])).values()]
-        .sort((a, b) => a.name.localeCompare(b.name, "en")),
+      peid: context.peid,
+      routeKey: context.peid,
+      displayName: context.displayName,
+      contexts: [context],
+      countries: [{ iso3: context.country.iso3, name: context.country.name }],
       population: {
-        knownValue: known.reduce((sum, context) => sum + (context.population.value ?? 0), 0),
-        knownContextCount: known.length,
-        totalContextCount: ordered.length,
-        complete: known.length === ordered.length,
-        aggregation: "sum-known-country-context-populations",
+        knownValue: context.population.value ?? 0,
+        knownContextCount: populationKnown ? 1 : 0,
+        totalContextCount: 1,
+        complete: populationKnown,
+        aggregation: "single-pgid-population-estimate",
       },
-      reach: entityReach(ordered),
-      primaryLanguage: mostCommon(languageCandidates, (item) => `${item.iso6393 ?? ""}|${item.name ?? ""}`),
-      primaryReligion: mostCommon(religionCandidates, (item) => `${item.code ?? ""}|${item.name ?? ""}`),
-      sourceUpdatedAt: newestTimestamp(ordered.map((context) => context.sourceUpdatedAt)),
+      reach: singleRecordReach(context),
+      primaryLanguage: context.language.iso6393 !== null || context.language.name !== null
+        ? { iso6393: context.language.iso6393, name: context.language.name }
+        : null,
+      primaryReligion: context.religion.code !== null || context.religion.name !== null
+        ? { code: context.religion.code, name: context.religion.name }
+        : null,
+      sourceUpdatedAt: context.sourceUpdatedAt,
     });
   }).sort((a, b) => b.population.knownValue - a.population.knownValue || a.displayName.localeCompare(b.displayName, "en"));
 }

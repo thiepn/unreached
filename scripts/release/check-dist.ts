@@ -16,9 +16,9 @@ for (const domain of ["mission", "countries", "peoples", "prayer", "languages"])
   const entries = await readdir(directory);
   const forbidden = entries.filter((entry) => entry !== "status.json" && entry !== "README.txt");
   if (forbidden.length) {
-    throw new Error(`U12E ${domain} must not ship a static source-derived dataset (${forbidden.join(", ")}).`);
+    throw new Error(`U12F ${domain} must not ship a static source-derived dataset (${forbidden.join(", ")}).`);
   }
-  if (!entries.includes("status.json")) throw new Error(`U12E ${domain} runtime status metadata is missing from dist.`);
+  if (!entries.includes("status.json")) throw new Error(`U12F ${domain} runtime status metadata is missing from dist.`);
   const status = JSON.parse(await readFile(resolve(directory, "status.json"), "utf8")) as {
     available?: unknown;
     fixture?: unknown;
@@ -26,8 +26,28 @@ for (const domain of ["mission", "countries", "peoples", "prayer", "languages"])
     datasetUrl?: unknown;
   };
   if (status.available !== true || status.fixture !== false || status.mode !== "runtime-api" || status.datasetUrl !== null) {
-    throw new Error(`U12E ${domain} dist status does not declare runtime-api publication safely.`);
+    throw new Error(`U12F ${domain} dist status does not declare runtime-api publication safely.`);
   }
+}
+
+const contextDirectory = resolve(dist, "data", "context");
+const contextEntries = await readdir(contextDirectory);
+const unexpectedContext = contextEntries.filter((entry) => entry !== "status.json" && entry !== "editorial.v2.json" && entry !== "README.txt");
+if (unexpectedContext.length) throw new Error(`U12F context dist contains an uncertified file (${unexpectedContext.join(", ")}).`);
+if (!contextEntries.includes("status.json") || !contextEntries.includes("editorial.v2.json")) throw new Error("U12F reviewed context publication files are missing from dist.");
+const contextStatus = JSON.parse(await readFile(resolve(contextDirectory, "status.json"), "utf8")) as {
+  available?: unknown;
+  fixture?: unknown;
+  mode?: unknown;
+  datasetUrl?: unknown;
+  profileCount?: unknown;
+};
+if (contextStatus.available !== true || contextStatus.fixture !== false || contextStatus.mode !== "reviewed-editorial" || contextStatus.datasetUrl !== "data/context/editorial.v2.json" || typeof contextStatus.profileCount !== "number" || contextStatus.profileCount < 1) {
+  throw new Error("U12F context dist status does not declare reviewed-editorial publication safely.");
+}
+const editorial = JSON.parse(await readFile(resolve(contextDirectory, "editorial.v2.json"), "utf8")) as { fixture?: unknown; profiles?: unknown[] };
+if (editorial.fixture !== false || !Array.isArray(editorial.profiles) || editorial.profiles.length !== contextStatus.profileCount) {
+  throw new Error("U12F context dist dataset does not match certified status metadata.");
 }
 
 async function size(path: string): Promise<number> {
@@ -58,4 +78,4 @@ if (geographyBytes > 5 * 1024 * 1024) throw new Error(`World geography unexpecte
 
 const total = await size(dist);
 if (total > 20 * 1024 * 1024) throw new Error(`Production dist unexpectedly exceeds 20 MiB (${total} bytes).`);
-console.log(`U12E production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only mission/PeopleGroups/language status metadata, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
+console.log(`U12F production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only PeopleGroups domains plus reviewed editorial context, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);

@@ -49,7 +49,7 @@ function LanguageRecentTracker({ iso6393 }: { iso6393: string }) {
       kind: "language",
       key: language.iso6393,
       label: language.name,
-      secondary: `${language.iso6393} · ${language.peopleEntityCount} people entities`,
+      secondary: `${language.iso6393} · ${language.peopleEntityCount} people-group records`,
       href: hrefFor(`/languages/${language.iso6393}`),
     });
   }, [language, recordRecent]);

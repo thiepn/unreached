@@ -102,27 +102,36 @@ export const runtimePeopleContextSchema = z.object({
   sourceUpdatedAt: z.string().nullable(),
 });
 
+/**
+ * Compatibility wrapper for one current PeopleGroups API people-group record.
+ *
+ * Live certification on 2026-08-23 established a 1:1 relationship across the
+ * complete corpus: 12,370 PGIDs, 12,370 PEIDs, zero PEIDs spanning multiple
+ * PGIDs/countries. `contexts` therefore contains exactly one PGID record.
+ * Cross-country relationships must use explicit source taxonomy such as PplNm
+ * (ROP3 people name), never PEID aggregation.
+ */
 export const runtimePeopleEntitySchema = z.object({
   id: z.string().regex(/^people-entity:peoplegroups:[0-9]+$/),
   provider: z.literal("peoplegroups-org"),
   peid: z.number().int().positive(),
   routeKey: z.number().int().positive(),
   displayName: z.string().min(1),
-  contexts: z.array(runtimePeopleContextSchema).min(1),
-  countries: z.array(z.object({ iso3: z.string().regex(/^[A-Z]{3}$/), name: z.string().min(1) })).min(1),
+  contexts: z.array(runtimePeopleContextSchema).length(1),
+  countries: z.array(z.object({ iso3: z.string().regex(/^[A-Z]{3}$/), name: z.string().min(1) })).length(1),
   population: z.object({
     knownValue: z.number().int().nonnegative(),
-    knownContextCount: z.number().int().nonnegative(),
-    totalContextCount: z.number().int().positive(),
+    knownContextCount: z.union([z.literal(0), z.literal(1)]),
+    totalContextCount: z.literal(1),
     complete: z.boolean(),
-    aggregation: z.literal("sum-known-country-context-populations"),
+    aggregation: z.literal("single-pgid-population-estimate"),
   }),
   reach: z.object({
-    classification: z.enum(["unreached-only", "other-only", "mixed", "unknown"]),
-    methodology: z.literal("imb-gsec-context-rollup-v1"),
-    unreachedContexts: z.number().int().nonnegative(),
-    otherContexts: z.number().int().nonnegative(),
-    unknownContexts: z.number().int().nonnegative(),
+    classification: z.enum(["unreached-only", "other-only", "unknown"]),
+    methodology: z.literal("imb-gsec-single-record-v1"),
+    unreachedContexts: z.union([z.literal(0), z.literal(1)]),
+    otherContexts: z.union([z.literal(0), z.literal(1)]),
+    unknownContexts: z.union([z.literal(0), z.literal(1)]),
   }),
   primaryLanguage: z.object({ iso6393: z.string().regex(/^[a-z]{3}$/).nullable(), name: z.string().nullable() }).nullable(),
   primaryReligion: z.object({ code: z.string().nullable(), name: z.string().nullable() }).nullable(),

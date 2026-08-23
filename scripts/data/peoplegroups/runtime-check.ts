@@ -53,8 +53,13 @@ function record(overrides: Partial<PeopleGroupsApiRecord> = {}): PeopleGroupsApi
   };
 }
 
-const page1 = [record(), record({ PEID: 200, PGID: "PG000200", NmDisp: "Second People", Pop: null, EvngLvl: null, GSEC: null })];
-const page2 = [record({ PGID: "PG000101", ISOalpha3: "NGA", Ctry: "Nigeria", Pop: 500, EvngLvl: "2% or more", GSEC: 5, UpdatedDate: "2026-08-01T00:00:00.000Z" })];
+const page1 = [
+  record(),
+  record({ PEID: 200, PGID: "PG000200", NmDisp: "Second People", Pop: null, EvngLvl: null, GSEC: null }),
+];
+const page2 = [
+  record({ PEID: 101, PGID: "PG000101", ISOalpha3: "NGA", Ctry: "Nigeria", Pop: 500, EvngLvl: "2% or more", GSEC: 5, UpdatedDate: "2026-08-01T00:00:00.000Z" }),
+];
 
 const fakeFetch: typeof fetch = async (input) => {
   const url = new URL(typeof input === "string" ? input : input instanceof URL ? input : input.url);
@@ -75,24 +80,36 @@ const all = await client.fetchAll();
 if (all.length !== 3) throw new Error(`Expected three runtime records, received ${all.length}.`);
 
 const entities = buildRuntimePeopleEntities(all);
-if (entities.length !== 2) throw new Error(`Expected PEID aggregation to produce two entities, received ${entities.length}.`);
+if (entities.length !== 3) throw new Error(`Expected one runtime entity per PGID/PEID record, received ${entities.length}.`);
 const first = entities.find((entity) => entity.peid === 100);
 if (!first) throw new Error("PEID 100 entity missing.");
-if (first.contexts.length !== 2) throw new Error("PGID country contexts were not preserved beneath PEID identity.");
-if (first.population.knownValue !== 1500 || !first.population.complete) throw new Error("Known country-context population rollup is incorrect.");
-if (first.reach.classification !== "mixed") throw new Error(`Expected mixed GSEC reach rollup, received ${first.reach.classification}.`);
-if (first.contexts[0]?.reach.methodology !== "imb-gsec-v1") throw new Error("Context reach methodology must remain source-native GSEC.");
+if (first.contexts.length !== 1 || first.contexts[0]?.pgid !== "PG000100") throw new Error("Runtime PEID must preserve exactly one current PGID source record.");
+if (first.population.knownValue !== 1000 || !first.population.complete || first.population.aggregation !== "single-pgid-population-estimate") throw new Error("Single-record population semantics are incorrect.");
+if (first.reach.classification !== "unreached-only" || first.reach.unreachedContexts !== 1) throw new Error(`Expected source-record GSEC unreached state, received ${first.reach.classification}.`);
+if (first.contexts[0]?.reach.methodology !== "imb-gsec-v1") throw new Error("Record reach methodology must remain source-native GSEC.");
 if (first.routeKey !== 100 || first.id !== "people-entity:peoplegroups:100") throw new Error("Provider-qualified identity or route key changed.");
-if (first.sourceUpdatedAt !== "2026-08-01T00:00:00.000Z") throw new Error("Entity freshness must retain the newest source context timestamp.");
+if (first.sourceUpdatedAt !== "2026-07-17T00:00:00.000Z") throw new Error("Record freshness must retain its source timestamp.");
+
+const nigeria = entities.find((entity) => entity.peid === 101);
+if (!nigeria || nigeria.contexts[0]?.country.iso3 !== "NGA" || nigeria.reach.classification !== "other-only") throw new Error("A separate PGID/PEID record must remain a separate country-specific entity.");
+if (nigeria.contexts[0]?.taxonomy.peopleName !== "Example People") throw new Error("ROP3 people-name taxonomy must remain available for source-backed cross-country relationships.");
 
 const second = entities.find((entity) => entity.peid === 200);
-if (!second || second.population.complete || second.population.knownContextCount !== 0) throw new Error("Unknown population coverage must remain incomplete rather than becoming zero.");
+if (!second || second.population.complete || second.population.knownContextCount !== 0) throw new Error("Unknown source-record population must remain incomplete rather than becoming zero coverage.");
 if (second.reach.classification !== "unknown") throw new Error("Missing GSEC must remain unknown rather than being inferred from another field.");
+
+let duplicatePeidBlocked = false;
+try {
+  buildRuntimePeopleEntities([record(), record({ PGID: "PG000101", PEID: 100 })]);
+} catch {
+  duplicatePeidBlocked = true;
+}
+if (!duplicatePeidBlocked) throw new Error("Duplicate PEIDs must fail closed rather than create a false cross-country rollup.");
 
 const countries = buildRuntimeCountrySummaries(all);
 const benin = countries.find((country) => country.iso3 === "BEN");
-if (!benin || benin.peopleContextCount !== 2 || benin.unreachedContextCount !== 1 || benin.unknownContextCount !== 1) throw new Error("Country denominator/GSEC reach aggregation is incorrect.");
-if (benin.populationCoverageComplete) throw new Error("Country population coverage must report incomplete when one context is unknown.");
+if (!benin || benin.peopleContextCount !== 2 || benin.unreachedContextCount !== 1 || benin.unknownContextCount !== 1) throw new Error("Country denominator/GSEC source-record aggregation is incorrect.");
+if (benin.populationCoverageComplete) throw new Error("Country population coverage must report incomplete when one record is unknown.");
 if (!benin.denominator.includes("people-group-in-country")) throw new Error("Country summary denominator must remain explicit.");
 
 const cache = createMemoryPeopleGroupsCache();
@@ -164,4 +181,4 @@ try {
 }
 if (!duplicateBlocked) throw new Error("Duplicate PGIDs across provider pages must fail closed.");
 
-console.log("U12B PeopleGroups runtime architecture checks passed.");
+console.log("U12B/U12F PeopleGroups runtime identity checks passed: one PEID per PGID record, no synthetic cross-country PEID aggregation.");

@@ -7,7 +7,7 @@ import {
   type RuntimePeopleEntity,
 } from "../providers/peoplegroups";
 
-export type LivePeopleStatusFilter = "all" | "unreached-only" | "other-only" | "mixed" | "unknown";
+export type LivePeopleStatusFilter = "all" | "unreached-only" | "other-only" | "unknown";
 export type LivePeopleSort = "population-desc" | "name" | "gsec-asc";
 
 export interface LivePeopleFilterState {
@@ -92,14 +92,12 @@ export function useLivePeopleExplorer(enabled = true) {
 
 export function livePeopleStatusLabel(entity: RuntimePeopleEntity): string {
   if (entity.reach.classification === "unreached-only") return "Unreached";
-  if (entity.reach.classification === "mixed") return "Mixed GSEC status";
   if (entity.reach.classification === "other-only") return "Other GSEC status";
   return "Status unknown";
 }
 
 export function livePeopleStatusClass(entity: RuntimePeopleEntity): string {
   if (entity.reach.classification === "unreached-only") return "unreached";
-  if (entity.reach.classification === "mixed") return "frontier";
   if (entity.reach.classification === "other-only") return "reached";
   return "unknown";
 }

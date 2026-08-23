@@ -33,29 +33,36 @@ function Claims({ claimIds, profile, sources }: { claimIds: string[]; profile: P
   return <ul class="context-claim-list">{claimIds.map((id) => byId.get(id)).filter((claim): claim is ContextClaim => Boolean(claim)).map((claim) => <Claim key={claim.id} claim={claim} sources={sources} />)}</ul>;
 }
 
-export function EditorialContextPanel({ sourcePeopleId }: { sourcePeopleId: number }) {
+export function EditorialContextPanel({ peid }: { peid: number }) {
   const context = useEditorialContext();
-  const profile = context.profilesBySourceId.get(sourcePeopleId) ?? null;
+  const profile = context.profilesByPeid.get(peid) ?? null;
   const sources = new Map((context.dataset?.sources ?? []).map((source) => [source.id, source]));
 
-  if (context.loading) return <section class="context-state" role="status">Loading editorial context…</section>;
+  if (context.loading) return <section class="context-state" role="status">Loading reviewed editorial context…</section>;
   if (!profile) {
     return (
       <section class="context-state" aria-label="Editorial context status">
         <BookOpenText size={20} aria-hidden="true" />
-        <div><strong>Editorial context not published for this profile</strong><p>{context.error ?? context.status?.reason ?? "A reviewed contextual profile has not yet been released."}</p></div>
+        <div><strong>Reviewed context not yet published for this source record</strong><p>{context.error ?? context.status?.reason ?? "The live source profile remains available, but a reviewed contextual article has not yet been released for this PEID/PGID record."}</p></div>
       </section>
     );
   }
 
   const reviewDate = profile.review.reviewedAt ? new Intl.DateTimeFormat("en", { year: "numeric", month: "short", day: "numeric" }).format(new Date(profile.review.reviewedAt)) : "Not recorded";
+  const identity = profile.identity;
 
   return (
     <section class="context-editorial" aria-labelledby="context-heading">
       <header class="context-editorial__header">
-        <div><span class="eyebrow">Contextual profile</span><h2 id="context-heading">Understand their world.</h2></div>
+        <div><span class="eyebrow">Reviewed editorial context</span><h2 id="context-heading">Understand their world.</h2></div>
         <div class="context-review-badge"><ShieldCheck size={17} aria-hidden="true" /><span>Tier {profile.review.qualityTier} · {profile.review.status}</span></div>
       </header>
+
+      <div class="context-identity-note" aria-label="Editorial identity verification">
+        <strong>Source-record identity verified</strong>
+        <span>PeopleGroups PEID {profile.peid} · {identity.pgidAnchors.join(", ")} · {identity.countryIso3Anchors.join(", ")} · {identity.languageIso6393Anchors.join(", ")}</span>
+        <small>This article is attached through explicit PEID, PGID, country, language and name evidence. The current API's PEID/PGID pairing is treated as a country-context record identity, not a cross-country grouping key; legacy numeric IDs are never matched by coincidence.</small>
+      </div>
 
       <div class="context-editorial__grid">
         <section class="context-section" aria-labelledby="who-they-are-heading">
@@ -90,7 +97,7 @@ export function EditorialContextPanel({ sourcePeopleId }: { sourcePeopleId: numb
       </section>
 
       <footer class="context-editorial__footer">
-        <div><strong>Editorial review</strong><span>Reviewed {reviewDate} · {profile.review.reviewerRole ?? "Reviewer role not recorded"}</span>{profile.review.aiAssisted ? <small>AI-assisted drafting was permitted; factual claims are sourced and the published profile passed editorial review.</small> : null}</div>
+        <div><strong>Editorial review</strong><span>Reviewed {reviewDate} · {profile.review.reviewerRole ?? "Reviewer role not recorded"}</span>{profile.review.aiAssisted ? <small>AI-assisted drafting was permitted; factual claims are sourced and the published profile passed the release editorial checklist.</small> : null}</div>
         <details>
           <summary><Link2 size={15} aria-hidden="true" /> Editorial sources ({profile.sourceIds.length})</summary>
           <ul>{profile.sourceIds.map((id) => { const source = sources.get(id); return <li key={id}>{source ? <a href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}</strong><span>{source.publisher ?? source.sourceType}{source.publicationDate ? ` · ${source.publicationDate}` : ""}{source.locator ? ` · ${source.locator}` : ""}</span></a> : id}</li>; })}</ul>

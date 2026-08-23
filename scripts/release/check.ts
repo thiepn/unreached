@@ -27,10 +27,15 @@ interface PublicationStatus {
   sourceIds?: string[];
   templateVersion?: string;
   templateReviewedAt?: string;
+  profileCount?: number;
+  identityProvider?: string;
 }
 
 const contextStatus = await readJson<PublicationStatus>("public/data/context/status.json");
-if (contextStatus.available || contextStatus.fixture || contextStatus.datasetUrl !== null) throw new Error("context must remain production-gated until a compatible reviewed editorial source mode is certified.");
+if (!contextStatus.available || contextStatus.fixture) throw new Error("context must be active with reviewed non-fixture editorial content in U12F.");
+if (contextStatus.mode !== "reviewed-editorial" || contextStatus.datasetUrl !== "data/context/editorial.v2.json") throw new Error("context must use the certified reviewed-editorial publication mode and canonical v2 dataset.");
+if (!contextStatus.profileCount || contextStatus.profileCount < 1) throw new Error("context must advertise at least one reviewed production profile.");
+if (contextStatus.identityProvider !== "peoplegroups-org") throw new Error("context identities must be anchored to PeopleGroups.org PEIDs.");
 
 for (const domain of ["mission", "countries", "peoples", "prayer", "languages"]) {
   const status = await readJson<PublicationStatus>(`public/data/${domain}/status.json`);
@@ -61,7 +66,7 @@ for (const id of ["joshua-project-api", "progress-bible-registered-data", "ethno
 }
 const peopleGroups = byId.get("peoplegroups-org-api");
 if (!peopleGroups?.runtimeReadAllowed) throw new Error("PeopleGroups.org runtime reads must remain approved.");
-if (peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) throw new Error("PeopleGroups.org static public release/redistribution must remain blocked.");
+if (peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) throw new Error("PeopleGroups.org static database release/redistribution must remain blocked; U12F publishes only reviewed authored editorial claims and source links.");
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed) throw new Error("Natural Earth must remain approved for public geographic distribution.");
 
@@ -69,4 +74,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("U12E release-policy checks passed: Mission/People/Countries/Prayer/Languages runtime-active; Context remains gated; static PeopleGroups redistribution remains blocked.");
+console.log("U12F release-policy checks passed: all core production domains active; Context uses reviewed PEID-native editorial publication while static PeopleGroups database redistribution remains blocked.");
