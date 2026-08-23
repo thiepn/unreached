@@ -103,7 +103,7 @@ if (JSON.stringify(resources).includes("complete-bible")) throw new Error("U12C 
 const nigeria = entities.find((entity) => entity.peid === 7002);
 if (!nigeria || nigeria.contexts[0]?.country.iso3 !== "NGA" || nigeria.reach.classification !== "other-only") throw new Error("Nigeria record must remain an independent PGID/PEID entity.");
 const related = relatedRuntimePeople(first, entities);
-if (!related.some((item) => item.entity.peid === 7002 && item.relationship === "same-rop3-people")) throw new Error("Source PplNm/ROP3 people-name relationship must connect same-named records across countries without PEID aggregation.");
+if (!related.some((item) => item.entity.peid === 7002 && item.relationship === "same-rop3-name")) throw new Error("Source PplNm/ROP3 people-name relationship must connect same-named records across countries without PEID aggregation.");
 
 const benin = countries.find((country) => country.iso3 === "BEN");
 if (!benin) throw new Error("Visible Benin record missing.");
