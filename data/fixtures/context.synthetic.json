@@ -45,11 +45,11 @@
         "verifiedAt": "2026-08-23T20:00:00Z"
       },
       "whoTheyAre": {
-        "summary": "Browser Test People is a fictional group used only to validate Unreached's PEID editorial pipeline.",
+        "summary": "Browser Test People is a fictional one-record people-group-in-country profile used only to validate Unreached's reviewed editorial pipeline.",
         "claimIds": ["claim:example-identity", "claim:example-geography"]
       },
       "religionAndCommunity": {
-        "summary": "The synthetic fixture tests respectful handling of aggregate religious context without implying uniform personal belief.",
+        "summary": "The synthetic fixture tests respectful handling of an aggregate source religion label without implying uniform personal belief.",
         "claimIds": ["claim:example-religion"]
       },
       "whyUnreachedIntro": "The following fictional factors test how Unreached separates sourced facts from evidence synthesis.",
@@ -57,7 +57,7 @@
         {
           "dimension": "language-media",
           "heading": "Language and media",
-          "summary": "Synthetic source material indicates that resource fields vary by country context.",
+          "summary": "Synthetic source material reports resource-availability fields for this one country-context record.",
           "claimIds": ["claim:example-language"]
         },
         {
@@ -75,7 +75,7 @@
           "evidenceLevel": "A",
           "certainty": "high",
           "temporalClass": "stable",
-          "text": "The Browser Test People fixture is defined as one synthetic PeopleGroups PEID with multiple PGID contexts.",
+          "text": "The Browser Test People fixture maps PEID 910001 to exactly one synthetic PeopleGroups record, PG910001.",
           "citationIds": ["ctx-source:example-reference"],
           "asOf": null,
           "reviewAfter": null,
@@ -89,7 +89,7 @@
           "evidenceLevel": "A",
           "certainty": "high",
           "temporalClass": "stable",
-          "text": "The fixture includes a Benin country context for identity verification.",
+          "text": "The fixture assigns PG910001 to Benin for identity verification.",
           "citationIds": ["ctx-source:example-reference"],
           "asOf": null,
           "reviewAfter": null,
@@ -103,12 +103,12 @@
           "evidenceLevel": "A",
           "certainty": "high",
           "temporalClass": "stable",
-          "text": "The fixture uses an aggregate primary-religion label only to test contextual presentation.",
+          "text": "The fixture uses one aggregate primary-religion label only to test contextual presentation.",
           "citationIds": ["ctx-source:example-reference"],
           "asOf": null,
           "reviewAfter": null,
           "sensitivity": "public",
-          "interpretationNote": null
+          "interpretationNote": "An aggregate record label is not a claim about every individual's belief or practice."
         },
         {
           "id": "claim:example-language",
@@ -117,7 +117,7 @@
           "evidenceLevel": "A",
           "certainty": "high",
           "temporalClass": "current",
-          "text": "The synthetic source reports differing resource availability across the fixture's country contexts.",
+          "text": "The synthetic PG910001 record reports a Bible-availability label and a Jesus Film availability label for testing source-preserving resource display.",
           "citationIds": ["ctx-source:example-reference"],
           "asOf": "2026-08-23",
           "reviewAfter": "2027-02-23",
@@ -131,7 +131,7 @@
           "evidenceLevel": "B",
           "certainty": "medium",
           "temporalClass": "current",
-          "text": "Taken together, the fictional records suggest a limited access environment in the test scenario.",
+          "text": "Taken together, the fictional references suggest a limited access environment in the test scenario.",
           "citationIds": ["ctx-source:example-reference", "ctx-source:example-research"],
           "asOf": "2026-08-23",
           "reviewAfter": "2027-02-23",
