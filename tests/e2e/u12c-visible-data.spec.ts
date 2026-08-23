@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test("live people and country surfaces preserve one-record PEID, PGID and GSEC semantics", async ({ page }) => {
   await page.goto("./#/peoples");
-  await expect(page.getByRole("heading", { name: "Meet the peoples behind the map." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
   const peopleLink = page.getByRole("link", { name: new RegExp(VISIBLE_TEST_PEOPLE) }).first();
   await expect(peopleLink).toBeVisible({ timeout: 15_000 });
   await peopleLink.click();
