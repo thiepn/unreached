@@ -4,11 +4,9 @@ import { hrefFor } from "../app/router";
 import { formatLanguageCount, rawResourceSummary, useLiveLanguageExplorer, type LiveLanguagePeopleSummary } from "../languages";
 
 function peopleReachLabel(people: LiveLanguagePeopleSummary): string {
-  const known = people.unreachedContextCount + people.otherContextCount;
-  if (!known) return "GSEC unknown";
-  if (people.unreachedContextCount && people.otherContextCount) return "Mixed GSEC contexts";
-  if (people.unreachedContextCount) return "GSEC 0–3 contexts";
-  return "GSEC 4–6 contexts";
+  if (people.unreachedContextCount) return "GSEC 0–3";
+  if (people.otherContextCount) return "GSEC 4–6";
+  return "GSEC unknown";
 }
 
 function resourceBreakdownRows(items: Array<{ label: string; contextCount: number }>) {
@@ -34,11 +32,11 @@ export function LanguagePage({ iso6393 }: { iso6393: string }) {
 
       {explorer.warning ? <div class="languages-release-notice" role="note"><Database size={18} aria-hidden="true" /><div><strong>{explorer.stale ? "Using stale cached source data" : "Source notice"}</strong><p>{explorer.warning}</p></div></div> : null}
 
-      <div class="language-metric-grid"><div><span>People entities</span><strong>{record.peopleEntityCount}</strong><small>Unique PEIDs represented by this language code</small></div><div><span>Countries</span><strong>{record.countryCount}</strong><small>PGID country contexts using this ISO code</small></div><div><span>Represented population</span><strong>{formatLanguageCount(record.knownPopulation)}</strong><small>{record.populationKnownContextCount}/{record.contextCount} contexts report population</small></div><div><span>GSEC 0–3 contexts</span><strong>{record.unreachedContextCount}</strong><small>{record.otherContextCount} GSEC 4–6 · {record.unknownContextCount} unknown</small></div></div>
+      <div class="language-metric-grid"><div><span>People-group records</span><strong>{record.peopleEntityCount}</strong><small>Unique PEID/PGID records reporting this language code</small></div><div><span>Countries</span><strong>{record.countryCount}</strong><small>PGID country contexts using this ISO code</small></div><div><span>Represented population</span><strong>{formatLanguageCount(record.knownPopulation)}</strong><small>{record.populationKnownContextCount}/{record.contextCount} contexts report population</small></div><div><span>GSEC 0–3 contexts</span><strong>{record.unreachedContextCount}</strong><small>{record.otherContextCount} GSEC 4–6 · {record.unknownContextCount} unknown</small></div></div>
 
       <div class="language-profile-grid">
         <main>
-          <section class="language-section" aria-labelledby="language-peoples-heading"><div class="language-section__heading"><div><span class="eyebrow">People groups</span><h2 id="language-peoples-heading">Peoples represented under {record.name}</h2></div><UsersRound size={20} aria-hidden="true" /></div><p class="language-section__intro">PEIDs are grouped only from PeopleGroups.org records whose primary-language field reports this ISO 639-3 code. Counts below remain tied to those country contexts.</p>{record.peoples.length ? <div class="language-table-wrap"><table class="language-table"><thead><tr><th>People</th><th>Contexts</th><th>Known population</th><th>GSEC</th></tr></thead><tbody>{record.peoples.map((people) => <tr key={people.peid}><th scope="row"><a href={hrefFor(`/peoples/${people.peid}`)}>{people.name}</a></th><td>{people.contextCount}</td><td>{formatLanguageCount(people.knownPopulation)}</td><td>{peopleReachLabel(people)}</td></tr>)}</tbody></table></div> : <p class="language-empty">No current PEID relationships are available for this language.</p>}</section>
+          <section class="language-section" aria-labelledby="language-peoples-heading"><div class="language-section__heading"><div><span class="eyebrow">People-group records</span><h2 id="language-peoples-heading">Records reporting {record.name}</h2></div><UsersRound size={20} aria-hidden="true" /></div><p class="language-section__intro">Each row is a PeopleGroups.org PEID/PGID country-context record whose primary-language field reports this ISO 639-3 code. Records with the same cross-country ROP3 people name remain separate rather than being merged by PEID.</p>{record.peoples.length ? <div class="language-table-wrap"><table class="language-table"><thead><tr><th>People record</th><th>Country</th><th>Known population</th><th>GSEC</th></tr></thead><tbody>{record.peoples.map((people) => <tr key={people.peid}><th scope="row"><a href={hrefFor(`/peoples/${people.peid}`)}>{people.name}</a><small>PEID {people.peid}</small></th><td>{people.countryNames.join(", ")}</td><td>{people.knownPopulation > 0 ? formatLanguageCount(people.knownPopulation) : "Unknown"}</td><td>{peopleReachLabel(people)}</td></tr>)}</tbody></table></div> : <p class="language-empty">No current people-group records are available for this language.</p>}</section>
 
           <section class="language-section" aria-labelledby="language-countries-heading"><div class="language-section__heading"><div><span class="eyebrow">Geographic context</span><h2 id="language-countries-heading">Countries</h2></div><Languages size={20} aria-hidden="true" /></div>{record.countries.length ? <div class="language-country-grid">{record.countries.map((country) => <a href={hrefFor(`/countries/${country.iso3}`)} key={country.iso3}><strong>{country.name}</strong><span>{country.contextCount} contexts · {country.unreachedContextCount} GSEC 0–3 · {formatLanguageCount(country.knownPopulation)} represented</span></a>)}</div> : <p class="language-empty">No country contexts are available for this language.</p>}</section>
         </main>
@@ -52,7 +50,7 @@ export function LanguagePage({ iso6393 }: { iso6393: string }) {
         </aside>
       </div>
 
-      <footer class="language-meaning-note"><Database size={19} aria-hidden="true" /><div><strong>How to read this page</strong><p>This is a source-aware aggregation of PeopleGroups.org people-group-in-country records by ISO 639-3 language. It is not an Ethnologue language census or a ProgressBible translation-progress dataset, and it does not infer missing translation milestones.</p></div></footer>
+      <footer class="language-meaning-note"><Database size={19} aria-hidden="true" /><div><strong>How to read this page</strong><p>This is a source-aware aggregation of PeopleGroups.org people-group-in-country records by ISO 639-3 language. The certified runtime keeps each PEID/PGID record separate; it does not treat PEID as a cross-country people identity. This is not an Ethnologue language census or a ProgressBible translation-progress dataset, and it does not infer missing translation milestones.</p></div></footer>
     </article>
   );
 }
