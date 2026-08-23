@@ -28,9 +28,10 @@ test("live people and country surfaces preserve PEID, PGID and GSEC semantics", 
 
   await page.goto("./#/countries/BEN");
   await expect(page.getByRole("heading", { name: "Benin", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Unreached people contexts" })).toBeVisible();
-  await expect(page.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
-  await expect(page.getByText("GSEC 0–3", { exact: true })).toBeVisible();
+  const unreachedSection = page.getByLabel("Unreached people contexts");
+  await expect(unreachedSection.getByRole("heading", { name: "Unreached people contexts" })).toBeVisible();
+  await expect(unreachedSection.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
+  await expect(unreachedSection.getByText("GSEC 0–3", { exact: true }).first()).toBeVisible();
   await expect(page.getByText(/people-group-in-country records returned by PeopleGroups.org/)).toBeVisible();
 });
 

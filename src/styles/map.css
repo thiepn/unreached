@@ -352,12 +352,15 @@
     inset: auto var(--space-3) var(--space-3);
     z-index: 8;
     display: block;
+    overflow: hidden;
     border: 1px solid var(--line);
     background: var(--paper-0);
     box-shadow: var(--shadow-panel);
   }
 
   .mobile-map-sheet > summary {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -365,6 +368,7 @@
     padding: var(--space-2) var(--space-4);
     cursor: pointer;
     list-style: none;
+    background: var(--paper-0);
   }
 
   .mobile-map-sheet > summary::-webkit-details-marker {
@@ -402,15 +406,20 @@
   }
 
   .mobile-map-sheet__body {
+    position: relative;
+    z-index: 1;
     display: flex;
+    min-height: 0;
     max-height: calc(min(68dvh, 560px) - 58px);
     flex-direction: column;
+    overflow: hidden;
     padding: 0 var(--space-4) var(--space-3);
     border-top: 1px solid var(--line);
   }
 
   .mobile-map-sheet .country-browser {
-    min-height: 220px;
+    min-height: 0;
+    flex: 1 1 220px;
   }
 
   .mobile-map-sheet .country-list {
@@ -419,12 +428,18 @@
 
   .mobile-selection {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3);
     min-height: 48px;
     color: var(--ink-2);
     font-size: 0.78rem;
+  }
+
+  .mobile-data-note,
+  .mobile-boundary-note {
+    flex: 0 0 auto;
   }
 
   .mobile-boundary-note {
