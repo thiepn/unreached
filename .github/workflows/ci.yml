@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - "phase/**"
+      - "release/**"
 
 permissions:
   contents: read
