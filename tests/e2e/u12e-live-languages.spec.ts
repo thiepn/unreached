@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test("live language explorer preserves raw PeopleGroups resource semantics", async ({ page }) => {
   await page.goto("./#/languages");
-  await expect(page.getByRole("heading", { name: /Follow gospel access through the languages people report/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Explore languages and resources." })).toBeVisible();
 
   const fon = page.getByRole("link", { name: /Fon/ }).first();
   await expect(fon).toBeVisible({ timeout: 15_000 });
