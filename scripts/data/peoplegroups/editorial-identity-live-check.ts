@@ -29,18 +29,23 @@ assertContextDatasetIntegrity(editorial);
 if (editorial.profiles.length !== status.profileCount) throw new Error("Editorial live preflight profile count does not match status metadata.");
 
 const client = createPeopleGroupsApiClient({ timeoutMs: 15_000 });
+const identityErrors: string[] = [];
 for (const profile of editorial.profiles) {
   const records = await Promise.all(profile.identity.pgidAnchors.map((pgid) => client.fetchByPgid(pgid)));
   for (const record of records) {
     console.log(`Editorial identity preflight ${record.PGID}: PEID ${record.PEID}, ${record.NmDisp}, ${record.ISOalpha3}, language ${record.ROL ?? "unknown"}, ROP3 name ${record.PplNm ?? "unknown"}.`);
-    if (record.PEID !== profile.peid) throw new Error(`${profile.peopleEntityId} targets PEID ${profile.peid}, but live ${record.PGID} currently reports PEID ${record.PEID}.`);
-    if (!profile.identity.countryIso3Anchors.includes(record.ISOalpha3)) throw new Error(`${profile.peopleEntityId} does not declare live country anchor ${record.ISOalpha3} for ${record.PGID}.`);
+    if (record.PEID !== profile.peid) identityErrors.push(`${profile.peopleEntityId} targets PEID ${profile.peid}, but live ${record.PGID} currently reports PEID ${record.PEID}.`);
+    if (!profile.identity.countryIso3Anchors.includes(record.ISOalpha3)) identityErrors.push(`${profile.peopleEntityId} does not declare live country anchor ${record.ISOalpha3} for ${record.PGID}.`);
     const language = record.ROL?.toLocaleLowerCase("en") ?? null;
-    if (language && !profile.identity.languageIso6393Anchors.includes(language)) throw new Error(`${profile.peopleEntityId} does not declare live language anchor ${language} for ${record.PGID}.`);
+    if (language && !profile.identity.languageIso6393Anchors.includes(language)) identityErrors.push(`${profile.peopleEntityId} does not declare live language anchor ${language} for ${record.PGID}.`);
     const expected = profile.identity.verifiedPeopleName.toLocaleLowerCase("en");
     const actual = record.NmDisp.toLocaleLowerCase("en");
-    if (!(actual.includes(expected) || expected.includes(actual))) throw new Error(`${profile.peopleEntityId} verified name '${profile.identity.verifiedPeopleName}' does not match live name '${record.NmDisp}'.`);
+    if (!(actual.includes(expected) || expected.includes(actual))) identityErrors.push(`${profile.peopleEntityId} verified name '${profile.identity.verifiedPeopleName}' does not match live name '${record.NmDisp}'.`);
   }
 }
 
-console.log(`v1.3 fast live editorial identity preflight passed for ${editorial.profiles.length} reviewed profile shard(s).`);
+if (identityErrors.length) {
+  throw new Error(`Editorial live identity preflight found ${identityErrors.length} mismatch(es):\n- ${identityErrors.join("\n- ")}`);
+}
+
+console.log(`Fast live editorial identity preflight passed for all ${editorial.profiles.length} reviewed profile shard(s).`);
