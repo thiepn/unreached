@@ -1,7 +1,8 @@
-import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Clock, Compass, Database, RefreshCw } from "lucide-preact";
+import { ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Clock, Compass, Database, RefreshCw } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
+import { isSameLocalDate, prayerSnapshotFromEntity, usePersonalization } from "../personalization";
 import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
   buildLivePrayerProfile,
@@ -19,12 +20,17 @@ function categoryLabel(category: PrayerCategory): string {
 
 export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) {
   const prayer = useLivePrayerExperience();
+  const personalization = usePersonalization();
   const [minutes, setMinutes] = useState<PrayerMinutes>(5);
   const [activeIndex, setActiveIndex] = useState(0);
   const entity = prayer.peopleByRouteKey.get(sourcePeopleId) ?? null;
   const profile = entity && isLivePrayerEligible(entity) ? buildLivePrayerProfile(entity) : null;
   const flow = useMemo(() => profile ? livePrayerFlow(profile, minutes) : [], [profile, minutes]);
   const activePrompt = flow[activeIndex] ?? null;
+  const prayerSnapshot = entity ? prayerSnapshotFromEntity(entity) : null;
+  const prayerListEntry = personalization.state.prayerList.find((item) => item.sourcePeopleId === sourcePeopleId) ?? null;
+  const listed = Boolean(prayerListEntry);
+  const recordedToday = isSameLocalDate(prayerListEntry?.lastPrayedAt ?? null);
 
   useEffect(() => setActiveIndex(0), [minutes, sourcePeopleId]);
 
@@ -41,7 +47,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
       </section>
     );
   }
-  if (!profile || !activePrompt) {
+  if (!profile || !activePrompt || !entity || !prayerSnapshot) {
     return (
       <section class="prayer-focus prayer-focus--state">
         <div class="eyebrow">Focused prayer</div>
@@ -64,6 +70,15 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
           <div class="eyebrow">Focused prayer</div>
           <h1 class="display-title">Pray for {profile.peopleName}</h1>
           <p>{profile.whyPray}</p>
+          <button
+            type="button"
+            class={`prayer-list-toggle prayer-list-toggle--focus${listed ? " is-active" : ""}`}
+            aria-pressed={listed}
+            onClick={() => personalization.togglePrayer(prayerSnapshot)}
+          >
+            <Bookmark size={16} aria-hidden="true" />
+            {listed ? "Remove from private prayer list" : "Add to private prayer list"}
+          </button>
         </div>
         <Compass size={32} aria-hidden="true" />
       </header>
@@ -101,8 +116,26 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
         )}
       </div>
 
+      <section class="prayer-practice-panel" aria-labelledby="prayer-practice-heading">
+        <div>
+          <span class="eyebrow">Private prayer practice</span>
+          <h2 id="prayer-practice-heading">Keep one simple return point.</h2>
+          <p>If useful, record that you prayed for this people today. Unreached stores only the latest timestamp in this browser—never a total, score, streak, or public activity record.</p>
+        </div>
+        <button
+          type="button"
+          class={`prayer-practice-record${recordedToday ? " is-recorded" : ""}`}
+          disabled={recordedToday}
+          onClick={() => personalization.recordPrayer(prayerSnapshot)}
+        >
+          {recordedToday ? <Check size={17} aria-hidden="true" /> : <Compass size={17} aria-hidden="true" />}
+          {recordedToday ? "Prayer noted today" : "Record prayer today"}
+        </button>
+        {prayerListEntry?.lastPrayedAt ? <small>Last recorded locally: {new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(prayerListEntry.lastPrayedAt))}</small> : <small>No prayer date is stored yet.</small>}
+      </section>
+
       <footer class="prayer-focus__footer">
-        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} is fixed and release-certified. Runtime facts come from the current PeopleGroups.org record. There is no prayer score, streak, public activity record, or spiritual completion metric.</p>
+        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} is fixed and release-certified. Runtime facts come from the current PeopleGroups.org record. Private prayer practice is optional and non-competitive: no prayer score, streak, public activity record, or spiritual completion metric is created.</p>
         <a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>Return to the people profile</a>
       </footer>
     </article>
