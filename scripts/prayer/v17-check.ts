@@ -25,10 +25,13 @@ if (selected?.sourcePeopleId !== 24277) throw new Error("v1.7 eligibility-aware 
 const excluded = selectNextPrayerRotationEntry(entries, { eligibleSourcePeopleIds: eligible, excludeSourcePeopleId: 24277 });
 if (excluded?.sourcePeopleId !== 12319) throw new Error("v1.7 next-person selection must honor current-person exclusion.");
 
-const [types, model, rotation, prayPage, savedPage, focusPage, main] = await Promise.all([
-  "src/personalization/types.ts", "src/personalization/model.ts", "src/personalization/rotation.ts",
-  "src/pages/PrayPage.tsx", "src/pages/SavedPage.tsx", "src/pages/PrayerFocusPage.tsx", "src/main.tsx",
-].map(readText));
+const types = await readText("src/personalization/types.ts");
+const model = await readText("src/personalization/model.ts");
+const rotation = await readText("src/personalization/rotation.ts");
+const prayPage = await readText("src/pages/PrayPage.tsx");
+const savedPage = await readText("src/pages/SavedPage.tsx");
+const focusPage = await readText("src/pages/PrayerFocusPage.tsx");
+const main = await readText("src/main.tsx");
 if (!types.includes("version: z.literal(2)")) throw new Error("v1.7 must reuse personalization schema v2 rather than add tracking fields.");
 const persistentSource = `${types}\n${model}`;
 for (const forbidden of ["rotationScore", "priorityScore", "urgencyScore", "overdueAt", "prayerCount", "prayerStreak", "rotationPosition"]) if (persistentSource.includes(forbidden)) throw new Error(`v1.7 must not persist ranking/performance field ${forbidden}.`);
