@@ -1,5 +1,6 @@
-import { BookOpenText, CheckCircle2, Clock3, Link2, ShieldCheck } from "lucide-preact";
+import { ArrowLeft, ArrowRight, BookOpenText, CheckCircle2, Clock3, Link2, ShieldCheck } from "lucide-preact";
 
+import { hrefFor } from "../app/router";
 import { claimLabel, isClaimStale, useEditorialContext, type ContextClaim, type EditorialSource, type PeopleContextProfile } from "../context";
 
 function formatDate(value: string | null): string {
@@ -43,13 +44,17 @@ export function EditorialContextPanel({ peid }: { peid: number }) {
     return (
       <section class="context-state" aria-label="Editorial context status">
         <BookOpenText size={20} aria-hidden="true" />
-        <div><strong>Reviewed context not yet published for this source record</strong><p>{context.error ?? context.status?.reason ?? "The live source profile remains available, but a reviewed contextual article has not yet been released for this PEID/PGID record."}</p></div>
+        <div><strong>Reviewed context not yet published for this source record</strong><p>{context.error ?? context.status?.reason ?? "The live source profile remains available, but a reviewed contextual article has not yet been released for this PEID/PGID record."}</p>{context.dataset?.profiles.length ? <a class="context-coverage-link" href={hrefFor("/coverage")}>Browse {context.dataset.profiles.length} reviewed profiles <ArrowRight size={14} aria-hidden="true" /></a> : null}</div>
       </section>
     );
   }
 
   const reviewDate = profile.review.reviewedAt ? new Intl.DateTimeFormat("en", { year: "numeric", month: "short", day: "numeric" }).format(new Date(profile.review.reviewedAt)) : "Not recorded";
   const identity = profile.identity;
+  const reviewedProfiles = [...(context.dataset?.profiles ?? [])].sort((a, b) => a.identity.verifiedPeopleName.localeCompare(b.identity.verifiedPeopleName, "en"));
+  const coverageIndex = reviewedProfiles.findIndex((item) => item.peid === profile.peid);
+  const previous = coverageIndex > 0 ? reviewedProfiles[coverageIndex - 1] ?? null : null;
+  const next = coverageIndex >= 0 && coverageIndex < reviewedProfiles.length - 1 ? reviewedProfiles[coverageIndex + 1] ?? null : null;
 
   return (
     <section class="context-editorial" aria-labelledby="context-heading">
@@ -57,6 +62,14 @@ export function EditorialContextPanel({ peid }: { peid: number }) {
         <div><span class="eyebrow">Reviewed editorial context</span><h2 id="context-heading">Understand their world.</h2></div>
         <div class="context-review-badge"><ShieldCheck size={17} aria-hidden="true" /><span>Tier {profile.review.qualityTier} · {profile.review.status}</span></div>
       </header>
+
+      <nav class="context-coverage-nav" aria-label="Reviewed editorial coverage navigation">
+        <a class="context-coverage-nav__all" href={hrefFor("/coverage")}><BookOpenText size={15} aria-hidden="true" /> Reviewed profile {coverageIndex + 1} of {reviewedProfiles.length}</a>
+        <div>
+          {previous ? <a href={hrefFor(`/peoples/${previous.peid}`)} rel="prev"><ArrowLeft size={14} aria-hidden="true" /><span><small>Previous reviewed profile</small>{previous.identity.verifiedPeopleName}</span></a> : <span class="is-disabled"><ArrowLeft size={14} aria-hidden="true" /><span><small>Previous reviewed profile</small>Start of coverage</span></span>}
+          {next ? <a href={hrefFor(`/peoples/${next.peid}`)} rel="next"><span><small>Next reviewed profile</small>{next.identity.verifiedPeopleName}</span><ArrowRight size={14} aria-hidden="true" /></a> : <span class="is-disabled"><span><small>Next reviewed profile</small>End of coverage</span><ArrowRight size={14} aria-hidden="true" /></span>}
+        </div>
+      </nav>
 
       <div class="context-identity-note" aria-label="Editorial identity verification">
         <strong>Source-record identity verified</strong>
