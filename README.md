@@ -8,8 +8,29 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.4.0**
-- **Release state:** **v1.4 Editorial Discovery & Coverage Navigation release candidate**
+- **Version:** **1.5.0**
+- **Release state:** **v1.5 Editorial Coverage Expansion & Regional Balance release candidate**
+
+## v1.5 — editorial coverage expansion & regional balance
+
+v1.5 doubles the reviewed contextual publication from six to twelve Tier-3 source-record profiles and makes editorial distribution visible without turning coverage into a mission-priority signal.
+
+New reviewed profiles:
+
+| People profile | Provider identity | Country | Language | Editorial region |
+| --- | --- | --- | --- | --- |
+| Kazakh | PEID 24277 / PG024277 | Kazakhstan | `kaz` | Central Asia |
+| Tajik | PEID 24529 / PG024529 | Tajikistan | `tgk` | Central Asia |
+| Rohingya | PEID 22052 / PG022052 | Myanmar | `ben` source anchor | Southeast Asia |
+| Wolof | PEID 14267 / PG014267 | Senegal | `wol` | West Africa |
+| Kurd, Northern (Kurmanji) | PEID 24567 / PG024567 | Türkiye | `kmr` | West Asia |
+| Javanese Transmigrants | PEID 46650 / PG046650 | Indonesia | `jav` | Southeast Asia |
+
+The coverage browser now reports and filters seven broad editorial regions: Central Asia, East Asia, Horn of Africa, South Asia, Southeast Asia, West Africa, and West Asia. These are editorial navigation groupings only. They are not PeopleGroups.org mission regions, geopolitical priorities, quotas, or rankings.
+
+Each v1.5 addition uses the exact PeopleGroups.org source record for runtime mission/identity evidence plus a second contextual source from UNESCO, Encyclopaedia Iranica, UNHCR, or Minority Rights Group. Current claims remain review-dated; religion, ethnicity, culture, displacement, and migration are not used as causal shortcuts for GSEC status.
+
+The release gate requires exactly twelve Tier-3 profiles, explicit PEID/PGID/country/language evidence for all twelve, cross-source synthesis for every new article, at least seven mapped editorial regions, and successful live PeopleGroups identity verification before promotion.
 
 ## v1.4 — editorial discovery & coverage navigation
 
@@ -39,7 +60,7 @@ v1.3 expands the human-reviewable **Understand** layer from one production profi
 | Southern Pashtun | PEID 24009 / PG024009 | Afghanistan | `pbt` |
 | Bengali Sunni Muslims | PEID 1156 / PG001156 | Bangladesh | `ben` |
 
-Coverage is intentionally partial. Six reviewed profiles do **not** imply representative coverage of all peoples, countries, religions, or mission situations.
+Coverage remains intentionally partial. Twelve reviewed profiles do **not** imply representative coverage of all peoples, countries, religions, regions, or mission situations.
 
 ### Editorial contract
 
@@ -55,16 +76,16 @@ Each published profile:
 - passes naming, citation, freshness, stereotype, religion-nuance, sensitivity, licensing, and identity review checks;
 - remains fail-closed if current PeopleGroups identity anchors no longer match.
 
-The editorial model does not treat a people's religion, ethnicity, or culture as a shortcut explanation for being unreached. Country/region conflict, legal restrictions, or access conditions are presented only where sourced and are not described as the sole cause of GSEC status.
+The editorial model does not treat a people's religion, ethnicity, or culture as a shortcut explanation for being unreached. Country/region conflict, legal restrictions, displacement, or access conditions are presented only where sourced and are not described as the sole cause of GSEC status.
 
 ### Sharded publication
 
-The old single editorial JSON has been replaced by a small publication manifest plus individually reviewed profile shards:
+The editorial publication uses a small manifest plus individually reviewed profile shards:
 
 - `data/context/manifest.v1.json`
 - `data/context/profiles/*.json`
 
-The browser materializes these packages into the existing reviewed-context model. This keeps each profile independently inspectable and allows future coverage growth without rewriting one large publication file.
+The browser materializes these packages into the reviewed-context model. This keeps each profile independently inspectable and allows future coverage growth without rewriting one large publication file.
 
 Release gates verify manifest/shard counts, unique URLs, non-fixture status, required PEIDs, Tier-3 review metadata, source/claim integrity, and live PeopleGroups PEID/PGID/country/language/name anchors.
 
@@ -114,11 +135,11 @@ IMB **GSEC** remains source-native:
 | --- | --- |
 | Explore | Natural Earth geography + live PeopleGroups.org mission aggregation |
 | Peoples | One current PEID/PGID source record per route + guided starts + reviewed-context annotation/filter |
-| Reviewed coverage | Local-first index and navigation over the reviewed editorial publication set |
+| Reviewed coverage | Local-first index, regional distribution, filtering and navigation over the twelve-profile reviewed publication set |
 | Countries | Local Natural Earth index + live country-context records + country-specific reviewed editorial links |
 | Languages | Live ISO 639-3 aggregation over current source records |
 | Prayer | Current GSEC 0–3 record + fixed release-certified prayer template |
-| Editorial context | Six reviewed source-record profile shards inherited from v1.3; intentionally partial coverage |
+| Editorial context | Twelve reviewed Tier-3 source-record profile shards; intentionally partial coverage |
 | Saved / Recent | Browser-local only |
 | ProgressBible | Permission-gated and not used |
 | Ethnologue proprietary taxonomy | Permission-gated and not used |
@@ -145,9 +166,9 @@ A release candidate must pass:
 - browser API/CORS contract;
 - post-merge GitHub Pages certification against the deployed site.
 
-v1.3 requires all six reviewed editorial profiles to survive deterministic publication validation, live PEID/PGID identity verification, and deployed manifest/shard verification. v1.4 additionally certifies the coverage browser's local-first boundary, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation.
+v1.3 requires the original six reviewed editorial profiles to survive deterministic publication validation and live identity verification. v1.4 additionally certifies the local-first coverage browser, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation. v1.5 requires twelve Tier-3 profile shards, six newly cross-sourced profiles, seven explicit editorial regions, regional coverage guardrails, and live verification of every declared PeopleGroups identity anchor.
 
-See [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
+See [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
 ## Local development
 

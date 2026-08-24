@@ -1,14 +1,20 @@
 {
   "schemaVersion": 1,
   "fixture": false,
-  "generatedAt": "2026-08-24T19:15:00Z",
-  "profileCount": 6,
+  "generatedAt": "2026-08-24T20:30:00Z",
+  "profileCount": 12,
   "profileUrls": [
     "data/context/profiles/fon-benin.json",
     "data/context/profiles/hui-china.json",
     "data/context/profiles/uyghur-china.json",
     "data/context/profiles/somali-somalia.json",
     "data/context/profiles/southern-pashtun-afghanistan.json",
-    "data/context/profiles/bengali-sunni-bangladesh.json"
+    "data/context/profiles/bengali-sunni-bangladesh.json",
+    "data/context/profiles/kazakh-kazakhstan.json",
+    "data/context/profiles/tajik-tajikistan.json",
+    "data/context/profiles/rohingya-myanmar.json",
+    "data/context/profiles/wolof-senegal.json",
+    "data/context/profiles/kurmanji-kurds-turkiye.json",
+    "data/context/profiles/javanese-transmigrants-indonesia.json"
   ]
 }

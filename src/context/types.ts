@@ -50,6 +50,8 @@ export const editorialSourceSchema = z.object({
     "mission-research",
     "international-organization",
     "human-rights",
+    "humanitarian",
+    "cultural-heritage",
     "news",
     "other",
   ]),

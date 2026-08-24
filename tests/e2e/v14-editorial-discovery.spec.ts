@@ -60,7 +60,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("v1.4 reviewed coverage is a first-class local discovery surface", async ({ page }) => {
+test("v1.4 reviewed coverage remains a first-class local discovery surface", async ({ page }) => {
   let peoplegroupsRequests = 0;
   page.on("request", (request) => {
     if (request.url().includes("peoplegroups.org/wp-json/pg/v1/people-groups")) peoplegroupsRequests += 1;
@@ -70,12 +70,13 @@ test("v1.4 reviewed coverage is a first-class local discovery surface", async ({
 
   await expect(page.getByRole("heading", { name: "Browse the profiles with deeper context." })).toBeVisible();
   await expect(page.getByText("Coverage is an editorial-publication measure.")).toBeVisible();
-  await expect(page.locator("[data-editorial-coverage-grid] [data-editorial-peid]")).toHaveCount(6);
-  await expect(page.getByText("6 reviewed profiles does not mean these groups are more important, more urgent, or more unreached than groups without an article.")).toBeVisible();
+  const coverageCards = page.locator("[data-editorial-coverage-grid] [data-editorial-peid]");
+  expect(await coverageCards.count()).toBeGreaterThanOrEqual(6);
+  await expect(page.getByText(/reviewed profiles does not mean these groups are more important, more urgent, or more unreached than groups without an article/i)).toBeVisible();
   expect(peoplegroupsRequests).toBe(0);
 
-  await page.getByPlaceholder("Search name, country, language, PEID or PGID").fill("Hui");
-  await expect(page.locator("[data-editorial-coverage-grid] [data-editorial-peid]")).toHaveCount(1);
+  await page.getByPlaceholder(/Search name, country/i).fill("Hui");
+  await expect(coverageCards).toHaveCount(1);
   await expect(page.locator('[data-editorial-peid="7206"]')).toBeVisible();
 });
 
@@ -102,12 +103,12 @@ test("v1.4 country pages expose reviewed articles for that country", async ({ pa
   await expect(coverage.getByText(/publication coverage, not a ranking of mission importance/i)).toBeVisible();
 });
 
-test("v1.4 reviewed articles provide previous, next and all-coverage navigation", async ({ page }) => {
+test("v1.4 reviewed articles retain previous, next and all-coverage navigation", async ({ page }) => {
   await page.goto("./#/peoples/12319", { waitUntil: "domcontentloaded" });
 
   const navigation = page.locator(".context-coverage-nav");
   await expect(navigation).toBeVisible({ timeout: 15_000 });
-  await expect(navigation.getByRole("link", { name: /Reviewed profile 2 of 6/ })).toHaveAttribute("href", "#/coverage");
+  await expect(navigation.getByRole("link", { name: /Reviewed profile 2 of \d+/ })).toHaveAttribute("href", "#/coverage");
   await expect(navigation.getByRole("link", { name: /Bengali Sunni Muslims/ })).toHaveAttribute("href", "#/peoples/1156");
   await expect(navigation.getByRole("link", { name: /Hui/ })).toHaveAttribute("href", "#/peoples/7206");
 });
