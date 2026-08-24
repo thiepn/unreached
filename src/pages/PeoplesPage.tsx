@@ -2,6 +2,7 @@ import { ArrowRight, Database, Filter, RefreshCw, Search, UsersRound } from "luc
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
+import { GuidedPeopleStarts } from "../components/GuidedPeopleStarts";
 import { useDebouncedValue } from "../hooks/useResponsiveWork";
 import {
   filterLivePeople,
@@ -79,6 +80,7 @@ export function PeoplesPage() {
   const results = useMemo(() => filterLivePeople(explorer.peoples, effectiveFilters), [explorer.peoples, effectiveFilters]);
   const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
   const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0].filter(Boolean).length;
+  const showGuidedStarts = !filters.query.trim() && activeFilterCount === 0;
 
   useEffect(() => setVisibleCount(PEOPLE_PAGE_SIZE), [debouncedQuery, filters.status, filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation, filters.sort]);
 
@@ -90,7 +92,7 @@ export function PeoplesPage() {
         <div>
           <div class="eyebrow">People Group Explorer</div>
           <h1 id="peoples-title" class="display-title">Find a people group.</h1>
-          <p class="lead">Search first. Open a profile when you want the full source record, context and prayer guide.</p>
+          <p class="lead">Search when you know what you want, or use a guided starting point when you do not. Every path opens the same source-backed profile and prayer flow.</p>
         </div>
         <div class="peoples-hero__mark" aria-hidden="true"><UsersRound size={35} /></div>
       </header>
@@ -101,7 +103,7 @@ export function PeoplesPage() {
         <div class="people-index-state people-index-state--loading" role="status">
           <span class="loading-pulse" aria-hidden="true" />
           <strong>{loadingLabel(explorer.progress?.loadedPages, explorer.progress?.totalPages)}</strong>
-          <small>Search and profiles appear when the shared source dataset is ready.</small>
+          <small>Search and guided starting points appear when the shared source dataset is ready.</small>
         </div>
       ) : null}
 
@@ -111,6 +113,8 @@ export function PeoplesPage() {
 
       {explorer.ready ? (
         <>
+          {showGuidedStarts ? <GuidedPeopleStarts peoples={explorer.peoples} /> : null}
+
           <label class="people-search people-search--primary" for="people-search">
             <Search size={19} aria-hidden="true" />
             <span class="sr-only">Search people groups</span>
@@ -159,7 +163,13 @@ export function PeoplesPage() {
                 <div class="result-load-more"><button type="button" onClick={() => setVisibleCount((count) => Math.min(count + PEOPLE_PAGE_SIZE, results.length))}>Show {Math.min(PEOPLE_PAGE_SIZE, results.length - visibleResults.length)} more</button><span>{results.length - visibleResults.length} remaining</span></div>
               ) : null}
             </>
-          ) : <div class="people-index-empty">No people groups match the current search and filters.</div>}
+          ) : (
+            <div class="people-index-empty people-index-empty--recover">
+              <strong>No people groups match this search.</strong>
+              <p>Clear the current search and filters to return to the guided starting points and full live index.</p>
+              <button type="button" class="people-reset-filters" onClick={() => setFilters(DEFAULT_FILTERS)}>Clear search & filters</button>
+            </div>
+          )}
         </>
       ) : null}
     </section>
