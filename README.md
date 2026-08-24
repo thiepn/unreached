@@ -8,8 +8,23 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.3.0**
-- **Release state:** **v1.3 Editorial Context Coverage Expansion release candidate**
+- **Version:** **1.4.0**
+- **Release state:** **v1.4 Editorial Discovery & Coverage Navigation release candidate**
+
+## v1.4 — editorial discovery & coverage navigation
+
+v1.4 turns the reviewed editorial publication into a first-class discovery surface without turning editorial availability into a mission-priority signal.
+
+- **Reviewed coverage** under Browse opens a dedicated local-first index of all published reviewed contextual profiles.
+- The coverage browser supports people/country/language/PEID/PGID search and country filtering.
+- People Explorer marks records with reviewed context and offers an explicit **Reviewed context only** filter while preserving its existing default sort order.
+- Country pages expose reviewed articles whose certified editorial identity includes that country.
+- Reviewed articles provide previous/next/all-coverage navigation.
+- Source records without an article can recover directly to the reviewed-coverage browser.
+
+Coverage is explicitly an **editorial-publication measure**. It does not mean a covered people is more important, more urgent, more unreached, or higher priority than an uncovered people.
+
+The dedicated `#/coverage` route loads the bounded editorial manifest/shards plus local Natural Earth geography and does not activate the full PeopleGroups.org corpus merely to display coverage.
 
 ## v1.3 — reviewed editorial context
 
@@ -60,7 +75,7 @@ People Explorer offers source-backed starting points when a visitor does not kno
 ## v1.1 usability/performance baseline retained
 
 - Primary navigation: **Explore / Peoples / Pray**.
-- Countries, Languages, and About & sources remain under **Browse**.
+- Reviewed coverage, Countries, Languages, and About & sources live under **Browse**.
 - People, Languages, and Countries are search-first with collapsed advanced controls.
 - Large indexes use bounded initial rendering and progressive reveal.
 - MapLibre is isolated to Explore instead of loading globally.
@@ -98,11 +113,12 @@ IMB **GSEC** remains source-native:
 | Surface | Production behavior |
 | --- | --- |
 | Explore | Natural Earth geography + live PeopleGroups.org mission aggregation |
-| Peoples | One current PEID/PGID source record per route + guided starts |
-| Countries | Local Natural Earth index + live country-context records |
+| Peoples | One current PEID/PGID source record per route + guided starts + reviewed-context annotation/filter |
+| Reviewed coverage | Local-first index and navigation over the reviewed editorial publication set |
+| Countries | Local Natural Earth index + live country-context records + country-specific reviewed editorial links |
 | Languages | Live ISO 639-3 aggregation over current source records |
 | Prayer | Current GSEC 0–3 record + fixed release-certified prayer template |
-| Editorial context | Six reviewed source-record profile shards in v1.3; intentionally partial coverage |
+| Editorial context | Six reviewed source-record profile shards inherited from v1.3; intentionally partial coverage |
 | Saved / Recent | Browser-local only |
 | ProgressBible | Permission-gated and not used |
 | Ethnologue proprietary taxonomy | Permission-gated and not used |
@@ -129,9 +145,9 @@ A release candidate must pass:
 - browser API/CORS contract;
 - post-merge GitHub Pages certification against the deployed site.
 
-v1.3 additionally requires all six reviewed editorial profiles to survive deterministic publication validation, live PEID/PGID identity verification, and deployed manifest/shard verification.
+v1.3 requires all six reviewed editorial profiles to survive deterministic publication validation, live PEID/PGID identity verification, and deployed manifest/shard verification. v1.4 additionally certifies the coverage browser's local-first boundary, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation.
 
-See [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
+See [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
 ## Local development
 
