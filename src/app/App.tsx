@@ -7,6 +7,7 @@ import { useHashRoute } from "./router";
 const AboutPage = lazy(() => import("../pages/AboutPage").then((module) => ({ default: module.AboutPage })));
 const CountriesPage = lazy(() => import("../pages/CountriesPage").then((module) => ({ default: module.CountriesPage })));
 const CountryPage = lazy(() => import("../pages/CountryPage").then((module) => ({ default: module.CountryPage })));
+const EditorialCoveragePage = lazy(() => import("../pages/EditorialCoveragePage").then((module) => ({ default: module.EditorialCoveragePage })));
 const ExplorePage = lazy(() => import("../pages/ExplorePage").then((module) => ({ default: module.ExplorePage })));
 const LanguagePage = lazy(() => import("../pages/LanguagePage").then((module) => ({ default: module.LanguagePage })));
 const LanguagesPage = lazy(() => import("../pages/LanguagesPage").then((module) => ({ default: module.LanguagesPage })));
@@ -35,6 +36,7 @@ export function App() {
     case "peoples": page = route.peopleSourceId ? <PeopleContextualPage sourcePeopleId={route.peopleSourceId} /> : <PeoplesPage />; break;
     case "countries": page = route.countryIso3 ? <CountryPage iso3={route.countryIso3} /> : <CountriesPage />; break;
     case "languages": page = route.languageIso6393 ? <LanguagePage iso6393={route.languageIso6393} /> : <LanguagesPage />; break;
+    case "coverage": page = <EditorialCoveragePage />; break;
     case "pray": page = route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />; break;
     case "saved": page = <SavedPage />; break;
     case "about": page = <AboutPage />; break;
