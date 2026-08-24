@@ -1,8 +1,9 @@
-import { ArrowRight, Database, Filter, RefreshCw, Search, UsersRound } from "lucide-preact";
+import { ArrowRight, BookOpenText, Database, Filter, RefreshCw, Search, UsersRound } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
 import { GuidedPeopleStarts } from "../components/GuidedPeopleStarts";
+import { useEditorialContext } from "../context";
 import { useDebouncedValue } from "../hooks/useResponsiveWork";
 import {
   filterLivePeople,
@@ -34,7 +35,9 @@ function loadingLabel(loadedPages: number | undefined, totalPages: number | unde
 
 export function PeoplesPage() {
   const explorer = useLivePeopleExplorer();
+  const editorial = useEditorialContext();
   const [filters, setFilters] = useState<LivePeopleFilterState>(DEFAULT_FILTERS);
+  const [reviewedOnly, setReviewedOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PEOPLE_PAGE_SIZE);
   const debouncedQuery = useDebouncedValue(filters.query, 120);
 
@@ -77,14 +80,16 @@ export function PeoplesPage() {
     filters.minimumPopulation,
     filters.sort,
   ]);
-  const results = useMemo(() => filterLivePeople(explorer.peoples, effectiveFilters), [explorer.peoples, effectiveFilters]);
+  const filteredResults = useMemo(() => filterLivePeople(explorer.peoples, effectiveFilters), [explorer.peoples, effectiveFilters]);
+  const results = useMemo(() => reviewedOnly ? filteredResults.filter((people) => editorial.profilesByPeid.has(people.peid)) : filteredResults, [filteredResults, reviewedOnly, editorial.profilesByPeid]);
   const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
-  const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0].filter(Boolean).length;
+  const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
   const showGuidedStarts = !filters.query.trim() && activeFilterCount === 0;
 
-  useEffect(() => setVisibleCount(PEOPLE_PAGE_SIZE), [debouncedQuery, filters.status, filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation, filters.sort]);
+  useEffect(() => setVisibleCount(PEOPLE_PAGE_SIZE), [debouncedQuery, filters.status, filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation, filters.sort, reviewedOnly]);
 
   const update = <K extends keyof LivePeopleFilterState>(key: K, value: LivePeopleFilterState[K]) => setFilters((current) => ({ ...current, [key]: value }));
+  const resetFilters = () => { setFilters(DEFAULT_FILTERS); setReviewedOnly(false); };
 
   return (
     <section class="peoples-page" aria-labelledby="peoples-title">
@@ -115,6 +120,14 @@ export function PeoplesPage() {
         <>
           {showGuidedStarts ? <GuidedPeopleStarts peoples={explorer.peoples} /> : null}
 
+          {!editorial.loading && !editorial.error && editorial.dataset?.profiles.length ? (
+            <a class="people-editorial-discovery" href={hrefFor("/coverage")}>
+              <BookOpenText size={20} aria-hidden="true" />
+              <span><strong>Browse reviewed context</strong><small>{editorial.dataset.profiles.length} people-group source records currently have deeper, cited editorial articles.</small></span>
+              <ArrowRight size={17} aria-hidden="true" />
+            </a>
+          ) : null}
+
           <label class="people-search people-search--primary" for="people-search">
             <Search size={19} aria-hidden="true" />
             <span class="sr-only">Search people groups</span>
@@ -131,11 +144,12 @@ export function PeoplesPage() {
               <label>Language<select value={filters.language} onChange={(event) => update("language", event.currentTarget.value)}><option value="">All languages</option>{options.languages.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
               <label>Bible label<select value={filters.bibleAvailability} onChange={(event) => update("bibleAvailability", event.currentTarget.value)}><option value="">Any source label</option>{options.bibleStatuses.map((status) => <option value={status} key={status}>{status}</option>)}</select></label>
               <label>Known population<select value={String(filters.minimumPopulation)} onChange={(event) => update("minimumPopulation", Number(event.currentTarget.value))}><option value="0">Any population</option><option value="10000">10K+</option><option value="100000">100K+</option><option value="1000000">1M+</option><option value="10000000">10M+</option></select></label>
+              <label class="people-reviewed-filter"><span>Editorial coverage</span><span class="people-reviewed-filter__control"><input type="checkbox" checked={reviewedOnly} disabled={editorial.loading || Boolean(editorial.error)} onChange={(event) => setReviewedOnly(event.currentTarget.checked)} /> Reviewed context only</span></label>
             </div>
-            <button class="people-reset-filters" type="button" onClick={() => setFilters(DEFAULT_FILTERS)}>Reset filters</button>
+            <button class="people-reset-filters" type="button" onClick={resetFilters}>Reset filters</button>
           </details>
 
-          <div class="people-result-count" aria-live="polite">Showing {visibleResults.length} of {results.length} matches <span>· {explorer.peoples.length} total source records</span></div>
+          <div class="people-result-count" aria-live="polite">Showing {visibleResults.length} of {results.length} matches <span>· {explorer.peoples.length} total source records</span>{reviewedOnly ? <span> · reviewed editorial coverage only</span> : null}</div>
 
           {results.length ? (
             <>
@@ -143,10 +157,11 @@ export function PeoplesPage() {
                 {visibleResults.map((people) => {
                   const gsec = entityGsecRange(people);
                   const context = people.contexts[0]!;
+                  const hasReviewedContext = editorial.profilesByPeid.has(people.peid);
                   return (
                     <a class="people-card people-card--concise" href={hrefFor(`/peoples/${people.routeKey}`)} key={people.id}>
                       <div class="people-card__head">
-                        <div><span class={`people-status people-status--${livePeopleStatusClass(people)}`}>{livePeopleStatusLabel(people)}</span><h2>{people.displayName}</h2></div>
+                        <div><div class="people-card__badges"><span class={`people-status people-status--${livePeopleStatusClass(people)}`}>{livePeopleStatusLabel(people)}</span>{hasReviewedContext ? <span class="people-editorial-badge"><BookOpenText size={12} aria-hidden="true" /> Reviewed context</span> : null}</div><h2>{people.displayName}</h2></div>
                         <ArrowRight size={18} aria-hidden="true" />
                       </div>
                       <p class="people-card__summary">{context.country.name} · {people.primaryReligion?.name ?? "Religion unknown"} · {people.primaryLanguage?.name ?? "Language unknown"}</p>
@@ -166,8 +181,8 @@ export function PeoplesPage() {
           ) : (
             <div class="people-index-empty people-index-empty--recover">
               <strong>No people groups match this search.</strong>
-              <p>Clear the current search and filters to return to the guided starting points and full live index.</p>
-              <button type="button" class="people-reset-filters" onClick={() => setFilters(DEFAULT_FILTERS)}>Clear search & filters</button>
+              <p>{reviewedOnly ? "No currently published reviewed editorial profile matches these source filters. Coverage is limited and is not a mission-priority ranking." : "Clear the current search and filters to return to the guided starting points and full live index."}</p>
+              <button type="button" class="people-reset-filters" onClick={resetFilters}>Clear search & filters</button>
             </div>
           )}
         </>
