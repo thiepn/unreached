@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-hui-china",
+      "sourceId": "peoplegroups-pgid-PG007206",
+      "title": "PeopleGroups.org — Hui of China (PGID PG007206)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg007206/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-24T19:15:00Z",
+      "locator": "Fast facts, Mandarin language, Sunni Islam, GSEC and resource sections"
+    },
+    {
+      "id": "ctx-source:scio-hui",
+      "sourceId": "scio-hui-2017",
+      "title": "Hui ethnic group",
+      "publisher": "State Council Information Office of the People's Republic of China",
+      "url": "https://english.scio.gov.cn/m/chinafacts/2017-04/13/content_40614062.htm",
+      "sourceType": "official",
+      "publicationDate": "2017-04-13",
+      "accessedAt": "2026-08-24T19:15:00Z",
+      "locator": "Distribution, language, religion and historical overview"
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:7206",
+    "peid": 7206,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 7206,
+      "verifiedPeopleName": "Hui",
+      "pgidAnchors": ["PG007206"],
+      "countryIso3Anchors": ["CHN"],
+      "languageIso6393Anchors": ["cmn"],
+      "matchEvidence": ["provider-peid", "provider-pgid", "name", "country", "language"],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-08-24T19:15:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The Hui are a widely distributed Muslim ethnocultural population in China. The current source record uses Mandarin Chinese as its primary language.",
+      "claimIds": ["claim:hui-identity", "claim:hui-context"]
+    },
+    "religionAndCommunity": {
+      "summary": "The current provider record classifies the Hui of China under Sunni Islam. That aggregate classification is context for the record, not a claim about every Hui person.",
+      "claimIds": ["claim:hui-religion"]
+    },
+    "whyUnreachedIntro": "This profile uses the provider's current mission-status classification and documented resource context. It does not treat Islam or Hui identity as the reason the record is unreached.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current mission-status evidence",
+        "summary": "PG007206 is currently classified GSEC 1 by PeopleGroups.org.",
+        "claimIds": ["claim:hui-gsec"]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resources are documented",
+        "summary": "The provider lists multiple Christian media/resource categories, so the profile does not equate GSEC status with complete absence of Mandarin-language resources.",
+        "claimIds": ["claim:hui-resources"]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:hui-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org record PG007206 reports PEID 7206 for the Hui of China, with Mandarin Chinese (cmn) as its primary language.",
+        "citationIds": ["ctx-source:peoplegroups-hui-china"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:hui-context",
+        "dimension": "history",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "PeopleGroups.org and a Chinese government reference both describe the Hui as a widely distributed Chinese Muslim ethnocultural population whose historical formation involved Muslim migration, settlement and long interaction within China.",
+        "citationIds": ["ctx-source:peoplegroups-hui-china", "ctx-source:scio-hui"],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The government reference is used only for broad identity and historical background, not for contested political interpretation."
+      },
+      {
+        "id": "claim:hui-religion",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently classifies PG007206 under Sunni Islam.",
+        "citationIds": ["ctx-source:peoplegroups-hui-china"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is an aggregate source classification and does not describe every Hui individual's beliefs or practice."
+      },
+      {
+        "id": "claim:hui-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The Hui of China record is currently GSEC 1 with the source label 'Less than 2% Evangelical, No Active CP Activity.'",
+        "citationIds": ["ctx-source:peoplegroups-hui-china"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "generalized",
+        "interpretationNote": "GSEC is a mission-research classification for this source record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:hui-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The PeopleGroups.org profile lists Bible translations, Jesus Film resources, gospel recordings and radio resources for the language context associated with this record.",
+        "citationIds": ["ctx-source:peoplegroups-hui-china"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "public",
+        "interpretationNote": "Listed availability does not establish distribution, comprehension, use, or Scripture translation-completeness."
+      }
+    ],
+    "sourceIds": ["ctx-source:peoplegroups-hui-china", "ctx-source:scio-hui"],
+    "review": {
+      "status": "published",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": "2026-08-24T19:15:00Z",
+      "reviewerRole": "Release-maintainer evidence review",
+      "checklist": {
+        "namingChecked": true,
+        "materialClaimsCited": true,
+        "currentClaimsFresh": true,
+        "noStereotypeShortcuts": true,
+        "religionNuanced": true,
+        "sensitiveDataChecked": true,
+        "sourceLicensingChecked": true,
+        "identityMatchChecked": true
+      }
+    }
+  }
+}
