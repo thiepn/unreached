@@ -8,8 +8,45 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.5.0**
-- **Release state:** **v1.5 Editorial Coverage Expansion & Regional Balance release candidate**
+- **Version:** **1.6.0**
+- **Release state:** **v1.6 Prayer Practice & Private Prayer List release candidate**
+
+## v1.6 — prayer practice & private prayer list
+
+v1.6 closes the gap between discovering a prayer subject and intentionally returning to that person later without turning prayer into a score, streak, or public engagement mechanic.
+
+### Private prayer list
+
+- Add or remove current prayer-eligible people directly from Prayer cards and focused-prayer guides.
+- The list remains browser-local and does not require an account.
+- Prayer entries retain only a small identity snapshot, when the entry was added, and an optional latest prayer timestamp.
+- Saved bookmarks and the Prayer list remain separate concepts.
+
+### Daily prayer preference
+
+When the private list contains an eligible person in the current scope, **People to Pray for Today** chooses from that list first. If no listed person applies, Unreached falls back to its normal source-backed daily selection.
+
+This is a personal return aid, not a mission-priority ranking.
+
+### Focused-prayer recording
+
+Focused prayer includes an optional **Record prayer today** action. It stores only the most recent local timestamp for that person. It does **not** create prayer totals, streaks, scores, leaderboards, public activity, or spiritual-completion metrics.
+
+### Saved & prayer workspace
+
+The existing Saved route now contains:
+
+1. Private prayer list
+2. Saved peoples
+3. Recent exploration
+
+All three remain local to the browser.
+
+### Personalization migration
+
+The browser-local personalization model moves from schema v1 to v2. Existing Saved and Recent data are preserved. The runtime reads `unreached.personal.v2` first and falls back to legacy `unreached.personal.v1` when necessary; the legacy key is not destructively removed.
+
+See [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md) for the privacy, migration, non-gamification, and release-gate contract.
 
 ## v1.5 — editorial coverage expansion & regional balance
 
@@ -138,9 +175,10 @@ IMB **GSEC** remains source-native:
 | Reviewed coverage | Local-first index, regional distribution, filtering and navigation over the twelve-profile reviewed publication set |
 | Countries | Local Natural Earth index + live country-context records + country-specific reviewed editorial links |
 | Languages | Live ISO 639-3 aggregation over current source records |
-| Prayer | Current GSEC 0–3 record + fixed release-certified prayer template |
+| Prayer | Current GSEC 0–3 record + fixed release-certified prayer template + optional private browser-local prayer list |
+| Focused prayer | Source-backed prayer flow + optional latest-only local prayer timestamp |
 | Editorial context | Twelve reviewed Tier-3 source-record profile shards; intentionally partial coverage |
-| Saved / Recent | Browser-local only |
+| Saved & prayer | Browser-local prayer list, saved people snapshots, and recent exploration |
 | ProgressBible | Permission-gated and not used |
 | Ethnologue proprietary taxonomy | Permission-gated and not used |
 | Third-party people photos | Not redistributed without separate authorization |
@@ -148,6 +186,8 @@ IMB **GSEC** remains source-native:
 ## Runtime reliability
 
 PeopleGroups responses are treated as untrusted external input. Protections include Zod validation, request timeouts, pagination/count limits, bounded concurrency, duplicate PGID/PEID rejection, GSEC bounds, fail-closed schema-drift handling, one shared session corpus, IndexedDB caching with a 24-hour fresh window and seven-day explicit stale fallback, and best-effort storage behavior.
+
+Personal prayer state is separate from mission data: it is local-only, bounded, migration-validated, and never treated as an authoritative source record.
 
 ## Release certification
 
@@ -157,7 +197,7 @@ A release candidate must pass:
 - deterministic source/data/editorial/release-policy checks;
 - PeopleGroups runtime/cache/visible-data/identity checks;
 - geography and mission-visualization checks;
-- country, people, context, prayer, language, and discovery checks;
+- country, people, context, prayer, prayer-practice, language, and discovery checks;
 - production distribution checks;
 - Chromium, Firefox, and WebKit desktop journeys;
 - mobile Chromium and mobile WebKit journeys;
@@ -166,9 +206,9 @@ A release candidate must pass:
 - browser API/CORS contract;
 - post-merge GitHub Pages certification against the deployed site.
 
-v1.3 requires the original six reviewed editorial profiles to survive deterministic publication validation and live identity verification. v1.4 additionally certifies the local-first coverage browser, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation. v1.5 requires twelve Tier-3 profile shards, six newly cross-sourced profiles, seven explicit editorial regions, regional coverage guardrails, and live verification of every declared PeopleGroups identity anchor.
+v1.3 requires the original six reviewed editorial profiles to survive deterministic publication validation and live identity verification. v1.4 additionally certifies the local-first coverage browser, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation. v1.5 requires twelve Tier-3 profile shards, six newly cross-sourced profiles, seven explicit editorial regions, regional coverage guardrails, and live verification of every declared PeopleGroups identity anchor. v1.6 additionally certifies v1→v2 browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, daily-list preference, and the absence of competitive/spiritual prayer metrics or network synchronization.
 
-See [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
+See [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
 ## Local development
 
