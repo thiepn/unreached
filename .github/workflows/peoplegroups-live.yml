@@ -45,6 +45,9 @@ jobs:
       - name: Validate complete live PeopleGroups corpus and editorial PEID mappings
         run: npm run peoplegroups:live-corpus-check
 
+      - name: Allow provider cooldown after full-corpus audit
+        run: sleep 12
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
