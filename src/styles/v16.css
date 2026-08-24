@@ -1,0 +1,183 @@
+.prayer-private-list-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  margin-top: 1rem;
+  color: var(--ink-0);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.prayer-private-list-link span {
+  min-width: 1.7rem;
+  padding: .1rem .45rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  text-align: center;
+  font-size: .78rem;
+}
+
+.prayer-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem;
+  margin-top: 1rem;
+}
+
+.prayer-list-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 2.35rem;
+  padding: .55rem .75rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+  color: var(--ink-1);
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.prayer-list-toggle:hover,
+.prayer-list-toggle:focus-visible,
+.prayer-list-toggle.is-active {
+  border-color: var(--forest-700);
+  color: var(--forest-900);
+  background: var(--forest-100);
+}
+
+.prayer-list-toggle--focus { margin-top: 1rem; }
+
+.prayer-list-source {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin-bottom: .8rem;
+  color: var(--forest-900);
+  font-size: .84rem;
+  font-weight: 700;
+}
+
+.prayer-practice-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem 1.5rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.prayer-practice-panel h2 {
+  margin: .2rem 0 .45rem;
+  font-family: var(--font-editorial);
+  font-size: 1.35rem;
+  color: var(--ink-0);
+}
+
+.prayer-practice-panel p { margin: 0; color: var(--ink-1); }
+.prayer-practice-panel small { grid-column: 2; color: var(--ink-2); text-align: right; }
+
+.prayer-practice-record {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 2.65rem;
+  padding: .65rem .9rem;
+  border: 1px solid var(--forest-700);
+  background: var(--forest-700);
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.prayer-practice-record.is-recorded,
+.prayer-practice-record:disabled {
+  background: var(--forest-100);
+  color: var(--forest-900);
+  cursor: default;
+}
+
+.saved-prayer-section {
+  border-top: 2px solid var(--ink-0);
+}
+
+.saved-prayer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.saved-prayer-card {
+  min-width: 0;
+  padding: 1.15rem;
+  background: var(--paper-0);
+}
+
+.saved-prayer-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  color: var(--ink-2);
+  font-size: .78rem;
+}
+
+.saved-prayer-card__top span {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-weight: 700;
+  color: var(--forest-900);
+}
+
+.saved-prayer-card h3 { margin: .8rem 0 .35rem; font-size: 1.15rem; }
+.saved-prayer-card h3 a { color: var(--ink-0); text-decoration: none; }
+.saved-prayer-card p { margin: 0; color: var(--ink-1); }
+
+.saved-prayer-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+  margin-top: 1rem;
+}
+
+.saved-prayer-card__actions a,
+.saved-prayer-card__actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-1);
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.saved-prayer-card__actions a:hover,
+.saved-prayer-card__actions button:hover,
+.saved-prayer-card__actions a:focus-visible,
+.saved-prayer-card__actions button:focus-visible { color: var(--forest-900); }
+
+@media (max-width: 760px) {
+  .prayer-practice-panel { grid-template-columns: 1fr; }
+  .prayer-practice-panel small { grid-column: 1; text-align: left; }
+  .prayer-practice-record { justify-self: start; }
+  .saved-prayer-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .prayer-card__actions { align-items: stretch; }
+  .prayer-card__actions > * { width: 100%; justify-content: center; }
+  .saved-prayer-card__top { display: grid; gap: .35rem; }
+}

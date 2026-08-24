@@ -1,7 +1,8 @@
-import { ArrowRight, CalendarDays, Compass, Database, Globe2, RefreshCw, Search } from "lucide-preact";
+import { ArrowRight, Bookmark, CalendarDays, Compass, Database, Globe2, List, RefreshCw, Search } from "lucide-preact";
 import { useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
+import { prayerSnapshotFromEntity, usePersonalization } from "../personalization";
 import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
   buildLivePrayerProfile,
@@ -33,7 +34,19 @@ function countryFilterFromHash(): string | null {
   return country && /^[A-Z]{3}$/.test(country) ? country : null;
 }
 
-function PrayerCard({ profile, featured = false }: { profile: LivePrayerProfile; featured?: boolean }) {
+function PrayerCard({
+  entity,
+  profile,
+  featured = false,
+  listed,
+  onTogglePrayer,
+}: {
+  entity: RuntimePeopleEntity;
+  profile: LivePrayerProfile;
+  featured?: boolean;
+  listed: boolean;
+  onTogglePrayer: (entity: RuntimePeopleEntity) => void;
+}) {
   const categories = Array.from(new Set(profile.prompts.map((prompt) => prompt.category))).slice(0, 5);
   return (
     <article class={`prayer-card${featured ? " prayer-card--featured" : ""}`}>
@@ -46,9 +59,21 @@ function PrayerCard({ profile, featured = false }: { profile: LivePrayerProfile;
       <div class="prayer-category-row" aria-label="Prayer categories">
         {categories.map((category) => <span key={category}>{categoryLabel(category)}</span>)}
       </div>
-      <a class="prayer-card__cta" href={hrefFor(`/pray/${profile.sourcePeopleId}`)}>
-        Pray for this people <ArrowRight size={17} aria-hidden="true" />
-      </a>
+      <div class="prayer-card__actions">
+        <a class="prayer-card__cta" href={hrefFor(`/pray/${profile.sourcePeopleId}`)}>
+          Pray for this people <ArrowRight size={17} aria-hidden="true" />
+        </a>
+        <button
+          type="button"
+          class={`prayer-list-toggle${listed ? " is-active" : ""}`}
+          aria-label={`${listed ? "Remove" : "Add"} ${profile.peopleName} ${listed ? "from" : "to"} private prayer list`}
+          aria-pressed={listed}
+          onClick={() => onTogglePrayer(entity)}
+        >
+          <Bookmark size={16} aria-hidden="true" />
+          {listed ? "In prayer list" : "Add to prayer list"}
+        </button>
+      </div>
     </article>
   );
 }
@@ -67,16 +92,28 @@ function matchesQuery(entity: RuntimePeopleEntity, query: string): boolean {
 
 export function PrayPage() {
   const prayer = useLivePrayerExperience();
+  const personalization = usePersonalization();
   const countryIso3 = countryFilterFromHash();
   const [query, setQuery] = useState("");
+
+  const prayerListIds = useMemo(() => new Set(personalization.state.prayerList.map((item) => item.sourcePeopleId)), [personalization.state.prayerList]);
+  const listedEligibleInScope = useMemo(() => prayer.eligible.filter((entity) => {
+    if (!prayerListIds.has(entity.routeKey)) return false;
+    return !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached");
+  }), [prayer.eligible, prayerListIds, countryIso3]);
 
   const scoped = useMemo(() => prayer.eligible
     .filter((entity) => !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached"))
     .filter((entity) => matchesQuery(entity, query))
     .sort((a, b) => b.population.knownValue - a.population.knownValue || a.displayName.localeCompare(b.displayName, "en")), [prayer.eligible, countryIso3, query]);
-  const dailyEntity = prayer.ready ? selectDailyLivePrayerEntity(prayer.eligible, dateKeyLocal(), countryIso3) : null;
+
+  const dailyPool = listedEligibleInScope.length ? listedEligibleInScope : prayer.eligible;
+  const dailyEntity = prayer.ready ? selectDailyLivePrayerEntity(dailyPool, dateKeyLocal(), countryIso3) : null;
   const daily = dailyEntity ? buildLivePrayerProfile(dailyEntity) : null;
+  const dailyFromPrayerList = Boolean(dailyEntity && prayerListIds.has(dailyEntity.routeKey));
   const visible = scoped.slice(0, 60);
+
+  const togglePrayer = (entity: RuntimePeopleEntity) => personalization.togglePrayer(prayerSnapshotFromEntity(entity));
 
   return (
     <section class="prayer-page" aria-labelledby="prayer-page-title">
@@ -85,6 +122,7 @@ export function PrayPage() {
           <div class="eyebrow">Prayer</div>
           <h1 id="prayer-page-title" class="display-title">Understand enough to pray specifically.</h1>
           <p class="lead">Live source records identify prayer subjects; a fixed release-certified template supplies the prayer wording. Unreached does not generate unreviewed claims about individual communities.</p>
+          <a class="prayer-private-list-link" href={hrefFor("/saved")}><List size={16} aria-hidden="true" /> Open private prayer list <span>{personalization.state.prayerList.length}</span></a>
         </div>
         <div class="prayer-hero__mark" aria-hidden="true"><Compass size={34} /></div>
       </header>
@@ -108,21 +146,22 @@ export function PrayPage() {
               <div><span class="eyebrow">Daily focus</span><h2 id="daily-prayer-heading">People to Pray for Today</h2></div>
               <CalendarDays size={21} aria-hidden="true" />
             </div>
-            {daily ? <PrayerCard profile={daily} featured /> : <p class="prayer-empty">No current GSEC 0–3 people context is available for this scope.</p>}
+            {dailyFromPrayerList ? <div class="prayer-list-source"><Bookmark size={15} aria-hidden="true" /> From your private prayer list</div> : null}
+            {daily && dailyEntity ? <PrayerCard entity={dailyEntity} profile={daily} featured listed={prayerListIds.has(dailyEntity.routeKey)} onTogglePrayer={togglePrayer} /> : <p class="prayer-empty">No current GSEC 0–3 people context is available for this scope.</p>}
           </section>
 
           <section class="prayer-library" aria-labelledby="prayer-library-heading">
             <div class="prayer-section-heading"><div><span class="eyebrow">Live prayer subjects</span><h2 id="prayer-library-heading">Choose a people</h2></div><Compass size={21} aria-hidden="true" /></div>
             <label class="countries-search" for="prayer-search"><Search size={18} aria-hidden="true" /><span class="sr-only">Search prayer subjects</span><input id="prayer-search" type="search" value={query} onInput={(event) => setQuery(event.currentTarget.value)} placeholder="Search people, country, language or PEID" /></label>
             <p class="prayer-empty">{scoped.length} matching people entities. Showing up to 60 at once.</p>
-            {visible.length ? <div class="prayer-card-grid">{visible.map((entity) => <PrayerCard key={entity.id} profile={buildLivePrayerProfile(entity)} />)}</div> : <p class="prayer-empty">No live prayer subjects match this scope.</p>}
+            {visible.length ? <div class="prayer-card-grid">{visible.map((entity) => <PrayerCard key={entity.id} entity={entity} profile={buildLivePrayerProfile(entity)} listed={prayerListIds.has(entity.routeKey)} onTogglePrayer={togglePrayer} />)}</div> : <p class="prayer-empty">No live prayer subjects match this scope.</p>}
           </section>
         </>
       ) : null}
 
       <footer class="prayer-principle">
         <strong>Prayer wording is template-certified, not person-by-person AI-generated.</strong>
-        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} was release-certified on {LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt}. Runtime interpolation is limited to source-backed identity, country, GSEC, and resource information. There is no prayer score, streak, leaderboard, or public activity record.</p>
+        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} was release-certified on {LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt}. Runtime interpolation is limited to source-backed identity, country, GSEC, and resource information. The optional prayer list stays only in this browser and stores no prayer score, streak, leaderboard, public activity record, or spiritual completion metric.</p>
       </footer>
     </section>
   );

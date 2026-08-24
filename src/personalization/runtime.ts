@@ -4,21 +4,35 @@ import {
   clearRecentVisits,
   emptyPersonalizationState,
   normalizePersonalizationState,
+  recordPrayerForPerson,
   recordRecentVisit,
+  removePrayerPerson,
   removeSavedPerson,
+  togglePrayerPerson,
   toggleSavedPersonSnapshot,
+  type PrayerPersonSnapshot,
 } from "./model";
 import type { PersonalizationState, RecentVisit, SavedPersonSnapshot } from "./types";
 
-const STORAGE_KEY = "unreached.personal.v1";
+const STORAGE_KEY = "unreached.personal.v2";
+const LEGACY_STORAGE_KEY = "unreached.personal.v1";
 const CHANGE_EVENT = "unreached:personalization-change";
+
+function parseStored(raw: string | null): PersonalizationState | null {
+  if (!raw) return null;
+  try {
+    return normalizePersonalizationState(JSON.parse(raw) as unknown);
+  } catch {
+    return null;
+  }
+}
 
 function readBrowserState(): PersonalizationState {
   if (typeof window === "undefined") return emptyPersonalizationState();
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return emptyPersonalizationState();
-    return normalizePersonalizationState(JSON.parse(raw) as unknown);
+    return parseStored(window.localStorage.getItem(STORAGE_KEY))
+      ?? parseStored(window.localStorage.getItem(LEGACY_STORAGE_KEY))
+      ?? emptyPersonalizationState();
   } catch {
     return emptyPersonalizationState();
   }
@@ -40,7 +54,7 @@ export function usePersonalization() {
   useEffect(() => {
     const refresh = () => setState(readBrowserState());
     const onStorage = (event: StorageEvent) => {
-      if (event.key === STORAGE_KEY) refresh();
+      if (event.key === STORAGE_KEY || event.key === LEGACY_STORAGE_KEY) refresh();
     };
     window.addEventListener(CHANGE_EVENT, refresh);
     window.addEventListener("storage", onStorage);
@@ -66,6 +80,18 @@ export function usePersonalization() {
     apply((current) => removeSavedPerson(current, sourcePeopleId));
   }, [apply]);
 
+  const togglePrayer = useCallback((snapshot: PrayerPersonSnapshot) => {
+    apply((current) => togglePrayerPerson(current, snapshot));
+  }, [apply]);
+
+  const removePrayer = useCallback((sourcePeopleId: number) => {
+    apply((current) => removePrayerPerson(current, sourcePeopleId));
+  }, [apply]);
+
+  const recordPrayer = useCallback((snapshot: PrayerPersonSnapshot) => {
+    apply((current) => recordPrayerForPerson(current, snapshot));
+  }, [apply]);
+
   const recordRecent = useCallback((visit: Omit<RecentVisit, "visitedAt">) => {
     apply((current) => recordRecentVisit(current, visit));
   }, [apply]);
@@ -74,5 +100,14 @@ export function usePersonalization() {
     apply(clearRecentVisits);
   }, [apply]);
 
-  return useMemo(() => ({ state, toggleSavedPerson, removeSaved, recordRecent, clearRecent }), [state, toggleSavedPerson, removeSaved, recordRecent, clearRecent]);
+  return useMemo(() => ({
+    state,
+    toggleSavedPerson,
+    removeSaved,
+    togglePrayer,
+    removePrayer,
+    recordPrayer,
+    recordRecent,
+    clearRecent,
+  }), [state, toggleSavedPerson, removeSaved, togglePrayer, removePrayer, recordPrayer, recordRecent, clearRecent]);
 }

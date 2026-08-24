@@ -8,11 +8,12 @@ const root = process.cwd();
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readFile(resolve(root, path), "utf8")) as T;
 
 const pkg = await readJson<{ version?: string }>("package.json");
-if (pkg.version !== "1.5.0") throw new Error(`v1.5 package version mismatch: ${String(pkg.version)}`);
+const [major = 0, minor = 0] = String(pkg.version ?? "0.0.0").split(".").map(Number);
+if (major < 1 || (major === 1 && minor < 5)) throw new Error(`v1.5 capability gate requires package >=1.5.0, got ${String(pkg.version)}`);
 
 const status = editorialContextAvailabilitySchema.parse(await readJson<unknown>("public/data/context/status.json"));
 const manifest = editorialContextManifestSchema.parse(await readJson<unknown>("public/data/context/manifest.v1.json"));
-if (status.profileCount !== 12 || manifest.profileCount !== 12 || manifest.profileUrls.length !== 12) throw new Error("v1.5 must publish exactly twelve reviewed editorial profile shards.");
+if (status.profileCount !== 12 || manifest.profileCount !== 12 || manifest.profileUrls.length !== 12) throw new Error("v1.5 must preserve exactly twelve reviewed editorial profile shards.");
 
 const required = new Map<number, { pgid: string; country: string; language: string }>([
   [12319, { pgid: "PG012319", country: "BEN", language: "fon" }],
@@ -60,4 +61,4 @@ for (const requiredText of ["Coverage distribution", "Broader, still intentional
   if (!coveragePage.includes(requiredText)) throw new Error(`v1.5 coverage browser is missing regional-balance guardrail: ${requiredText}`);
 }
 
-console.log(`v1.5 editorial expansion passed: ${profiles.size} Tier-3 profiles across ${regions.size} explicit editorial regions with six newly cross-sourced publications.`);
+console.log(`v1.5 capability checks passed on package ${pkg.version}: ${profiles.size} Tier-3 profiles across ${regions.size} explicit editorial regions remain intact.`);
