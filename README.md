@@ -9,7 +9,7 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
 - **Version:** **1.8.0**
-- **Release state:** **v1.8 Guided Prayer Session & Rotation Review release candidate**
+- **Release state:** **v1.8 Guided Prayer Session & Rotation Review — production certified**
 
 ## v1.8 — guided prayer session & rotation review
 
@@ -187,9 +187,9 @@ IMB **GSEC** remains source-native:
 | Guided prayer session | Frozen page-local 3/5/full rotation plan + compact source-backed prompts + optional existing latest-only recording |
 | Editorial context | Twelve reviewed Tier-3 source-record profile shards; intentionally partial coverage |
 | Saved & prayer | Browser-local prayer list/rotation/session launcher, saved people snapshots, and recent exploration |
-| ProgressBible | Permission-gated and not used |
-| Ethnologue proprietary taxonomy | Permission-gated and not used |
-| Third-party people photos | Not redistributed without separate authorization |
+| ProgressBible | permission-gated and not used |
+| Ethnologue proprietary taxonomy | permission-gated and not used |
+| Third-party people photos | not redistributed without separate authorization |
 
 ## Runtime reliability
 
