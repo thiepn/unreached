@@ -2,6 +2,7 @@ import type { ComponentChildren } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import {
   Bookmark,
+  BookOpenText,
   ChevronDown,
   Compass,
   Globe2,
@@ -36,6 +37,7 @@ const primaryNav: NavItem[] = [
 ];
 
 const browseNav: NavItem[] = [
+  { id: "coverage", label: "Reviewed coverage", path: "/coverage", icon: BookOpenText, description: "Browse people records with reviewed contextual articles" },
   { id: "countries", label: "Countries", path: "/countries", icon: Globe2, description: "Browse mission context by nation" },
   { id: "languages", label: "Languages", path: "/languages", icon: Languages, description: "Explore language and resource records" },
   { id: "about", label: "About & sources", path: "/about", icon: Info, description: "Definitions, methodology and data policy" },
