@@ -16,6 +16,7 @@ const PeopleContextualPage = lazy(() => import("../pages/PeopleContextualPage").
 const PeoplesPage = lazy(() => import("../pages/PeoplesPage").then((module) => ({ default: module.PeoplesPage })));
 const PrayPage = lazy(() => import("../pages/PrayPage").then((module) => ({ default: module.PrayPage })));
 const PrayerFocusPage = lazy(() => import("../pages/PrayerFocusPage").then((module) => ({ default: module.PrayerFocusPage })));
+const PrayerSessionPage = lazy(() => import("../pages/PrayerSessionPage").then((module) => ({ default: module.PrayerSessionPage })));
 const SavedPage = lazy(() => import("../pages/SavedPage").then((module) => ({ default: module.SavedPage })));
 
 function RouteFallback() {
@@ -37,7 +38,7 @@ export function App() {
     case "countries": page = route.countryIso3 ? <CountryPage iso3={route.countryIso3} /> : <CountriesPage />; break;
     case "languages": page = route.languageIso6393 ? <LanguagePage iso6393={route.languageIso6393} /> : <LanguagesPage />; break;
     case "coverage": page = <EditorialCoveragePage />; break;
-    case "pray": page = route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />; break;
+    case "pray": page = route.path === "/pray/session" ? <PrayerSessionPage /> : route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />; break;
     case "saved": page = <SavedPage />; break;
     case "about": page = <AboutPage />; break;
     default: page = <NotFoundPage />;

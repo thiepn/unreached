@@ -37,6 +37,7 @@ export function SavedPage() {
   const { state, removeSaved, removePrayer, clearRecent } = usePersonalization();
   const prayerRotation = orderPrayerRotation(state.prayerList);
   const nextPrayer = prayerRotation[0] ?? null;
+  const sessionHref = hrefFor("/pray/session");
 
   return (
     <section class="saved-page">
@@ -67,6 +68,21 @@ export function SavedPage() {
         ) : null}
 
         {prayerRotation.length ? (
+          <div class="saved-prayer-session-launcher" aria-labelledby="guided-session-heading">
+            <div>
+              <span class="eyebrow">Guided prayer session</span>
+              <h3 id="guided-session-heading">Pray through several return points.</h3>
+              <p>Start from the current rotation and freeze a temporary session plan. The plan exists only while that session page is open and creates no session history or completion record.</p>
+            </div>
+            <div class="saved-prayer-session-launcher__actions" role="group" aria-label="Choose prayer session size">
+              <a data-prayer-session-size="3" href={`${sessionHref}?size=3`}>3 people</a>
+              <a data-prayer-session-size="5" href={`${sessionHref}?size=5`}>5 people</a>
+              <a data-prayer-session-size="all" href={`${sessionHref}?size=all`}>Full eligible list</a>
+            </div>
+          </div>
+        ) : null}
+
+        {prayerRotation.length ? (
           <div class="saved-prayer-grid">
             {prayerRotation.map((person, index) => (
               <article class={`saved-prayer-card${index === 0 ? " saved-prayer-card--next" : ""}`} key={person.sourcePeopleId} data-prayer-list-peid={person.sourcePeopleId}>
@@ -87,7 +103,7 @@ export function SavedPage() {
         ) : (
           <div class="saved-empty"><List size={22} aria-hidden="true" /><div><strong>Your private prayer list is empty.</strong><p>Add a people from Prayer or a focused prayer guide. The list is local to this browser and is never published.</p><a href={hrefFor("/pray")}>Choose someone to pray for</a></div></div>
         )}
-        <p class="saved-snapshot-note">Prayer practice stores only a small local identity snapshot, when the person was added, and the latest prayer timestamp if you choose to record one. Rotation is derived from those existing timestamps and does not add totals, scores, streaks, deadlines, leaderboards, priority values, or public activity.</p>
+        <p class="saved-snapshot-note">Prayer practice stores only a small local identity snapshot, when the person was added, and the latest prayer timestamp if you choose to record one. Rotation and guided-session planning are derived from those existing timestamps and do not add totals, scores, streaks, deadlines, leaderboards, priority values, session histories, completion metrics, or public activity.</p>
       </section>
 
       <section class="saved-section" aria-labelledby="saved-peoples-heading">
