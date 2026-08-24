@@ -6,14 +6,33 @@
   "start_url": "/unreached/#/",
   "scope": "/unreached/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#f4f0e6",
   "theme_color": "#f4f0e6",
+  "categories": ["education", "reference", "lifestyle"],
   "icons": [
     {
       "src": "/unreached/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore peoples",
+      "short_name": "Explore",
+      "url": "/unreached/#/peoples"
+    },
+    {
+      "name": "Pray",
+      "short_name": "Pray",
+      "url": "/unreached/#/pray"
+    },
+    {
+      "name": "Saved & prayer",
+      "short_name": "Saved",
+      "url": "/unreached/#/saved"
     }
   ]
 }

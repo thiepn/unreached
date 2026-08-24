@@ -50,6 +50,7 @@ let snapshot: PeopleGroupsRuntimeSnapshot = {
 };
 
 let pendingLoad: Promise<void> | null = null;
+let reconnectRefreshInstalled = false;
 
 function publish(next: PeopleGroupsRuntimeSnapshot): void {
   snapshot = next;
@@ -113,6 +114,17 @@ export function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<void> {
     });
 
   return pendingLoad;
+}
+
+export function installPeopleGroupsReconnectRefresh(): void {
+  if (reconnectRefreshInstalled || typeof window === "undefined") return;
+  reconnectRefreshInstalled = true;
+  window.addEventListener("online", () => {
+    if (pendingLoad) return;
+    if (snapshot.error || snapshot.stale || snapshot.source === "cache-fresh" || snapshot.source === "cache-stale") {
+      void ensurePeopleGroupsRuntime(true);
+    }
+  });
 }
 
 export function usePeopleGroupsRuntimeStore(enabled = true): PeopleGroupsRuntimeSnapshot & { retry: () => void } {

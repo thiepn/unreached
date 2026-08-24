@@ -1,6 +1,7 @@
 import { render } from "preact";
 
 import { App } from "./app/App";
+import { initializeOfflineRuntime } from "./offline/runtime";
 import "@fontsource-variable/newsreader";
 import "@fontsource-variable/source-sans-3";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -26,5 +27,7 @@ import "./styles/v15.css";
 import "./styles/v16.css";
 import "./styles/v17.css";
 import "./styles/v18.css";
+import "./styles/v19.css";
 
+initializeOfflineRuntime();
 render(<App />, document.getElementById("app")!);

@@ -7,7 +7,8 @@ import type { PrayerListEntry } from "../../src/personalization/types.js";
 const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const pkg = JSON.parse(await readText("package.json")) as { version?: string };
-if (pkg.version !== "1.8.0") throw new Error(`v1.8 package version mismatch: ${String(pkg.version)}`);
+const versionMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(pkg.version ?? "");
+if (!versionMatch || Number(versionMatch[1]) !== 1 || Number(versionMatch[2]) < 8) throw new Error(`v1.8+ package capability mismatch: ${String(pkg.version)}`);
 
 const entries: PrayerListEntry[] = [
   { sourcePeopleId: 24277, peopleGroupId: "people-entity:peoplegroups:24277", name: "Kazakh", countryName: "Kazakhstan", languageName: "Kazakh", addedAt: "2026-08-21T10:00:00.000Z", lastPrayedAt: "2026-08-23T20:00:00.000Z" },
@@ -52,4 +53,4 @@ for (const marker of ["data-prayer-session-plan", "was frozen when this session 
 const main = await readText("src/main.tsx");
 if (!main.includes('"./styles/v18.css"')) throw new Error("v1.8 stylesheet is not loaded.");
 
-console.log("v1.8 guided prayer-session checks passed: frozen rotation plan, 3/5/full sizing, eligibility filtering, schema-v2 reuse, latest-only recording, and zero persisted session/performance state.");
+console.log("v1.8+ guided prayer-session checks passed: frozen rotation plan, 3/5/full sizing, eligibility filtering, schema-v2 reuse, latest-only recording, and zero persisted session/performance state.");

@@ -1,12 +1,12 @@
 {
   "name": "unreached",
   "private": true,
-  "version": "1.8.0",
+  "version": "1.9.0",
   "type": "module",
   "scripts": {
     "predev": "npm run geography:build",
     "dev": "vite",
-    "build": "npm run typecheck && npm run data:check && npm run peoplegroups:check && npm run peoplegroups:runtime-check && npm run peoplegroups:visible-check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run visualization:live-check && npm run country:check && npm run people:check && npm run context:check && npm run editorial-expansion:check && npm run prayer:check && npm run prayer-practice:check && npm run prayer-rotation:check && npm run prayer-session:check && npm run language:check && npm run discovery:check && npm run editorial-discovery:check && npm run release:check && vite build && npm run release:dist",
+    "build": "npm run typecheck && npm run data:check && npm run peoplegroups:check && npm run peoplegroups:runtime-check && npm run peoplegroups:visible-check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run visualization:live-check && npm run country:check && npm run people:check && npm run context:check && npm run editorial-expansion:check && npm run prayer:check && npm run prayer-practice:check && npm run prayer-rotation:check && npm run prayer-session:check && npm run offline:check && npm run language:check && npm run discovery:check && npm run editorial-discovery:check && npm run release:check && vite build && npm run offline:dist && npm run release:dist",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "data:check": "tsx scripts/data/check.ts",
     "peoplegroups:check": "tsx scripts/data/peoplegroups/check.ts",
@@ -27,6 +27,8 @@
     "prayer-practice:check": "tsx scripts/prayer/v16-check.ts",
     "prayer-rotation:check": "tsx scripts/prayer/v17-check.ts",
     "prayer-session:check": "tsx scripts/prayer/v18-check.ts",
+    "offline:check": "tsx scripts/offline/v19-check.ts",
+    "offline:dist": "tsx scripts/offline/v19-dist-check.ts",
     "language:check": "tsx scripts/languages/check.ts",
     "discovery:check": "tsx scripts/discovery/check.ts",
     "editorial-discovery:check": "tsx scripts/discovery/v14-check.ts",
