@@ -1,5 +1,4 @@
 import { EditorialContextPanel } from "../components/EditorialContextPanel";
-import { ProfileLocalActions } from "../components/ProfileLocalActions";
 import { PeoplePage } from "./PeoplePage";
 
 export function PeopleContextualPage({ sourcePeopleId }: { sourcePeopleId: number }) {
@@ -7,7 +6,6 @@ export function PeopleContextualPage({ sourcePeopleId }: { sourcePeopleId: numbe
     <>
       <PeoplePage sourcePeopleId={sourcePeopleId} />
       <EditorialContextPanel peid={sourcePeopleId} />
-      <ProfileLocalActions sourcePeopleId={sourcePeopleId} />
     </>
   );
 }

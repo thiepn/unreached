@@ -68,8 +68,8 @@ export const LIVE_MISSION_AVAILABILITY: LiveMissionAvailability = liveMissionAva
   attributions: [PEOPLE_GROUPS_ATTRIBUTION],
 });
 
-export function useLiveMissionVisualization() {
-  const runtime = usePeopleGroupsRuntimeStore();
+export function useLiveMissionVisualization(enabled = true) {
+  const runtime = usePeopleGroupsRuntimeStore(enabled);
   const countries = useMemo(() => {
     if (!runtime.ready) return [];
     return buildLiveMissionCountrySummaries(buildVisibleCountryRecords(runtime.contexts, runtime.countrySummaries));
