@@ -8,44 +8,59 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.1.0**
-- **Release state:** **v1.1 UX Simplification & Performance Refinement release candidate**
+- **Version:** **1.2.0**
+- **Release state:** **v1.2 Guided Exploration & Content Prioritization release candidate**
 
-## v1.1
+## v1.2
 
-v1.1 is a usability and runtime-efficiency pass over the U12 production-data baseline. It deliberately removes interface competition rather than adding another feature layer.
+v1.2 adds a guided entry layer on top of the simplified v1.1 application without turning Unreached into a mission-priority scoring system.
 
-### Simpler navigation
+### Guided starting points
 
-Primary navigation now expresses the three main product tasks:
+People Explorer now offers a small set of source-backed starting points when the user does not know what to search for. The selection method is intentionally narrow and explainable:
 
-1. **Explore** — use the mission atlas.
-2. **Peoples** — find and understand a people-group source record.
-3. **Pray** — move into a focused prayer guide.
+- current PeopleGroups.org source record;
+- source record classified GSEC 0–3;
+- known reported population estimate;
+- larger reported estimates appear first;
+- country diversity is preferred where possible.
 
-**Countries**, **Languages**, and **About & sources** remain fully available under **Browse**. Search and Saved remain utility actions.
+This is explicitly a **discovery heuristic, not a ranking of mission importance**. Unreached does not infer spiritual urgency, receptivity, cultural resistance, or hidden priority scores.
 
-### Simpler discovery
+Country profiles also surface one clear **Start here** people context before the full country table. It uses the largest known-population GSEC 0–3 source record in that country as a navigation starting point and discloses the method directly in the interface.
 
-- People, Languages, and Countries are search-first rather than filter-first.
-- Advanced filters and sorting are collapsed until requested.
-- People, Language, and Country indexes render **48 records initially** and progressively reveal more.
-- People cards show only the information needed to choose a profile.
-- People profiles lead with four essential facts and a direct **Pray now** action.
-- Related records, taxonomy, source methodology, and other dense material remain available through progressive disclosure.
-- Explore uses one explicit **Map view** selector instead of five competing layer buttons.
-- Map provenance and boundary notes remain accessible without occupying the primary control flow.
+### Explore → Understand → Pray
 
-### Faster interaction
+People profiles now make the product journey visible as three explicit steps:
 
-- The app shell is route-split; MapLibre is isolated to Explore instead of loading globally.
-- Explore paints local Natural Earth geography before activating the full PeopleGroups runtime corpus.
-- Countries paints its local country index before remote mission aggregation begins.
-- Opening global Search with an empty query does **not** load PeopleGroups; remote data begins only after the user types.
-- People and Language full-corpus matching is debounced during typing.
-- Derived Language records are cached for a stable runtime corpus instead of being rebuilt across surfaces.
-- PeopleGroups network pagination remains bounded-concurrent rather than serial.
-- Validated IndexedDB cache pages are read concurrently.
+1. **Explore** — return to the relevant country/map context.
+2. **Understand** — read the current source-backed people profile.
+3. **Pray** — continue to the focused prayer guide when the current record is GSEC 0–3.
+
+The prayer handoff still uses the fixed release-certified prayer template. v1.2 does not add person-by-person AI-authored spiritual claims.
+
+### Better recovery
+
+A no-match People Explorer state now explains what happened and provides one action to clear search/filters and return to the full index plus guided starting points.
+
+## v1.1 baseline retained
+
+v1.2 preserves the v1.1 UX and performance reconstruction:
+
+- primary navigation remains **Explore / Peoples / Pray**;
+- Countries, Languages, and About & sources stay under **Browse**;
+- Search and Saved remain utility actions;
+- People, Languages, and Countries remain search-first;
+- advanced filters/sorting remain collapsed until requested;
+- People, Language, and Country indexes remain bounded and progressively reveal more;
+- MapLibre remains isolated to Explore instead of loading globally;
+- Explore paints local Natural Earth geography before activating the full PeopleGroups runtime corpus;
+- Countries paints its local country index before remote mission aggregation begins;
+- opening global Search without a query does not load PeopleGroups;
+- People and Language full-corpus matching remains debounced;
+- derived Language records remain cached for a stable runtime corpus;
+- PeopleGroups network pagination remains bounded-concurrent;
+- validated IndexedDB cache pages are read concurrently.
 
 ## Production data architecture
 
@@ -87,8 +102,8 @@ Unreached does not derive or fabricate Joshua Project `JPScale`, `Frontier`, exa
 | Surface | Production behavior |
 | --- | --- |
 | Explore | Natural Earth geography + live PeopleGroups.org mission aggregation |
-| Peoples | One current PEID/PGID source record per route |
-| Countries | Local Natural Earth index + live country-context records |
+| Peoples | One current PEID/PGID source record per route + source-safe guided starting points |
+| Countries | Local Natural Earth index + live country-context records + one disclosed guided starting context |
 | Languages | Live ISO 639-3 aggregation over current source records |
 | Prayer | Current GSEC 0–3 record + fixed release-certified prayer template |
 | Editorial context | Separately authored/reviewed source-record profiles; intentionally partial coverage |
@@ -107,11 +122,11 @@ The atlas retains five source-safe views:
 4. population-estimate coverage
 5. people-group context count
 
-v1.1 presents them through a single selector. No-data remains no-data, and all denominators describe PeopleGroups source records rather than national census populations.
+They are presented through a single selector. No-data remains no-data, and all denominators describe PeopleGroups source records rather than national census populations.
 
 ## Peoples
 
-`#/peoples` supports search and optional filtering by GSEC, country, language, religion, Bible label, population, PEID, PGID, and text.
+`#/peoples` supports guided starting points plus search and optional filtering by GSEC, country, language, religion, Bible label, population, PEID, PGID, and text.
 
 `#/peoples/:PEID` prioritizes:
 
@@ -120,17 +135,18 @@ v1.1 presents them through a single selector. No-data remains no-data, and all d
 - GSEC
 - country
 - language / religion
+- explicit Explore → Understand → Pray progression
 - direct focused-prayer action when the record is GSEC 0–3
 - the current provider source record
 - reviewed editorial context when published
 
-Provider descriptions are attributed as provider material. Taxonomy, related records, and methodology remain available but no longer compete with the first-screen decision flow.
+Provider descriptions are attributed as provider material. Taxonomy, related records, and methodology remain available but do not compete with the first-screen decision flow.
 
 The first U12F reviewed production profile is **Fon of Benin — PEID 12319 / PG012319 / BEN / fon**.
 
 ## Countries
 
-`#/countries` uses local Natural Earth geography immediately, so the index is useful before PeopleGroups aggregation completes. `#/countries/:ISO3` combines geography with live country-context records while keeping population/data coverage explicit.
+`#/countries` uses local Natural Earth geography immediately, so the index is useful before PeopleGroups aggregation completes. `#/countries/:ISO3` combines geography with live country-context records while keeping population/data coverage explicit and now offers one disclosed GSEC 0–3 starting context before the larger table.
 
 ## Languages
 
@@ -192,7 +208,7 @@ A release candidate must pass:
 - browser API/CORS contract
 - post-merge GitHub Pages certification against the deployed site
 
-v1.1 additionally certifies simplified Browse navigation, collapsed advanced controls, bounded People/Language/Country DOMs, direct profile prayer action, and zero PeopleGroups requests when Search opens without a query.
+v1.2 additionally certifies guided starting points, disclosure that curation is not a mission-priority ranking, country-to-people handoff, no-match recovery, and the explicit Explore → Understand → Pray profile journey.
 
 See [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md) and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md) for the production-data gates.
 
@@ -218,33 +234,3 @@ npm run e2e
 ```
 
 Vite is configured for the `/unreached/` project path.
-
-## Stack
-
-- Vite 8
-- TypeScript 7
-- Preact 10
-- MapLibre GL JS 5.24
-- Natural Earth v5.1.1 Admin-0 geography
-- Zod runtime schemas
-- IndexedDB + localStorage browser persistence
-- GitHub Actions + GitHub Pages
-- locally bundled Newsreader + Source Sans 3 typography
-- no backend, account system, analytics SDK, external map tile service, prayer scoring, or client-side API secret
-
-## Development phases
-
-- **U0–U11 — Product foundation through release hardening** ✅
-- **U12A — Provider Foundation & Semantic Isolation** ✅
-- **U12B — Real Data Runtime Architecture** ✅
-- **U12C — Visible Real-Data Integration** ✅
-- **U12D — Live Mission Visualization** ✅
-- **U12E — Live Language & Resource Integration** ✅
-- **U12F — Reviewed Editorial Context Migration & Identity Correction** ✅
-- **U12 — Production Data Activation** ✅
-- **v1.0.1 — Performance, Navigation & Rendering Repair** ✅ merged
-- **v1.1.0 — UX Simplification & Performance Refinement** 🚧 release certification
-
-## Product rule
-
-A feature belongs only if it strengthens **Explore → Understand → Pray** while preserving source meaning, uncertainty, editorial provenance, and user privacy.
