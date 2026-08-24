@@ -8,6 +8,31 @@ import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities } from "../../
 
 const root = process.cwd();
 const readJson = async (path: string): Promise<unknown> => JSON.parse(await readFile(resolve(root, path), "utf8")) as unknown;
+
+const corsProbeUrl = "https://peoplegroups.org/wp-json/pg/v1/people-groups?page=1&per_page=1";
+const corsProbe = await fetch(corsProbeUrl, {
+  method: "GET",
+  headers: { Origin: "https://www.thiepn.dev" },
+  cache: "no-store",
+  signal: AbortSignal.timeout(15_000),
+});
+if (!corsProbe.ok) throw new Error(`PeopleGroups.org CORS contract probe returned HTTP ${corsProbe.status}.`);
+const allowOrigin = corsProbe.headers.get("access-control-allow-origin")?.trim() ?? "";
+if (allowOrigin !== "*" && allowOrigin !== "https://www.thiepn.dev") {
+  throw new Error(`PeopleGroups.org CORS contract does not allow the production origin; access-control-allow-origin=${JSON.stringify(allowOrigin)}.`);
+}
+const exposedHeaders = (corsProbe.headers.get("access-control-expose-headers") ?? "")
+  .toLowerCase()
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+for (const required of ["x-wp-total", "x-wp-totalpages"]) {
+  if (!exposedHeaders.includes(required)) throw new Error(`PeopleGroups.org CORS contract does not expose required pagination header ${required}.`);
+}
+const corsBody = await corsProbe.json() as unknown;
+if (!Array.isArray(corsBody) || corsBody.length !== 1) throw new Error("PeopleGroups.org CORS contract probe did not return the expected one-record list payload.");
+console.log(`PeopleGroups.org HTTP CORS contract certified: allow-origin ${allowOrigin}; exposed pagination headers ${exposedHeaders.join(", ")}.`);
+
 const client = createPeopleGroupsApiClient({ timeoutMs: 15_000 });
 let lastPage = 0;
 let advertisedPages = 0;
