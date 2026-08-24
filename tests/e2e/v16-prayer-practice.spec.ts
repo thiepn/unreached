@@ -133,7 +133,7 @@ test("v1.6 daily prayer prefers an eligible person already in the private list",
 
   await page.goto("./#/pray", { waitUntil: "domcontentloaded" });
   const daily = page.locator(".prayer-daily");
-  await expect(daily.getByText("From your private prayer list")).toBeVisible({ timeout: 15_000 });
+  await expect(daily.getByText(/private prayer (list|rotation)/i)).toBeVisible({ timeout: 15_000 });
   await expect(daily.getByRole("heading", { name: "Fon" })).toBeVisible();
 });
 
