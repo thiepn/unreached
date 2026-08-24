@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowUpRight, BookOpen, Compass, Database, Globe2, Languages, RefreshCw, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
+import { CountryGuidedStart } from "../components/CountryGuidedStart";
 import { formatCount, formatPercent, useLiveCountryExplorer } from "../countries";
 import { useWorldGeography } from "../map/geography";
 import { PEOPLE_GROUPS_ATTRIBUTION, type VisibleCountryRecord } from "../providers/peoplegroups";
@@ -112,6 +113,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
       {record ? (
         <>
           <CountryMetrics record={record} />
+          <CountryGuidedStart countryName={name} contexts={record.contexts} />
 
           <div class="country-content-grid">
             <main class="country-content-main">
