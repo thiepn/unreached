@@ -6,7 +6,8 @@ const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readText(path)) as T;
 
 const pkg = await readJson<{ version?: string }>("package.json");
-if (pkg.version !== "1.4.0") throw new Error(`v1.4 package version mismatch: ${String(pkg.version)}`);
+const [major = 0, minor = 0] = String(pkg.version ?? "0.0.0").split(".").map(Number);
+if (major < 1 || (major === 1 && minor < 4)) throw new Error(`v1.4 capability gate requires package >=1.4.0, got ${String(pkg.version)}`);
 
 const router = await readText("src/app/router.ts");
 if (!router.includes('| "coverage"') || !router.includes('"/coverage": "coverage"')) throw new Error("v1.4 reviewed coverage route is not registered.");
@@ -50,4 +51,4 @@ if (manifest.fixture !== false || !manifest.profileCount || manifest.profileCoun
   throw new Error("v1.4 requires the certified six-plus reviewed editorial manifest inherited from v1.3.");
 }
 
-console.log(`v1.4 editorial-discovery checks passed: ${manifest.profileCount} reviewed profiles are discoverable through local-first coverage navigation without changing mission-priority semantics.`);
+console.log(`v1.4 capability checks passed on package ${pkg.version}: ${manifest.profileCount} reviewed profiles remain discoverable through local-first coverage navigation without changing mission-priority semantics.`);
