@@ -20,5 +20,6 @@ import "./styles/discovery.css";
 import "./styles/about.css";
 import "./styles/v101-hotfix.css";
 import "./styles/v11.css";
+import "./styles/v12.css";
 
 render(<App />, document.getElementById("app")!);
