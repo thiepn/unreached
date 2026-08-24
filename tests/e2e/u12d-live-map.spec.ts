@@ -8,23 +8,24 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
 
   const desktopSearch = page.locator("#desktop-country-search");
+  const mobileSearch = page.locator("#mobile-country-search");
   const mobileSheet = page.locator(".mobile-map-sheet");
-  const desktop = await desktopSearch.isVisible();
-  const search = desktop ? desktopSearch : page.locator("#mobile-country-search");
+  const mobile = await mobileSheet.isVisible();
+  const search = mobile ? mobileSearch : desktopSearch;
 
-  if (!desktop) {
+  if (mobile) {
     await mobileSheet.locator("summary").first().click();
-    await expect(search).toBeVisible();
   }
+  await expect(search).toBeVisible();
 
   const layerSelect = page.getByLabel("Mission map layer").filter({ visible: true }).first();
   await expect(layerSelect).toBeVisible();
-  await expect(layerSelect).toHaveValue("unreached-population-share");
+  await expect(layerSelect).toHaveValue("unreached-population");
 
   await search.fill("Benin");
   await page.locator(".country-row:visible", { hasText: "Benin" }).first().click();
 
-  if (desktop) {
+  if (!mobile) {
     await expect(page.getByRole("heading", { name: "Benin" })).toBeVisible();
     await expect(page.getByText("People contexts").first()).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("GSEC 0–3").first()).toBeVisible();
