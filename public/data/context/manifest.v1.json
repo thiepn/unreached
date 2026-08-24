@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "generatedAt": "2026-08-24T19:15:00Z",
+  "profileCount": 6,
+  "profileUrls": [
+    "data/context/profiles/fon-benin.json",
+    "data/context/profiles/hui-china.json",
+    "data/context/profiles/uyghur-china.json",
+    "data/context/profiles/somali-somalia.json",
+    "data/context/profiles/southern-pashtun-afghanistan.json",
+    "data/context/profiles/bengali-sunni-bangladesh.json"
+  ]
+}
