@@ -28,6 +28,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/languages": "languages",
   "/coverage": "coverage",
   "/pray": "pray",
+  "/pray/session": "pray",
   "/saved": "saved",
   "/about": "about"
 };

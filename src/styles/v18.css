@@ -1,0 +1,244 @@
+.saved-prayer-session-launcher {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem 1.5rem;
+  align-items: end;
+  margin: 1rem 0;
+  padding: 1.15rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.saved-prayer-session-launcher h3 {
+  margin: .2rem 0 .45rem;
+  font-family: var(--font-editorial);
+  font-size: 1.25rem;
+  color: var(--ink-0);
+}
+
+.saved-prayer-session-launcher p { margin: 0; color: var(--ink-1); max-width: 62rem; }
+
+.saved-prayer-session-launcher__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: .5rem;
+}
+
+.saved-prayer-session-launcher__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  padding: .55rem .75rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+  color: var(--ink-0);
+  font-size: .84rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.saved-prayer-session-launcher__actions a:hover,
+.saved-prayer-session-launcher__actions a:focus-visible {
+  border-color: var(--forest-700);
+  background: var(--forest-100);
+  color: var(--forest-900);
+}
+
+.prayer-session {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.prayer-session--state {
+  display: grid;
+  gap: .9rem;
+  justify-items: start;
+  padding-top: 3rem;
+}
+
+.prayer-session__back {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1.25rem;
+  color: var(--ink-2);
+  font-size: .84rem;
+}
+
+.prayer-session__back a {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  color: var(--ink-1);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.prayer-session__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.5rem 0;
+  border-top: 2px solid var(--ink-0);
+  border-bottom: 1px solid var(--line);
+}
+
+.prayer-session__hero h1 { margin: .3rem 0 .65rem; }
+.prayer-session__hero p { margin: 0; max-width: 68ch; color: var(--ink-1); }
+
+.prayer-session__policy {
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+  margin: 1rem 0 1.5rem;
+  padding: .9rem 1rem;
+  border-left: 3px solid var(--forest-700);
+  background: var(--forest-100);
+  color: var(--forest-900);
+}
+
+.prayer-session__policy p { margin: 0; }
+
+.prayer-session__person {
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.prayer-session__position {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: .8rem;
+}
+
+.prayer-session__position strong { color: var(--ink-0); }
+
+.prayer-session__identity { margin-top: 1rem; }
+.prayer-session__identity h2 {
+  margin: .2rem 0 .2rem;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  color: var(--ink-0);
+}
+.prayer-session__identity p { margin: 0; color: var(--ink-2); }
+.prayer-session__why { margin: 1rem 0; color: var(--ink-1); line-height: 1.65; }
+
+.prayer-session__prompts { margin-top: 1.5rem; }
+.prayer-session__prompt-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: .8rem 0 1rem;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.prayer-session__prompt-list article {
+  min-width: 0;
+  padding: 1rem;
+  background: var(--paper-0);
+}
+
+.prayer-session__prompt-list article > span {
+  display: inline-block;
+  margin-bottom: .55rem;
+  color: var(--forest-900);
+  font-size: .76rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.prayer-session__prompt-list p { margin: 0 0 .8rem; color: var(--ink-1); line-height: 1.55; }
+.prayer-session__prompt-list small { color: var(--ink-2); line-height: 1.45; }
+
+.prayer-session__record {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem 1.5rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 1.15rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.prayer-session__record h2 {
+  margin: .2rem 0 .4rem;
+  font-family: var(--font-editorial);
+  font-size: 1.25rem;
+  color: var(--ink-0);
+}
+.prayer-session__record p { margin: 0; color: var(--ink-1); }
+
+.prayer-session__controls {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: 1.2rem;
+}
+
+.prayer-session__controls button,
+.prayer-session__controls > a,
+.prayer-session__primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 2.55rem;
+  padding: .65rem .85rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+  color: var(--ink-0);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.prayer-session__controls button:hover:not(:disabled),
+.prayer-session__controls > a:hover,
+.prayer-session__controls button:focus-visible:not(:disabled),
+.prayer-session__controls > a:focus-visible,
+.prayer-session__primary-link:hover,
+.prayer-session__primary-link:focus-visible {
+  border-color: var(--forest-700);
+  color: var(--forest-900);
+  background: var(--forest-100);
+}
+
+.prayer-session__controls button:disabled { opacity: .45; cursor: default; }
+
+.prayer-session__footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: .84rem;
+}
+.prayer-session__footer p { margin: 0; }
+
+@media (max-width: 760px) {
+  .saved-prayer-session-launcher,
+  .prayer-session__record { grid-template-columns: 1fr; align-items: start; }
+  .saved-prayer-session-launcher__actions { justify-content: flex-start; }
+  .prayer-session__prompt-list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .prayer-session { padding-inline: .75rem; }
+  .prayer-session__hero { grid-template-columns: 1fr; }
+  .prayer-session__hero > svg { display: none; }
+  .prayer-session__position { align-items: flex-start; flex-direction: column; gap: .25rem; }
+  .prayer-session__controls { flex-direction: column; }
+  .prayer-session__controls > * { width: 100%; }
+  .saved-prayer-session-launcher__actions { display: grid; grid-template-columns: 1fr; }
+}

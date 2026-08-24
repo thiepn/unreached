@@ -6,7 +6,8 @@ import type { PrayerListEntry } from "../../src/personalization/types.js";
 const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const pkg = JSON.parse(await readText("package.json")) as { version?: string };
-if (pkg.version !== "1.7.0") throw new Error(`v1.7 package version mismatch: ${String(pkg.version)}`);
+const versionMatch = pkg.version?.match(/^(\d+)\.(\d+)\.(\d+)$/);
+if (!versionMatch || Number(versionMatch[1]) < 1 || (Number(versionMatch[1]) === 1 && Number(versionMatch[2]) < 7)) throw new Error(`v1.7 capability gate requires package >=1.7.0, got ${String(pkg.version)}`);
 
 const entries: PrayerListEntry[] = [
   { sourcePeopleId: 12319, peopleGroupId: "people-entity:peoplegroups:12319", name: "Fon", countryName: "Benin", languageName: "Fon", addedAt: "2026-08-22T10:00:00.000Z", lastPrayedAt: "2026-08-24T20:00:00.000Z" },
