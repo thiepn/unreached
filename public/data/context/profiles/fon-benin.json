@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-fon-benin-api",
+      "sourceId": "peoplegroups-api-pgid-PG012319",
+      "title": "PeopleGroups.org API — Fon of Benin (PG012319)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012319",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-24T19:15:00Z",
+      "locator": "PEID 12319, PGID PG012319, Benin, Fon (fon), GSEC and resource fields"
+    },
+    {
+      "id": "ctx-source:peoplegroups-fon-benin",
+      "sourceId": "peoplegroups-pgid-PG012319",
+      "title": "PeopleGroups.org — Fon of Benin (PGID PG012319)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012319/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-24T19:15:00Z",
+      "locator": "Fast facts, GSEC, language, ROP3 relationship and resource sections"
+    },
+    {
+      "id": "ctx-source:peoplegroups-fon-media",
+      "sourceId": "peoplegroups-media-fon",
+      "title": "PeopleGroups.org — Media Resources for Fon",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/media-resources/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-08-24T19:15:00Z",
+      "locator": "Fon (fon) resource listings"
+    },
+    {
+      "id": "ctx-source:unesco-abomey",
+      "sourceId": "unesco-whc-323",
+      "title": "Royal Palaces of Abomey",
+      "publisher": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/323/",
+      "sourceType": "international-organization",
+      "publicationDate": null,
+      "accessedAt": "2026-08-24T19:15:00Z",
+      "locator": "Outstanding Universal Value and criteria iii–iv"
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12319",
+    "peid": 12319,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12319,
+      "verifiedPeopleName": "Fon",
+      "pgidAnchors": ["PG012319"],
+      "countryIso3Anchors": ["BEN"],
+      "languageIso6393Anchors": ["fon"],
+      "matchEvidence": ["provider-peid", "provider-pgid", "name", "country", "language"],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-08-24T19:15:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The Fon of Benin are an ethnolinguistic community of Benin. Their historical context includes Aja-Fon culture associated with the Kingdom of Dahomey and the Royal Palaces of Abomey.",
+      "claimIds": ["claim:fon-identity", "claim:fon-history"]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports an aggregate primary-religion label for this Benin source record. That classification should not be read as a statement about every individual's belief or practice.",
+      "claimIds": ["claim:fon-religion-context"]
+    },
+    "whyUnreachedIntro": "This profile limits its explanation to documented mission-status and access evidence for the Fon of Benin record. It does not infer spiritual resistance from Fon culture, ethnicity, or religion.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current mission-status evidence",
+        "summary": "The current Fon of Benin record carries PeopleGroups.org's source-native GSEC 1 classification.",
+        "claimIds": ["claim:fon-gsec-benin"]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Language resources are present",
+        "summary": "PeopleGroups.org documents Fon-language Bible and film resources, so total absence of local-language Christian media is not used here as an explanation for the current status.",
+        "claimIds": ["claim:fon-resources"]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:fon-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org API record PG012319 reports PEID 12319, the display name Fon, country Benin, primary language Fon (fon), and ROP3 people name Fon.",
+        "citationIds": ["ctx-source:peoplegroups-fon-benin-api"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:fon-history",
+        "dimension": "history",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "UNESCO describes the Royal Palaces of Abomey as major material testimony to the Kingdom of Dahomey and says their organization follows principles relating to Aja-Fon culture.",
+        "citationIds": ["ctx-source:unesco-abomey"],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:fon-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The PeopleGroups.org Fon of Benin profile currently lists Protestantism as the record's primary religion.",
+        "citationIds": ["ctx-source:peoplegroups-fon-benin"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "generalized",
+        "interpretationNote": "Primary religion is an aggregate source classification for the people-group-in-country record, not a claim about every Fon person's belief or practice."
+      },
+      {
+        "id": "claim:fon-gsec-benin",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The Fon of Benin record reports GSEC 1 with the source label 'Less than 2% Evangelical, No Active CP Activity.'",
+        "citationIds": ["ctx-source:peoplegroups-fon-benin-api", "ctx-source:peoplegroups-fon-benin"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is the provider's status for PG012319, not a statement about every individual or community member."
+      },
+      {
+        "id": "claim:fon-resources",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org documents Bible resources and Jesus Film Project films associated with Fon (fon), so the available evidence does not support describing this record as having no local-language Christian media resources.",
+        "citationIds": ["ctx-source:peoplegroups-fon-benin", "ctx-source:peoplegroups-fon-media"],
+        "asOf": "2026-08-24",
+        "reviewAfter": "2027-02-24",
+        "sensitivity": "public",
+        "interpretationNote": "Resource availability does not by itself establish distribution, comprehension, use, or Scripture translation-completeness."
+      }
+    ],
+    "sourceIds": ["ctx-source:peoplegroups-fon-benin-api", "ctx-source:peoplegroups-fon-benin", "ctx-source:peoplegroups-fon-media", "ctx-source:unesco-abomey"],
+    "review": {
+      "status": "published",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": "2026-08-24T19:15:00Z",
+      "reviewerRole": "Release-maintainer evidence review",
+      "checklist": {
+        "namingChecked": true,
+        "materialClaimsCited": true,
+        "currentClaimsFresh": true,
+        "noStereotypeShortcuts": true,
+        "religionNuanced": true,
+        "sensitiveDataChecked": true,
+        "sourceLicensingChecked": true,
+        "identityMatchChecked": true
+      }
+    }
+  }
+}

@@ -139,6 +139,21 @@ export const editorialContextDatasetSchema = z.object({
   profiles: z.array(peopleContextProfileSchema),
 });
 
+export const editorialContextProfilePackageSchema = z.object({
+  schemaVersion: z.literal(1),
+  fixture: z.boolean(),
+  sources: z.array(editorialSourceSchema).min(1),
+  profile: peopleContextProfileSchema,
+});
+
+export const editorialContextManifestSchema = z.object({
+  schemaVersion: z.literal(1),
+  fixture: z.boolean(),
+  generatedAt: timestampSchema,
+  profileCount: z.number().int().positive(),
+  profileUrls: z.array(z.string().regex(/^data\/context\/profiles\/[a-z0-9][a-z0-9._-]*\.json$/)).min(1),
+});
+
 export const editorialContextAvailabilitySchema = z.object({
   schemaVersion: z.literal(2),
   available: z.boolean(),
@@ -154,6 +169,8 @@ export type EditorialSource = z.infer<typeof editorialSourceSchema>;
 export type ContextClaim = z.infer<typeof contextClaimSchema>;
 export type PeopleContextProfile = z.infer<typeof peopleContextProfileSchema>;
 export type EditorialContextDataset = z.infer<typeof editorialContextDatasetSchema>;
+export type EditorialContextProfilePackage = z.infer<typeof editorialContextProfilePackageSchema>;
+export type EditorialContextManifest = z.infer<typeof editorialContextManifestSchema>;
 export type EditorialContextAvailability = z.infer<typeof editorialContextAvailabilitySchema>;
 export type WhyUnreachedDimension = z.infer<typeof whyUnreachedDimensionSchema>;
 export type ContextIdentity = z.infer<typeof contextIdentitySchema>;

@@ -3,8 +3,8 @@
   "available": true,
   "fixture": false,
   "mode": "reviewed-editorial",
-  "datasetUrl": "data/context/editorial.v2.json",
+  "datasetUrl": "data/context/manifest.v1.json",
   "reason": null,
-  "profileCount": 1,
+  "profileCount": 6,
   "identityProvider": "peoplegroups-org"
 }
