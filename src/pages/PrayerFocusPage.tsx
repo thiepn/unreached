@@ -1,8 +1,8 @@
-import { ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Clock, Compass, Database, RefreshCw } from "lucide-preact";
+import { ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Clock, Compass, Database, RefreshCw, RotateCcw } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
-import { isSameLocalDate, prayerSnapshotFromEntity, usePersonalization } from "../personalization";
+import { isSameLocalDate, prayerSnapshotFromEntity, selectNextPrayerRotationEntry, usePersonalization } from "../personalization";
 import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
   buildLivePrayerProfile,
@@ -31,6 +31,11 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
   const prayerListEntry = personalization.state.prayerList.find((item) => item.sourcePeopleId === sourcePeopleId) ?? null;
   const listed = Boolean(prayerListEntry);
   const recordedToday = isSameLocalDate(prayerListEntry?.lastPrayedAt ?? null);
+  const eligiblePrayerListIds = useMemo(() => new Set(prayer.eligible.map((item) => item.routeKey)), [prayer.eligible]);
+  const nextPrayerEntry = useMemo(() => selectNextPrayerRotationEntry(personalization.state.prayerList, {
+    eligibleSourcePeopleIds: eligiblePrayerListIds,
+    excludeSourcePeopleId: sourcePeopleId,
+  }), [personalization.state.prayerList, eligiblePrayerListIds, sourcePeopleId]);
 
   useEffect(() => setActiveIndex(0), [minutes, sourcePeopleId]);
 
@@ -132,10 +137,17 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
           {recordedToday ? "Prayer noted today" : "Record prayer today"}
         </button>
         {prayerListEntry?.lastPrayedAt ? <small>Last recorded locally: {new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(prayerListEntry.lastPrayedAt))}</small> : <small>No prayer date is stored yet.</small>}
+        {recordedToday && nextPrayerEntry ? (
+          <a class="prayer-rotation-next" data-next-prayer-peid={nextPrayerEntry.sourcePeopleId} href={hrefFor(`/pray/${nextPrayerEntry.sourcePeopleId}`)}>
+            <RotateCcw size={16} aria-hidden="true" />
+            <span><strong>Continue with {nextPrayerEntry.name}</strong><small>Next return point from your private prayer rotation</small></span>
+            <ChevronRight size={17} aria-hidden="true" />
+          </a>
+        ) : null}
       </section>
 
       <footer class="prayer-focus__footer">
-        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} is fixed and release-certified. Runtime facts come from the current PeopleGroups.org record. Private prayer practice is optional and non-competitive: no prayer score, streak, public activity record, or spiritual completion metric is created.</p>
+        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} is fixed and release-certified. Runtime facts come from the current PeopleGroups.org record. Private prayer practice and rotation are optional and non-competitive: no prayer score, streak, public activity record, mission-priority signal, or spiritual completion metric is created.</p>
         <a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>Return to the people profile</a>
       </footer>
     </article>

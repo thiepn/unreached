@@ -1,7 +1,7 @@
-import { Bookmark, Clock3, Compass, Globe2, Languages, List, Trash2, UsersRound } from "lucide-preact";
+import { ArrowRight, Bookmark, Clock3, Compass, Globe2, Languages, List, RotateCcw, Trash2, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
-import { usePersonalization, type RecentVisitKind, type SavedPersonSnapshot } from "../personalization";
+import { orderPrayerRotation, prayerRotationReturnLabel, usePersonalization, type RecentVisitKind, type SavedPersonSnapshot } from "../personalization";
 
 function recentIcon(kind: RecentVisitKind) {
   if (kind === "country") return Globe2;
@@ -35,6 +35,8 @@ function prayerEligible(person: SavedPersonSnapshot): boolean {
 
 export function SavedPage() {
   const { state, removeSaved, removePrayer, clearRecent } = usePersonalization();
+  const prayerRotation = orderPrayerRotation(state.prayerList);
+  const nextPrayer = prayerRotation[0] ?? null;
 
   return (
     <section class="saved-page">
@@ -49,12 +51,27 @@ export function SavedPage() {
 
       <section class="saved-section saved-prayer-section" aria-labelledby="prayer-list-heading">
         <div class="saved-section__heading"><div><span class="eyebrow">Private prayer practice</span><h2 id="prayer-list-heading">Prayer list</h2></div><span>{state.prayerList.length}</span></div>
-        {state.prayerList.length ? (
+        {nextPrayer ? (
+          <div class="saved-prayer-rotation" aria-labelledby="prayer-rotation-heading">
+            <div>
+              <span class="eyebrow">Prayer rotation</span>
+              <h3 id="prayer-rotation-heading">Next return point</h3>
+              <p>The rotation surfaces people with no recorded prayer date first, then those least recently recorded. It only helps you revisit your list; it does not rank urgency, importance, unreachedness, or prayer faithfulness.</p>
+            </div>
+            <a data-prayer-rotation-next={nextPrayer.sourcePeopleId} href={hrefFor(`/pray/${nextPrayer.sourcePeopleId}`)}>
+              <RotateCcw size={18} aria-hidden="true" />
+              <span><strong>{nextPrayer.name}</strong><small>{prayerRotationReturnLabel(nextPrayer)}</small></span>
+              <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </div>
+        ) : null}
+
+        {prayerRotation.length ? (
           <div class="saved-prayer-grid">
-            {state.prayerList.map((person) => (
-              <article class="saved-prayer-card" key={person.sourcePeopleId} data-prayer-list-peid={person.sourcePeopleId}>
+            {prayerRotation.map((person, index) => (
+              <article class={`saved-prayer-card${index === 0 ? " saved-prayer-card--next" : ""}`} key={person.sourcePeopleId} data-prayer-list-peid={person.sourcePeopleId}>
                 <div class="saved-prayer-card__top">
-                  <span><List size={14} aria-hidden="true" /> Private prayer list</span>
+                  <span>{index === 0 ? <RotateCcw size={14} aria-hidden="true" /> : <List size={14} aria-hidden="true" />}{index === 0 ? "Next return point" : "Private prayer list"}</span>
                   <small>{person.lastPrayedAt ? `Last prayed ${dateTimeLabel(person.lastPrayedAt)}` : "No prayer date recorded"}</small>
                 </div>
                 <h3><a href={hrefFor(`/pray/${person.sourcePeopleId}`)}>{person.name}</a></h3>
@@ -70,7 +87,7 @@ export function SavedPage() {
         ) : (
           <div class="saved-empty"><List size={22} aria-hidden="true" /><div><strong>Your private prayer list is empty.</strong><p>Add a people from Prayer or a focused prayer guide. The list is local to this browser and is never published.</p><a href={hrefFor("/pray")}>Choose someone to pray for</a></div></div>
         )}
-        <p class="saved-snapshot-note">Prayer practice stores only a small local identity snapshot, when the person was added, and the latest prayer timestamp if you choose to record one. It does not create prayer totals, scores, streaks, leaderboards, or public activity.</p>
+        <p class="saved-snapshot-note">Prayer practice stores only a small local identity snapshot, when the person was added, and the latest prayer timestamp if you choose to record one. Rotation is derived from those existing timestamps and does not add totals, scores, streaks, deadlines, leaderboards, priority values, or public activity.</p>
       </section>
 
       <section class="saved-section" aria-labelledby="saved-peoples-heading">

@@ -1,8 +1,8 @@
-import { ArrowRight, Bookmark, CalendarDays, Compass, Database, Globe2, List, RefreshCw, Search } from "lucide-preact";
+import { ArrowRight, Bookmark, CalendarDays, Compass, Database, Globe2, List, RefreshCw, RotateCcw, Search } from "lucide-preact";
 import { useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
-import { prayerSnapshotFromEntity, usePersonalization } from "../personalization";
+import { prayerSnapshotFromEntity, selectNextPrayerRotationEntry, usePersonalization } from "../personalization";
 import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
   buildLivePrayerProfile,
@@ -97,20 +97,25 @@ export function PrayPage() {
   const [query, setQuery] = useState("");
 
   const prayerListIds = useMemo(() => new Set(personalization.state.prayerList.map((item) => item.sourcePeopleId)), [personalization.state.prayerList]);
-  const listedEligibleInScope = useMemo(() => prayer.eligible.filter((entity) => {
-    if (!prayerListIds.has(entity.routeKey)) return false;
-    return !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached");
-  }), [prayer.eligible, prayerListIds, countryIso3]);
+  const eligibleSourcePeopleIdsInScope = useMemo(() => new Set(prayer.eligible
+    .filter((entity) => !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached"))
+    .map((entity) => entity.routeKey)), [prayer.eligible, countryIso3]);
+
+  const rotationEntry = useMemo(() => selectNextPrayerRotationEntry(personalization.state.prayerList, {
+    eligibleSourcePeopleIds: eligibleSourcePeopleIdsInScope,
+  }), [personalization.state.prayerList, eligibleSourcePeopleIdsInScope]);
+  const rotationEntity = rotationEntry ? prayer.peopleByRouteKey.get(rotationEntry.sourcePeopleId) ?? null : null;
 
   const scoped = useMemo(() => prayer.eligible
     .filter((entity) => !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached"))
     .filter((entity) => matchesQuery(entity, query))
     .sort((a, b) => b.population.knownValue - a.population.knownValue || a.displayName.localeCompare(b.displayName, "en")), [prayer.eligible, countryIso3, query]);
 
-  const dailyPool = listedEligibleInScope.length ? listedEligibleInScope : prayer.eligible;
-  const dailyEntity = prayer.ready ? selectDailyLivePrayerEntity(dailyPool, dateKeyLocal(), countryIso3) : null;
+  const dailyEntity = prayer.ready
+    ? rotationEntity ?? selectDailyLivePrayerEntity(prayer.eligible, dateKeyLocal(), countryIso3)
+    : null;
   const daily = dailyEntity ? buildLivePrayerProfile(dailyEntity) : null;
-  const dailyFromPrayerList = Boolean(dailyEntity && prayerListIds.has(dailyEntity.routeKey));
+  const dailyFromRotation = Boolean(dailyEntity && rotationEntry && dailyEntity.routeKey === rotationEntry.sourcePeopleId);
   const visible = scoped.slice(0, 60);
 
   const togglePrayer = (entity: RuntimePeopleEntity) => personalization.togglePrayer(prayerSnapshotFromEntity(entity));
@@ -146,7 +151,12 @@ export function PrayPage() {
               <div><span class="eyebrow">Daily focus</span><h2 id="daily-prayer-heading">People to Pray for Today</h2></div>
               <CalendarDays size={21} aria-hidden="true" />
             </div>
-            {dailyFromPrayerList ? <div class="prayer-list-source"><Bookmark size={15} aria-hidden="true" /> From your private prayer list</div> : null}
+            {dailyFromRotation ? (
+              <div class="prayer-list-source prayer-rotation-source">
+                <RotateCcw size={15} aria-hidden="true" />
+                <span><strong>Next from your private prayer rotation</strong><small>Never-recorded entries come first, then the least recently recorded. This is a return aid, not a priority ranking.</small></span>
+              </div>
+            ) : null}
             {daily && dailyEntity ? <PrayerCard entity={dailyEntity} profile={daily} featured listed={prayerListIds.has(dailyEntity.routeKey)} onTogglePrayer={togglePrayer} /> : <p class="prayer-empty">No current GSEC 0–3 people context is available for this scope.</p>}
           </section>
 
@@ -161,7 +171,7 @@ export function PrayPage() {
 
       <footer class="prayer-principle">
         <strong>Prayer wording is template-certified, not person-by-person AI-generated.</strong>
-        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} was release-certified on {LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt}. Runtime interpolation is limited to source-backed identity, country, GSEC, and resource information. The optional prayer list stays only in this browser and stores no prayer score, streak, leaderboard, public activity record, or spiritual completion metric.</p>
+        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} was release-certified on {LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt}. Runtime interpolation is limited to source-backed identity, country, GSEC, and resource information. The optional prayer list and rotation stay only in this browser and create no prayer score, streak, leaderboard, public activity record, mission-priority signal, or spiritual completion metric.</p>
       </footer>
     </section>
   );

@@ -8,8 +8,39 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.6.0**
-- **Release state:** **v1.6 Prayer Practice & Private Prayer List release candidate**
+- **Version:** **1.7.0**
+- **Release state:** **v1.7 Prayer Rotation & Guided Return release candidate**
+
+## v1.7 — prayer rotation & guided return
+
+v1.7 turns the v1.6 private prayer list into a simple return rhythm without introducing any new tracking fields.
+
+### Derived prayer rotation
+
+The rotation is computed from the existing browser-local `addedAt` and `lastPrayedAt` timestamps:
+
+1. people with no recorded prayer date first;
+2. oldest-added first among those never recorded;
+3. least-recently recorded next;
+4. stable identity ordering only for exact ties.
+
+This order is a continuity aid only. It is **not** a mission-priority, urgency, importance, unreachedness, prayer-faithfulness, or spiritual-performance ranking.
+
+### Daily prayer
+
+When an eligible person exists on the private prayer list, **People to Pray for Today** uses the next eligible rotation entry. Country scope remains authoritative, and the normal source-backed daily selection remains the fallback when no listed entry applies.
+
+### Saved & prayer
+
+The private workspace now shows a **Next return point** and displays prayer-list cards in derived rotation order. Viewing the page does not rewrite the stored array.
+
+### Focused prayer continuation
+
+After prayer is explicitly recorded, the focused-prayer screen can offer **Continue with [next person]** when another current eligible prayer-list entry exists. Recording changes only the existing latest timestamp; no queue position or completion state is stored.
+
+The personalization schema remains **v2**. There are still no prayer totals, streaks, deadlines, scores, leaderboards, priority values, public activity records, or cloud synchronization.
+
+See [`docs/V17_PRAYER_ROTATION.md`](docs/V17_PRAYER_ROTATION.md) for the ordering, privacy, theology, and release-gate contract.
 
 ## v1.6 — prayer practice & private prayer list
 
@@ -34,7 +65,7 @@ Focused prayer includes an optional **Record prayer today** action. It stores on
 
 ### Saved & prayer workspace
 
-The existing Saved route now contains:
+The existing Saved route contains:
 
 1. Private prayer list
 2. Saved peoples
@@ -44,7 +75,7 @@ All three remain local to the browser.
 
 ### Personalization migration
 
-The browser-local personalization model moves from schema v1 to v2. Existing Saved and Recent data are preserved. The runtime reads `unreached.personal.v2` first and falls back to legacy `unreached.personal.v1` when necessary; the legacy key is not destructively removed.
+The browser-local personalization model moved from schema v1 to v2. Existing Saved and Recent data are preserved. The runtime reads `unreached.personal.v2` first and falls back to legacy `unreached.personal.v1` when necessary; the legacy key is not destructively removed.
 
 See [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md) for the privacy, migration, non-gamification, and release-gate contract.
 
@@ -63,11 +94,9 @@ New reviewed profiles:
 | Kurd, Northern (Kurmanji) | PEID 24567 / PG024567 | Türkiye | `kmr` | West Asia |
 | Javanese Transmigrants | PEID 46650 / PG046650 | Indonesia | `jav` | Southeast Asia |
 
-The coverage browser now reports and filters seven broad editorial regions: Central Asia, East Asia, Horn of Africa, South Asia, Southeast Asia, West Africa, and West Asia. These are editorial navigation groupings only. They are not PeopleGroups.org mission regions, geopolitical priorities, quotas, or rankings.
+The coverage browser reports and filters seven broad editorial regions: Central Asia, East Asia, Horn of Africa, South Asia, Southeast Asia, West Africa, and West Asia. These are editorial navigation groupings only. They are not PeopleGroups.org mission regions, geopolitical priorities, quotas, or rankings.
 
 Each v1.5 addition uses the exact PeopleGroups.org source record for runtime mission/identity evidence plus a second contextual source from UNESCO, Encyclopaedia Iranica, UNHCR, or Minority Rights Group. Current claims remain review-dated; religion, ethnicity, culture, displacement, and migration are not used as causal shortcuts for GSEC status.
-
-The release gate requires exactly twelve Tier-3 profiles, explicit PEID/PGID/country/language evidence for all twelve, cross-source synthesis for every new article, at least seven mapped editorial regions, and successful live PeopleGroups identity verification before promotion.
 
 ## v1.4 — editorial discovery & coverage navigation
 
@@ -86,7 +115,7 @@ The dedicated `#/coverage` route loads the bounded editorial manifest/shards plu
 
 ## v1.3 — reviewed editorial context
 
-v1.3 expands the human-reviewable **Understand** layer from one production profile to six Tier-3 reviewed source-record profiles:
+v1.3 expanded the human-reviewable **Understand** layer from one production profile to six Tier-3 reviewed source-record profiles:
 
 | People profile | Provider identity | Country | Language |
 | --- | --- | --- | --- |
@@ -123,8 +152,6 @@ The editorial publication uses a small manifest plus individually reviewed profi
 - `data/context/profiles/*.json`
 
 The browser materializes these packages into the reviewed-context model. This keeps each profile independently inspectable and allows future coverage growth without rewriting one large publication file.
-
-Release gates verify manifest/shard counts, unique URLs, non-fixture status, required PEIDs, Tier-3 review metadata, source/claim integrity, and live PeopleGroups PEID/PGID/country/language/name anchors.
 
 ## v1.2 guided exploration retained
 
@@ -175,10 +202,10 @@ IMB **GSEC** remains source-native:
 | Reviewed coverage | Local-first index, regional distribution, filtering and navigation over the twelve-profile reviewed publication set |
 | Countries | Local Natural Earth index + live country-context records + country-specific reviewed editorial links |
 | Languages | Live ISO 639-3 aggregation over current source records |
-| Prayer | Current GSEC 0–3 record + fixed release-certified prayer template + optional private browser-local prayer list |
-| Focused prayer | Source-backed prayer flow + optional latest-only local prayer timestamp |
+| Prayer | Current GSEC 0–3 record + fixed release-certified prayer template + private prayer rotation when available |
+| Focused prayer | Source-backed prayer flow + optional latest-only local prayer timestamp + guided next-person continuation |
 | Editorial context | Twelve reviewed Tier-3 source-record profile shards; intentionally partial coverage |
-| Saved & prayer | Browser-local prayer list, saved people snapshots, and recent exploration |
+| Saved & prayer | Browser-local prayer list/rotation, saved people snapshots, and recent exploration |
 | ProgressBible | Permission-gated and not used |
 | Ethnologue proprietary taxonomy | Permission-gated and not used |
 | Third-party people photos | Not redistributed without separate authorization |
@@ -187,7 +214,7 @@ IMB **GSEC** remains source-native:
 
 PeopleGroups responses are treated as untrusted external input. Protections include Zod validation, request timeouts, pagination/count limits, bounded concurrency, duplicate PGID/PEID rejection, GSEC bounds, fail-closed schema-drift handling, one shared session corpus, IndexedDB caching with a 24-hour fresh window and seven-day explicit stale fallback, and best-effort storage behavior.
 
-Personal prayer state is separate from mission data: it is local-only, bounded, migration-validated, and never treated as an authoritative source record.
+Personal prayer state is separate from mission data: it is local-only, bounded, migration-validated, and never treated as an authoritative source record. v1.7 rotation is derived at runtime and adds no persistent ranking or performance state.
 
 ## Release certification
 
@@ -197,7 +224,7 @@ A release candidate must pass:
 - deterministic source/data/editorial/release-policy checks;
 - PeopleGroups runtime/cache/visible-data/identity checks;
 - geography and mission-visualization checks;
-- country, people, context, prayer, prayer-practice, language, and discovery checks;
+- country, people, context, prayer, prayer-practice, prayer-rotation, language, and discovery checks;
 - production distribution checks;
 - Chromium, Firefox, and WebKit desktop journeys;
 - mobile Chromium and mobile WebKit journeys;
@@ -206,9 +233,9 @@ A release candidate must pass:
 - browser API/CORS contract;
 - post-merge GitHub Pages certification against the deployed site.
 
-v1.3 requires the original six reviewed editorial profiles to survive deterministic publication validation and live identity verification. v1.4 additionally certifies the local-first coverage browser, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation. v1.5 requires twelve Tier-3 profile shards, six newly cross-sourced profiles, seven explicit editorial regions, regional coverage guardrails, and live verification of every declared PeopleGroups identity anchor. v1.6 additionally certifies v1→v2 browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, daily-list preference, and the absence of competitive/spiritual prayer metrics or network synchronization.
+v1.3 requires the original six reviewed editorial profiles to survive deterministic publication validation and live identity verification. v1.4 additionally certifies the local-first coverage browser, reviewed-only People filtering, country editorial handoff, and previous/next/all-coverage article navigation. v1.5 requires twelve Tier-3 profile shards, six newly cross-sourced profiles, seven explicit editorial regions, regional coverage guardrails, and live verification of every declared PeopleGroups identity anchor. v1.6 additionally certifies v1→v2 browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, daily-list preference, and the absence of competitive/spiritual prayer metrics or network synchronization. v1.7 certifies derived prayer rotation ordering, scope-aware selection, guided continuation, schema-v2 reuse, and explicit non-priority/non-performance semantics.
 
-See [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
+See [`docs/V17_PRAYER_ROTATION.md`](docs/V17_PRAYER_ROTATION.md), [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
 ## Local development
 
