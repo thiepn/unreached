@@ -67,7 +67,7 @@ test("v1.3 manifest loads the reviewed Fon shard only onto its verified PEID rou
   await expect(editorial).toBeVisible({ timeout: 15_000 });
   await expect(editorial.getByText("Reviewed editorial context", { exact: true })).toBeVisible();
   await expect(editorial.getByText(/PeopleGroups PEID 12319/)).toBeVisible();
-  await expect(editorial.getByText(/PG012319/)).toBeVisible();
+  await expect(editorial.locator(".context-identity-note > span")).toContainText("PG012319");
   await expect(editorial.getByRole("heading", { name: "Who are they?" })).toBeVisible();
   await expect(editorial.getByRole("heading", { name: "Why are they unreached?" })).toBeVisible();
   await expect(editorial.getByText(/does not infer spiritual resistance/i)).toBeVisible();
