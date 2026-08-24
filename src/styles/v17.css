@@ -1,0 +1,124 @@
+.prayer-rotation-source {
+  align-items: flex-start;
+  padding: .75rem .85rem;
+  border-left: 3px solid var(--forest-700);
+  background: var(--forest-100);
+}
+
+.prayer-rotation-source > span {
+  display: grid;
+  gap: .15rem;
+}
+
+.prayer-rotation-source small {
+  color: var(--ink-1);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.saved-prayer-rotation {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(17rem, .8fr);
+  gap: 1.2rem;
+  align-items: stretch;
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--paper-1);
+}
+
+.saved-prayer-rotation h3 {
+  margin: .2rem 0 .4rem;
+  font-family: var(--font-editorial);
+  font-size: 1.45rem;
+  color: var(--ink-0);
+}
+
+.saved-prayer-rotation p {
+  margin: 0;
+  color: var(--ink-1);
+  line-height: 1.55;
+}
+
+.saved-prayer-rotation > a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: .7rem;
+  align-items: center;
+  padding: .95rem;
+  border: 1px solid var(--forest-700);
+  background: var(--paper-0);
+  color: var(--ink-0);
+  text-decoration: none;
+}
+
+.saved-prayer-rotation > a:hover,
+.saved-prayer-rotation > a:focus-visible {
+  background: var(--forest-100);
+}
+
+.saved-prayer-rotation > a span {
+  display: grid;
+  gap: .2rem;
+  min-width: 0;
+}
+
+.saved-prayer-rotation > a strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saved-prayer-rotation > a small {
+  color: var(--ink-2);
+}
+
+.saved-prayer-card--next {
+  box-shadow: inset 3px 0 0 var(--forest-700);
+}
+
+.prayer-rotation-next {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: .65rem;
+  align-items: center;
+  padding: .8rem .9rem;
+  border: 1px solid var(--forest-700);
+  background: var(--forest-100);
+  color: var(--forest-900);
+  text-decoration: none;
+}
+
+.prayer-rotation-next span {
+  display: grid;
+  gap: .1rem;
+}
+
+.prayer-rotation-next small {
+  grid-column: auto;
+  color: var(--ink-1);
+  text-align: left;
+}
+
+.prayer-rotation-next:hover,
+.prayer-rotation-next:focus-visible {
+  background: var(--paper-0);
+}
+
+@media (max-width: 760px) {
+  .saved-prayer-rotation {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .saved-prayer-rotation > a,
+  .prayer-rotation-next {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .saved-prayer-rotation > a > svg:last-child,
+  .prayer-rotation-next > svg:last-child {
+    display: none;
+  }
+}
