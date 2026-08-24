@@ -23,21 +23,16 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: "22"
-
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-
       - name: Typecheck, validate and build
         run: npm run build
-
       - name: Configure Pages
         uses: actions/configure-pages@v6
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
@@ -66,15 +61,12 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: "22"
-
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-
       - name: Wait for deployed entry point
         shell: bash
         run: |
@@ -88,16 +80,12 @@ jobs:
           done
           echo "Production entry point did not become ready: ${base}" >&2
           exit 1
-
       - name: Verify deployed release-policy endpoints
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
-          const base = process.env.PLAYWRIGHT_BASE_URL.endsWith("/")
-            ? process.env.PLAYWRIGHT_BASE_URL
-            : `${process.env.PLAYWRIGHT_BASE_URL}/`;
-
+          const base = process.env.PLAYWRIGHT_BASE_URL.endsWith("/") ? process.env.PLAYWRIGHT_BASE_URL : `${process.env.PLAYWRIGHT_BASE_URL}/`;
           async function get(path) {
             const url = new URL(path, base);
             const response = await fetch(url, { cache: "no-store" });
@@ -108,56 +96,41 @@ jobs:
           const html = await (await get("./")).text();
           if (!html.includes("Unreached")) throw new Error("Production HTML does not identify Unreached");
           if (!html.includes("/unreached/")) throw new Error("Production HTML is missing /unreached/ scoped assets");
-
-          const manifest = await (await get("site.webmanifest")).json();
-          if (manifest.name !== "Unreached — Explore. Understand. Pray.") throw new Error("Unexpected production manifest name");
-          if (manifest.short_name !== "Unreached") throw new Error("Unexpected production manifest short_name");
-          if (manifest.id !== "/unreached/") throw new Error("Unexpected production manifest id");
-          if (manifest.scope !== "/unreached/") throw new Error("Unexpected production manifest scope");
-          if (manifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest start_url");
+          const webmanifest = await (await get("site.webmanifest")).json();
+          if (webmanifest.name !== "Unreached — Explore. Understand. Pray." || webmanifest.short_name !== "Unreached") throw new Error("Unexpected production manifest identity");
+          if (webmanifest.id !== "/unreached/" || webmanifest.scope !== "/unreached/" || webmanifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest scope");
 
           const context = await (await get("data/context/status.json")).json();
-          if (context.available !== true || context.fixture !== false || context.mode !== "reviewed-editorial" || context.datasetUrl !== "data/context/editorial.v2.json") {
-            throw new Error("Production context status violates U12F reviewed-editorial contract");
+          if (context.available !== true || context.fixture !== false || context.mode !== "reviewed-editorial" || context.datasetUrl !== "data/context/manifest.v1.json") throw new Error("Production context status violates v1.3 reviewed-editorial contract");
+          if (!Number.isInteger(context.profileCount) || context.profileCount < 6 || context.identityProvider !== "peoplegroups-org") throw new Error("Production context identity/profile metadata is invalid");
+          const editorialManifest = await (await get(context.datasetUrl)).json();
+          if (editorialManifest.schemaVersion !== 1 || editorialManifest.fixture !== false || editorialManifest.profileCount !== context.profileCount || !Array.isArray(editorialManifest.profileUrls) || editorialManifest.profileUrls.length !== context.profileCount) throw new Error("Production editorial manifest does not match status metadata");
+          if (new Set(editorialManifest.profileUrls).size !== editorialManifest.profileUrls.length) throw new Error("Production editorial manifest contains duplicate shard URLs");
+          const packages = await Promise.all(editorialManifest.profileUrls.map(async (url) => await (await get(url)).json()));
+          const requiredPeids = new Set([12319, 7206, 24104, 11954, 24009, 1156]);
+          const published = new Set();
+          for (const pkg of packages) {
+            if (pkg.schemaVersion !== 1 || pkg.fixture !== false || !pkg.profile || !Array.isArray(pkg.sources) || pkg.sources.length < 1) throw new Error("Invalid production editorial shard");
+            const profile = pkg.profile;
+            if (profile.peopleEntityId !== `people-entity:peoplegroups:${profile.peid}` || profile.identity?.targetPeid !== profile.peid || profile.identity?.numericCoincidenceUsed !== false) throw new Error(`Editorial context identity contract failed for PEID ${profile.peid}`);
+            if (profile.review?.status !== "published" || profile.review?.qualityTier !== 3 || profile.review?.checklist?.identityMatchChecked !== true) throw new Error(`Editorial context review contract failed for PEID ${profile.peid}`);
+            if (published.has(profile.peid)) throw new Error(`Duplicate production editorial PEID ${profile.peid}`);
+            published.add(profile.peid);
           }
-          if (!Number.isInteger(context.profileCount) || context.profileCount < 1 || context.identityProvider !== "peoplegroups-org") {
-            throw new Error("Production context identity/profile metadata is invalid");
-          }
-          const editorial = await (await get(context.datasetUrl)).json();
-          if (editorial.schemaVersion !== 2 || editorial.fixture !== false || !Array.isArray(editorial.profiles) || editorial.profiles.length !== context.profileCount) {
-            throw new Error("Production editorial context dataset does not match status metadata");
-          }
-          for (const profile of editorial.profiles) {
-            if (profile.peopleEntityId !== `people-entity:peoplegroups:${profile.peid}` || profile.identity?.targetPeid !== profile.peid || profile.identity?.numericCoincidenceUsed !== false) {
-              throw new Error(`Editorial context identity contract failed for PEID ${profile.peid}`);
-            }
-            if (profile.review?.status !== "published" || profile.review?.checklist?.identityMatchChecked !== true) {
-              throw new Error(`Editorial context review contract failed for PEID ${profile.peid}`);
-            }
-          }
+          for (const peid of requiredPeids) if (!published.has(peid)) throw new Error(`Required v1.3 editorial PEID ${peid} is missing from production`);
 
           for (const domain of ["mission", "countries", "peoples", "prayer", "languages"]) {
             const status = await (await get(`data/${domain}/status.json`)).json();
-            if (status.available !== true || status.fixture !== false || status.datasetUrl !== null || status.mode !== "runtime-api") {
-              throw new Error(`Production ${domain} runtime publication status is invalid`);
-            }
-            if (!Array.isArray(status.sourceIds) || !status.sourceIds.includes("peoplegroups-org-api")) {
-              throw new Error(`Production ${domain} status does not identify PeopleGroups.org`);
-            }
+            if (status.available !== true || status.fixture !== false || status.datasetUrl !== null || status.mode !== "runtime-api") throw new Error(`Production ${domain} runtime publication status is invalid`);
+            if (!Array.isArray(status.sourceIds) || !status.sourceIds.includes("peoplegroups-org-api")) throw new Error(`Production ${domain} status does not identify PeopleGroups.org`);
           }
-
           const prayer = await (await get("data/prayer/status.json")).json();
-          if (prayer.templateVersion !== "u12c-v1" || prayer.templateReviewedAt !== "2026-08-22") {
-            throw new Error("Production prayer template certification metadata is invalid");
-          }
+          if (prayer.templateVersion !== "u12c-v1" || prayer.templateReviewedAt !== "2026-08-22") throw new Error("Production prayer template certification metadata is invalid");
           NODE
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit
-
       - name: Run browser certification against deployed Pages site
         run: npm run e2e
-
       - name: Upload production Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v7
@@ -188,13 +161,11 @@ jobs:
             state="success"
             description="Pages deployment and live browser certification passed"
           fi
-
           if [[ -n "${TARGET_URL}" ]]; then
             payload=$(jq -nc --arg state "${state}" --arg target "${TARGET_URL}" --arg description "${description}" '{state:$state,target_url:$target,description:$description,context:"unreached/pages-production"}')
           else
             payload=$(jq -nc --arg state "${state}" --arg description "${description}" '{state:$state,description:$description,context:"unreached/pages-production"}')
           fi
-
           curl --fail-with-body --silent --show-error --location \
             --request POST \
             --header "Accept: application/vnd.github+json" \
