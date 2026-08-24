@@ -18,7 +18,13 @@ const recorded = recordPrayerForPerson(added, snapshot, new Date("2026-08-24T20:
 if (recorded.prayerList[0]?.lastPrayedAt !== "2026-08-24T20:30:00.000Z") throw new Error("Latest-only prayer timestamp contract failed.");
 if (removePrayerPerson(recorded, 12319).prayerList.length !== 0) throw new Error("Prayer-list removal failed.");
 
-const [types, model, runtime, prayPage, focusPage, savedPage, main] = await Promise.all(["src/personalization/types.ts", "src/personalization/model.ts", "src/personalization/runtime.ts", "src/pages/PrayPage.tsx", "src/pages/PrayerFocusPage.tsx", "src/pages/SavedPage.tsx", "src/main.tsx"].map(readText));
+const types = await readText("src/personalization/types.ts");
+const model = await readText("src/personalization/model.ts");
+const runtime = await readText("src/personalization/runtime.ts");
+const prayPage = await readText("src/pages/PrayPage.tsx");
+const focusPage = await readText("src/pages/PrayerFocusPage.tsx");
+const savedPage = await readText("src/pages/SavedPage.tsx");
+const main = await readText("src/main.tsx");
 const localSource = `${types}\n${model}\n${runtime}`;
 for (const forbidden of ["prayerCount", "totalPrayers", "prayerScore", "prayerStreak", "leaderboardRank"]) if (localSource.includes(forbidden)) throw new Error(`Forbidden prayer metric field: ${forbidden}`);
 for (const network of ["fetch(", "XMLHttpRequest", "sendBeacon", "WebSocket("]) if (runtime.includes(network)) throw new Error(`Personalization runtime must remain browser-local: ${network}`);
