@@ -5,6 +5,7 @@ export type RouteId =
   | "peoples"
   | "countries"
   | "languages"
+  | "coverage"
   | "pray"
   | "saved"
   | "about"
@@ -25,6 +26,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/peoples": "peoples",
   "/countries": "countries",
   "/languages": "languages",
+  "/coverage": "coverage",
   "/pray": "pray",
   "/saved": "saved",
   "/about": "about"
