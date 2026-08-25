@@ -101,10 +101,23 @@ export function AccountPage() {
 
   const deleteAccount = async () => {
     if (!window.confirm("Delete the private synced account data? Saved and prayer data on this device will remain local.")) return;
-    await run("delete", async () => {
+    setBusy("delete");
+    setNotice(null);
+    try {
       await deletePrivateAccountAndDisconnect();
-      setNotice("Private account data deleted. This device kept its local data.");
-    });
+      setRuntime(getSyncRuntimeStatus());
+      setAuthenticated(false);
+      setAccountEmail(null);
+      setBackend("ready");
+      setNotice("Private account data deleted. This device kept its local data. Sign in again only if you want to create a new private sync account.");
+      // Do not probe /private/state here: an active Access session would recreate an empty
+      // account row immediately after deletion. End the Access session instead.
+      openSyncLogout();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "The private account could not be deleted.");
+    } finally {
+      setBusy(null);
+    }
   };
 
   return (
