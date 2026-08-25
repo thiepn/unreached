@@ -1,0 +1,89 @@
+name: Promote Unreached v2.0.0
+
+on:
+  push:
+    branches:
+      - release/v2.0.0
+    paths:
+      - .github/workflows/promote-v2-release.yml
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_SHA: 09cd3e2c04c113db0da3a72bfc16491855fdc6b2
+      RELEASE_TAG: v2.0.0
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Verify certified target and package version
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "${TARGET_SHA}^{commit}"
+          git fetch origin main --no-tags
+          git merge-base --is-ancestor "${TARGET_SHA}" origin/main
+          VERSION="$(git show "${TARGET_SHA}:package.json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s).version))')"
+          test "${VERSION}" = "2.0.0"
+
+      - name: Create immutable release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null 2>&1; then
+            REMOTE_SHA="$(git ls-remote --tags origin "refs/tags/${RELEASE_TAG}^{}" | awk '{print $1}')"
+            if [ -z "${REMOTE_SHA}" ]; then
+              REMOTE_SHA="$(git ls-remote --tags origin "refs/tags/${RELEASE_TAG}" | awk '{print $1}')"
+            fi
+            test "${REMOTE_SHA}" = "${TARGET_SHA}"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "${RELEASE_TAG}" "${TARGET_SHA}" -m "Unreached v2.0.0 — certified production release"
+            git push origin "refs/tags/${RELEASE_TAG}"
+          fi
+
+      - name: Publish GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "${RELEASE_TAG} release already exists."
+            exit 0
+          fi
+          cat > release-notes.md <<'EOF'
+          ## Unreached v2.0.0
+
+          Production release of **Unreached — Explore. Understand. Pray.**
+
+          Certified frontend release commit: `09cd3e2c04c113db0da3a72bfc16491855fdc6b2`.
+
+          ### Included
+          - Live PeopleGroups.org / IMB Global Research mission-data experience with certified identity and classification semantics.
+          - Country, people-group, language, map, search, source/methodology, and reviewed editorial discovery experiences.
+          - Browser-local Saved peoples, private prayer list, ethical prayer rotation, and guided prayer sessions without scores, streaks, rankings, prayer totals, or public activity.
+          - v1.9 offline resilience: owned app-shell caching, validated cached mission-data return, explicit stale/offline provenance, and honest first-offline failure behavior.
+          - v2.0 optional private accounts and cross-device continuity for Saved membership, prayer-list membership, and latest `lastPrayedAt` only.
+          - Anonymous/local-only use remains the default and fully functional baseline.
+          - Cloudflare Access + D1 private-sync backend with explicit first-sign-in merge, tombstones, offline mutation queue, per-user authorization, export/delete controls, strict origin policy, and session-only Access bearer storage.
+
+          ### Privacy and data boundaries
+          - Recent browsing history remains local only.
+          - PeopleGroups provider corpus/cache is never uploaded to private sync.
+          - No prayer history, prayer counts, streaks, completion metrics, leaderboards, rankings, or spiritual-performance data is synchronized.
+
+          ### Certification
+          Release gates include deterministic type/build/policy validation, live PeopleGroups certification, Chromium/Firefox/WebKit desktop and mobile browser certification, deployed GitHub Pages production certification, D1 migration/deployment checks, Worker health verification, and Cloudflare Access protection verification.
+          EOF
+          gh release create "${RELEASE_TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --verify-tag \
+            --title "Unreached v2.0.0" \
+            --notes-file release-notes.md
