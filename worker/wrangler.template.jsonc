@@ -4,12 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-08-25",
   "compatibility_flags": ["nodejs_compat"],
-  "routes": [
-    {
-      "pattern": "www.thiepn.dev/unreached-sync/*",
-      "zone_name": "thiepn.dev"
-    }
-  ],
+  "workers_dev": true,
   "d1_databases": [
     {
       "binding": "DB",
