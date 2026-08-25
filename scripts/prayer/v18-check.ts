@@ -8,7 +8,9 @@ const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const pkg = JSON.parse(await readText("package.json")) as { version?: string };
 const versionMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(pkg.version ?? "");
-if (!versionMatch || Number(versionMatch[1]) !== 1 || Number(versionMatch[2]) < 8) throw new Error(`v1.8+ package capability mismatch: ${String(pkg.version)}`);
+const major = Number(versionMatch?.[1] ?? -1);
+const minor = Number(versionMatch?.[2] ?? -1);
+if (!versionMatch || major < 1 || (major === 1 && minor < 8)) throw new Error(`v1.8+ package capability mismatch: ${String(pkg.version)}`);
 
 const entries: PrayerListEntry[] = [
   { sourcePeopleId: 24277, peopleGroupId: "people-entity:peoplegroups:24277", name: "Kazakh", countryName: "Kazakhstan", languageName: "Kazakh", addedAt: "2026-08-21T10:00:00.000Z", lastPrayedAt: "2026-08-23T20:00:00.000Z" },
