@@ -28,9 +28,10 @@ if (!syncRuntime.includes('"unreached.sync.v1"')) throw new Error("v2.0 sync met
 for (const marker of ['SyncKind = "saved" | "prayer"', "baseItemRevision", "mutationId", "pending", "mirror"]) {
   if (!syncTypes.includes(marker)) throw new Error(`v2.0 sync contract missing ${marker}.`);
 }
-for (const marker of ["captureLocalDiff", "enablePrivateSyncWithMerge", "disconnectPrivateSync", "crypto.randomUUID", "lastPrayedAt", "applyingRemoteState"]) {
+for (const marker of ["captureLocalDiff", "enablePrivateSyncWithMerge", "disconnectPrivateSync", "createMutationId", "crypto.randomUUID", "crypto.getRandomValues", "lastPrayedAt", "applyingRemoteState"]) {
   if (!syncRuntime.includes(marker)) throw new Error(`v2.0 local sync runtime missing ${marker}.`);
 }
+if (syncRuntime.includes("Math.random")) throw new Error("v2.0 mutation IDs must never fall back to Math.random.");
 if (!syncRuntime.includes("readBrowserPersonalizationState") || !syncRuntime.includes("persistBrowserPersonalizationState")) throw new Error("v2.0 sync must bridge the existing browser-local state rather than replace it.");
 
 const protocolSurface = `${syncTypes}\n${syncClient}\n${worker}`;
@@ -74,4 +75,4 @@ if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styl
 const offlineGate = await readText("scripts/offline/v19-check.ts");
 if (offlineGate.includes('pkg.version !== "1.9.0"')) throw new Error("v1.9 capability gate must remain forward-compatible for v2.0.");
 
-console.log("v2.0 private continuity checks passed: optional local-first accounts, explicit merge, tombstones, latest-only prayer timestamp, private Access+D1 backend, export/delete controls, no recent history/corpus/performance sync.");
+console.log("v2.0 private continuity checks passed: optional local-first accounts, explicit merge, secure cross-WebKit mutation IDs, tombstones, latest-only prayer timestamp, private Access+D1 backend, export/delete controls, no recent history/corpus/performance sync.");
