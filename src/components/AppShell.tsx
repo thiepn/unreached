@@ -15,6 +15,7 @@ import {
 } from "lucide-preact";
 
 import { hrefFor, type RouteId } from "../app/router";
+import { DataStatus } from "./DataStatus";
 import { SearchDialog } from "./SearchDialog";
 
 interface AppShellProps {
@@ -138,6 +139,7 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
         </nav>
 
         <div class="header-actions">
+          <DataStatus />
           <button
             class="icon-action utility-action search-action"
             type="button"

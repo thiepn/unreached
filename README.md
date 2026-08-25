@@ -8,8 +8,37 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 - **Repository:** https://github.com/thiepn/unreached
 - **Platform:** static Preact/Vite application deployed through GitHub Pages
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.8.0**
-- **Release state:** **v1.8 Guided Prayer Session & Rotation Review — production certified**
+- **Version:** **1.9.0**
+- **Release state:** **v1.9 Offline Resilience & Cached Return**
+
+## v1.9 — offline resilience & cached return
+
+v1.9 makes the existing local-first V1 product resilient to temporary connectivity and provider outages without bundling a PeopleGroups.org mirror.
+
+### Installable offline shell
+
+The production build emits a scoped `/unreached/sw.js` service worker and installable manifest. The worker precaches only same-origin Unreached-owned assets: the application shell, hashed code/styles/fonts, Natural Earth geography, the reviewed editorial publication, and local status/methodology assets.
+
+It does **not** intercept, proxy, precache, or runtime-cache PeopleGroups.org API requests.
+
+### Validated cached mission data
+
+PeopleGroups mission records remain in the existing validated IndexedDB snapshot cache after a successful runtime load.
+
+- up to 24 hours: a complete validated cache may be used as fresh;
+- after 24 hours while online: Unreached attempts a live refresh;
+- if an online refresh fails: a validated cache up to seven days old may be used as stale fallback;
+- while explicitly offline: an older fully validated snapshot may still be used for continuity, but it is visibly marked stale and awaiting revalidation.
+
+If no validated mission snapshot exists yet, the offline app shell fails closed and asks the user to reconnect once rather than inventing or silently substituting mission data.
+
+### Visible provenance and reconnect
+
+The header exposes **Live mission data**, **Cached mission data**, **Stale cached mission data**, and **Offline · no mission cache** states with snapshot-time context. When connectivity returns after a cached/stale/error state, Unreached automatically forces PeopleGroups revalidation and returns to live provenance after a successful refresh.
+
+Saved people, the private prayer list, rotation, and guided sessions remain browser-local and can resolve against the validated cached corpus when available. No account, cloud sync, prayer-history, or performance tracking is added.
+
+See [`docs/V19_OFFLINE_RESILIENCE.md`](docs/V19_OFFLINE_RESILIENCE.md).
 
 ## v1.8 — guided prayer session & rotation review
 
@@ -177,25 +206,28 @@ IMB **GSEC** remains source-native:
 
 | Surface | Production behavior |
 | --- | --- |
-| Explore | Natural Earth geography + live PeopleGroups.org mission aggregation |
+| Explore | Natural Earth geography + live or explicitly cached/stale PeopleGroups.org mission aggregation |
 | Peoples | One current PEID/PGID source record per route + guided starts + reviewed-context annotation/filter |
-| Reviewed coverage | Local-first index, regional distribution, filtering and navigation over twelve reviewed profile shards |
-| Countries | Local Natural Earth index + live country-context records + country-specific reviewed editorial links |
-| Languages | Live ISO 639-3 aggregation over current source records |
-| Prayer | Current GSEC 0–3 record + fixed release-certified prayer template + private prayer rotation when available |
+| Reviewed coverage | Local-first index, regional distribution, filtering and navigation over twelve reviewed profile shards; available from the owned offline shell |
+| Countries | Local Natural Earth index + live/cached country-context records + country-specific reviewed editorial links |
+| Languages | Live/cached ISO 639-3 aggregation over current validated source records |
+| Prayer | Current eligible source record + fixed release-certified prayer template + private prayer rotation when available |
 | Focused prayer | Source-backed prayer flow + optional latest-only local prayer timestamp + guided next-person continuation |
 | Guided prayer session | Frozen page-local 3/5/full rotation plan + compact source-backed prompts + optional existing latest-only recording |
 | Editorial context | Twelve reviewed Tier-3 source-record profile shards; intentionally partial coverage |
 | Saved & prayer | Browser-local prayer list/rotation/session launcher, saved people snapshots, and recent exploration |
+| Offline shell | Same-origin PWA precache for Unreached-owned application/geography/editorial assets only |
 | ProgressBible | permission-gated and not used |
 | Ethnologue proprietary taxonomy | permission-gated and not used |
 | Third-party people photos | not redistributed without separate authorization |
 
 ## Runtime reliability
 
-PeopleGroups responses are treated as untrusted external input. Protections include Zod validation, request timeouts, pagination/count limits, bounded concurrency, duplicate PGID/PEID rejection, GSEC bounds, fail-closed schema-drift handling, one shared session corpus, IndexedDB caching with a 24-hour fresh window and seven-day explicit stale fallback, and best-effort storage behavior.
+PeopleGroups responses are treated as untrusted external input. Protections include Zod validation, request timeouts, pagination/count limits, bounded concurrency, duplicate PGID/PEID rejection, GSEC bounds, fail-closed schema-drift handling, one shared session corpus, complete-snapshot IndexedDB validation, and best-effort storage behavior.
 
-Personal prayer state is separate from mission data: it is local-only, bounded, migration-validated, and never treated as an authoritative source record. v1.7 rotation and v1.8 session planning are derived at runtime and add no persistent ranking, performance, or session-history state.
+Online cache policy uses a 24-hour fresh window and seven-day explicit stale fallback after refresh failure. When the browser explicitly reports that it is offline, an older fully validated local snapshot may be used only with stale/offline provenance until reconnection revalidates it. The service worker caches only same-origin Unreached-owned assets and never becomes a PeopleGroups corpus store.
+
+Personal prayer state is separate from mission data: it is local-only, bounded, migration-validated, and never treated as an authoritative source record. v1.7 rotation and v1.8 session planning are derived at runtime and add no persistent ranking, performance, or session-history state. v1.9 does not change that schema.
 
 ## Release certification
 
@@ -205,18 +237,19 @@ A release candidate must pass:
 - deterministic source/data/editorial/release-policy checks;
 - PeopleGroups runtime/cache/visible-data/identity checks;
 - geography and mission-visualization checks;
-- country, people, context, prayer, prayer-practice, prayer-rotation, prayer-session, language, and discovery checks;
-- production distribution checks;
+- country, people, context, prayer, prayer-practice, prayer-rotation, prayer-session, language, discovery, and offline-resilience checks;
+- production distribution checks including the emitted service worker and manifest boundary;
 - Chromium, Firefox, and WebKit desktop journeys;
 - mobile Chromium and mobile WebKit journeys;
+- offline shell, cached mission-data, first-offline, and reconnect browser journeys;
 - live PeopleGroups editorial-identity preflight;
 - complete live PeopleGroups corpus audit;
 - browser API/CORS contract;
 - post-merge GitHub Pages certification against the deployed site.
 
-v1.6 certifies browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, and absence of competitive/spiritual prayer metrics. v1.7 adds derived rotation ordering, scope-aware selection, guided continuation, and non-priority semantics. v1.8 adds frozen 3/5/full guided-session planning, eligibility filtering, mid-session ordering stability, page-local session state, and explicit zero-persistence session-history/performance guarantees.
+v1.6 certifies browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, and absence of competitive/spiritual prayer metrics. v1.7 adds derived rotation ordering, scope-aware selection, guided continuation, and non-priority semantics. v1.8 adds frozen 3/5/full guided-session planning, eligibility filtering, mid-session ordering stability, page-local session state, and explicit zero-persistence session-history/performance guarantees. v1.9 adds the same-origin PWA shell, explicit live/cached/stale provenance, validated offline return, first-offline fail-closed behavior, and reconnect revalidation without introducing a bundled PeopleGroups dataset.
 
-See [`docs/V18_PRAYER_SESSION.md`](docs/V18_PRAYER_SESSION.md), [`docs/V17_PRAYER_ROTATION.md`](docs/V17_PRAYER_ROTATION.md), [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
+See [`docs/V19_OFFLINE_RESILIENCE.md`](docs/V19_OFFLINE_RESILIENCE.md), [`docs/V18_PRAYER_SESSION.md`](docs/V18_PRAYER_SESSION.md), [`docs/V17_PRAYER_ROTATION.md`](docs/V17_PRAYER_ROTATION.md), [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
 ## Local development
 
@@ -239,4 +272,4 @@ Browser certification:
 npm run e2e
 ```
 
-Vite is configured for the `/unreached/` project path.
+Vite is configured for the `/unreached/` project path. Service-worker registration is production-build only.

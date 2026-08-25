@@ -23,6 +23,7 @@ export interface PeopleGroupsCorpusLoaderOptions {
   client?: PeopleGroupsApiClient;
   cache?: PeopleGroupsPageCache;
   now?: () => number;
+  isOnline?: () => boolean;
 }
 
 interface ValidatedCache {
@@ -35,8 +36,6 @@ async function readCompleteCache(cache: PeopleGroupsPageCache, now: number): Pro
   const first = await cache.read(1);
   if (!first || first.schemaVersion !== 1 || first.totalPages < 1) return null;
 
-  // IndexedDB page reads are independent. Reading the remaining snapshot pages
-  // concurrently avoids dozens of serialized transactions on repeat visits.
   const remaining = first.totalPages > 1
     ? await Promise.all(Array.from({ length: first.totalPages - 1 }, (_, index) => cache.read(index + 2)))
     : [];
@@ -79,23 +78,42 @@ async function readValidatedCache(cache: PeopleGroupsPageCache, now: number): Pr
   }
 }
 
+function cacheResult(cached: ValidatedCache, stale: boolean, warning: string | null): PeopleGroupsCorpusLoadResult {
+  return {
+    records: cached.records,
+    source: stale ? "cache-stale" : "cache-fresh",
+    stale,
+    loadedAt: cached.pages[0]!.storedAt,
+    totalPages: cached.pages.length,
+    totalRecords: cached.records.length,
+    warning,
+  };
+}
+
 export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoaderOptions = {}) {
   const client = options.client ?? createPeopleGroupsApiClient();
   const cache = options.cache ?? createIndexedDbPeopleGroupsCache();
   const now = options.now ?? Date.now;
+  const isOnline = options.isOnline ?? (() => typeof navigator === "undefined" || navigator.onLine !== false);
 
   async function load(params: { signal?: AbortSignal; forceRefresh?: boolean; onProgress?: (loadedPages: number, totalPages: number) => void } = {}): Promise<PeopleGroupsCorpusLoadResult> {
     const cached = await readValidatedCache(cache, now());
     if (!params.forceRefresh && cached && cached.age <= PEOPLE_GROUPS_CACHE_FRESH_MS) {
-      return {
-        records: cached.records,
-        source: "cache-fresh",
-        stale: false,
-        loadedAt: cached.pages[0]!.storedAt,
-        totalPages: cached.pages.length,
-        totalRecords: cached.records.length,
-        warning: null,
-      };
+      return cacheResult(cached, false, null);
+    }
+
+    if (!isOnline()) {
+      if (cached) {
+        const stale = cached.age > PEOPLE_GROUPS_CACHE_FRESH_MS;
+        return cacheResult(
+          cached,
+          stale,
+          stale
+            ? "You are offline. Showing the last fully validated local PeopleGroups snapshot; it may be out of date and will be refreshed after reconnection."
+            : "You are offline. Showing a recent fully validated local PeopleGroups snapshot.",
+        );
+      }
+      throw new Error("You are offline and no validated PeopleGroups cache is available yet. Reconnect once to prepare mission data for offline return.");
     }
 
     try {
@@ -118,8 +136,6 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
         },
       });
 
-      // The live corpus is authoritative. Cache writes begin only after the entire
-      // provider snapshot has passed schema, pagination, count, and duplicate checks.
       await Promise.allSettled(pendingCachePages.map((page) => cache.write(page)));
 
       return {
@@ -133,15 +149,11 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
       };
     } catch (error) {
       if (cached && cached.age <= PEOPLE_GROUPS_CACHE_STALE_MAX_MS) {
-        return {
-          records: cached.records,
-          source: "cache-stale",
-          stale: true,
-          loadedAt: cached.pages[0]!.storedAt,
-          totalPages: cached.pages.length,
-          totalRecords: cached.records.length,
-          warning: "Live PeopleGroups.org data could not be refreshed. Showing a previously validated local cache that may be out of date.",
-        };
+        return cacheResult(
+          cached,
+          true,
+          "Live PeopleGroups.org data could not be refreshed. Showing a previously validated local cache that may be out of date.",
+        );
       }
       throw error;
     }

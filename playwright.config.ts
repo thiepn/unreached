@@ -16,6 +16,9 @@ export default defineConfig({
     baseURL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // Routed PeopleGroups fixtures must not be bypassed by an active service worker.
+    // The dedicated v1.9 offline suite opts back in explicitly.
+    serviceWorkers: "block",
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
