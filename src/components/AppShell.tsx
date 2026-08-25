@@ -11,6 +11,7 @@ import {
   Map,
   Menu,
   Search,
+  UserRound,
   UsersRound,
 } from "lucide-preact";
 
@@ -41,6 +42,7 @@ const browseNav: NavItem[] = [
   { id: "coverage", label: "Reviewed coverage", path: "/coverage", icon: BookOpenText, description: "Browse people records with reviewed contextual articles" },
   { id: "countries", label: "Countries", path: "/countries", icon: Globe2, description: "Browse mission context by nation" },
   { id: "languages", label: "Languages", path: "/languages", icon: Languages, description: "Explore language and resource records" },
+  { id: "account", label: "Account & sync", path: "/account", icon: UserRound, description: "Optional private cross-device continuity" },
   { id: "about", label: "About & sources", path: "/about", icon: Info, description: "Definitions, methodology and data policy" },
 ];
 
@@ -159,6 +161,15 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
           >
             <Bookmark size={18} aria-hidden="true" />
             <span class="utility-action__label">Saved</span>
+          </a>
+          <a
+            class={`icon-action utility-action account-action${activeRoute === "account" ? " is-active" : ""}`}
+            href={hrefFor("/account")}
+            aria-label="Account and private sync"
+            aria-current={activeRoute === "account" ? "page" : undefined}
+          >
+            <UserRound size={18} aria-hidden="true" />
+            <span class="utility-action__label">Account</span>
           </a>
         </div>
       </header>
