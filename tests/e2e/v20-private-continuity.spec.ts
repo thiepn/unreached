@@ -71,6 +71,11 @@ async function installHealth(page: Page, ok = true) {
 }
 
 test.describe("v2.0 optional private accounts", () => {
+  // These journeys certify the sync protocol/runtime through Playwright route fixtures.
+  // Blocking the already-deployed app service worker keeps those fixtures authoritative;
+  // v1.9 separately certifies the real production service worker and offline shell.
+  test.use({ serviceWorkers: "block" });
+
   test("local-only remains complete when the private backend is unavailable", async ({ page }) => {
     await seed(page, personalization());
     await installHealth(page, false);
