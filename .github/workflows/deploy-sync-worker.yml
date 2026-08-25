@@ -1,0 +1,125 @@
+name: Unreached Private Sync Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "worker/**"
+      - ".github/workflows/deploy-sync-worker.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unreached-private-sync-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WORKER_NAME: unreached-private-continuity
+      D1_NAME: unreached-private-continuity
+      ACCESS_APP_NAME: Unreached private continuity
+      ACCESS_DOMAIN: www.thiepn.dev/unreached-sync/private/*
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Verify deployment credentials exist
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "CLOUDFLARE_API_TOKEN is missing"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "CLOUDFLARE_ACCOUNT_ID is missing"; exit 1; }
+
+      - name: Install Worker dependencies
+        working-directory: worker
+        run: npm install --no-audit --no-fund
+
+      - name: Create or reuse D1 database
+        id: d1
+        working-directory: worker
+        run: |
+          set -euo pipefail
+          LIST=$(npx wrangler d1 list --json)
+          DB_ID=$(printf '%s' "$LIST" | jq -r --arg name "$D1_NAME" '.[] | select(.name == $name) | (.uuid // .id)' | head -n1)
+          if [ -z "$DB_ID" ] || [ "$DB_ID" = "null" ]; then
+            CREATED=$(npx wrangler d1 create "$D1_NAME" --json)
+            DB_ID=$(printf '%s' "$CREATED" | jq -r '.uuid // .id // .result.uuid // .result.id')
+          fi
+          test -n "$DB_ID" && test "$DB_ID" != "null"
+          echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Create or reuse One-time PIN identity provider
+        id: otp
+        run: |
+          set -euo pipefail
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"
+          PROVIDERS=$(curl --fail-with-body --silent --show-error -H "$AUTH" "$BASE/identity_providers")
+          OTP_ID=$(printf '%s' "$PROVIDERS" | jq -r '.result[] | select(.type == "onetimepin") | .id' | head -n1)
+          if [ -z "$OTP_ID" ] || [ "$OTP_ID" = "null" ]; then
+            CREATED=$(curl --fail-with-body --silent --show-error -X POST -H "$AUTH" -H "Content-Type: application/json" \
+              --data '{"name":"Unreached email one-time PIN","type":"onetimepin","config":{}}' \
+              "$BASE/identity_providers")
+            OTP_ID=$(printf '%s' "$CREATED" | jq -r '.result.id')
+          fi
+          test -n "$OTP_ID" && test "$OTP_ID" != "null"
+          echo "otp_id=$OTP_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Create or reuse Access application
+        id: access
+        env:
+          OTP_ID: ${{ steps.otp.outputs.otp_id }}
+        run: |
+          set -euo pipefail
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"
+          APPS=$(curl --fail-with-body --silent --show-error -H "$AUTH" "$BASE/apps")
+          APP_ID=$(printf '%s' "$APPS" | jq -r --arg name "$ACCESS_APP_NAME" '.result[] | select(.name == $name) | .id' | head -n1)
+          AUD=$(printf '%s' "$APPS" | jq -r --arg name "$ACCESS_APP_NAME" '.result[] | select(.name == $name) | .aud' | head -n1)
+          if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
+            PAYLOAD=$(jq -n \
+              --arg name "$ACCESS_APP_NAME" \
+              --arg domain "$ACCESS_DOMAIN" \
+              --arg otp "$OTP_ID" \
+              '{type:"self_hosted",name:$name,domain:$domain,session_duration:"720h",allowed_idps:[$otp],auto_redirect_to_identity:true,app_launcher_visible:false,policies:[{name:"Authenticated email account",decision:"allow",include:[{login_method:{id:$otp}}]}]}')
+            CREATED=$(curl --fail-with-body --silent --show-error -X POST -H "$AUTH" -H "Content-Type: application/json" --data "$PAYLOAD" "$BASE/apps")
+            APP_ID=$(printf '%s' "$CREATED" | jq -r '.result.id')
+            AUD=$(printf '%s' "$CREATED" | jq -r '.result.aud')
+          fi
+          test -n "$APP_ID" && test "$APP_ID" != "null"
+          test -n "$AUD" && test "$AUD" != "null"
+          echo "aud=$AUD" >> "$GITHUB_OUTPUT"
+
+      - name: Render production Wrangler configuration
+        working-directory: worker
+        env:
+          D1_DATABASE_ID: ${{ steps.d1.outputs.database_id }}
+          ACCESS_AUD: ${{ steps.access.outputs.aud }}
+        run: node render-config.mjs
+
+      - name: Generate binding types and typecheck Worker
+        working-directory: worker
+        run: npm run check
+
+      - name: Apply D1 migrations
+        working-directory: worker
+        run: npx wrangler d1 migrations apply "$D1_NAME" --remote --config wrangler.generated.jsonc
+
+      - name: Deploy private sync Worker
+        working-directory: worker
+        run: npm run deploy
+
+      - name: Verify public health endpoint
+        run: |
+          RESPONSE=$(curl --fail-with-body --silent --show-error --retry 5 --retry-delay 2 "https://www.thiepn.dev/unreached-sync/health")
+          printf '%s' "$RESPONSE" | jq -e '.ok == true and .version == "2.0.0"' >/dev/null
+          echo "$RESPONSE"
