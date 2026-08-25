@@ -45,14 +45,18 @@ jobs:
 
       - name: Create or reuse D1 database
         id: d1
-        working-directory: worker
         run: |
           set -euo pipefail
-          LIST=$(npx wrangler d1 list --json)
-          DB_ID=$(printf '%s' "$LIST" | jq -r --arg name "$D1_NAME" '.[] | select(.name == $name) | (.uuid // .id)' | head -n1)
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database"
+          LIST=$(curl --fail-with-body --silent --show-error -H "$AUTH" "$BASE")
+          printf '%s' "$LIST" | jq -e '.success == true' >/dev/null
+          DB_ID=$(printf '%s' "$LIST" | jq -r --arg name "$D1_NAME" '.result[]? | select(.name == $name) | (.uuid // .id)' | head -n1)
           if [ -z "$DB_ID" ] || [ "$DB_ID" = "null" ]; then
-            CREATED=$(npx wrangler d1 create "$D1_NAME" --json)
-            DB_ID=$(printf '%s' "$CREATED" | jq -r '.uuid // .id // .result.uuid // .result.id')
+            PAYLOAD=$(jq -n --arg name "$D1_NAME" '{name:$name}')
+            CREATED=$(curl --fail-with-body --silent --show-error -X POST -H "$AUTH" -H "Content-Type: application/json" --data "$PAYLOAD" "$BASE")
+            printf '%s' "$CREATED" | jq -e '.success == true' >/dev/null
+            DB_ID=$(printf '%s' "$CREATED" | jq -r '.result.uuid // .result.id')
           fi
           test -n "$DB_ID" && test "$DB_ID" != "null"
           echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
