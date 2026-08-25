@@ -2,6 +2,10 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { installPeopleGroupsFixture, VISIBLE_TEST_PEOPLE } from "./peoplegroups-fixture";
 
+// The default browser matrix blocks service workers so route-backed provider fixtures stay deterministic.
+// This suite is the explicit exception because it certifies the production offline shell itself.
+test.use({ serviceWorkers: "allow" });
+
 async function ensureServiceWorkerControl(page: Page): Promise<void> {
   await page.evaluate(async () => {
     if (!("serviceWorker" in navigator)) throw new Error("service workers unavailable in this browser");
