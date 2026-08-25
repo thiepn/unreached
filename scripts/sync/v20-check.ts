@@ -42,18 +42,65 @@ for (const forbidden of [
   if (protocolSurface.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`v2.0 private sync protocol contains forbidden field/reference: ${forbidden}`);
 }
 
-if (!syncClient.includes('SYNC_API_BASE = "/unreached-sync"')) throw new Error("v2.0 sync client must use the same-origin private service path.");
-for (const marker of ["credentials: \"include\"", "cache: \"no-store\"", "deleteRemoteAccount", "exportRemoteAccount", "openSyncSignIn"]) {
+for (const marker of [
+  "https://unreached-private-continuity.thiepn.workers.dev",
+  '"unreached.sync.access.v1"',
+  "sessionStorage",
+  "Authorization",
+  "Bearer",
+  'credentials: "omit"',
+  'mode: "cors"',
+  "storeSyncAccessToken",
+  "clearSyncAccessToken",
+  "deleteRemoteAccount",
+  "exportRemoteAccount",
+  "openSyncSignIn",
+]) {
   if (!syncClient.includes(marker)) throw new Error(`v2.0 sync client missing ${marker}.`);
 }
+if (syncClient.includes('credentials: "include"')) throw new Error("v2.0 workers.dev sync must not depend on cross-site cookies.");
+if (syncClient.includes("localStorage")) throw new Error("v2.0 Access identity tokens must not be persisted in localStorage.");
 
-for (const marker of ["Merge this device & enable sync", "Nothing is uploaded while you remain signed out", "Recent browsing history stays on this device", "No prayer history", "PeopleGroups.org corpus", "Delete private account data", "Disconnect this device"]) {
-  if (!accountPage.includes(marker)) throw new Error(`v2.0 account surface missing explicit privacy/consent marker: ${marker}`);
+for (const marker of [
+  "Merge this device & enable sync",
+  "Nothing is uploaded while you remain signed out",
+  "Recent browsing history stays on this device",
+  "No prayer history",
+  "PeopleGroups.org corpus",
+  "Delete private account data",
+  "Disconnect this device",
+  "SYNC_BACKEND_ORIGIN",
+  "event.origin !== SYNC_BACKEND_ORIGIN",
+  "storeSyncAccessToken",
+]) {
+  if (!accountPage.includes(marker)) throw new Error(`v2.0 account surface missing explicit privacy/auth marker: ${marker}`);
 }
 
-for (const marker of ["Cf-Access-Jwt-Assertion", "createRemoteJWKSet", "jwtVerify", "env.ACCESS_AUD", "sha256Hex", "MAX_BODY_BYTES", "MAX_MUTATIONS", "current.present === 0", "current.revision > mutation.baseItemRevision", "sync_mutations", "last_prayed_at", "PRIVATE_PREFIX}/export", "PRIVATE_PREFIX}/account"]) {
+for (const marker of [
+  "Cf-Access-Jwt-Assertion",
+  "Authorization",
+  "Bearer",
+  "createRemoteJWKSet",
+  "jwtVerify",
+  "env.ACCESS_AUD",
+  "sha256Hex",
+  "MAX_BODY_BYTES",
+  "MAX_MUTATIONS",
+  "current.present === 0",
+  "current.revision > mutation.baseItemRevision",
+  "sync_mutations",
+  "last_prayed_at",
+  "PRIVATE_PREFIX}/export",
+  "PRIVATE_PREFIX}/account",
+  "Access-Control-Allow-Origin",
+  "Access-Control-Allow-Headers",
+  "env.APP_ORIGIN",
+  "postMessage",
+  "accessTokenFromRequest",
+]) {
   if (!worker.includes(marker)) throw new Error(`v2.0 Worker missing security/conflict marker: ${marker}`);
 }
+if (!worker.includes('request.headers.get("Cf-Access-Jwt-Assertion")')) throw new Error("v2.0 sign-in bootstrap must require a Cloudflare Access assertion.");
 for (const forbidden of ["Math.random", "prayer_history", "prayer_count", "recent", "peoplegroups.org", "/wp-json/pg/v1"]) {
   if (worker.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`v2.0 Worker contains forbidden implementation/reference: ${forbidden}`);
 }
@@ -61,10 +108,24 @@ for (const forbidden of ["Math.random", "prayer_history", "prayer_count", "recen
 for (const table of ["sync_users", "sync_items", "sync_mutations"]) if (!migration.includes(`CREATE TABLE IF NOT EXISTS ${table}`)) throw new Error(`v2.0 D1 migration missing ${table}.`);
 if (!migration.includes("ON DELETE CASCADE")) throw new Error("v2.0 account deletion must cascade private sync rows.");
 
-for (const marker of ["nodejs_compat", '"DB"', "__D1_DATABASE_ID__", "__ACCESS_AUD__", "observability", "www.thiepn.dev/unreached-sync/*"]) {
+for (const marker of ["nodejs_compat", '"workers_dev": true', '"DB"', "__D1_DATABASE_ID__", "__ACCESS_AUD__", "observability"]) {
   if (!workerConfig.includes(marker)) throw new Error(`v2.0 Wrangler template missing ${marker}.`);
 }
-for (const marker of ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "wrangler d1", "identity_providers", "ACCESS_DOMAIN", "migrations apply", "npm run deploy", "unreached-sync/health"]) {
+if (workerConfig.includes('"routes"') || workerConfig.includes("www.thiepn.dev/unreached-sync/*")) throw new Error("v2.0 Worker must not depend on thiepn.dev being a Cloudflare-managed zone.");
+
+for (const marker of [
+  "CLOUDFLARE_API_TOKEN",
+  "CLOUDFLARE_ACCOUNT_ID",
+  "/d1/database",
+  "/workers/subdomain",
+  "workers.dev",
+  "identity_providers",
+  "/access",
+  "migrations apply",
+  "npm run deploy",
+  "unreached-sync/health",
+  "unreached-sync/private/auth/start",
+]) {
   if (!deploy.includes(marker)) throw new Error(`v2.0 production deployment workflow missing ${marker}.`);
 }
 
@@ -75,4 +136,4 @@ if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styl
 const offlineGate = await readText("scripts/offline/v19-check.ts");
 if (offlineGate.includes('pkg.version !== "1.9.0"')) throw new Error("v1.9 capability gate must remain forward-compatible for v2.0.");
 
-console.log("v2.0 private continuity checks passed: optional local-first accounts, explicit merge, secure cross-WebKit mutation IDs, tombstones, latest-only prayer timestamp, private Access+D1 backend, export/delete controls, no recent history/corpus/performance sync.");
+console.log("v2.0 private continuity checks passed: optional local-first accounts, explicit merge, secure mutation IDs, tombstones, latest-only prayer timestamp, workers.dev Access bootstrap + session-only verified bearer bridge, strict CORS, D1 backend, export/delete controls, no recent history/corpus/performance sync.");
