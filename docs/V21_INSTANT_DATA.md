@@ -41,14 +41,18 @@ If revalidation succeeds, the new fully materialized corpus replaces the old run
 
 ## Startup warming
 
-The application shell renders first. Mission-data warming is scheduled afterward using `requestIdleCallback` when available, with a timer fallback for browsers without that API.
+The application shell renders first. Local mission-data warming is scheduled afterward using `requestIdleCallback` when available, with a timer fallback for browsers without that API.
 
 This means:
 
 1. navigation and owned UI paint first;
-2. the prepared local snapshot is hydrated before a corpus request when available;
-3. a first-time visitor can begin background corpus preparation without blocking the shell;
-4. later navigation to Peoples, Countries, Languages, Explore, Saved, or Prayer can reuse the already-warmed shared runtime.
+2. the prepared local snapshot is hydrated in the background when one exists;
+3. a fresh prepared snapshot causes no provider request;
+4. a stale-but-usable prepared snapshot may start live revalidation in the background while remaining visible;
+5. a first-time visitor with no prepared snapshot does **not** trigger a cold corpus request merely by opening a local-only surface such as Search or editorial coverage;
+6. the first surface that actually requires mission data starts the normal certified corpus load, after which later visits benefit from the prepared snapshot.
+
+This preserves the pre-existing lazy-network contract while still making repeat mission-data visits effectively immediate.
 
 Reconnect handling remains active and forces live revalidation after stale/offline/error states.
 
@@ -74,7 +78,7 @@ PeopleGroups.org currently documents a public comprehensive CSV download in addi
 - database migration from the existing page-cache schema;
 - prepared snapshot validation;
 - non-blocking stale-while-revalidate runtime state;
-- idle startup warming;
+- local-only idle startup warming;
 - reconnect refresh;
 - provider `no-store` semantics;
 - preservation of the no-static-mirror boundary.
@@ -83,7 +87,8 @@ The browser suite additionally verifies that:
 
 1. one validated load creates a prepared snapshot;
 2. a fresh repeat visit renders from that snapshot without a PeopleGroups.org request;
-3. a two-day-old snapshot remains visible while a deliberately delayed provider refresh is still unresolved.
+3. a two-day-old snapshot remains visible while a deliberately delayed provider refresh is still unresolved;
+4. local-only surfaces do not trigger a cold provider request when no prepared snapshot exists.
 
 ## Expected UX
 
