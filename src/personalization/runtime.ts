@@ -14,9 +14,9 @@ import {
 } from "./model";
 import type { PersonalizationState, RecentVisit, SavedPersonSnapshot } from "./types";
 
-const STORAGE_KEY = "unreached.personal.v2";
-const LEGACY_STORAGE_KEY = "unreached.personal.v1";
-const CHANGE_EVENT = "unreached:personalization-change";
+export const PERSONALIZATION_STORAGE_KEY = "unreached.personal.v2";
+export const LEGACY_PERSONALIZATION_STORAGE_KEY = "unreached.personal.v1";
+export const PERSONALIZATION_CHANGE_EVENT = "unreached:personalization-change";
 
 function parseStored(raw: string | null): PersonalizationState | null {
   if (!raw) return null;
@@ -27,39 +27,39 @@ function parseStored(raw: string | null): PersonalizationState | null {
   }
 }
 
-function readBrowserState(): PersonalizationState {
+export function readBrowserPersonalizationState(): PersonalizationState {
   if (typeof window === "undefined") return emptyPersonalizationState();
   try {
-    return parseStored(window.localStorage.getItem(STORAGE_KEY))
-      ?? parseStored(window.localStorage.getItem(LEGACY_STORAGE_KEY))
+    return parseStored(window.localStorage.getItem(PERSONALIZATION_STORAGE_KEY))
+      ?? parseStored(window.localStorage.getItem(LEGACY_PERSONALIZATION_STORAGE_KEY))
       ?? emptyPersonalizationState();
   } catch {
     return emptyPersonalizationState();
   }
 }
 
-function persistBrowserState(state: PersonalizationState): void {
+export function persistBrowserPersonalizationState(state: PersonalizationState): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    window.dispatchEvent(new Event(CHANGE_EVENT));
+    window.localStorage.setItem(PERSONALIZATION_STORAGE_KEY, JSON.stringify(state));
+    window.dispatchEvent(new Event(PERSONALIZATION_CHANGE_EVENT));
   } catch {
     // Storage can be disabled or quota-limited. The current session state remains usable.
   }
 }
 
 export function usePersonalization() {
-  const [state, setState] = useState<PersonalizationState>(() => readBrowserState());
+  const [state, setState] = useState<PersonalizationState>(() => readBrowserPersonalizationState());
 
   useEffect(() => {
-    const refresh = () => setState(readBrowserState());
+    const refresh = () => setState(readBrowserPersonalizationState());
     const onStorage = (event: StorageEvent) => {
-      if (event.key === STORAGE_KEY || event.key === LEGACY_STORAGE_KEY) refresh();
+      if (event.key === PERSONALIZATION_STORAGE_KEY || event.key === LEGACY_PERSONALIZATION_STORAGE_KEY) refresh();
     };
-    window.addEventListener(CHANGE_EVENT, refresh);
+    window.addEventListener(PERSONALIZATION_CHANGE_EVENT, refresh);
     window.addEventListener("storage", onStorage);
     return () => {
-      window.removeEventListener(CHANGE_EVENT, refresh);
+      window.removeEventListener(PERSONALIZATION_CHANGE_EVENT, refresh);
       window.removeEventListener("storage", onStorage);
     };
   }, []);
@@ -67,7 +67,7 @@ export function usePersonalization() {
   const apply = useCallback((update: (current: PersonalizationState) => PersonalizationState) => {
     setState((current) => {
       const next = update(current);
-      persistBrowserState(next);
+      persistBrowserPersonalizationState(next);
       return next;
     });
   }, []);

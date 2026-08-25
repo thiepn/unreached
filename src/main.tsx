@@ -2,6 +2,7 @@ import { render } from "preact";
 
 import { App } from "./app/App";
 import { initializeOfflineRuntime } from "./offline/runtime";
+import { initializePrivateSyncRuntime } from "./sync/runtime";
 import "@fontsource-variable/newsreader";
 import "@fontsource-variable/source-sans-3";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -28,6 +29,8 @@ import "./styles/v16.css";
 import "./styles/v17.css";
 import "./styles/v18.css";
 import "./styles/v19.css";
+import "./styles/v20.css";
 
 initializeOfflineRuntime();
+initializePrivateSyncRuntime();
 render(<App />, document.getElementById("app")!);

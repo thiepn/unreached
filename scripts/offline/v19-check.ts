@@ -8,7 +8,10 @@ import { createPeopleGroupsCorpusLoader } from "../../src/providers/peoplegroups
 const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const pkg = JSON.parse(await readText("package.json")) as { version?: string };
-if (pkg.version !== "1.9.0") throw new Error(`v1.9 package version mismatch: ${String(pkg.version)}`);
+const versionMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(pkg.version ?? "");
+const major = Number(versionMatch?.[1] ?? -1);
+const minor = Number(versionMatch?.[2] ?? -1);
+if (!versionMatch || major < 1 || (major === 1 && minor < 9)) throw new Error(`v1.9+ package capability mismatch: ${String(pkg.version)}`);
 
 const now = Date.parse("2026-08-25T00:00:00.000Z");
 const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -65,6 +68,6 @@ if (manifest.id !== "/unreached/" || manifest.start_url !== "/unreached/#/" || m
 if (!Array.isArray(manifest.shortcuts) || manifest.shortcuts.length < 3) throw new Error("v1.9 manifest must expose useful Explore/Pray/Saved shortcuts.");
 
 const v18 = await readText("scripts/prayer/v18-check.ts");
-if (v18.includes('pkg.version !== "1.8.0"')) throw new Error("v1.8 capability gate must be forward-compatible for v1.9.");
+if (v18.includes('pkg.version !== "1.8.0"')) throw new Error("v1.8 capability gate must remain forward-compatible.");
 
-console.log("v1.9 offline resilience checks passed: installable shell, owned-asset precache boundary, explicit data provenance, old validated offline fallback, first-offline failure safety, and reconnect refresh.");
+console.log("v1.9+ offline resilience checks passed: installable shell, owned-asset precache boundary, explicit data provenance, old validated offline fallback, first-offline failure safety, and reconnect refresh.");

@@ -8,6 +8,7 @@ export type RouteId =
   | "coverage"
   | "pray"
   | "saved"
+  | "account"
   | "about"
   | "not-found";
 
@@ -30,6 +31,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/pray": "pray",
   "/pray/session": "pray",
   "/saved": "saved",
+  "/account": "account",
   "/about": "about"
 };
 

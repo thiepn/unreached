@@ -6,10 +6,42 @@ Unreached is a browser-based Christian mission atlas for discovering unreached p
 
 - **Live site:** https://www.thiepn.dev/unreached/
 - **Repository:** https://github.com/thiepn/unreached
-- **Platform:** static Preact/Vite application deployed through GitHub Pages
+- **Platform:** static Preact/Vite application deployed through GitHub Pages, with an optional Cloudflare Worker + D1 private-continuity service
 - **Core loop:** **Explore → Understand → Pray**
-- **Version:** **1.9.0**
-- **Release state:** **v1.9 Offline Resilience & Cached Return**
+- **Version:** **2.0.0**
+- **Release state:** **v2.0 Optional Private Accounts & Cross-Device Continuity**
+
+## v2.0 — optional private accounts & cross-device continuity
+
+v2.0 adds an optional private continuity layer without turning Unreached into an account-first application. Signed-out/local-only use remains the default and every core Explore → Understand → Pray experience continues to work without an account or sync backend.
+
+### Minimal private sync boundary
+
+Only the continuity state that needs to follow a user between devices is eligible for sync:
+
+- Saved-person membership and its existing source-backed snapshot;
+- private prayer-list membership;
+- the single latest `lastPrayedAt` timestamp for a prayer-list entry.
+
+The sync protocol deliberately excludes recent browsing history, prayer history, prayer counts/totals, streaks, scores, rankings, session completion state, the PeopleGroups.org corpus, and the PeopleGroups IndexedDB cache.
+
+The existing browser schema remains `unreached.personal.v2`. Sync metadata, tombstones and pending mutations live separately in `unreached.sync.v1`.
+
+### Explicit first merge and deletion safety
+
+Signing in does **not** automatically enable sync. The Account surface requires a separate **Merge this device & enable sync** action before local personalization is uploaded.
+
+Remote items carry revisions and deletions are retained as tombstones. Each mutation has an idempotent mutation ID and a `baseItemRevision`, so an old disconnected device cannot silently resurrect something deleted on another device. Concurrent prayer updates preserve only the latest explicit `lastPrayedAt`; no prayer event history is created.
+
+Offline edits remain local and queue for a later sync attempt. A private-service outage degrades to local-only behavior instead of breaking the atlas or prayer tools.
+
+### Private backend and controls
+
+The optional same-origin `/unreached-sync` service is an ES-module Cloudflare Worker backed by D1. Cloudflare Access protects `/unreached-sync/private/*`; the Worker independently verifies the Access JWT before reading or writing private data.
+
+The Account surface provides explicit controls to sync now, export private account data, disconnect this device, sign out, and delete server-held account data. Disconnecting, signing out, or deleting the private server account does not silently erase this browser’s local Saved/prayer data.
+
+See [`docs/V20_PRIVATE_CONTINUITY.md`](docs/V20_PRIVATE_CONTINUITY.md).
 
 ## v1.9 — offline resilience & cached return
 
@@ -36,7 +68,7 @@ If no validated mission snapshot exists yet, the offline app shell fails closed 
 
 The header exposes **Live mission data**, **Cached mission data**, **Stale cached mission data**, and **Offline · no mission cache** states with snapshot-time context. When connectivity returns after a cached/stale/error state, Unreached automatically forces PeopleGroups revalidation and returns to live provenance after a successful refresh.
 
-Saved people, the private prayer list, rotation, and guided sessions remain browser-local and can resolve against the validated cached corpus when available. No account, cloud sync, prayer-history, or performance tracking is added.
+Saved people, the private prayer list, rotation, and guided sessions remain available from browser-local state and can resolve against the validated cached corpus when available. v2.0 may optionally synchronize the minimal private continuity subset, but mission-data caching and offline behavior remain device-local.
 
 See [`docs/V19_OFFLINE_RESILIENCE.md`](docs/V19_OFFLINE_RESILIENCE.md).
 
@@ -107,7 +139,7 @@ v1.6 added a browser-local prayer list separate from ordinary Saved bookmarks.
 - add/remove current prayer-eligible people from Prayer and focused-prayer surfaces;
 - optional **Record prayer today** stores only the latest timestamp;
 - v1 personalization migrates to schema v2 while preserving Saved and Recent data;
-- no account or cloud synchronization;
+- at the v1.6 release point there was no account or cloud synchronization;
 - no prayer totals, streaks, scores, leaderboards, public activity, or spiritual-completion metrics.
 
 See [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md).
@@ -169,7 +201,7 @@ See [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md) and [`doc
 Earlier releases established:
 
 - primary navigation: **Explore / Peoples / Pray**;
-- Reviewed coverage, Countries, Languages, and About & sources under **Browse**;
+- Reviewed coverage, Countries, Languages, Account & sync, and About & sources under **Browse**;
 - search-first People, Languages, and Countries surfaces;
 - bounded progressive rendering for large indexes;
 - MapLibre isolated to Explore instead of loading globally;
@@ -212,11 +244,13 @@ IMB **GSEC** remains source-native:
 | Countries | Local Natural Earth index + live/cached country-context records + country-specific reviewed editorial links |
 | Languages | Live/cached ISO 639-3 aggregation over current validated source records |
 | Prayer | Current eligible source record + fixed release-certified prayer template + private prayer rotation when available |
-| Focused prayer | Source-backed prayer flow + optional latest-only local prayer timestamp + guided next-person continuation |
+| Focused prayer | Source-backed prayer flow + optional latest-only prayer timestamp + guided next-person continuation |
 | Guided prayer session | Frozen page-local 3/5/full rotation plan + compact source-backed prompts + optional existing latest-only recording |
 | Editorial context | Twelve reviewed Tier-3 source-record profile shards; intentionally partial coverage |
-| Saved & prayer | Browser-local prayer list/rotation/session launcher, saved people snapshots, and recent exploration |
+| Saved & prayer | Browser-local source of truth for saved people, private prayer list/rotation/session launcher and recent exploration; Saved/prayer/latest-prayed may optionally sync |
+| Account & sync | Optional explicit local↔private-account merge, sync status, export, disconnect, sign-out and account deletion |
 | Offline shell | Same-origin PWA precache for Unreached-owned application/geography/editorial assets only |
+| Private continuity API | Same-origin Cloudflare Worker + D1; Access-protected; contains no PeopleGroups corpus or prayer-history/performance model |
 | ProgressBible | permission-gated and not used |
 | Ethnologue proprietary taxonomy | permission-gated and not used |
 | Third-party people photos | not redistributed without separate authorization |
@@ -227,7 +261,9 @@ PeopleGroups responses are treated as untrusted external input. Protections incl
 
 Online cache policy uses a 24-hour fresh window and seven-day explicit stale fallback after refresh failure. When the browser explicitly reports that it is offline, an older fully validated local snapshot may be used only with stale/offline provenance until reconnection revalidates it. The service worker caches only same-origin Unreached-owned assets and never becomes a PeopleGroups corpus store.
 
-Personal prayer state is separate from mission data: it is local-only, bounded, migration-validated, and never treated as an authoritative source record. v1.7 rotation and v1.8 session planning are derived at runtime and add no persistent ranking, performance, or session-history state. v1.9 does not change that schema.
+Personal prayer state remains browser-local first, bounded, migration-validated, and never treated as an authoritative mission source record. v1.7 rotation and v1.8 session planning are derived at runtime and add no persistent ranking, performance, or session-history state. v2.0 adds only an optional minimal private continuity copy of Saved/prayer membership and the latest prayer timestamp; recent exploration and mission-data caches stay device-local.
+
+Private sync requests are bounded and payload allow-listed. Authentication alone does not enable sync. Server item revisions, tombstones and mutation IDs provide deterministic retry/deletion behavior, while backend failure leaves local personalization usable.
 
 ## Release certification
 
@@ -237,19 +273,22 @@ A release candidate must pass:
 - deterministic source/data/editorial/release-policy checks;
 - PeopleGroups runtime/cache/visible-data/identity checks;
 - geography and mission-visualization checks;
-- country, people, context, prayer, prayer-practice, prayer-rotation, prayer-session, language, discovery, and offline-resilience checks;
+- country, people, context, prayer, prayer-practice, prayer-rotation, prayer-session, language, discovery, offline-resilience, and private-continuity checks;
 - production distribution checks including the emitted service worker and manifest boundary;
 - Chromium, Firefox, and WebKit desktop journeys;
 - mobile Chromium and mobile WebKit journeys;
 - offline shell, cached mission-data, first-offline, and reconnect browser journeys;
+- optional-account/local-only, explicit first-merge, deletion propagation, offline mutation queue/reconnect, and account-delete/local-retention browser journeys;
+- isolated Cloudflare Worker/Wrangler generated-binding TypeScript certification;
 - live PeopleGroups editorial-identity preflight;
 - complete live PeopleGroups corpus audit;
 - browser API/CORS contract;
-- post-merge GitHub Pages certification against the deployed site.
+- post-merge GitHub Pages certification against the deployed site;
+- private Worker production health and Access enforcement when v2.0 is promoted.
 
-v1.6 certifies browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, and absence of competitive/spiritual prayer metrics. v1.7 adds derived rotation ordering, scope-aware selection, guided continuation, and non-priority semantics. v1.8 adds frozen 3/5/full guided-session planning, eligibility filtering, mid-session ordering stability, page-local session state, and explicit zero-persistence session-history/performance guarantees. v1.9 adds the same-origin PWA shell, explicit live/cached/stale provenance, validated offline return, first-offline fail-closed behavior, and reconnect revalidation without introducing a bundled PeopleGroups dataset.
+v1.6 certifies browser-local personalization migration, private prayer-list persistence, latest-only prayer recording, and absence of competitive/spiritual prayer metrics. v1.7 adds derived rotation ordering, scope-aware selection, guided continuation, and non-priority semantics. v1.8 adds frozen 3/5/full guided-session planning, eligibility filtering, mid-session ordering stability, page-local session state, and explicit zero-persistence session-history/performance guarantees. v1.9 adds the same-origin PWA shell, explicit live/cached/stale provenance, validated offline return, first-offline fail-closed behavior, and reconnect revalidation without introducing a bundled PeopleGroups dataset. v2.0 adds optional private Saved/prayer continuity with explicit merge consent, tombstones, offline mutation queuing, export/delete controls, and a protocol that excludes recent browsing, prayer performance/history, and provider datasets.
 
-See [`docs/V19_OFFLINE_RESILIENCE.md`](docs/V19_OFFLINE_RESILIENCE.md), [`docs/V18_PRAYER_SESSION.md`](docs/V18_PRAYER_SESSION.md), [`docs/V17_PRAYER_ROTATION.md`](docs/V17_PRAYER_ROTATION.md), [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
+See [`docs/V20_PRIVATE_CONTINUITY.md`](docs/V20_PRIVATE_CONTINUITY.md), [`docs/V19_OFFLINE_RESILIENCE.md`](docs/V19_OFFLINE_RESILIENCE.md), [`docs/V18_PRAYER_SESSION.md`](docs/V18_PRAYER_SESSION.md), [`docs/V17_PRAYER_ROTATION.md`](docs/V17_PRAYER_ROTATION.md), [`docs/V16_PRAYER_PRACTICE.md`](docs/V16_PRAYER_PRACTICE.md), [`docs/V15_EDITORIAL_EXPANSION.md`](docs/V15_EDITORIAL_EXPANSION.md), [`docs/V14_EDITORIAL_DISCOVERY.md`](docs/V14_EDITORIAL_DISCOVERY.md), [`docs/V13_EDITORIAL_COVERAGE.md`](docs/V13_EDITORIAL_COVERAGE.md), [`docs/U12_RELEASE_GATES.md`](docs/U12_RELEASE_GATES.md), and [`docs/U12_FINAL_CERTIFICATION.md`](docs/U12_FINAL_CERTIFICATION.md).
 
 ## Local development
 
@@ -272,4 +311,13 @@ Browser certification:
 npm run e2e
 ```
 
-Vite is configured for the `/unreached/` project path. Service-worker registration is production-build only.
+The optional Worker has its own validation path:
+
+```bash
+cd worker
+npm install
+# render wrangler.generated.jsonc with test/deployment values, then:
+npm run check
+```
+
+Vite is configured for the `/unreached/` project path. Service-worker registration is production-build only. The optional private sync service is deployed independently under `/unreached-sync/*`; its absence must not break local-only application use.
