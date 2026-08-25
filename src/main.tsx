@@ -2,6 +2,7 @@ import { render } from "preact";
 
 import { App } from "./app/App";
 import { initializeOfflineRuntime } from "./offline/runtime";
+import { installPeopleGroupsReconnectRefresh, warmPeopleGroupsRuntime } from "./providers/peoplegroups";
 import { initializePrivateSyncRuntime } from "./sync/runtime";
 import "@fontsource-variable/newsreader";
 import "@fontsource-variable/source-sans-3";
@@ -34,3 +35,13 @@ import "./styles/v20.css";
 initializeOfflineRuntime();
 initializePrivateSyncRuntime();
 render(<App />, document.getElementById("app")!);
+
+installPeopleGroupsReconnectRefresh();
+const idleWindow = window as Window & {
+  requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+};
+if (typeof idleWindow.requestIdleCallback === "function") {
+  idleWindow.requestIdleCallback(warmPeopleGroupsRuntime, { timeout: 1_200 });
+} else {
+  window.setTimeout(warmPeopleGroupsRuntime, 300);
+}
