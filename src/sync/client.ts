@@ -1,6 +1,8 @@
 import type { SyncMutation, SyncSnapshot } from "./types";
 
-export const SYNC_API_BASE = "/unreached-sync";
+export const SYNC_BACKEND_ORIGIN = "https://unreached-private-continuity.thiepn.workers.dev";
+export const SYNC_API_BASE = `${SYNC_BACKEND_ORIGIN}/unreached-sync`;
+export const SYNC_ACCESS_TOKEN_KEY = "unreached.sync.access.v1";
 
 export class SyncApiError extends Error {
   status: number | null;
@@ -12,6 +14,39 @@ export class SyncApiError extends Error {
   }
 }
 
+function validAccessToken(value: unknown): value is string {
+  if (typeof value !== "string" || value.length < 20 || value.length > 16_384) return false;
+  return value.split(".").length === 3;
+}
+
+export function readSyncAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const value = window.sessionStorage.getItem(SYNC_ACCESS_TOKEN_KEY);
+    return validAccessToken(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function storeSyncAccessToken(token: unknown): void {
+  if (!validAccessToken(token)) throw new SyncApiError("Cloudflare Access returned an invalid identity token.", 401);
+  try {
+    window.sessionStorage.setItem(SYNC_ACCESS_TOKEN_KEY, token);
+  } catch {
+    throw new SyncApiError("This browser could not keep the private sign-in session.");
+  }
+}
+
+export function clearSyncAccessToken(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(SYNC_ACCESS_TOKEN_KEY);
+  } catch {
+    // The token is session-only. A failed removal does not affect browser-local personalization.
+  }
+}
+
 async function readJson<T>(response: Response): Promise<T> {
   const text = await response.text();
   if (!response.ok) {
@@ -20,7 +55,7 @@ async function readJson<T>(response: Response): Promise<T> {
       const parsed = JSON.parse(text) as { error?: string };
       if (parsed.error) message = parsed.error;
     } catch {
-      // Access may redirect signed-out fetches to an HTML login surface.
+      // Cloudflare or the network may return a non-JSON error surface.
     }
     throw new SyncApiError(message, response.status);
   }
@@ -32,17 +67,23 @@ async function readJson<T>(response: Response): Promise<T> {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const isPrivate = path.startsWith("/private/");
+  const accessToken = isPrivate ? readSyncAccessToken() : null;
+  if (isPrivate && !accessToken) throw new SyncApiError("Sign in is required for private sync.", 401);
+
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 10_000);
   try {
     const response = await fetch(`${SYNC_API_BASE}${path}`, {
       ...init,
-      credentials: "include",
+      credentials: "omit",
+      mode: "cors",
       cache: "no-store",
       signal: controller.signal,
       headers: {
         Accept: "application/json",
         ...(init.body ? { "Content-Type": "application/json" } : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         ...init.headers,
       },
     });
@@ -97,5 +138,6 @@ export function openSyncSignIn(): void {
 }
 
 export function openSyncLogout(): void {
-  window.open("/cdn-cgi/access/logout", "_blank", "noopener,noreferrer");
+  clearSyncAccessToken();
+  window.open(`${SYNC_BACKEND_ORIGIN}/cdn-cgi/access/logout`, "_blank", "noopener,noreferrer");
 }
