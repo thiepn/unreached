@@ -3,10 +3,14 @@ import { useCallback, useEffect, useState } from "preact/hooks";
 
 import {
   checkSyncHealth,
+  clearSyncAccessToken,
   exportRemoteAccount,
   getRemoteSyncState,
   openSyncLogout,
   openSyncSignIn,
+  storeSyncAccessToken,
+  SYNC_BACKEND_ORIGIN,
+  SyncApiError,
 } from "../sync/client";
 import {
   deletePrivateAccountAndDisconnect,
@@ -56,7 +60,8 @@ export function AccountPage() {
       const snapshot = await getRemoteSyncState();
       setAuthenticated(true);
       setAccountEmail(snapshot.account.email);
-    } catch {
+    } catch (error) {
+      if (error instanceof SyncApiError && error.status === 401) clearSyncAccessToken();
       setAuthenticated(false);
       setAccountEmail(readLocalSyncState().accountEmail);
     }
@@ -66,8 +71,16 @@ export function AccountPage() {
     void probe();
     const refresh = () => setRuntime(getSyncRuntimeStatus());
     const onMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return;
-      if ((event.data as { type?: string } | null)?.type === "unreached-private-sync-authenticated") void probe();
+      if (event.origin !== SYNC_BACKEND_ORIGIN) return;
+      const data = event.data as { type?: string; token?: unknown } | null;
+      if (data?.type !== "unreached-private-sync-authenticated") return;
+      try {
+        storeSyncAccessToken(data.token);
+        setNotice(null);
+        void probe();
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "The private sign-in session could not be accepted.");
+      }
     };
     window.addEventListener(SYNC_CHANGE_EVENT, refresh);
     window.addEventListener("message", onMessage);
@@ -141,7 +154,7 @@ export function AccountPage() {
               : runtime.enabled
                 ? `${accountEmail ?? runtime.accountEmail ?? "Private account"} · ${formatTime(runtime.lastSyncedAt)}`
                 : authenticated
-                  ? `${accountEmail ?? "Authenticated account"}. Choose the explicit merge below before anything is uploaded.`
+                  ? `${accountEmail ?? "Authenticated account"}. Choose the explicit merge below before any local Saved or prayer data is uploaded.`
                   : "Nothing is uploaded while you remain signed out."}
           </p>
           {runtime.pending > 0 ? <p class="account-tech-note">Changes waiting to sync: {runtime.pending}. They remain stored locally until a connection succeeds.</p> : null}
@@ -173,7 +186,7 @@ export function AccountPage() {
         <div>
           <p class="eyebrow">Controls</p>
           <h2>Your data remains usable without the service.</h2>
-          <p>Signing out or disconnecting sync does not erase this browser’s local Saved or prayer data.</p>
+          <p>Signing out or disconnecting sync does not erase this browser’s local Saved or prayer data. The Cloudflare Access identity token is kept only for this browser-tab session.</p>
         </div>
         <div class="account-actions">
           {backend === "checking" ? <button class="button button--secondary" type="button" disabled><RefreshCw size={16} aria-hidden="true" /> Checking service…</button> : null}
