@@ -5,6 +5,7 @@ import { RecentRouteTracker } from "../components/RecentRouteTracker";
 import { useHashRoute } from "./router";
 
 const AboutPage = lazy(() => import("../pages/AboutPage").then((module) => ({ default: module.AboutPage })));
+const AccountPage = lazy(() => import("../pages/AccountPage").then((module) => ({ default: module.AccountPage })));
 const CountriesPage = lazy(() => import("../pages/CountriesPage").then((module) => ({ default: module.CountriesPage })));
 const CountryPage = lazy(() => import("../pages/CountryPage").then((module) => ({ default: module.CountryPage })));
 const EditorialCoveragePage = lazy(() => import("../pages/EditorialCoveragePage").then((module) => ({ default: module.EditorialCoveragePage })));
@@ -40,6 +41,7 @@ export function App() {
     case "coverage": page = <EditorialCoveragePage />; break;
     case "pray": page = route.path === "/pray/session" ? <PrayerSessionPage /> : route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />; break;
     case "saved": page = <SavedPage />; break;
+    case "account": page = <AccountPage />; break;
     case "about": page = <AboutPage />; break;
     default: page = <NotFoundPage />;
   }
