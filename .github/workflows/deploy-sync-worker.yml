@@ -61,19 +61,58 @@ jobs:
           test -n "$DB_ID" && test "$DB_ID" != "null"
           echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
 
+      - name: Ensure Zero Trust organization is initialized
+        run: |
+          set -euo pipefail
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          URL="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access/organizations"
+          BODY=$(mktemp)
+          STATUS=$(curl --silent --show-error -o "$BODY" -w '%{http_code}' -H "$AUTH" "$URL")
+          if [ "$STATUS" = "200" ] && jq -e '.success == true' "$BODY" >/dev/null 2>&1; then
+            echo "Zero Trust organization is already initialized."
+            exit 0
+          fi
+
+          echo "Zero Trust organization lookup returned HTTP $STATUS. Attempting idempotent initialization."
+          jq -c '{success,errors,messages}' "$BODY" 2>/dev/null || cat "$BODY"
+          TEAM="unreached-${CLOUDFLARE_ACCOUNT_ID:0:8}"
+          PAYLOAD=$(jq -n --arg name "$TEAM" --arg domain "$TEAM.cloudflareaccess.com" '{name:$name,auth_domain:$domain}')
+          CREATE_BODY=$(mktemp)
+          CREATE_STATUS=$(curl --silent --show-error -o "$CREATE_BODY" -w '%{http_code}' -X POST -H "$AUTH" -H "Content-Type: application/json" --data "$PAYLOAD" "$URL")
+          if { [ "$CREATE_STATUS" = "200" ] || [ "$CREATE_STATUS" = "201" ]; } && jq -e '.success == true' "$CREATE_BODY" >/dev/null 2>&1; then
+            echo "Zero Trust organization initialized."
+            exit 0
+          fi
+
+          echo "Unable to initialize Zero Trust organization (HTTP $CREATE_STATUS)."
+          jq -c '{success,errors,messages}' "$CREATE_BODY" 2>/dev/null || cat "$CREATE_BODY"
+          exit 1
+
       - name: Create or reuse One-time PIN identity provider
         id: otp
         run: |
           set -euo pipefail
           AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
           BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"
-          PROVIDERS=$(curl --fail-with-body --silent --show-error -H "$AUTH" "$BASE/identity_providers")
-          OTP_ID=$(printf '%s' "$PROVIDERS" | jq -r '.result[] | select(.type == "onetimepin") | .id' | head -n1)
+          BODY=$(mktemp)
+          STATUS=$(curl --silent --show-error -o "$BODY" -w '%{http_code}' -H "$AUTH" "$BASE/identity_providers")
+          if [ "$STATUS" != "200" ] || ! jq -e '.success == true' "$BODY" >/dev/null 2>&1; then
+            echo "Identity-provider lookup failed (HTTP $STATUS)."
+            jq -c '{success,errors,messages}' "$BODY" 2>/dev/null || cat "$BODY"
+            exit 1
+          fi
+          OTP_ID=$(jq -r '.result[]? | select(.type == "onetimepin") | .id' "$BODY" | head -n1)
           if [ -z "$OTP_ID" ] || [ "$OTP_ID" = "null" ]; then
-            CREATED=$(curl --fail-with-body --silent --show-error -X POST -H "$AUTH" -H "Content-Type: application/json" \
+            CREATE_BODY=$(mktemp)
+            CREATE_STATUS=$(curl --silent --show-error -o "$CREATE_BODY" -w '%{http_code}' -X POST -H "$AUTH" -H "Content-Type: application/json" \
               --data '{"name":"Unreached email one-time PIN","type":"onetimepin","config":{}}' \
               "$BASE/identity_providers")
-            OTP_ID=$(printf '%s' "$CREATED" | jq -r '.result.id')
+            if { [ "$CREATE_STATUS" != "200" ] && [ "$CREATE_STATUS" != "201" ]; } || ! jq -e '.success == true' "$CREATE_BODY" >/dev/null 2>&1; then
+              echo "Identity-provider creation failed (HTTP $CREATE_STATUS)."
+              jq -c '{success,errors,messages}' "$CREATE_BODY" 2>/dev/null || cat "$CREATE_BODY"
+              exit 1
+            fi
+            OTP_ID=$(jq -r '.result.id' "$CREATE_BODY")
           fi
           test -n "$OTP_ID" && test "$OTP_ID" != "null"
           echo "otp_id=$OTP_ID" >> "$GITHUB_OUTPUT"
@@ -86,18 +125,30 @@ jobs:
           set -euo pipefail
           AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
           BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"
-          APPS=$(curl --fail-with-body --silent --show-error -H "$AUTH" "$BASE/apps")
-          APP_ID=$(printf '%s' "$APPS" | jq -r --arg name "$ACCESS_APP_NAME" '.result[] | select(.name == $name) | .id' | head -n1)
-          AUD=$(printf '%s' "$APPS" | jq -r --arg name "$ACCESS_APP_NAME" '.result[] | select(.name == $name) | .aud' | head -n1)
+          BODY=$(mktemp)
+          STATUS=$(curl --silent --show-error -o "$BODY" -w '%{http_code}' -H "$AUTH" "$BASE/apps")
+          if [ "$STATUS" != "200" ] || ! jq -e '.success == true' "$BODY" >/dev/null 2>&1; then
+            echo "Access-app lookup failed (HTTP $STATUS)."
+            jq -c '{success,errors,messages}' "$BODY" 2>/dev/null || cat "$BODY"
+            exit 1
+          fi
+          APP_ID=$(jq -r --arg name "$ACCESS_APP_NAME" '.result[]? | select(.name == $name) | .id' "$BODY" | head -n1)
+          AUD=$(jq -r --arg name "$ACCESS_APP_NAME" '.result[]? | select(.name == $name) | .aud' "$BODY" | head -n1)
           if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
             PAYLOAD=$(jq -n \
               --arg name "$ACCESS_APP_NAME" \
               --arg domain "$ACCESS_DOMAIN" \
               --arg otp "$OTP_ID" \
               '{type:"self_hosted",name:$name,domain:$domain,session_duration:"720h",allowed_idps:[$otp],auto_redirect_to_identity:true,app_launcher_visible:false,policies:[{name:"Authenticated email account",decision:"allow",include:[{login_method:{id:$otp}}]}]}')
-            CREATED=$(curl --fail-with-body --silent --show-error -X POST -H "$AUTH" -H "Content-Type: application/json" --data "$PAYLOAD" "$BASE/apps")
-            APP_ID=$(printf '%s' "$CREATED" | jq -r '.result.id')
-            AUD=$(printf '%s' "$CREATED" | jq -r '.result.aud')
+            CREATE_BODY=$(mktemp)
+            CREATE_STATUS=$(curl --silent --show-error -o "$CREATE_BODY" -w '%{http_code}' -X POST -H "$AUTH" -H "Content-Type: application/json" --data "$PAYLOAD" "$BASE/apps")
+            if { [ "$CREATE_STATUS" != "200" ] && [ "$CREATE_STATUS" != "201" ]; } || ! jq -e '.success == true' "$CREATE_BODY" >/dev/null 2>&1; then
+              echo "Access-app creation failed (HTTP $CREATE_STATUS)."
+              jq -c '{success,errors,messages}' "$CREATE_BODY" 2>/dev/null || cat "$CREATE_BODY"
+              exit 1
+            fi
+            APP_ID=$(jq -r '.result.id' "$CREATE_BODY")
+            AUD=$(jq -r '.result.aud' "$CREATE_BODY")
           fi
           test -n "$APP_ID" && test "$APP_ID" != "null"
           test -n "$AUD" && test "$AUD" != "null"
