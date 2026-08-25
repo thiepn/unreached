@@ -1,0 +1,54 @@
+name: Unreached Private Sync Certification
+
+on:
+  pull_request:
+    paths:
+      - "worker/**"
+      - "src/sync/**"
+      - "src/pages/AccountPage.tsx"
+      - "scripts/sync/**"
+      - ".github/workflows/sync-worker-cert.yml"
+  push:
+    branches: [main]
+    paths:
+      - "worker/**"
+      - "src/sync/**"
+      - "src/pages/AccountPage.tsx"
+      - "scripts/sync/**"
+      - ".github/workflows/sync-worker-cert.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  worker:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install Worker dependencies
+        working-directory: worker
+        run: npm install --no-audit --no-fund
+
+      - name: Render isolated certification configuration
+        working-directory: worker
+        env:
+          D1_DATABASE_ID: 00000000-0000-0000-0000-000000000001
+          ACCESS_AUD: certification-access-audience
+        run: node render-config.mjs
+
+      - name: Validate Wrangler configuration, generated bindings and TypeScript
+        working-directory: worker
+        run: npm run check
+
+      - name: Verify deployment template remains secret-free
+        run: |
+          ! grep -R --line-number -E '(^|[^A-Za-z])(api[_-]?token|account[_-]?token|client[_-]?secret)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9_-]{12,}' worker --exclude='wrangler.generated.jsonc'
+          grep -q '__D1_DATABASE_ID__' worker/wrangler.template.jsonc
+          grep -q '__ACCESS_AUD__' worker/wrangler.template.jsonc
