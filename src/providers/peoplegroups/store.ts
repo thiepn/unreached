@@ -1,7 +1,15 @@
 import { useEffect, useState } from "preact/hooks";
 
+import {
+  PEOPLE_GROUPS_CACHE_FRESH_MS,
+  PEOPLE_GROUPS_CACHE_STALE_MAX_MS,
+  cacheAgeMs,
+  createIndexedDbPreparedPeopleGroupsCache,
+  preparedPeopleGroupsSnapshotIsUsable,
+  type PreparedPeopleGroupsSnapshot,
+} from "./cache";
 import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities, toRuntimePeopleContext } from "./model";
-import { createPeopleGroupsCorpusLoader } from "./runtime";
+import { createPeopleGroupsCorpusLoader, type PeopleGroupsCorpusLoadResult } from "./runtime";
 import type {
   PeopleGroupsApiRecord,
   RuntimeCountrySummary,
@@ -16,7 +24,9 @@ export interface PeopleGroupsRuntimeProgress {
 
 export interface PeopleGroupsRuntimeSnapshot {
   loading: boolean;
+  refreshing: boolean;
   ready: boolean;
+  hydrated: boolean;
   error: string | null;
   warning: string | null;
   stale: boolean;
@@ -31,11 +41,14 @@ export interface PeopleGroupsRuntimeSnapshot {
 }
 
 const loader = createPeopleGroupsCorpusLoader();
+const preparedCache = createIndexedDbPreparedPeopleGroupsCache();
 const listeners = new Set<(value: PeopleGroupsRuntimeSnapshot) => void>();
 
 let snapshot: PeopleGroupsRuntimeSnapshot = {
   loading: false,
+  refreshing: false,
   ready: false,
+  hydrated: false,
   error: null,
   warning: null,
   stale: false,
@@ -50,6 +63,8 @@ let snapshot: PeopleGroupsRuntimeSnapshot = {
 };
 
 let pendingLoad: Promise<void> | null = null;
+let hydrationPromise: Promise<boolean> | null = null;
+let hydrationAttempted = false;
 let reconnectRefreshInstalled = false;
 
 function publish(next: PeopleGroupsRuntimeSnapshot): void {
@@ -61,18 +76,97 @@ function patch(values: Partial<PeopleGroupsRuntimeSnapshot>): void {
   publish({ ...snapshot, ...values });
 }
 
-export function getPeopleGroupsRuntimeSnapshot(): PeopleGroupsRuntimeSnapshot {
-  return snapshot;
+function isOnline(): boolean {
+  return typeof navigator === "undefined" || navigator.onLine !== false;
 }
 
-export function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<void> {
-  if (pendingLoad) return pendingLoad;
-  if (snapshot.ready && !forceRefresh) return Promise.resolve();
+function materialize(records: PeopleGroupsApiRecord[]) {
+  return {
+    records,
+    contexts: records.map(toRuntimePeopleContext),
+    entities: buildRuntimePeopleEntities(records),
+    countrySummaries: buildRuntimeCountrySummaries(records),
+  };
+}
 
+function preparedFromResult(
+  result: PeopleGroupsCorpusLoadResult,
+  materialized: ReturnType<typeof materialize>,
+): PreparedPeopleGroupsSnapshot {
+  return {
+    schemaVersion: 1,
+    key: "active",
+    storedAt: result.loadedAt,
+    totalPages: result.totalPages,
+    totalRecords: result.totalRecords,
+    ...materialized,
+  };
+}
+
+async function persistPrepared(result: PeopleGroupsCorpusLoadResult, materialized: ReturnType<typeof materialize>): Promise<void> {
+  try {
+    await preparedCache.write(preparedFromResult(result, materialized));
+  } catch {
+    // The prepared snapshot is a performance optimization. The validated page cache remains the recovery source.
+  }
+}
+
+async function hydratePreparedSnapshot(): Promise<boolean> {
+  if (snapshot.ready) return true;
+  if (hydrationAttempted && !hydrationPromise) return false;
+  if (hydrationPromise) return hydrationPromise;
+
+  hydrationAttempted = true;
+  hydrationPromise = (async () => {
+    try {
+      const prepared = await preparedCache.read();
+      if (!preparedPeopleGroupsSnapshotIsUsable(prepared)) return false;
+
+      const age = cacheAgeMs(prepared);
+      const online = isOnline();
+      if (online && age > PEOPLE_GROUPS_CACHE_STALE_MAX_MS) return false;
+
+      const stale = age > PEOPLE_GROUPS_CACHE_FRESH_MS;
+      publish({
+        loading: false,
+        refreshing: false,
+        ready: true,
+        hydrated: true,
+        error: null,
+        warning: stale
+          ? online
+            ? "Showing the last fully validated local PeopleGroups snapshot while fresh source data updates in the background."
+            : "You are offline. Showing the last fully validated local PeopleGroups snapshot; it may be out of date and will refresh after reconnection."
+          : null,
+        stale,
+        source: stale ? "cache-stale" : "cache-fresh",
+        loadedAt: prepared.storedAt,
+        progress: null,
+        totalRecords: prepared.totalRecords,
+        records: prepared.records,
+        contexts: prepared.contexts,
+        entities: prepared.entities,
+        countrySummaries: prepared.countrySummaries,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  })().finally(() => {
+    hydrationPromise = null;
+  });
+
+  return hydrationPromise;
+}
+
+function refreshFromSource(forceRefresh: boolean): Promise<void> {
+  if (pendingLoad) return pendingLoad;
+
+  const blocking = !snapshot.ready;
   patch({
-    loading: true,
-    error: null,
-    warning: forceRefresh ? snapshot.warning : null,
+    loading: blocking,
+    refreshing: !blocking,
+    error: blocking ? null : snapshot.error,
     progress: null,
   });
 
@@ -81,12 +175,12 @@ export function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<void> {
     onProgress: (loadedPages, totalPages) => patch({ progress: { loadedPages, totalPages } }),
   })
     .then((result) => {
-      const contexts = result.records.map(toRuntimePeopleContext);
-      const entities = buildRuntimePeopleEntities(result.records);
-      const countrySummaries = buildRuntimeCountrySummaries(result.records);
+      const materialized = materialize(result.records);
       publish({
         loading: false,
+        refreshing: false,
         ready: true,
+        hydrated: true,
         error: null,
         warning: result.warning,
         stale: result.stale,
@@ -94,17 +188,28 @@ export function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<void> {
         loadedAt: result.loadedAt,
         progress: null,
         totalRecords: result.totalRecords,
-        records: result.records,
-        contexts,
-        entities,
-        countrySummaries,
+        ...materialized,
       });
+      void persistPrepared(result, materialized);
     })
     .catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : "PeopleGroups.org data could not be loaded.";
+      if (snapshot.ready) {
+        patch({
+          loading: false,
+          refreshing: false,
+          error: null,
+          warning: snapshot.warning ?? `Live PeopleGroups.org data could not be refreshed. ${message}`,
+          progress: null,
+        });
+        return;
+      }
       patch({
         loading: false,
+        refreshing: false,
         ready: false,
-        error: error instanceof Error ? error.message : "PeopleGroups.org data could not be loaded.",
+        hydrated: true,
+        error: message,
         warning: null,
         progress: null,
       });
@@ -114,6 +219,35 @@ export function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<void> {
     });
 
   return pendingLoad;
+}
+
+export function getPeopleGroupsRuntimeSnapshot(): PeopleGroupsRuntimeSnapshot {
+  return snapshot;
+}
+
+export async function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<void> {
+  if (forceRefresh) {
+    await hydratePreparedSnapshot();
+    await refreshFromSource(true);
+    return;
+  }
+
+  if (snapshot.ready) {
+    if (snapshot.stale && isOnline() && !pendingLoad) void refreshFromSource(true);
+    return;
+  }
+
+  const hydrated = await hydratePreparedSnapshot();
+  if (hydrated) {
+    if (snapshot.stale && isOnline() && !pendingLoad) void refreshFromSource(true);
+    return;
+  }
+
+  await refreshFromSource(false);
+}
+
+export function warmPeopleGroupsRuntime(): void {
+  void ensurePeopleGroupsRuntime();
 }
 
 export function installPeopleGroupsReconnectRefresh(): void {
