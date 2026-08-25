@@ -79,20 +79,26 @@ This does not alter the v1.9 PeopleGroups offline/cache policy or cause the serv
 
 ## Authentication and authorization
 
-The production private API is mounted under the same site origin:
+The production private service runs independently from GitHub Pages at:
 
+- backend origin: `https://unreached-private-continuity.thiepn.workers.dev`
 - public health: `/unreached-sync/health`
-- authenticated data: `/unreached-sync/private/*`
+- authenticated API: `/unreached-sync/private/*`
+- Access-protected sign-in bootstrap: `/unreached-sync/private/auth/start`
 
-Cloudflare Access protects the private path. The deployment provisions/reuses a One-time PIN email identity provider and an Access self-hosted application for that path.
+The existing `www.thiepn.dev` site is not moved behind Cloudflare and no DNS migration is required.
 
-The Worker independently verifies the `Cf-Access-Jwt-Assertion` signature and audience before touching D1. It does not trust a client-supplied user ID. The normalized authenticated email is SHA-256 hashed to form the D1 user key.
+Cloudflare Access protects the top-level sign-in bootstrap and uses the account's One-time PIN email identity provider. After a successful top-level Access login, the Worker receives `Cf-Access-Jwt-Assertion`, verifies its signature, issuer and exact Access audience, and returns the verified Access JWT to the opener at exactly `https://www.thiepn.dev`.
 
-The public GitHub Pages application is not behind Access.
+The frontend keeps that identity token only in `sessionStorage` under `unreached.sync.access.v1`; it is not written to persistent local personalization storage. Subsequent cross-origin private API calls send the token as `Authorization: Bearer <Access JWT>`. The Worker performs the same Access JWT verification before touching D1, so API authorization does not depend on third-party cookies.
+
+CORS is restricted to `https://www.thiepn.dev`, allows only the required methods/headers, and does not enable credentialed cross-origin cookies. The Worker never trusts a client-supplied user ID. The normalized authenticated email is SHA-256 hashed to form the D1 user key.
+
+The public GitHub Pages application remains accountless and outside Access.
 
 ## Backend
 
-The private service is an ES-module Cloudflare Worker with D1.
+The private service is an ES-module Cloudflare Worker with D1, deployed on the account's `workers.dev` subdomain.
 
 D1 tables:
 
@@ -115,45 +121,47 @@ The Account page exposes:
 - Sign out;
 - Delete private account data.
 
-Disconnecting or signing out does not erase local browser personalization.
+Disconnecting or signing out does not erase local browser personalization. Signing out clears the session-only Access token and ends the Access session separately.
 
 Deleting the private account deletes the D1 user row and cascades all server-held items/mutation IDs. It also disconnects sync on the current device but deliberately leaves local Saved/prayer data intact unless the user separately clears browser storage.
 
 ## Deployment
 
-Production deployment is handled by `.github/workflows/deploy-sync-worker.yml` after merge to `main`.
+Production deployment is handled by `.github/workflows/deploy-sync-worker.yml` after relevant changes reach `main`.
 
 Required GitHub repository secrets:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-The API token must be able to manage the Worker route/script, D1, Access applications/policies, and Access identity providers for the account/zone.
+The API token must be able to manage D1, Workers, the account's Workers subdomain, Zero Trust/Access applications and policies, and Access identity providers.
 
 The deployment is idempotent in intent:
 
 1. install Worker dependencies;
-2. reuse or create `unreached-private-continuity` D1;
-3. reuse or create a One-time PIN Access identity provider;
-4. reuse or create the `Unreached private continuity` Access application;
-5. render the generated Wrangler config with D1 ID and Access AUD;
-6. generate binding types and typecheck;
-7. apply remote D1 migrations;
-8. deploy the Worker;
-9. health-check `https://www.thiepn.dev/unreached-sync/health`.
+2. reuse or create `unreached-private-continuity` D1 through the Cloudflare REST API;
+3. discover/enable the account's `workers.dev` subdomain;
+4. ensure the Zero Trust organization exists;
+5. reuse or create a One-time PIN Access identity provider;
+6. reuse or create the `Unreached private continuity workers.dev` Access application for the sign-in bootstrap;
+7. render the generated Wrangler config with D1 ID and Access AUD;
+8. generate binding types and typecheck;
+9. apply remote D1 migrations;
+10. deploy the Worker to workers.dev;
+11. health-check the live Worker and verify the sign-in bootstrap is not anonymously usable.
 
-No Cloudflare token is stored in source or generated into the frontend.
+No Cloudflare token, account credential, Access JWT or D1 identifier is generated into the public frontend bundle.
 
 ## Certification
 
 v2.0 is not releasable unless all existing release gates still pass plus:
 
 - `scripts/sync/v20-check.ts` source-policy gate;
-- the five-project Playwright account/sync journeys;
+- the five-project Playwright account/sync journeys, including bearer authorization and session-only token storage;
 - isolated Worker/Wrangler generated-binding TypeScript certification;
 - v1.9 offline source/dist/browser gates;
 - live PeopleGroups corpus/CORS/editorial identity gates;
 - post-merge GitHub Pages deployment;
-- private Worker health endpoint and Access enforcement.
+- private Worker health endpoint and Access/JWT enforcement.
 
-The v2.0 certification explicitly rejects protocol/backend references to recent history, prayer performance fields, PeopleGroups.org corpus URLs, or a private API that bypasses Access JWT validation.
+The v2.0 certification explicitly rejects protocol/backend references to recent history, prayer performance fields, PeopleGroups.org corpus URLs, persistent Access-token storage, cross-site-cookie dependence, or a private API that bypasses Access JWT validation.
