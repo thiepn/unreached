@@ -1,9 +1,16 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Route } from "@playwright/test";
 
 const LOCAL_PERSON_ID = 12319;
 const REMOTE_PERSON_ID = 24277;
 const LOCAL_STORAGE = "unreached.personal.v2";
 const SYNC_STORAGE = "unreached.sync.v1";
+const ACCESS_STORAGE = "unreached.sync.access.v1";
+const TEST_ACCESS_TOKEN = "testheader.testpayload.testsignature";
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+};
 
 const localSaved = {
   sourcePeopleId: LOCAL_PERSON_ID,
@@ -56,17 +63,46 @@ function snapshot(items = [savedItem()], revision = 4) {
   return { account: { email: "reader@example.com" }, revision, items };
 }
 
-async function seed(page: Page, personal: unknown, sync: unknown | null = null) {
-  await page.addInitScript(({ personalState, syncState, personalKey, syncKey }) => {
+async function seed(page: Page, personal: unknown, sync: unknown | null = null, authenticated = true) {
+  await page.addInitScript(({ personalState, syncState, personalKey, syncKey, accessKey, accessToken, withAccess }) => {
     localStorage.setItem(personalKey, JSON.stringify(personalState));
     if (syncState) localStorage.setItem(syncKey, JSON.stringify(syncState));
     else localStorage.removeItem(syncKey);
-  }, { personalState: personal, syncState: sync, personalKey: LOCAL_STORAGE, syncKey: SYNC_STORAGE });
+    if (withAccess) sessionStorage.setItem(accessKey, accessToken);
+    else sessionStorage.removeItem(accessKey);
+  }, {
+    personalState: personal,
+    syncState: sync,
+    personalKey: LOCAL_STORAGE,
+    syncKey: SYNC_STORAGE,
+    accessKey: ACCESS_STORAGE,
+    accessToken: TEST_ACCESS_TOKEN,
+    withAccess: authenticated,
+  });
+}
+
+async function handlePreflight(route: Route): Promise<boolean> {
+  if (route.request().method() !== "OPTIONS") return false;
+  await route.fulfill({ status: 204, headers: CORS_HEADERS });
+  return true;
+}
+
+async function fulfillJson(route: Route, status: number, value: unknown): Promise<void> {
+  await route.fulfill({
+    status,
+    contentType: "application/json",
+    headers: CORS_HEADERS,
+    body: JSON.stringify(value),
+  });
+}
+
+function expectBearer(route: Route): void {
+  expect(route.request().headers().authorization).toBe(`Bearer ${TEST_ACCESS_TOKEN}`);
 }
 
 async function installHealth(page: Page, ok = true) {
   await page.route("**/unreached-sync/health", async (route) => {
-    await route.fulfill({ status: ok ? 200 : 503, contentType: "application/json", body: JSON.stringify(ok ? { ok: true, version: "2.0.0" } : { error: "offline" }) });
+    await fulfillJson(route, ok ? 200 : 503, ok ? { ok: true, version: "2.0.0" } : { error: "offline" });
   });
 }
 
@@ -77,7 +113,7 @@ test.describe("v2.0 optional private accounts", () => {
   test.use({ serviceWorkers: "block" });
 
   test("local-only remains complete when the private backend is unavailable", async ({ page }) => {
-    await seed(page, personalization());
+    await seed(page, personalization(), null, false);
     await installHealth(page, false);
     await page.goto("./#/account");
 
@@ -97,18 +133,22 @@ test.describe("v2.0 optional private accounts", () => {
     let syncBody: { mutations?: Array<{ sourcePeopleId?: number; [key: string]: unknown }> } | null = null;
     let stateCalls = 0;
     await page.route("**/unreached-sync/private/state", async (route) => {
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
       stateCalls += 1;
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot()) });
+      await fulfillJson(route, 200, snapshot());
     });
     await page.route("**/unreached-sync/private/sync", async (route) => {
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
       syncBody = JSON.parse(route.request().postData() ?? "null") as { mutations?: Array<{ sourcePeopleId?: number; [key: string]: unknown }> };
       const localItem = savedItem(localSaved, 5);
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot([savedItem(remoteSaved, 4), localItem], 5)) });
+      await fulfillJson(route, 200, snapshot([savedItem(remoteSaved, 4), localItem], 5));
     });
 
     await page.goto("./#/account");
     await expect(page.getByRole("heading", { name: "Signed in · sync not enabled" })).toBeVisible();
-    await expect(page.getByText(/Choose the explicit merge below before anything is uploaded/)).toBeVisible();
+    await expect(page.getByText(/Choose the explicit merge below before any local Saved or prayer data is uploaded/)).toBeVisible();
 
     await page.getByRole("button", { name: "Merge this device & enable sync" }).click();
     await expect(page.getByRole("heading", { name: "Private sync enabled" })).toBeVisible();
@@ -123,6 +163,8 @@ test.describe("v2.0 optional private accounts", () => {
     const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null"), LOCAL_STORAGE);
     expect(stored.savedPeoples.map((item: { sourcePeopleId: number }) => item.sourcePeopleId).sort()).toEqual([LOCAL_PERSON_ID, REMOTE_PERSON_ID].sort());
     expect(stored.recent).toEqual([recentVisit]);
+    expect(await page.evaluate((key) => localStorage.getItem(key), ACCESS_STORAGE)).toBeNull();
+    expect(await page.evaluate((key) => sessionStorage.getItem(key), ACCESS_STORAGE)).toBe(TEST_ACCESS_TOKEN);
   });
 
   test("a local deletion becomes a revision-based tombstone mutation instead of resurrecting remote data", async ({ page }) => {
@@ -142,13 +184,17 @@ test.describe("v2.0 optional private accounts", () => {
 
     let mutation: Record<string, unknown> | null = null;
     await page.route("**/unreached-sync/private/state", async (route) => {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot([mirrorItem], 11)) });
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
+      await fulfillJson(route, 200, snapshot([mirrorItem], 11));
     });
     await page.route("**/unreached-sync/private/sync", async (route) => {
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
       const body = JSON.parse(route.request().postData() ?? "{}") as { mutations?: Record<string, unknown>[] };
       mutation = body.mutations?.[0] ?? null;
       const tombstone = { ...mirrorItem, present: false, payload: null, revision: 12, updatedAt: "2026-08-25T03:00:00.000Z" };
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot([tombstone], 12)) });
+      await fulfillJson(route, 200, snapshot([tombstone], 12));
     });
 
     await page.goto("./#/account");
@@ -175,16 +221,22 @@ test.describe("v2.0 optional private accounts", () => {
 
     let syncCalls = 0;
     await page.route("**/unreached-sync/private/state", async (route) => {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot([mirrorItem], 6)) });
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
+      await fulfillJson(route, 200, snapshot([mirrorItem], 6));
     });
     await page.route("**/unreached-sync/private/sync", async (route) => {
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
       syncCalls += 1;
       const remoteItem = savedItem(remoteSaved, 7);
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot([mirrorItem, remoteItem], 7)) });
+      await fulfillJson(route, 200, snapshot([mirrorItem, remoteItem], 7));
     });
     await page.route("**/unreached-sync/private/account", async (route) => {
+      if (await handlePreflight(route)) return;
+      expectBearer(route);
       expect(route.request().method()).toBe("DELETE");
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ deleted: true }) });
+      await fulfillJson(route, 200, { deleted: true });
     });
 
     await page.goto("./#/account");
@@ -212,5 +264,6 @@ test.describe("v2.0 optional private accounts", () => {
     const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null"), LOCAL_STORAGE);
     expect(stored.savedPeoples.length).toBeGreaterThan(0);
     expect(stored.recent).toEqual([recentVisit]);
+    expect(await page.evaluate((key) => sessionStorage.getItem(key), ACCESS_STORAGE)).toBeNull();
   });
 });
