@@ -1,6 +1,7 @@
 import { createRemoteJWKSet, decodeJwt, jwtVerify } from "jose";
 
 const PRIVATE_PREFIX = "/unreached-sync/private";
+const HEALTH_PATH = "/unreached-sync/health";
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_MUTATIONS = 200;
 const CLASSIFICATIONS = new Set(["unreached", "reached", "unknown", "unreached-only", "other-only", "mixed"]);
@@ -55,6 +56,12 @@ interface UserRow {
   revision: number;
 }
 
+interface AccessIdentity {
+  email: string;
+  userId: string;
+  token: string;
+}
+
 class HttpError extends Error {
   status: number;
 
@@ -86,6 +93,35 @@ function text(value: string, status = 200, contentType = "text/plain; charset=ut
       "X-Content-Type-Options": "nosniff",
     },
   });
+}
+
+function corsHeaders(env: Env): Record<string, string> {
+  return {
+    "Access-Control-Allow-Origin": env.APP_ORIGIN,
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+    "Access-Control-Max-Age": "600",
+    "Vary": "Origin",
+  };
+}
+
+function withCors(response: Response, request: Request, env: Env): Response {
+  if (request.headers.get("Origin") !== env.APP_ORIGIN) return response;
+  const headers = new Headers(response.headers);
+  for (const [name, value] of Object.entries(corsHeaders(env))) headers.set(name, value);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function accessTokenFromRequest(request: Request): string | null {
+  const assertion = request.headers.get("Cf-Access-Jwt-Assertion")?.trim();
+  if (assertion) return assertion;
+  const authorization = request.headers.get("Authorization")?.trim() ?? "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
 }
 
 function normalizedIsoTimestamp(value: unknown, nullable = false): string | null {
@@ -200,8 +236,8 @@ async function sha256Hex(value: string): Promise<string> {
   return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function authenticate(request: Request, env: Env): Promise<{ email: string; userId: string }> {
-  const token = request.headers.get("Cf-Access-Jwt-Assertion");
+async function authenticate(request: Request, env: Env): Promise<AccessIdentity> {
+  const token = accessTokenFromRequest(request);
   if (!token) throw new HttpError(401, "Sign in is required for private sync.");
 
   let issuer: string;
@@ -219,7 +255,7 @@ async function authenticate(request: Request, env: Env): Promise<{ email: string
     const verified = await jwtVerify(token, jwks, { issuer, audience: env.ACCESS_AUD });
     const email = typeof verified.payload.email === "string" ? verified.payload.email.trim().toLowerCase() : "";
     if (!email || email.length > 320) throw new Error("missing email");
-    return { email, userId: await sha256Hex(email) };
+    return { email, userId: await sha256Hex(email), token };
   } catch {
     throw new HttpError(401, "Access identity could not be verified.");
   }
@@ -346,9 +382,10 @@ async function applyMutation(env: Env, userId: string, mutation: Mutation): Prom
   await recordMutation(env, userId, mutation.mutationId);
 }
 
-function authCompletionPage(origin: string): Response {
+function authCompletionPage(origin: string, token: string): Response {
   const safeOrigin = JSON.stringify(origin);
-  const html = `<!doctype html><meta charset="utf-8"><title>Unreached private sync</title><body><p>Sign-in complete. You can return to Unreached.</p><script>try{window.opener&&window.opener.postMessage({type:"unreached-private-sync-authenticated"},${safeOrigin});}finally{window.close();}</script></body>`;
+  const safeToken = JSON.stringify(token);
+  const html = `<!doctype html><meta charset="utf-8"><title>Unreached private sync</title><body><p>Sign-in complete. You can return to Unreached.</p><script>try{window.opener&&window.opener.postMessage({type:"unreached-private-sync-authenticated",token:${safeToken}},${safeOrigin});}finally{window.close();}</script></body>`;
   return new Response(html, {
     headers: {
       "Cache-Control": "no-store",
@@ -360,53 +397,73 @@ function authCompletionPage(origin: string): Response {
   });
 }
 
+async function handleRequest(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  if (url.pathname === HEALTH_PATH && request.method === "GET") {
+    return json({ ok: true, service: "unreached-private-continuity", version: "2.0.0" });
+  }
+  if (!url.pathname.startsWith(PRIVATE_PREFIX)) return json({ error: "Not found" }, 404);
+
+  if (url.pathname === `${PRIVATE_PREFIX}/auth/start` && request.method === "GET") {
+    if (!request.headers.get("Cf-Access-Jwt-Assertion")) throw new HttpError(401, "Cloudflare Access sign-in is required.");
+    const identity = await authenticate(request, env);
+    await ensureUser(env, identity);
+    const requested = url.searchParams.get("returnOrigin");
+    return authCompletionPage(requested === env.APP_ORIGIN ? requested : env.APP_ORIGIN, identity.token);
+  }
+
+  const identity = await authenticate(request, env);
+  await ensureUser(env, identity);
+
+  if (url.pathname === `${PRIVATE_PREFIX}/state` && request.method === "GET") {
+    return json(await snapshot(env, identity));
+  }
+
+  if (url.pathname === `${PRIVATE_PREFIX}/sync` && request.method === "POST") {
+    const body = await readJsonLimited(request);
+    const mutationsRaw = body && typeof body === "object" && Array.isArray((body as { mutations?: unknown }).mutations)
+      ? (body as { mutations: unknown[] }).mutations
+      : null;
+    if (!mutationsRaw) throw new HttpError(400, "Sync request requires a mutations array.");
+    if (mutationsRaw.length > MAX_MUTATIONS) throw new HttpError(400, `At most ${MAX_MUTATIONS} mutations may be sent at once.`);
+    for (const raw of mutationsRaw) await applyMutation(env, identity.userId, sanitizeMutation(raw));
+    return json(await snapshot(env, identity));
+  }
+
+  if (url.pathname === `${PRIVATE_PREFIX}/export` && request.method === "GET") {
+    const state = await snapshot(env, identity);
+    return json({ exportedAt: new Date().toISOString(), account: state.account, items: state.items });
+  }
+
+  if (url.pathname === `${PRIVATE_PREFIX}/account` && request.method === "DELETE") {
+    await env.DB.prepare("DELETE FROM sync_users WHERE user_id = ?1").bind(identity.userId).run();
+    return json({ deleted: true });
+  }
+
+  return json({ error: "Not found" }, 404);
+}
+
 export default {
   async fetch(request, env): Promise<Response> {
+    const url = new URL(request.url);
+    if (request.method === "OPTIONS") {
+      if (request.headers.get("Origin") !== env.APP_ORIGIN) return json({ error: "Origin not allowed" }, 403);
+      if (url.pathname !== HEALTH_PATH && !url.pathname.startsWith(PRIVATE_PREFIX)) return json({ error: "Not found" }, 404);
+      return new Response(null, {
+        status: 204,
+        headers: {
+          ...corsHeaders(env),
+          "Cache-Control": "no-store",
+        },
+      });
+    }
+
     try {
-      const url = new URL(request.url);
-      if (url.pathname === "/unreached-sync/health" && request.method === "GET") {
-        return json({ ok: true, service: "unreached-private-continuity", version: "2.0.0" });
-      }
-      if (!url.pathname.startsWith(PRIVATE_PREFIX)) return json({ error: "Not found" }, 404);
-
-      const identity = await authenticate(request, env);
-      await ensureUser(env, identity);
-
-      if (url.pathname === `${PRIVATE_PREFIX}/auth/start` && request.method === "GET") {
-        const requested = url.searchParams.get("returnOrigin");
-        return authCompletionPage(requested === env.APP_ORIGIN ? requested : env.APP_ORIGIN);
-      }
-
-      if (url.pathname === `${PRIVATE_PREFIX}/state` && request.method === "GET") {
-        return json(await snapshot(env, identity));
-      }
-
-      if (url.pathname === `${PRIVATE_PREFIX}/sync` && request.method === "POST") {
-        const body = await readJsonLimited(request);
-        const mutationsRaw = body && typeof body === "object" && Array.isArray((body as { mutations?: unknown }).mutations)
-          ? (body as { mutations: unknown[] }).mutations
-          : null;
-        if (!mutationsRaw) throw new HttpError(400, "Sync request requires a mutations array.");
-        if (mutationsRaw.length > MAX_MUTATIONS) throw new HttpError(400, `At most ${MAX_MUTATIONS} mutations may be sent at once.`);
-        for (const raw of mutationsRaw) await applyMutation(env, identity.userId, sanitizeMutation(raw));
-        return json(await snapshot(env, identity));
-      }
-
-      if (url.pathname === `${PRIVATE_PREFIX}/export` && request.method === "GET") {
-        const state = await snapshot(env, identity);
-        return json({ exportedAt: new Date().toISOString(), account: state.account, items: state.items });
-      }
-
-      if (url.pathname === `${PRIVATE_PREFIX}/account` && request.method === "DELETE") {
-        await env.DB.prepare("DELETE FROM sync_users WHERE user_id = ?1").bind(identity.userId).run();
-        return json({ deleted: true });
-      }
-
-      return json({ error: "Not found" }, 404);
+      return withCors(await handleRequest(request, env), request, env);
     } catch (error) {
-      if (error instanceof HttpError) return json({ error: error.message }, error.status);
+      if (error instanceof HttpError) return withCors(json({ error: error.message }, error.status), request, env);
       console.error(JSON.stringify({ event: "unreached_private_sync_error", message: error instanceof Error ? error.message : String(error) }));
-      return json({ error: "Private sync encountered an internal error." }, 500);
+      return withCors(json({ error: "Private sync encountered an internal error." }, 500), request, env);
     }
   },
 } satisfies ExportedHandler<Env>;
