@@ -39,6 +39,11 @@ export function DataStatus() {
     label = online ? "Refreshing mission data" : "Opening cached mission data";
     detail = data.progress ? `Loading page ${data.progress.loadedPages} of ${data.progress.totalPages}` : "Checking the validated local snapshot";
     Icon = RefreshCw;
+  } else if (data.ready && data.refreshing) {
+    state = data.stale ? "stale" : "refreshing";
+    label = data.stale ? "Cached mission data · updating" : "Mission data · updating";
+    detail = `${formatLoadedAt(data.loadedAt)} · live revalidation is running in the background`;
+    Icon = RefreshCw;
   } else if (data.source === "network" && online) {
     state = "live";
     label = "Live mission data";

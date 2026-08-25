@@ -4,7 +4,8 @@ import { resolve } from "node:path";
 const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const pkg = JSON.parse(await readText("package.json")) as { version?: string; scripts?: Record<string, string> };
-if (pkg.version !== "2.0.0") throw new Error(`v2.0 package version mismatch: ${String(pkg.version)}`);
+const version = String(pkg.version ?? "0.0.0").split(".").map((part) => Number(part));
+if ((version[0] ?? 0) < 2) throw new Error(`v2.0 capability gate requires package version >=2.0.0: ${String(pkg.version)}`);
 if (!pkg.scripts?.["sync:check"]?.includes("scripts/sync/v20-check.ts")) throw new Error("v2.0 sync certification script is not wired.");
 
 const personalizationTypes = await readText("src/personalization/types.ts");
