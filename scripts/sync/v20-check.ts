@@ -50,7 +50,7 @@ for (const marker of ["Merge this device & enable sync", "Nothing is uploaded wh
   if (!accountPage.includes(marker)) throw new Error(`v2.0 account surface missing explicit privacy/consent marker: ${marker}`);
 }
 
-for (const marker of ["Cf-Access-Jwt-Assertion", "createRemoteJWKSet", "jwtVerify", "env.ACCESS_AUD", "sha256Hex", "MAX_BODY_BYTES", "MAX_MUTATIONS", "current.present === 0", "current.revision > mutation.baseItemRevision", "sync_mutations", "last_prayed_at", "/private/export", "/private/account"]) {
+for (const marker of ["Cf-Access-Jwt-Assertion", "createRemoteJWKSet", "jwtVerify", "env.ACCESS_AUD", "sha256Hex", "MAX_BODY_BYTES", "MAX_MUTATIONS", "current.present === 0", "current.revision > mutation.baseItemRevision", "sync_mutations", "last_prayed_at", "PRIVATE_PREFIX}/export", "PRIVATE_PREFIX}/account"]) {
   if (!worker.includes(marker)) throw new Error(`v2.0 Worker missing security/conflict marker: ${marker}`);
 }
 for (const forbidden of ["Math.random", "prayer_history", "prayer_count", "recent", "peoplegroups.org", "/wp-json/pg/v1"]) {
