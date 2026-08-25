@@ -23,8 +23,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       WORKER_NAME: unreached-private-continuity
       D1_NAME: unreached-private-continuity
-      ACCESS_APP_NAME: Unreached private continuity
-      ACCESS_DOMAIN: www.thiepn.dev/unreached-sync/private/*
+      ACCESS_APP_NAME: Unreached private continuity workers.dev
     steps:
       - uses: actions/checkout@v7
         with:
@@ -60,6 +59,30 @@ jobs:
           fi
           test -n "$DB_ID" && test "$DB_ID" != "null"
           echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Discover workers.dev backend origin
+        id: backend
+        run: |
+          set -euo pipefail
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          URL="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
+          BODY=$(curl --fail-with-body --silent --show-error -H "$AUTH" "$URL")
+          printf '%s' "$BODY" | jq -e '.success == true' >/dev/null
+          SUBDOMAIN=$(printf '%s' "$BODY" | jq -r '.result.subdomain')
+          ENABLED=$(printf '%s' "$BODY" | jq -r '.result.enabled // true')
+          test -n "$SUBDOMAIN" && test "$SUBDOMAIN" != "null"
+          if [ "$ENABLED" = "false" ]; then
+            UPDATED=$(curl --fail-with-body --silent --show-error -X POST -H "$AUTH" -H "Content-Type: application/json" --data '{"enabled":true}' "$URL")
+            printf '%s' "$UPDATED" | jq -e '.success == true' >/dev/null
+          fi
+          HOST="$WORKER_NAME.$SUBDOMAIN.workers.dev"
+          ORIGIN="https://$HOST"
+          ACCESS_DOMAIN="$HOST/unreached-sync/private/auth/start"
+          echo "workers_subdomain=$SUBDOMAIN" >> "$GITHUB_OUTPUT"
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
+          echo "access_domain=$ACCESS_DOMAIN" >> "$GITHUB_OUTPUT"
+          echo "Private sync backend origin: $ORIGIN"
 
       - name: Ensure Zero Trust organization is initialized
         run: |
@@ -121,6 +144,7 @@ jobs:
         id: access
         env:
           OTP_ID: ${{ steps.otp.outputs.otp_id }}
+          ACCESS_DOMAIN: ${{ steps.backend.outputs.access_domain }}
         run: |
           set -euo pipefail
           AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
@@ -174,7 +198,20 @@ jobs:
         run: npm run deploy
 
       - name: Verify public health endpoint
+        env:
+          BACKEND_ORIGIN: ${{ steps.backend.outputs.origin }}
         run: |
-          RESPONSE=$(curl --fail-with-body --silent --show-error --retry 5 --retry-delay 2 "https://www.thiepn.dev/unreached-sync/health")
+          RESPONSE=$(curl --fail-with-body --silent --show-error --retry 5 --retry-delay 2 "$BACKEND_ORIGIN/unreached-sync/health")
           printf '%s' "$RESPONSE" | jq -e '.ok == true and .version == "2.0.0"' >/dev/null
           echo "$RESPONSE"
+
+      - name: Verify Access protects sign-in bootstrap
+        env:
+          BACKEND_ORIGIN: ${{ steps.backend.outputs.origin }}
+        run: |
+          STATUS=$(curl --silent --show-error -o /dev/null -w '%{http_code}' "$BACKEND_ORIGIN/unreached-sync/private/auth/start?returnOrigin=https%3A%2F%2Fwww.thiepn.dev")
+          case "$STATUS" in
+            200|301|302|303|307|308|401|403) ;;
+            *) echo "Unexpected sign-in bootstrap status: $STATUS"; exit 1 ;;
+          esac
+          echo "Unauthenticated sign-in bootstrap returned HTTP $STATUS as expected."
