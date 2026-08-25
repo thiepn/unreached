@@ -89,21 +89,21 @@ test.describe("v2.0 optional private accounts", () => {
     await seed(page, personalization());
     await installHealth(page);
 
-    let syncBody: unknown = null;
+    let syncBody: { mutations?: Array<{ sourcePeopleId?: number; [key: string]: unknown }> } | null = null;
     let stateCalls = 0;
     await page.route("**/unreached-sync/private/state", async (route) => {
       stateCalls += 1;
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot()) });
     });
     await page.route("**/unreached-sync/private/sync", async (route) => {
-      syncBody = JSON.parse(route.request().postData() ?? "null") as unknown;
+      syncBody = JSON.parse(route.request().postData() ?? "null") as { mutations?: Array<{ sourcePeopleId?: number; [key: string]: unknown }> };
       const localItem = savedItem(localSaved, 5);
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(snapshot([savedItem(remoteSaved, 4), localItem], 5)) });
     });
 
     await page.goto("./#/account");
     await expect(page.getByRole("heading", { name: "Signed in · sync not enabled" })).toBeVisible();
-    await expect(page.getByText(/Nothing is uploaded while you remain signed out/)).toBeVisible();
+    await expect(page.getByText(/Choose the explicit merge below before anything is uploaded/)).toBeVisible();
 
     await page.getByRole("button", { name: "Merge this device & enable sync" }).click();
     await expect(page.getByRole("heading", { name: "Private sync enabled" })).toBeVisible();
@@ -113,7 +113,7 @@ test.describe("v2.0 optional private accounts", () => {
     const bodyText = JSON.stringify(syncBody);
     expect(bodyText).not.toContain("recent");
     expect(bodyText).not.toContain("visitedAt");
-    expect(bodyText).toContain(`\"sourcePeopleId\":${LOCAL_PERSON_ID}`);
+    expect(syncBody?.mutations?.some((mutation) => mutation.sourcePeopleId === LOCAL_PERSON_ID)).toBe(true);
 
     const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null"), LOCAL_STORAGE);
     expect(stored.savedPeoples.map((item: { sourcePeopleId: number }) => item.sourcePeopleId).sort()).toEqual([LOCAL_PERSON_ID, REMOTE_PERSON_ID].sort());
