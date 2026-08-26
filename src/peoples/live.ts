@@ -1,5 +1,3 @@
-import { useMemo } from "preact/hooks";
-
 import {
   entityGsecRange,
   entityTaxonomy,
@@ -85,9 +83,7 @@ export function filterLivePeople(entities: RuntimePeopleEntity[], state: LivePeo
 
 export function useLivePeopleExplorer(enabled = true) {
   const runtime = usePeopleGroupsRuntimeStore(enabled);
-  const peopleByRouteKey = useMemo(() => new Map(runtime.entities.map((entity) => [entity.routeKey, entity])), [runtime.entities]);
-  const peopleByPeid = useMemo(() => new Map(runtime.entities.map((entity) => [entity.peid, entity])), [runtime.entities]);
-  return { ...runtime, peoples: runtime.entities, peopleByRouteKey, peopleByPeid };
+  return { ...runtime, peoples: runtime.entities };
 }
 
 export function livePeopleStatusLabel(entity: RuntimePeopleEntity): string {

@@ -1,14 +1,10 @@
 import { ArrowUpRight, Clock3, Globe2, Languages, Search, UsersRound, X } from "lucide-preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
-import { useLiveCountryExplorer } from "../countries";
-import { buildSearchDocuments, searchDocuments, type SearchDomain } from "../discovery/search";
+import { searchDocuments, type SearchDomain } from "../discovery/search";
+import { useSharedSearchDocuments } from "../discovery/shared";
 import { useDebouncedValue } from "../hooks/useResponsiveWork";
-import { useLiveLanguageExplorer } from "../languages";
-import { useWorldGeography } from "../map/geography";
-import { useLivePeopleExplorer } from "../peoples";
 import { usePersonalization } from "../personalization";
-import { entityTaxonomy } from "../providers/peoplegroups";
 
 function domainIcon(domain: SearchDomain) {
   if (domain === "country") return Globe2;
@@ -32,10 +28,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const debouncedQuery = useDebouncedValue(query, 90);
   const searchActive = query.trim().length > 0;
-  const peoples = useLivePeopleExplorer(searchActive);
-  const countries = useLiveCountryExplorer(searchActive);
-  const languages = useLiveLanguageExplorer(searchActive);
-  const geography = useWorldGeography();
+  const sharedSearch = useSharedSearchDocuments(searchActive);
   const personalization = usePersonalization();
 
   useEffect(() => {
@@ -75,41 +68,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
-  const documents = useMemo(() => {
-    const geographicCountries = geography.countries.flatMap((feature) => {
-      const rawIso = feature.properties.iso3 || feature.properties.adminA3;
-      const iso3 = typeof rawIso === "string" ? rawIso.toUpperCase() : "";
-      if (!/^[A-Z]{3}$/.test(iso3)) return [];
-      const record = countries.countriesByIso3.get(iso3);
-      return [{ iso3, name: record?.name ?? feature.properties.name, regionName: record?.regionName ?? feature.properties.continent ?? null }];
-    });
-
-    return buildSearchDocuments({
-      peoples: peoples.peoples.map((people) => {
-        const taxonomy = entityTaxonomy(people);
-        return {
-          sourcePeopleId: people.routeKey,
-          name: people.displayName,
-          primaryLanguageName: people.primaryLanguage?.name ?? null,
-          primaryReligionName: people.primaryReligion?.name ?? null,
-          largestCountryName: people.contexts[0]?.country.name ?? null,
-          cluster: taxonomy.peopleCluster,
-          affinityBloc: taxonomy.affinityBloc,
-        };
-      }),
-      countries: geographicCountries,
-      languages: languages.languages.map((language) => ({
-        iso6393: language.iso6393,
-        name: language.name,
-        familyName: language.familyName,
-        branchName: null,
-        countryNames: language.countries.map((country) => country.name),
-        peopleNames: language.peoples.map((people) => people.name),
-      })),
-    });
-  }, [countries.countriesByIso3, geography.countries, peoples.peoples, languages.languages]);
-
-  const results = useMemo(() => searchDocuments(documents, debouncedQuery, 18), [documents, debouncedQuery]);
+  const results = useMemo(() => searchDocuments(sharedSearch.documents, debouncedQuery, 18), [sharedSearch.documents, debouncedQuery]);
   const grouped = useMemo(() => (["people", "country", "language"] as const).map((domain) => ({ domain, results: results.filter((result) => result.domain === domain) })).filter((group) => group.results.length), [results]);
 
   useEffect(() => setActiveIndex(0), [debouncedQuery]);
@@ -118,9 +77,6 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
     onClose();
     window.location.hash = href.replace(/^#/, "");
   };
-
-  const loadingSource = searchActive && (peoples.loading || countries.loading || languages.loading);
-  const sourceError = searchActive ? peoples.error ?? countries.error ?? languages.error : null;
 
   return (
     <div class="search-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) onClose(); }}>
@@ -150,8 +106,8 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
         </div>
 
         <div class="search-dialog__body">
-          {loadingSource ? <p class="search-empty">Loading live people and language records{peoples.progress ? `… ${peoples.progress.loadedPages}/${peoples.progress.totalPages}` : "…"}</p> : null}
-          {sourceError ? <p class="search-empty">Live people and language search is temporarily unavailable: {sourceError}</p> : null}
+          {sharedSearch.loading ? <p class="search-empty">Loading live people and language records{sharedSearch.progress ? `… ${sharedSearch.progress.loadedPages}/${sharedSearch.progress.totalPages}` : "…"}</p> : null}
+          {sharedSearch.error ? <p class="search-empty">Live people and language search is temporarily unavailable: {sharedSearch.error}</p> : null}
 
           {!query.trim() ? (
             <section class="search-recents" aria-labelledby="search-recent-heading">
@@ -178,7 +134,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
                 </section>
               ))}
             </div>
-          ) : debouncedQuery.trim() && !loadingSource ? (
+          ) : debouncedQuery.trim() && !sharedSearch.loading ? (
             <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No current result matches “{debouncedQuery}”.</strong><p>Country geography is local; people and language results use the live PeopleGroups.org runtime corpus.</p></div>
           ) : null}
         </div>

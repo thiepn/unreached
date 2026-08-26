@@ -1,7 +1,4 @@
-import { useMemo } from "preact/hooks";
-
-import { entityResourceBreakdown, type RuntimePeopleEntity } from "../providers/peoplegroups";
-import { useLivePeopleExplorer } from "../peoples/live";
+import { entityResourceBreakdown, usePeopleGroupsRuntimeStore, type RuntimePeopleEntity } from "../providers/peoplegroups";
 import type { PrayerCategory, ScriptureReference } from "./types";
 
 export const LIVE_PRAYER_TEMPLATE_VERSION = "u12c-v1";
@@ -141,7 +138,10 @@ export function livePrayerFlow(profile: LivePrayerProfile, minutes: 2 | 5 | 10):
 }
 
 export function useLivePrayerExperience(enabled = true) {
-  const people = useLivePeopleExplorer(enabled);
-  const eligible = useMemo(() => people.peoples.filter(isLivePrayerEligible), [people.peoples]);
-  return { ...people, eligible };
+  const runtime = usePeopleGroupsRuntimeStore(enabled);
+  return {
+    ...runtime,
+    peoples: runtime.entities,
+    eligible: runtime.eligiblePrayerPeople,
+  };
 }

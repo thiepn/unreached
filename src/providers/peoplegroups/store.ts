@@ -10,6 +10,7 @@ import {
 } from "./cache";
 import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities, toRuntimePeopleContext } from "./model";
 import { createPeopleGroupsCorpusLoader, type PeopleGroupsCorpusLoadResult } from "./runtime";
+import { buildVisibleCountryRecords, type VisibleCountryRecord } from "./visible";
 import type {
   PeopleGroupsApiRecord,
   RuntimeCountrySummary,
@@ -22,7 +23,17 @@ export interface PeopleGroupsRuntimeProgress {
   totalPages: number;
 }
 
-export interface PeopleGroupsRuntimeSnapshot {
+interface SharedPeopleGroupsDerivedData {
+  peopleByRouteKey: Map<number, RuntimePeopleEntity>;
+  peopleByPeid: Map<number, RuntimePeopleEntity>;
+  countries: VisibleCountryRecord[];
+  countriesByIso3: Map<string, VisibleCountryRecord>;
+  eligiblePrayerPeople: RuntimePeopleEntity[];
+  eligiblePrayerIds: Set<number>;
+}
+
+export interface PeopleGroupsRuntimeSnapshot extends SharedPeopleGroupsDerivedData {
+  generation: number;
   loading: boolean;
   refreshing: boolean;
   ready: boolean;
@@ -44,7 +55,36 @@ const loader = createPeopleGroupsCorpusLoader();
 const preparedCache = createIndexedDbPreparedPeopleGroupsCache();
 const listeners = new Set<(value: PeopleGroupsRuntimeSnapshot) => void>();
 
+function emptyDerivedData(): SharedPeopleGroupsDerivedData {
+  return {
+    peopleByRouteKey: new Map(),
+    peopleByPeid: new Map(),
+    countries: [],
+    countriesByIso3: new Map(),
+    eligiblePrayerPeople: [],
+    eligiblePrayerIds: new Set(),
+  };
+}
+
+export function buildSharedPeopleGroupsDerivedData(
+  contexts: RuntimePeopleContext[],
+  entities: RuntimePeopleEntity[],
+  countrySummaries: RuntimeCountrySummary[],
+): SharedPeopleGroupsDerivedData {
+  const countries = buildVisibleCountryRecords(contexts, countrySummaries);
+  const eligiblePrayerPeople = entities.filter((entity) => entity.reach.unreachedContexts === 1);
+  return {
+    peopleByRouteKey: new Map(entities.map((entity) => [entity.routeKey, entity])),
+    peopleByPeid: new Map(entities.map((entity) => [entity.peid, entity])),
+    countries,
+    countriesByIso3: new Map(countries.map((country) => [country.iso3, country])),
+    eligiblePrayerPeople,
+    eligiblePrayerIds: new Set(eligiblePrayerPeople.map((entity) => entity.routeKey)),
+  };
+}
+
 let snapshot: PeopleGroupsRuntimeSnapshot = {
+  generation: 0,
   loading: false,
   refreshing: false,
   ready: false,
@@ -60,6 +100,7 @@ let snapshot: PeopleGroupsRuntimeSnapshot = {
   contexts: [],
   entities: [],
   countrySummaries: [],
+  ...emptyDerivedData(),
 };
 
 let pendingLoad: Promise<void> | null = null;
@@ -81,11 +122,15 @@ function isOnline(): boolean {
 }
 
 function materialize(records: PeopleGroupsApiRecord[]) {
+  const contexts = records.map(toRuntimePeopleContext);
+  const entities = buildRuntimePeopleEntities(records);
+  const countrySummaries = buildRuntimeCountrySummaries(records);
   return {
     records,
-    contexts: records.map(toRuntimePeopleContext),
-    entities: buildRuntimePeopleEntities(records),
-    countrySummaries: buildRuntimeCountrySummaries(records),
+    contexts,
+    entities,
+    countrySummaries,
+    ...buildSharedPeopleGroupsDerivedData(contexts, entities, countrySummaries),
   };
 }
 
@@ -99,7 +144,10 @@ function preparedFromResult(
     storedAt: result.loadedAt,
     totalPages: result.totalPages,
     totalRecords: result.totalRecords,
-    ...materialized,
+    records: materialized.records,
+    contexts: materialized.contexts,
+    entities: materialized.entities,
+    countrySummaries: materialized.countrySummaries,
   };
 }
 
@@ -127,7 +175,9 @@ async function hydratePreparedSnapshot(): Promise<boolean> {
       if (online && age > PEOPLE_GROUPS_CACHE_STALE_MAX_MS) return false;
 
       const stale = age > PEOPLE_GROUPS_CACHE_FRESH_MS;
+      const derived = buildSharedPeopleGroupsDerivedData(prepared.contexts, prepared.entities, prepared.countrySummaries);
       publish({
+        generation: snapshot.generation + 1,
         loading: false,
         refreshing: false,
         ready: true,
@@ -147,6 +197,7 @@ async function hydratePreparedSnapshot(): Promise<boolean> {
         contexts: prepared.contexts,
         entities: prepared.entities,
         countrySummaries: prepared.countrySummaries,
+        ...derived,
       });
       return true;
     } catch {
@@ -177,6 +228,7 @@ function refreshFromSource(forceRefresh: boolean): Promise<void> {
     .then((result) => {
       const materialized = materialize(result.records);
       publish({
+        generation: snapshot.generation + 1,
         loading: false,
         refreshing: false,
         ready: true,
