@@ -236,7 +236,10 @@ export function reconcileSnapshot(input: ReconcileSnapshotInput): ReconcileSnaps
     if (existingUnsent) {
       if (!equivalentDesired(localDesired, remote)) {
         protectedKeys.add(key);
-        pending.push({ ...existingUnsent, baseItemRevision: remote?.revision ?? 0 });
+        // Preserve the causal base of an offline/previously queued mutation. If
+        // another device created a newer opposing state while this device was
+        // offline, the Worker must see the old base revision and reject it.
+        pending.push(existingUnsent);
       }
       continue;
     }
@@ -246,6 +249,9 @@ export function reconcileSnapshot(input: ReconcileSnapshotInput): ReconcileSnaps
       const sentDesired = desiredFromMutation(sent);
       if (!equivalentDesired(localDesired, sentDesired) && !equivalentDesired(localDesired, remote)) {
         protectedKeys.add(key);
+        // This is a genuinely newer local action made after the sent mutation.
+        // Rebase that new action onto the response revision so it survives the
+        // older request result without reusing the old mutation's causal base.
         pending.push(mutationFor(localDesired, remote, kind, sourcePeopleId, input.mutationId));
       }
       continue;
