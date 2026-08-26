@@ -247,11 +247,7 @@ export async function ensurePeopleGroupsRuntime(forceRefresh = false): Promise<v
 }
 
 export function warmPeopleGroupsRuntime(): void {
-  void hydratePreparedSnapshot().then((hydrated) => {
-    if (hydrated && snapshot.stale && isOnline() && !pendingLoad) {
-      void refreshFromSource(true);
-    }
-  });
+  void hydratePreparedSnapshot();
 }
 
 export function installPeopleGroupsReconnectRefresh(): void {
