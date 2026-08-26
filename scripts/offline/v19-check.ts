@@ -40,14 +40,14 @@ try {
 if (!emptyOfflineMessage.includes("no validated PeopleGroups cache") || !emptyOfflineMessage.includes("Reconnect once")) throw new Error("v1.9 first-offline behavior must fail clearly without inventing data.");
 
 const vite = await readText("vite.config.ts");
-for (const marker of ["unreached-v19-offline-shell", "unreached-shell-v1.9.0", "PRECACHE", "request.mode === \"navigate\"", "url.origin !== self.location.origin", "listPublicFiles"]) {
-  if (!vite.includes(marker)) throw new Error(`v1.9 Vite offline shell missing contract marker: ${marker}`);
+for (const marker of ["unreached-phase2-deployment-safe-offline-shell", "OFFLINE_CACHE_PREFIX", "PRECACHE", "request.mode === \"navigate\"", "url.origin !== self.location.origin", "listPublicFiles"]) {
+  if (!vite.includes(marker)) throw new Error(`v1.9+ Vite offline shell missing contract marker: ${marker}`);
 }
-if (vite.includes("peoplegroups.org")) throw new Error("v1.9 service-worker generation must not cache or proxy PeopleGroups.org.");
+if (vite.includes("peoplegroups.org")) throw new Error("v1.9+ service-worker generation must not cache or proxy PeopleGroups.org.");
 
 const offlineRuntime = await readText("src/offline/runtime.ts");
 for (const marker of ["serviceWorker.register", "import.meta.env.BASE_URL", "installPeopleGroupsReconnectRefresh", "Registration failure must not break the app"]) {
-  if (!offlineRuntime.includes(marker)) throw new Error(`v1.9 offline runtime missing: ${marker}`);
+  if (!offlineRuntime.includes(marker)) throw new Error(`v1.9+ offline runtime missing: ${marker}`);
 }
 
 const store = await readText("src/providers/peoplegroups/store.ts");
@@ -70,4 +70,4 @@ if (!Array.isArray(manifest.shortcuts) || manifest.shortcuts.length < 3) throw n
 const v18 = await readText("scripts/prayer/v18-check.ts");
 if (v18.includes('pkg.version !== "1.8.0"')) throw new Error("v1.8 capability gate must remain forward-compatible.");
 
-console.log("v1.9+ offline resilience checks passed: installable shell, owned-asset precache boundary, explicit data provenance, old validated offline fallback, first-offline failure safety, and reconnect refresh.");
+console.log("v1.9+ offline resilience checks passed: installable shell, owned-asset offline boundary, explicit data provenance, old validated offline fallback, first-offline failure safety, and reconnect refresh.");
