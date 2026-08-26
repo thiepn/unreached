@@ -31,7 +31,7 @@ The prepared snapshot is a local optimization only. It is not bundled into the a
 The existing freshness contract remains intact:
 
 - up to 24 hours: prepared data may render immediately as fresh and no network refresh is required;
-- 24 hours to 7 days while online: prepared data renders immediately as stale, while a full live revalidation runs in the background;
+- 24 hours to 7 days while online: prepared data renders immediately as stale when a mission-data surface is activated, while a full live revalidation then runs in the background;
 - older than 7 days while online: the prepared fast path is not accepted as the online fallback, preserving the existing maximum stale budget;
 - explicitly offline: an older fully validated prepared snapshot may still support continuity with stale/offline provenance, consistent with v1.9.
 
@@ -41,18 +41,20 @@ If revalidation succeeds, the new fully materialized corpus replaces the old run
 
 ## Startup warming
 
-The application shell renders first. Local mission-data warming is scheduled afterward using `requestIdleCallback` when available, with a timer fallback for browsers without that API.
+The application shell renders first. Local snapshot hydration is scheduled afterward using `requestIdleCallback` when available, with a timer fallback for browsers without that API.
 
-This means:
+Startup warming is deliberately **local-only**:
 
 1. navigation and owned UI paint first;
-2. the prepared local snapshot is hydrated in the background when one exists;
-3. a fresh prepared snapshot causes no provider request;
-4. a stale-but-usable prepared snapshot may start live revalidation in the background while remaining visible;
-5. a first-time visitor with no prepared snapshot does **not** trigger a cold corpus request merely by opening a local-only surface such as Search or editorial coverage;
-6. the first surface that actually requires mission data starts the normal certified corpus load, after which later visits benefit from the prepared snapshot.
+2. the prepared local snapshot is read from IndexedDB in the background when one exists;
+3. startup warming itself never contacts PeopleGroups.org;
+4. local-only surfaces such as the unopened global Search dialog and reviewed editorial coverage therefore retain their zero-provider-request contract;
+5. a first-time visitor with no prepared snapshot does not trigger a cold corpus request merely by opening the application;
+6. when a surface actually requires mission data, it activates the normal certified runtime;
+7. if a usable stale prepared snapshot was hydrated, that surface renders it immediately and starts live revalidation in the background;
+8. if no usable prepared snapshot exists, that data-dependent surface starts the normal certified corpus load.
 
-This preserves the pre-existing lazy-network contract while still making repeat mission-data visits effectively immediate.
+This preserves the pre-existing lazy-network contract while making repeat mission-data visits effectively immediate.
 
 Reconnect handling remains active and forces live revalidation after stale/offline/error states.
 
@@ -78,7 +80,8 @@ PeopleGroups.org currently documents a public comprehensive CSV download in addi
 - database migration from the existing page-cache schema;
 - prepared snapshot validation;
 - non-blocking stale-while-revalidate runtime state;
-- local-only idle startup warming;
+- local-only idle startup hydration;
+- demand-activated provider revalidation;
 - reconnect refresh;
 - provider `no-store` semantics;
 - preservation of the no-static-mirror boundary.
