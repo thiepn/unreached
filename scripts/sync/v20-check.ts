@@ -5,42 +5,79 @@ const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const pkg = JSON.parse(await readText("package.json")) as { version?: string; scripts?: Record<string, string> };
 const version = String(pkg.version ?? "0.0.0").split(".").map((part) => Number(part));
-if ((version[0] ?? 0) < 2) throw new Error(`v2.0 capability gate requires package version >=2.0.0: ${String(pkg.version)}`);
-if (!pkg.scripts?.["sync:check"]?.includes("scripts/sync/v20-check.ts")) throw new Error("v2.0 sync certification script is not wired.");
+if ((version[0] ?? 0) < 2) throw new Error(`v2 private-sync capability gate requires package version >=2.0.0: ${String(pkg.version)}`);
+if (!pkg.scripts?.["sync:check"]?.includes("scripts/sync/v20-check.ts")) throw new Error("Private-sync certification script is not wired.");
 
 const personalizationTypes = await readText("src/personalization/types.ts");
+const personalizationModel = await readText("src/personalization/model.ts");
 const personalizationRuntime = await readText("src/personalization/runtime.ts");
-if (!personalizationTypes.includes("version: z.literal(2)")) throw new Error("v2.0 must preserve personalization schema v2.");
-if (!personalizationRuntime.includes('"unreached.personal.v2"')) throw new Error("v2.0 must preserve the existing local personalization storage key.");
+if (!personalizationTypes.includes("version: z.literal(2)")) throw new Error("Personalization schema v2 must be preserved.");
+if (!personalizationRuntime.includes('"unreached.personal.v2"')) throw new Error("The existing local personalization storage key must be preserved.");
+for (const marker of ["memoryFallbackState", "PERSONALIZATION_CHANGE_EVENT", "finally", "dispatchEvent"]) {
+  if (!personalizationRuntime.includes(marker)) throw new Error(`Phase 1 storage fallback missing ${marker}.`);
+}
+if (!personalizationModel.includes("MAX_PRAYER_LIST = 100")) throw new Error("Phase 1 expects the existing 100-person prayer-list boundary.");
 
 const syncTypes = await readText("src/sync/types.ts");
 const syncRuntime = await readText("src/sync/runtime.ts");
 const syncClient = await readText("src/sync/client.ts");
+const reconcile = await readText("src/sync/reconcile.ts");
 const accountPage = await readText("src/pages/AccountPage.tsx");
-const worker = await readText("worker/src/index.ts");
+const workerRouter = await readText("worker/src/index.ts");
+const workerMutations = await readText("worker/src/mutations.ts");
+const worker = `${workerRouter}\n${workerMutations}`;
 const migration = await readText("worker/migrations/0001_private_continuity.sql");
+const phase1Migration = await readText("worker/migrations/0002_phase1_atomic_mutations.sql");
 const deploy = await readText(".github/workflows/deploy-sync-worker.yml");
 const router = await readText("src/app/router.ts");
 const app = await readText("src/app/App.tsx");
 const main = await readText("src/main.tsx");
 const workerConfig = await readText("worker/wrangler.template.jsonc");
 
-if (!syncRuntime.includes('"unreached.sync.v1"')) throw new Error("v2.0 sync metadata must remain separate from personalization v2.");
-for (const marker of ['SyncKind = "saved" | "prayer"', "baseItemRevision", "mutationId", "pending", "mirror"]) {
-  if (!syncTypes.includes(marker)) throw new Error(`v2.0 sync contract missing ${marker}.`);
+if (!syncRuntime.includes('"unreached.sync.v1"')) throw new Error("Sync metadata storage must remain separate from personalization v2 and migrate in place.");
+for (const marker of ['SyncKind = "saved" | "prayer"', "baseItemRevision", "mutationId", "pending", "mirror", "accountMismatchEmail", "authenticationRequired"]) {
+  if (!syncTypes.includes(marker)) throw new Error(`Sync contract missing ${marker}.`);
 }
-for (const marker of ["captureLocalDiff", "enablePrivateSyncWithMerge", "disconnectPrivateSync", "createMutationId", "crypto.randomUUID", "crypto.getRandomValues", "lastPrayedAt", "applyingRemoteState"]) {
-  if (!syncRuntime.includes(marker)) throw new Error(`v2.0 local sync runtime missing ${marker}.`);
+for (const marker of [
+  "captureLocalDiff",
+  "enablePrivateSyncWithMerge",
+  "disconnectPrivateSync",
+  "createMutationId",
+  "crypto.randomUUID",
+  "crypto.getRandomValues",
+  "lastPrayedAt",
+  "applyingRemoteState",
+  "snapshotMatchesBoundAccount",
+  "takeSyncMutationBatch",
+  "reconcileSnapshot",
+  "readSyncAccessToken",
+  "memoryFallbackSyncState",
+]) {
+  if (!syncRuntime.includes(marker)) throw new Error(`Phase 1 local sync runtime missing ${marker}.`);
 }
-if (syncRuntime.includes("Math.random")) throw new Error("v2.0 mutation IDs must never fall back to Math.random.");
-if (!syncRuntime.includes("readBrowserPersonalizationState") || !syncRuntime.includes("persistBrowserPersonalizationState")) throw new Error("v2.0 sync must bridge the existing browser-local state rather than replace it.");
+if (syncRuntime.includes("Math.random")) throw new Error("Mutation IDs must never fall back to Math.random.");
+if (!syncRuntime.includes("readBrowserPersonalizationState") || !syncRuntime.includes("persistBrowserPersonalizationState")) throw new Error("Sync must bridge the existing browser-local state rather than replace it.");
+
+for (const marker of [
+  "SyncCapacityError",
+  "mergeForFirstActivation",
+  "reconcileSnapshot",
+  "previousMirror",
+  "sentMutations",
+  "protectedKeys",
+  "MAX_PRAYER_LIST",
+  "No local or remote entries were discarded",
+  "Nothing was merged or uploaded",
+]) {
+  if (!reconcile.includes(marker)) throw new Error(`Phase 1 reconciliation layer missing ${marker}.`);
+}
 
 const protocolSurface = `${syncTypes}\n${syncClient}\n${worker}`;
 for (const forbidden of [
   "recentVisit", "recentVisits", "visitedAt", "sessionHistory", "sessionCount", "completionRate", "completionPercent",
   "sessionScore", "sessionStreak", "prayerCount", "prayerTotal", "prayerMinutesTotal", "leaderboard", "peoplegroups.org", "/wp-json/pg/v1"
 ]) {
-  if (protocolSurface.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`v2.0 private sync protocol contains forbidden field/reference: ${forbidden}`);
+  if (protocolSurface.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`Private sync protocol contains forbidden field/reference: ${forbidden}`);
 }
 
 for (const marker of [
@@ -56,11 +93,15 @@ for (const marker of [
   "deleteRemoteAccount",
   "exportRemoteAccount",
   "openSyncSignIn",
+  "SYNC_MAX_MUTATIONS = 200",
+  "SYNC_MAX_BODY_BYTES = 64 * 1024",
+  "takeSyncMutationBatch",
+  "TextEncoder",
 ]) {
-  if (!syncClient.includes(marker)) throw new Error(`v2.0 sync client missing ${marker}.`);
+  if (!syncClient.includes(marker)) throw new Error(`Phase 1 sync client missing ${marker}.`);
 }
-if (syncClient.includes('credentials: "include"')) throw new Error("v2.0 workers.dev sync must not depend on cross-site cookies.");
-if (syncClient.includes("localStorage")) throw new Error("v2.0 Access identity tokens must not be persisted in localStorage.");
+if (syncClient.includes('credentials: "include"')) throw new Error("Workers.dev sync must not depend on cross-site cookies.");
+if (syncClient.includes("localStorage")) throw new Error("Access identity tokens must not be persisted in localStorage.");
 
 for (const marker of [
   "Merge this device & enable sync",
@@ -73,8 +114,11 @@ for (const marker of [
   "SYNC_BACKEND_ORIGIN",
   "event.origin !== SYNC_BACKEND_ORIGIN",
   "storeSyncAccessToken",
+  "Sync paused · different account",
+  "Sync paused · sign in again",
+  "Sign in again",
 ]) {
-  if (!accountPage.includes(marker)) throw new Error(`v2.0 account surface missing explicit privacy/auth marker: ${marker}`);
+  if (!accountPage.includes(marker)) throw new Error(`Account surface missing explicit privacy/auth marker: ${marker}`);
 }
 
 for (const marker of [
@@ -87,9 +131,6 @@ for (const marker of [
   "sha256Hex",
   "MAX_BODY_BYTES",
   "MAX_MUTATIONS",
-  "current.present === 0",
-  "current.revision > mutation.baseItemRevision",
-  "sync_mutations",
   "last_prayed_at",
   "PRIVATE_PREFIX}/export",
   "PRIVATE_PREFIX}/account",
@@ -98,21 +139,39 @@ for (const marker of [
   "env.APP_ORIGIN",
   "postMessage",
   "accessTokenFromRequest",
+  "applyMutationAtomic",
 ]) {
-  if (!worker.includes(marker)) throw new Error(`v2.0 Worker missing security/conflict marker: ${marker}`);
+  if (!workerRouter.includes(marker)) throw new Error(`Worker router missing security/protocol marker: ${marker}`);
 }
-if (!worker.includes('request.headers.get("Cf-Access-Jwt-Assertion")')) throw new Error("v2.0 sign-in bootstrap must require a Cloudflare Access assertion.");
+if (!workerRouter.includes('request.headers.get("Cf-Access-Jwt-Assertion")')) throw new Error("Sign-in bootstrap must require a Cloudflare Access assertion.");
+
+for (const marker of [
+  "env.DB.batch(statements)",
+  "claim_token",
+  "outcome = 'applied'",
+  "applied_revision",
+  "revision > ?7",
+  "'upsert' AND present = 0",
+  "'delete' AND present = 1",
+  "ON CONFLICT(user_id, mutation_id) DO NOTHING",
+  "json_set",
+]) {
+  if (!workerMutations.includes(marker)) throw new Error(`Phase 1 atomic mutation implementation missing ${marker}.`);
+}
 for (const forbidden of ["Math.random", "prayer_history", "prayer_count", "recent", "peoplegroups.org", "/wp-json/pg/v1"]) {
-  if (worker.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`v2.0 Worker contains forbidden implementation/reference: ${forbidden}`);
+  if (worker.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`Worker contains forbidden implementation/reference: ${forbidden}`);
 }
 
-for (const table of ["sync_users", "sync_items", "sync_mutations"]) if (!migration.includes(`CREATE TABLE IF NOT EXISTS ${table}`)) throw new Error(`v2.0 D1 migration missing ${table}.`);
-if (!migration.includes("ON DELETE CASCADE")) throw new Error("v2.0 account deletion must cascade private sync rows.");
+for (const table of ["sync_users", "sync_items", "sync_mutations"]) if (!migration.includes(`CREATE TABLE IF NOT EXISTS ${table}`)) throw new Error(`D1 base migration missing ${table}.`);
+if (!migration.includes("ON DELETE CASCADE")) throw new Error("Account deletion must cascade private sync rows.");
+for (const column of ["claim_token", "outcome", "applied_revision"]) {
+  if (!phase1Migration.includes(`ADD COLUMN ${column}`)) throw new Error(`Phase 1 D1 migration missing ${column}.`);
+}
 
 for (const marker of ["nodejs_compat", '"workers_dev": true', '"DB"', "__D1_DATABASE_ID__", "__ACCESS_AUD__", "observability"]) {
-  if (!workerConfig.includes(marker)) throw new Error(`v2.0 Wrangler template missing ${marker}.`);
+  if (!workerConfig.includes(marker)) throw new Error(`Wrangler template missing ${marker}.`);
 }
-if (workerConfig.includes('"routes"') || workerConfig.includes("www.thiepn.dev/unreached-sync/*")) throw new Error("v2.0 Worker must not depend on thiepn.dev being a Cloudflare-managed zone.");
+if (workerConfig.includes('"routes"') || workerConfig.includes("www.thiepn.dev/unreached-sync/*")) throw new Error("Worker must not depend on thiepn.dev being a Cloudflare-managed zone.");
 
 for (const marker of [
   "CLOUDFLARE_API_TOKEN",
@@ -127,14 +186,14 @@ for (const marker of [
   "unreached-sync/health",
   "unreached-sync/private/auth/start",
 ]) {
-  if (!deploy.includes(marker)) throw new Error(`v2.0 production deployment workflow missing ${marker}.`);
+  if (!deploy.includes(marker)) throw new Error(`Production deployment workflow missing ${marker}.`);
 }
 
-if (!router.includes('"/account": "account"')) throw new Error("v2.0 account route is not registered.");
-if (!app.includes("AccountPage") || !app.includes('case "account"')) throw new Error("v2.0 Account page is not materialized by the app.");
-if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styles/v20.css"')) throw new Error("v2.0 private sync runtime/style is not initialized.");
+if (!router.includes('"/account": "account"')) throw new Error("Account route is not registered.");
+if (!app.includes("AccountPage") || !app.includes('case "account"')) throw new Error("Account page is not materialized by the app.");
+if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styles/v20.css"')) throw new Error("Private sync runtime/style is not initialized.");
 
 const offlineGate = await readText("scripts/offline/v19-check.ts");
-if (offlineGate.includes('pkg.version !== "1.9.0"')) throw new Error("v1.9 capability gate must remain forward-compatible for v2.0.");
+if (offlineGate.includes('pkg.version !== "1.9.0"')) throw new Error("v1.9 capability gate must remain forward-compatible.");
 
-console.log("v2.0 private continuity checks passed: optional local-first accounts, explicit merge, secure mutation IDs, tombstones, latest-only prayer timestamp, workers.dev Access bootstrap + session-only verified bearer bridge, strict CORS, D1 backend, export/delete controls, no recent history/corpus/performance sync.");
+console.log("Phase 1 private-sync architecture checks passed: storage fallback, capacity-safe first merge, causal reconciliation, account binding, byte/count batching, symmetric stale-conflict handling, atomic D1 mutation claims, latest-only prayer timestamps, session-only verified bearer auth, export/delete controls, and no recent-history/corpus/performance sync.");
