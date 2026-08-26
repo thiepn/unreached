@@ -97,6 +97,21 @@ const records = [
 ];
 
 export async function installPeopleGroupsFixture(page: Page): Promise<void> {
+  await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups\/PG[0-9]+$/, async (route) => {
+    const pgid = route.request().url().split("/").pop()?.toUpperCase() ?? "";
+    const record = records.find((item) => item.PGID === pgid) ?? null;
+    if (!record) {
+      await route.fulfill({ status: 404, contentType: "application/json", body: JSON.stringify({ message: "Not found" }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify(record),
+    });
+  });
+
   await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
     const url = new URL(route.request().url());
     const pageNumber = Number(url.searchParams.get("page") ?? "1");
