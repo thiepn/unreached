@@ -30,6 +30,13 @@ for (const marker of [
 const peoplePage = await readText("src/pages/PeoplePage.tsx");
 if (!peoplePage.includes("usePeopleGroupsRouteRecord")) throw new Error("Phase 4 people details must use route-specific loading.");
 if (peoplePage.includes("useLivePeopleExplorer")) throw new Error("Phase 4 people details must not activate the full people explorer corpus.");
+if (!peoplePage.includes("<ProfileLocalActions record={record}")) throw new Error("Phase 4 people details must pass the already-loaded route entity into profile actions.");
+
+const profileActions = await readText("src/components/ProfileLocalActions.tsx");
+if (profileActions.includes("useLivePeopleExplorer") || profileActions.includes("usePeopleGroupsRuntimeStore")) {
+  throw new Error("Phase 4 profile actions must not activate or subscribe to a full PeopleGroups corpus.");
+}
+if (!profileActions.includes("record: RuntimePeopleEntity")) throw new Error("Phase 4 profile actions must consume the route entity directly.");
 
 const prayerPage = await readText("src/pages/PrayerFocusPage.tsx");
 if (!prayerPage.includes("usePeopleGroupsRouteRecord")) throw new Error("Phase 4 focused prayer must use route-specific loading.");
@@ -51,4 +58,4 @@ for (const marker of [
   if (!browser.includes(marker)) throw new Error(`Phase 4 browser certification missing ${marker}.`);
 }
 
-console.log("Phase 4 route-loading checks passed: detail routes use one verified PeopleGroups record, route records have dedicated caching, and canonical full-corpus promotion remains explicit.");
+console.log("Phase 4 route-loading checks passed: detail routes and their child actions use one verified PeopleGroups record, route records have dedicated caching, and canonical full-corpus promotion remains explicit.");
