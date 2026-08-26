@@ -6,7 +6,6 @@ import {
   formatPeopleCount,
   livePeopleStatusClass,
   livePeopleStatusLabel,
-  useLivePeopleExplorer,
 } from "../peoples";
 import {
   PEOPLE_GROUPS_ATTRIBUTION,
@@ -15,6 +14,8 @@ import {
   entityResourceBreakdown,
   entityTaxonomy,
   relatedRuntimePeople,
+  usePeopleGroupsRouteRecord,
+  usePeopleGroupsRuntimeStore,
   type RuntimePeopleContext,
   type RuntimePeopleEntity,
 } from "../providers/peoplegroups";
@@ -74,8 +75,6 @@ function DeepSourceDetails({ record, loadedAt, stale }: { record: RuntimePeopleE
   const context = record.contexts[0]!;
   const taxonomy = entityTaxonomy(record);
   const resources = entityResourceBreakdown(record);
-  const related = relatedRuntimePeople(record, []);
-  void related;
   return (
     <details class="people-disclosure">
       <summary><Link2 size={18} aria-hidden="true" /> Sources, taxonomy & methodology</summary>
@@ -99,23 +98,24 @@ function DeepSourceDetails({ record, loadedAt, stale }: { record: RuntimePeopleE
 }
 
 export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const explorer = useLivePeopleExplorer();
-  const record = explorer.peopleByRouteKey.get(sourcePeopleId) ?? null;
+  const route = usePeopleGroupsRouteRecord(sourcePeopleId);
+  const corpus = usePeopleGroupsRuntimeStore(false);
+  const record = route.entity;
 
-  if (explorer.loading) return <section class="people-profile people-profile--state" role="status">Loading live people-group data{explorer.progress ? `… ${explorer.progress.loadedPages}/${explorer.progress.totalPages}` : "…"}</section>;
-  if (explorer.error) {
+  if (route.loading) return <section class="people-profile people-profile--state" role="status">Loading live people-group record…</section>;
+  if (route.error) {
     return (
       <section class="people-profile people-profile--state">
         <Database size={24} aria-hidden="true" />
         <div class="eyebrow">People Group Explorer</div>
         <h1 class="display-title">Live people profile unavailable.</h1>
-        <p>{explorer.error}</p>
-        <button type="button" class="people-reset-filters" onClick={explorer.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
+        <p>{route.error}</p>
+        <button type="button" class="people-reset-filters" onClick={route.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
         <a class="inline-link" href={hrefFor("/peoples")}><ArrowLeft size={16} aria-hidden="true" /> Back to peoples</a>
       </section>
     );
   }
-  if (!record) {
+  if (route.notFound || !record) {
     return (
       <section class="people-profile people-profile--state">
         <div class="eyebrow">People Group Explorer</div>
@@ -128,14 +128,14 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
 
   const taxonomy = entityTaxonomy(record);
   const editorial = entityEditorialContext(record);
-  const related = relatedRuntimePeople(record, explorer.peoples).slice(0, 8);
+  const related = corpus.ready ? relatedRuntimePeople(record, corpus.entities).slice(0, 8) : [];
   const context = record.contexts[0]!;
 
   return (
-    <article class="people-profile people-profile--v11">
+    <article class="people-profile people-profile--v11" data-people-data-source={route.source ?? "unknown"} data-people-pgid={context.pgid}>
       <nav class="people-breadcrumb" aria-label="Breadcrumb"><a href={hrefFor("/peoples")}><ArrowLeft size={15} aria-hidden="true" /> Peoples</a><span>/</span><span aria-current="page">{record.displayName}</span></nav>
 
-      {explorer.warning ? <div class="people-data-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{explorer.warning}</p></div></div> : null}
+      {route.warning ? <div class="people-data-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{route.warning}</p></div></div> : null}
 
       <header class="people-profile-hero people-profile-hero--focused">
         <div>
@@ -165,11 +165,11 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
           <summary><UsersRound size={18} aria-hidden="true" /> Related source records{related.length ? ` · ${related.length}` : ""}</summary>
           <div class="people-disclosure__body">
             <p>Relationships use explicit source taxonomy such as ROP3 people name, cluster or affinity bloc. They are not PEID rollups.</p>
-            {related.length ? <div class="people-related-grid">{related.map((item) => <a href={hrefFor(`/peoples/${item.entity.routeKey}`)} class="people-related-card" key={item.entity.id}><span>{item.relationship === "same-rop3-name" ? "Same ROP3 people name" : item.relationship === "same-cluster" ? "Same source cluster" : "Same affinity bloc"}</span><strong>{item.entity.displayName}</strong><small>{item.entity.contexts[0]?.country.name ?? "Country unknown"}</small></a>)}</div> : <p class="people-empty">No related records are available from the current source taxonomy.</p>}
+            {related.length ? <div class="people-related-grid">{related.map((item) => <a href={hrefFor(`/peoples/${item.entity.routeKey}`)} class="people-related-card" key={item.entity.id}><span>{item.relationship === "same-rop3-name" ? "Same ROP3 people name" : item.relationship === "same-cluster" ? "Same source cluster" : "Same affinity bloc"}</span><strong>{item.entity.displayName}</strong><small>{item.entity.contexts[0]?.country.name ?? "Country unknown"}</small></a>)}</div> : <p class="people-empty">{corpus.ready ? "No related records are available from the current source taxonomy." : "Related records become available after a full people explorer dataset has been loaded in this session."}</p>}
           </div>
         </details>
 
-        <DeepSourceDetails record={record} loadedAt={explorer.loadedAt} stale={explorer.stale} />
+        <DeepSourceDetails record={record} loadedAt={route.loadedAt} stale={route.stale} />
 
         <details class="people-disclosure">
           <summary><BookOpen size={18} aria-hidden="true" /> Why raw resource labels are preserved</summary>
