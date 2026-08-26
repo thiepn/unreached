@@ -1,34 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { installPeopleGroupsFixture, VISIBLE_TEST_PEID, VISIBLE_TEST_PEOPLE } from "./peoplegroups-fixture";
+
 const SYNC_STORAGE_KEY = "unreached.sync.v1";
 const PERSONALIZATION_STORAGE_KEY = "unreached.personal.v2";
 const TOKEN_KEY = "unreached.sync.access.v1";
 const VALID_SHAPE_TOKEN = "aaaaaaaaaa.bbbbbbbbbb.cccccccccc";
-
-function savedPayload(id: number) {
-  return {
-    sourcePeopleId: id,
-    peopleGroupId: `people-entity:peoplegroups:${id}`,
-    name: `Bound person ${id}`,
-    largestCountryName: "Testland",
-    primaryLanguageName: "Test",
-    classification: "unreached",
-    frontier: false,
-    savedAt: "2026-08-26T12:00:00.000Z",
-  };
-}
-
-function mirrorItem(id: number) {
-  return {
-    kind: "saved",
-    sourcePeopleId: id,
-    present: true,
-    revision: 1,
-    payload: savedPayload(id),
-    lastPrayedAt: null,
-    updatedAt: "2026-08-26T12:00:00.000Z",
-  };
-}
 
 async function seedBoundDevice(page: Page, withToken: boolean) {
   await page.addInitScript(({ syncKey, personalKey, tokenKey, token, useToken }) => {
@@ -77,8 +54,8 @@ async function seedBoundDevice(page: Page, withToken: boolean) {
   });
 }
 
-test.describe("Phase 1 private-sync account binding", () => {
-  test.skip(({ browserName }) => browserName !== "chromium", "Account-binding regression runs once in Chromium; the existing release suite owns the full browser matrix.");
+test.describe("Phase 1 private-sync and storage integrity", () => {
+  test.skip(({ browserName }) => browserName !== "chromium", "Phase 1 integrity regressions run once in Chromium; the existing release suite owns the full browser matrix.");
 
   test("a differently authenticated account receives zero pending uploads", async ({ page }) => {
     await seedBoundDevice(page, true);
@@ -105,6 +82,8 @@ test.describe("Phase 1 private-sync account binding", () => {
 
     await page.goto("./#/account");
     await expect(page.getByRole("heading", { name: "Sync paused · different account" })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("button", { name: "Export private data" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Delete private account data" })).toHaveCount(0);
     await page.waitForTimeout(750);
     expect(syncPosts).toBe(0);
 
@@ -136,5 +115,28 @@ test.describe("Phase 1 private-sync account binding", () => {
     const syncState = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null"), SYNC_STORAGE_KEY);
     expect(syncState.enabled).toBe(true);
     expect(syncState.accountEmail).toBe("owner@example.com");
+  });
+
+  test("blocked personalization storage keeps the current tab state coherent", async ({ page }) => {
+    await page.addInitScript((personalKey) => {
+      const originalSetItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key: string, value: string) {
+        if (key === personalKey) throw new DOMException("Phase 1 blocked personalization storage", "QuotaExceededError");
+        return originalSetItem.call(this, key, value);
+      };
+    }, PERSONALIZATION_STORAGE_KEY);
+    await installPeopleGroupsFixture(page);
+
+    await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
+    const save = page.getByRole("button", { name: "Save for later" });
+    await expect(save).toBeVisible({ timeout: 10_000 });
+    await save.click();
+    await expect(page.getByRole("button", { name: "Remove from saved" })).toBeVisible();
+
+    const durable = await page.evaluate((key) => localStorage.getItem(key), PERSONALIZATION_STORAGE_KEY);
+    expect(durable).toBeNull();
+
+    await page.getByRole("link", { name: "Saved peoples" }).click();
+    await expect(page.getByText(VISIBLE_TEST_PEOPLE, { exact: true })).toBeVisible({ timeout: 10_000 });
   });
 });
