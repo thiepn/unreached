@@ -45,6 +45,11 @@ for (const marker of [
   if (!store.includes(marker)) throw new Error(`P2.1 stale-while-revalidate runtime missing ${marker}.`);
 }
 
+const localOnlyWarmup = `export function warmPeopleGroupsRuntime(): void {\n  void hydratePreparedSnapshot();\n}`;
+if (!store.includes(localOnlyWarmup)) {
+  throw new Error("P2.1 startup warming must hydrate only the prepared local snapshot and must not trigger a provider request.");
+}
+
 for (const marker of [
   "installPeopleGroupsReconnectRefresh",
   "requestIdleCallback",
@@ -69,4 +74,4 @@ for (const forbidden of [
   }
 }
 
-console.log("P2.1 instant-data checks passed: prepared one-read hydration, non-blocking stale-while-revalidate, idle corpus warming, reconnect refresh, and no static provider mirror.");
+console.log("P2.1 instant-data checks passed: prepared one-read hydration, local-only idle startup, non-blocking stale-while-revalidate on demand, reconnect refresh, and no static provider mirror.");
