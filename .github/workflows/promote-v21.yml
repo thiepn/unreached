@@ -1,0 +1,58 @@
+name: Promote Unreached v2.1.0
+
+on:
+  push:
+    branches:
+      - promotion/v2.1.0
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_SHA: 6fae316cd7dcb07e7ff96307803bf06f8bee92c9
+    steps:
+      - name: Verify certified target
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${TARGET_SHA}" = "6fae316cd7dcb07e7ff96307803bf06f8bee92c9"
+
+      - name: Publish v2.1.0
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cat > /tmp/release-notes.md <<'EOF'
+          ## Unreached v2.1.0 — Instant Data & Background Revalidation
+
+          Certified release commit: `6fae316cd7dcb07e7ff96307803bf06f8bee92c9`.
+
+          ### Performance
+          - Adds a prepared, fully validated IndexedDB mission-data snapshot for effectively immediate repeat visits.
+          - Hydrates prepared data in one local read instead of rebuilding dozens of cached provider pages on every return.
+          - Keeps stale-but-valid cached mission data visible while live revalidation runs in the background on mission-data surfaces.
+          - Separates background `refreshing` from blocking `loading`, so refreshes do not blank usable pages.
+          - Startup hydration is local-only: Search/editorial/local-only surfaces do not trigger a cold PeopleGroups.org corpus download.
+          - First-ever full corpus loading remains provider/network dependent and preserves the existing validation and redistribution boundaries.
+
+          ### Data integrity and privacy
+          - PeopleGroups.org requests retain `cache: "no-store"` semantics.
+          - No static PeopleGroups corpus, service-worker provider cache, provider proxy, or PEID→PGID inference is introduced.
+          - Existing v2.0 optional private-sync and prayer/privacy boundaries are unchanged.
+
+          ### Certification
+          - Deterministic type/build/policy certification passed.
+          - P2.1 instant-data policy gate passed.
+          - Full live PeopleGroups corpus/CORS/editorial certification passed.
+          - Chromium, Firefox, WebKit, mobile Chromium, and mobile WebKit certification passed.
+          - GitHub Pages deployment and browser certification against the deployed production site passed.
+          EOF
+          gh release create v2.1.0 \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${TARGET_SHA}" \
+            --title "Unreached v2.1.0" \
+            --notes-file /tmp/release-notes.md
