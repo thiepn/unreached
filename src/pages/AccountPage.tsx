@@ -145,6 +145,7 @@ export function AccountPage() {
   const accountMismatch = runtime.enabled && authenticated && Boolean(mismatchEmail || (boundEmail && signedInEmail && boundEmail !== signedInEmail));
   const needsAuthentication = runtime.enabled && !authenticated;
   const canSyncNow = runtime.enabled && authenticated && !accountMismatch;
+  const canManageRemoteAccount = authenticated && !accountMismatch;
 
   const statusTitle = backend === "unavailable"
     ? "Local-only mode"
@@ -234,10 +235,10 @@ export function AccountPage() {
             </button>
           ) : null}
           {canSyncNow ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("sync", syncNow)}><RefreshCw size={16} aria-hidden="true" /> Sync now</button> : null}
-          {authenticated ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("export", async () => downloadJson(await exportRemoteAccount()))}><Download size={16} aria-hidden="true" /> Export private data</button> : null}
+          {canManageRemoteAccount ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("export", async () => downloadJson(await exportRemoteAccount()))}><Download size={16} aria-hidden="true" /> Export private data</button> : null}
           {runtime.enabled ? <button class="button button--secondary" type="button" onClick={() => { disconnectPrivateSync(); setRuntime(getSyncRuntimeStatus()); }}><CloudOff size={16} aria-hidden="true" /> Disconnect this device</button> : null}
           {authenticated ? <button class="button button--secondary" type="button" onClick={signOut}><LogOut size={16} aria-hidden="true" /> Sign out</button> : null}
-          {authenticated ? <button class="button button--danger" type="button" disabled={busy !== null} onClick={() => void deleteAccount()}><Trash2 size={16} aria-hidden="true" /> Delete private account data</button> : null}
+          {canManageRemoteAccount ? <button class="button button--danger" type="button" disabled={busy !== null} onClick={() => void deleteAccount()}><Trash2 size={16} aria-hidden="true" /> Delete private account data</button> : null}
         </div>
       </section>
 
