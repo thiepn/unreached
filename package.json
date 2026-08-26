@@ -29,7 +29,7 @@
     "prayer-session:check": "tsx scripts/prayer/v18-check.ts",
     "offline:check": "tsx scripts/offline/v19-check.ts",
     "offline:dist": "tsx scripts/offline/v19-dist-check.ts",
-    "sync:check": "tsx scripts/sync/v20-check.ts",
+    "sync:check": "tsx scripts/sync/v20-check.ts && tsx scripts/sync/phase1-integrity-check.ts",
     "instant-data:check": "tsx scripts/performance/v21-check.ts",
     "language:check": "tsx scripts/languages/check.ts",
     "discovery:check": "tsx scripts/discovery/check.ts",
