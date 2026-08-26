@@ -148,7 +148,7 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
       </header>
 
       <EssentialMetrics record={record} />
-      <ProfileLocalActions sourcePeopleId={sourcePeopleId} />
+      <ProfileLocalActions record={record} />
 
       <div class="people-profile-flow">
         <SourceRecord record={record} />
