@@ -1,5 +1,7 @@
 import { createRemoteJWKSet, decodeJwt, jwtVerify } from "jose";
 
+import { applyMutationAtomic, type WorkerSyncMutation } from "./mutations";
+
 const PRIVATE_PREFIX = "/unreached-sync/private";
 const HEALTH_PATH = "/unreached-sync/health";
 const MAX_BODY_BYTES = 64 * 1024;
@@ -31,16 +33,7 @@ interface PrayerPayload {
 }
 
 type AllowedPayload = SavedPayload | PrayerPayload;
-
-interface Mutation {
-  mutationId: string;
-  kind: SyncKind;
-  sourcePeopleId: number;
-  action: SyncAction;
-  baseItemRevision: number;
-  payload: AllowedPayload | null;
-  lastPrayedAt: string | null;
-}
+type Mutation = Omit<WorkerSyncMutation, "payload"> & { payload: AllowedPayload | null };
 
 interface ItemRow {
   kind: SyncKind;
@@ -77,18 +70,6 @@ function json(value: unknown, status = 200): Response {
     headers: {
       "Cache-Control": "no-store",
       "Content-Security-Policy": "default-src 'none'",
-      "Referrer-Policy": "no-referrer",
-      "X-Content-Type-Options": "nosniff",
-    },
-  });
-}
-
-function text(value: string, status = 200, contentType = "text/plain; charset=utf-8"): Response {
-  return new Response(value, {
-    status,
-    headers: {
-      "Cache-Control": "no-store",
-      "Content-Type": contentType,
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
     },
@@ -275,14 +256,6 @@ async function currentUserRevision(env: Env, userId: string): Promise<number> {
   return row?.revision ?? 0;
 }
 
-async function nextRevision(env: Env, userId: string): Promise<number> {
-  const row = await env.DB.prepare(`
-    UPDATE sync_users SET revision = revision + 1, updated_at = ?2 WHERE user_id = ?1 RETURNING revision
-  `).bind(userId, new Date().toISOString()).first<UserRow>();
-  if (!row) throw new HttpError(500, "Private sync revision could not be advanced.");
-  return row.revision;
-}
-
 function parsePayload(row: ItemRow): AllowedPayload | null {
   if (!row.payload_json) return null;
   try {
@@ -315,71 +288,6 @@ async function snapshot(env: Env, identity: { email: string; userId: string }) {
     revision: await currentUserRevision(env, identity.userId),
     items: rows.results.map(itemFromRow),
   };
-}
-
-function laterTimestamp(a: string | null, b: string | null): string | null {
-  if (!a) return b;
-  if (!b) return a;
-  return Date.parse(a) >= Date.parse(b) ? a : b;
-}
-
-async function recordMutation(env: Env, userId: string, mutationId: string): Promise<void> {
-  await env.DB.prepare(`
-    INSERT OR IGNORE INTO sync_mutations (user_id, mutation_id, created_at) VALUES (?1, ?2, ?3)
-  `).bind(userId, mutationId, new Date().toISOString()).run();
-}
-
-async function applyMutation(env: Env, userId: string, mutation: Mutation): Promise<void> {
-  const duplicate = await env.DB.prepare(`
-    SELECT mutation_id FROM sync_mutations WHERE user_id = ?1 AND mutation_id = ?2
-  `).bind(userId, mutation.mutationId).first<{ mutation_id: string }>();
-  if (duplicate) return;
-
-  const current = await env.DB.prepare(`
-    SELECT kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at
-    FROM sync_items WHERE user_id = ?1 AND kind = ?2 AND source_people_id = ?3
-  `).bind(userId, mutation.kind, mutation.sourcePeopleId).first<ItemRow>();
-
-  // A deletion created by another device after this mutation's base revision wins. This prevents
-  // an old offline upsert from silently resurrecting an item. A user can intentionally re-add it
-  // after receiving the tombstone in a later sync, which gives the new upsert the current revision.
-  if (mutation.action === "upsert" && current && current.present === 0 && current.revision > mutation.baseItemRevision) {
-    await recordMutation(env, userId, mutation.mutationId);
-    return;
-  }
-
-  const revision = await nextRevision(env, userId);
-  const now = new Date().toISOString();
-
-  if (mutation.action === "delete") {
-    await env.DB.prepare(`
-      INSERT INTO sync_items (user_id, kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at)
-      VALUES (?1, ?2, ?3, 0, NULL, NULL, ?4, ?5)
-      ON CONFLICT(user_id, kind, source_people_id) DO UPDATE SET
-        present = 0, payload_json = NULL, last_prayed_at = NULL, revision = excluded.revision, updated_at = excluded.updated_at
-    `).bind(userId, mutation.kind, mutation.sourcePeopleId, revision, now).run();
-    await recordMutation(env, userId, mutation.mutationId);
-    return;
-  }
-
-  let payload = mutation.payload;
-  let lastPrayedAt = mutation.lastPrayedAt;
-  if (mutation.kind === "prayer" && current?.present === 1 && current.revision > mutation.baseItemRevision) {
-    lastPrayedAt = laterTimestamp(current.last_prayed_at, mutation.lastPrayedAt);
-    if (payload && "addedAt" in payload) payload = { ...payload, lastPrayedAt };
-  }
-
-  await env.DB.prepare(`
-    INSERT INTO sync_items (user_id, kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at)
-    VALUES (?1, ?2, ?3, 1, ?4, ?5, ?6, ?7)
-    ON CONFLICT(user_id, kind, source_people_id) DO UPDATE SET
-      present = 1,
-      payload_json = excluded.payload_json,
-      last_prayed_at = excluded.last_prayed_at,
-      revision = excluded.revision,
-      updated_at = excluded.updated_at
-  `).bind(userId, mutation.kind, mutation.sourcePeopleId, JSON.stringify(payload), lastPrayedAt, revision, now).run();
-  await recordMutation(env, userId, mutation.mutationId);
 }
 
 function authCompletionPage(origin: string, token: string): Response {
@@ -426,7 +334,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
       : null;
     if (!mutationsRaw) throw new HttpError(400, "Sync request requires a mutations array.");
     if (mutationsRaw.length > MAX_MUTATIONS) throw new HttpError(400, `At most ${MAX_MUTATIONS} mutations may be sent at once.`);
-    for (const raw of mutationsRaw) await applyMutation(env, identity.userId, sanitizeMutation(raw));
+    for (const raw of mutationsRaw) await applyMutationAtomic(env, identity.userId, sanitizeMutation(raw));
     return json(await snapshot(env, identity));
   }
 

@@ -38,9 +38,10 @@ export interface SyncRequest {
 }
 
 export interface LocalSyncState {
-  version: 1;
+  version: 2;
   enabled: boolean;
   accountEmail: string | null;
+  accountMismatchEmail: string | null;
   lastServerRevision: number;
   mirror: Record<string, SyncItem>;
   pending: SyncMutation[];
@@ -52,6 +53,8 @@ export interface SyncRuntimeStatus {
   configured: boolean;
   enabled: boolean;
   accountEmail: string | null;
+  accountMismatchEmail: string | null;
+  authenticationRequired: boolean;
   pending: number;
   lastSyncedAt: string | null;
   lastError: string | null;
