@@ -136,7 +136,10 @@ test.describe("Phase 1 private-sync and storage integrity", () => {
     const durable = await page.evaluate((key) => localStorage.getItem(key), PERSONALIZATION_STORAGE_KEY);
     expect(durable).toBeNull();
 
-    await page.getByRole("link", { name: "Saved peoples" }).click();
-    await expect(page.getByText(VISIBLE_TEST_PEOPLE, { exact: true })).toBeVisible({ timeout: 10_000 });
+    await page.goto("./#/saved");
+    await expect(page.getByRole("heading", { name: "Saved & prayer" })).toBeVisible({ timeout: 10_000 });
+    const savedCard = page.locator(".saved-person-card").filter({ hasText: VISIBLE_TEST_PEOPLE });
+    await expect(savedCard).toHaveCount(1);
+    await expect(savedCard).toBeVisible();
   });
 });
