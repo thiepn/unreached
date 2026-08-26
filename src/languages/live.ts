@@ -1,5 +1,3 @@
-import { useMemo } from "preact/hooks";
-
 import { usePeopleGroupsRuntimeStore, type RuntimePeopleContext } from "../providers/peoplegroups";
 
 export interface LiveLanguageBreakdownItem {
@@ -184,14 +182,25 @@ export function buildLiveLanguageRecords(contexts: RuntimePeopleContext[]): Live
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-const languageRecordCache = new WeakMap<RuntimePeopleContext[], LiveLanguageRecord[]>();
+interface SharedLiveLanguageData {
+  languages: LiveLanguageRecord[];
+  languagesByIso: Map<string, LiveLanguageRecord>;
+  bibleLabels: string[];
+}
 
-function cachedLiveLanguageRecords(contexts: RuntimePeopleContext[]): LiveLanguageRecord[] {
-  const cached = languageRecordCache.get(contexts);
+const sharedLanguageCache = new WeakMap<RuntimePeopleContext[], SharedLiveLanguageData>();
+
+export function getSharedLiveLanguageData(contexts: RuntimePeopleContext[]): SharedLiveLanguageData {
+  const cached = sharedLanguageCache.get(contexts);
   if (cached) return cached;
-  const records = buildLiveLanguageRecords(contexts);
-  languageRecordCache.set(contexts, records);
-  return records;
+  const languages = buildLiveLanguageRecords(contexts);
+  const shared = {
+    languages,
+    languagesByIso: new Map(languages.map((language) => [language.iso6393, language])),
+    bibleLabels: [...new Set(languages.flatMap((language) => language.bible.breakdown.map((item) => item.label)))].sort(),
+  };
+  sharedLanguageCache.set(contexts, shared);
+  return shared;
 }
 
 export function filterLiveLanguages(records: LiveLanguageRecord[], state: LiveLanguageFilterState): LiveLanguageRecord[] {
@@ -230,8 +239,6 @@ export function rawResourceSummary(items: LiveLanguageBreakdownItem[], knownCont
 
 export function useLiveLanguageExplorer(enabled = true) {
   const runtime = usePeopleGroupsRuntimeStore(enabled);
-  const languages = useMemo(() => cachedLiveLanguageRecords(runtime.contexts), [runtime.contexts]);
-  const languagesByIso = useMemo(() => new Map(languages.map((language) => [language.iso6393, language])), [languages]);
-  const bibleLabels = useMemo(() => [...new Set(languages.flatMap((language) => language.bible.breakdown.map((item) => item.label)))].sort(), [languages]);
-  return { ...runtime, languages, languagesByIso, bibleLabels };
+  const shared = getSharedLiveLanguageData(runtime.contexts);
+  return { ...runtime, ...shared };
 }

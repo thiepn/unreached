@@ -2,7 +2,6 @@ import { useMemo } from "preact/hooks";
 
 import {
   PEOPLE_GROUPS_ATTRIBUTION,
-  buildVisibleCountryRecords,
   usePeopleGroupsRuntimeStore,
   type VisibleCountryRecord,
 } from "../providers/peoplegroups";
@@ -68,12 +67,19 @@ export const LIVE_MISSION_AVAILABILITY: LiveMissionAvailability = liveMissionAva
   attributions: [PEOPLE_GROUPS_ATTRIBUTION],
 });
 
+const missionSummaryCache = new WeakMap<VisibleCountryRecord[], LiveMissionCountrySummary[]>();
+
+function sharedMissionSummaries(records: VisibleCountryRecord[]): LiveMissionCountrySummary[] {
+  const cached = missionSummaryCache.get(records);
+  if (cached) return cached;
+  const summaries = buildLiveMissionCountrySummaries(records);
+  missionSummaryCache.set(records, summaries);
+  return summaries;
+}
+
 export function useLiveMissionVisualization(enabled = true) {
   const runtime = usePeopleGroupsRuntimeStore(enabled);
-  const countries = useMemo(() => {
-    if (!runtime.ready) return [];
-    return buildLiveMissionCountrySummaries(buildVisibleCountryRecords(runtime.contexts, runtime.countrySummaries));
-  }, [runtime.ready, runtime.contexts, runtime.countrySummaries]);
+  const countries = useMemo(() => runtime.ready ? sharedMissionSummaries(runtime.countries) : [], [runtime.ready, runtime.countries]);
   const countriesByIso3 = useMemo(() => new Map(countries.map((summary) => [summary.iso3, summary])), [countries]);
 
   return {

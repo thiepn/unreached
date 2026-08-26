@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 import type { MapCountryFeature, MapCountryProperties, WorldGeography } from "./types";
 
-interface GeographyState {
+export interface GeographyState {
   data: WorldGeography | null;
   error: string | null;
   loading: boolean;
+  generation: number;
+  countries: MapCountryFeature[];
+  countriesByIso3: Map<string, MapCountryFeature>;
 }
 
 function isNullableString(value: unknown): value is string | null {
@@ -75,31 +78,66 @@ function parseGeography(value: unknown): WorldGeography {
   };
 }
 
-export function useWorldGeography(): GeographyState & { countries: MapCountryFeature[] } {
-  const [state, setState] = useState<GeographyState>({ data: null, error: null, loading: true });
+const listeners = new Set<(value: GeographyState) => void>();
+let snapshot: GeographyState = {
+  data: null,
+  error: null,
+  loading: false,
+  generation: 0,
+  countries: [],
+  countriesByIso3: new Map(),
+};
+let pendingLoad: Promise<void> | null = null;
 
+function publish(next: GeographyState): void {
+  snapshot = next;
+  for (const listener of listeners) listener(snapshot);
+}
+
+export function getWorldGeographySnapshot(): GeographyState {
+  return snapshot;
+}
+
+export function ensureWorldGeography(): Promise<void> {
+  if (snapshot.data) return Promise.resolve();
+  if (pendingLoad) return pendingLoad;
+
+  publish({ ...snapshot, loading: true, error: null });
+  const url = `${import.meta.env.BASE_URL}maps/world-countries.geojson`;
+  pendingLoad = fetch(url, { cache: "no-cache" })
+    .then((response) => {
+      if (!response.ok) throw new Error(`Map data request failed (${response.status}).`);
+      return response.json() as Promise<unknown>;
+    })
+    .then((value) => {
+      const data = parseGeography(value);
+      const countries = [...data.features].sort((a, b) => a.properties.name.localeCompare(b.properties.name, "en"));
+      const countriesByIso3 = new Map<string, MapCountryFeature>();
+      for (const feature of countries) {
+        const rawIso = feature.properties.iso3 || feature.properties.adminA3;
+        const iso3 = typeof rawIso === "string" ? rawIso.toUpperCase() : "";
+        if (/^[A-Z]{3}$/.test(iso3) && !countriesByIso3.has(iso3)) countriesByIso3.set(iso3, feature);
+      }
+      publish({ data, error: null, loading: false, generation: snapshot.generation + 1, countries, countriesByIso3 });
+    })
+    .catch((error: unknown) => {
+      publish({ ...snapshot, data: null, error: error instanceof Error ? error.message : "Map data could not be loaded.", loading: false });
+    })
+    .finally(() => {
+      pendingLoad = null;
+    });
+  return pendingLoad;
+}
+
+export function useWorldGeography(enabled = true): GeographyState {
+  const [state, setState] = useState<GeographyState>(() => snapshot);
   useEffect(() => {
-    const controller = new AbortController();
-    const url = `${import.meta.env.BASE_URL}maps/world-countries.geojson`;
-
-    void fetch(url, { signal: controller.signal, cache: "force-cache" })
-      .then((response) => {
-        if (!response.ok) throw new Error(`Map data request failed (${response.status}).`);
-        return response.json() as Promise<unknown>;
-      })
-      .then((value) => setState({ data: parseGeography(value), error: null, loading: false }))
-      .catch((error: unknown) => {
-        if (controller.signal.aborted) return;
-        setState({ data: null, error: error instanceof Error ? error.message : "Map data could not be loaded.", loading: false });
-      });
-
-    return () => controller.abort();
-  }, []);
-
-  const countries = useMemo(
-    () => [...(state.data?.features ?? [])].sort((a, b) => a.properties.name.localeCompare(b.properties.name, "en")),
-    [state.data],
-  );
-
-  return { ...state, countries };
+    listeners.add(setState);
+    setState(snapshot);
+    if (enabled) void ensureWorldGeography();
+    return () => {
+      listeners.delete(setState);
+    };
+  }, [enabled]);
+  return state;
 }

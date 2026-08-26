@@ -1,5 +1,6 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 
+import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities, toRuntimePeopleContext } from "../../src/providers/peoplegroups/model";
 import { installPeopleGroupsFixture } from "./peoplegroups-fixture";
 
 test.beforeEach(({ browserName }) => {
@@ -58,20 +59,21 @@ async function installLargeLanguageFixture(page: Page, count = 550) {
 }
 
 async function seedStalePreparedSnapshot(page: Page) {
+  const records = [largeLanguageRecord(79_001)];
+  const snapshot = {
+    schemaVersion: 1 as const,
+    key: "active" as const,
+    storedAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+    totalPages: 1,
+    totalRecords: records.length,
+    records,
+    contexts: records.map(toRuntimePeopleContext),
+    entities: buildRuntimePeopleEntities(records),
+    countrySummaries: buildRuntimeCountrySummaries(records),
+  };
+
   await page.goto("./#/about");
-  await page.evaluate(async () => {
-    const storedAt = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
-    const snapshot = {
-      schemaVersion: 1,
-      key: "active",
-      storedAt,
-      totalPages: 1,
-      totalRecords: 1,
-      records: [{ PGID: "PG999001" }],
-      contexts: [{}],
-      entities: [{}],
-      countrySummaries: [{}],
-    };
+  await page.evaluate(async (preparedSnapshot) => {
     await new Promise<void>((resolve, reject) => {
       const request = indexedDB.open("unreached-peoplegroups-v1", 2);
       request.onupgradeneeded = () => {
@@ -83,12 +85,12 @@ async function seedStalePreparedSnapshot(page: Page) {
       request.onsuccess = () => {
         const db = request.result;
         const transaction = db.transaction("prepared", "readwrite");
-        transaction.objectStore("prepared").put(snapshot);
+        transaction.objectStore("prepared").put(preparedSnapshot);
         transaction.oncomplete = () => { db.close(); resolve(); };
         transaction.onerror = () => { const error = transaction.error; db.close(); reject(error); };
       };
     });
-  });
+  }, snapshot);
   await page.reload();
 }
 
