@@ -37,7 +37,7 @@
     "release:check": "tsx scripts/release/check.ts",
     "release:dist": "tsx scripts/release/check-dist.ts",
     "audit:baseline": "tsx scripts/audit/phase0-baseline.ts",
-    "audit:phase0": "npm run audit:baseline && playwright test tests/e2e/phase0-regression.spec.ts --project=chromium",
+    "audit:phase0": "npm run audit:baseline && playwright test tests/e2e/phase0-regression.spec.ts tests/e2e/phase0-stress.spec.ts --project=chromium",
     "e2e": "playwright test",
     "preview": "vite preview",
     "check": "npm run build"
