@@ -9,9 +9,7 @@ test.beforeEach(({ browserName }) => {
 });
 
 async function clearMissionCache(page: Page) {
-  await page.addInitScript(() => {
-    indexedDB.deleteDatabase("unreached-peoplegroups-v1");
-  });
+  await page.addInitScript(() => { indexedDB.deleteDatabase("unreached-peoplegroups-v1"); });
 }
 
 async function attachBrowserBaseline(page: Page, label: string) {
@@ -20,23 +18,11 @@ async function attachBrowserBaseline(page: Page, label: string) {
     const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
     return {
       url: location.href,
-      navigation: nav ? {
-        domContentLoaded: Math.round(nav.domContentLoadedEventEnd),
-        load: Math.round(nav.loadEventEnd),
-        transferSize: nav.transferSize,
-      } : null,
-      resources: {
-        count: resources.length,
-        transferSize: resources.reduce((sum, item) => sum + item.transferSize, 0),
-        js: resources.filter((item) => item.name.includes(".js")).length,
-        css: resources.filter((item) => item.name.includes(".css")).length,
-      },
+      navigation: nav ? { domContentLoaded: Math.round(nav.domContentLoadedEventEnd), load: Math.round(nav.loadEventEnd), transferSize: nav.transferSize } : null,
+      resources: { count: resources.length, transferSize: resources.reduce((sum, item) => sum + item.transferSize, 0), js: resources.filter((item) => item.name.includes(".js")).length, css: resources.filter((item) => item.name.includes(".css")).length },
     };
   });
-  await test.info().attach(`${label}.json`, {
-    body: Buffer.from(JSON.stringify(metrics, null, 2)),
-    contentType: "application/json",
-  });
+  await test.info().attach(`${label}.json`, { body: Buffer.from(JSON.stringify(metrics, null, 2)), contentType: "application/json" });
 }
 
 test.describe("Phase 0 observational baseline", () => {
@@ -51,32 +37,14 @@ test.describe("Phase 0 observational baseline", () => {
     await page.addInitScript(({ key }) => {
       const savedPeoples = Array.from({ length: 300 }, (_, index) => {
         const id = 50_000 + index;
-        return {
-          sourcePeopleId: id,
-          peopleGroupId: `people-entity:peoplegroups:${id}`,
-          name: `Phase 0 saved person ${index + 1}`,
-          largestCountryName: "Baseline Country",
-          primaryLanguageName: "Baseline Language",
-          classification: "unreached",
-          frontier: false,
-          savedAt: "2026-08-26T00:00:00.000Z",
-        };
+        return { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Phase 0 saved person ${index + 1}`, largestCountryName: "Baseline Country", primaryLanguageName: "Baseline Language", classification: "unreached", frontier: false, savedAt: "2026-08-26T00:00:00.000Z" };
       });
       const prayerList = Array.from({ length: 100 }, (_, index) => {
         const id = 70_000 + index;
-        return {
-          sourcePeopleId: id,
-          peopleGroupId: `people-entity:peoplegroups:${id}`,
-          name: `Phase 0 prayer person ${index + 1}`,
-          countryName: "Baseline Country",
-          languageName: "Baseline Language",
-          addedAt: "2026-08-26T00:00:00.000Z",
-          lastPrayedAt: null,
-        };
+        return { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Phase 0 prayer person ${index + 1}`, countryName: "Baseline Country", languageName: "Baseline Language", addedAt: "2026-08-26T00:00:00.000Z", lastPrayedAt: null };
       });
       localStorage.setItem(key, JSON.stringify({ version: 2, savedPeoples, prayerList, recent: [] }));
     }, { key: PERSONAL_STORAGE });
-
     await page.goto("./#/saved");
     const state = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null"), PERSONAL_STORAGE);
     expect(state.savedPeoples).toHaveLength(300);
@@ -95,12 +63,8 @@ test.describe("Phase 0 observational baseline", () => {
     }, { key: PERSONAL_STORAGE });
     await page.goto("./#/saved");
     const result = await page.evaluate((key) => {
-      try {
-        localStorage.setItem(key, "test");
-        return "unexpected-success";
-      } catch (error) {
-        return error instanceof DOMException ? error.name : "other-error";
-      }
+      try { localStorage.setItem(key, "test"); return "unexpected-success"; }
+      catch (error) { return error instanceof DOMException ? error.name : "other-error"; }
     }, PERSONAL_STORAGE);
     expect(result).toBe("QuotaExceededError");
   });
