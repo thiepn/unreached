@@ -19,11 +19,13 @@ for (const marker of [
   "networkFirst",
   'APP_BASE + "assets/"',
   "PRECACHE",
+  "const cache = await caches.open(CACHE_NAME)",
+  "const cached = await cache.match",
 ]) {
   if (!vite.includes(marker)) throw new Error(`Phase 2 service-worker generator missing ${marker}.`);
 }
-for (const forbidden of ["self.skipWaiting", "self.clients.claim", 'OFFLINE_CACHE = "unreached-shell-v1.9.0"']) {
-  if (vite.includes(forbidden)) throw new Error(`Phase 2 service-worker generator contains forbidden legacy behavior: ${forbidden}.`);
+for (const forbidden of ["self.skipWaiting", "self.clients.claim", 'OFFLINE_CACHE = "unreached-shell-v1.9.0"', "caches.match("]) {
+  if (vite.includes(forbidden)) throw new Error(`Phase 2 service-worker generator contains forbidden legacy/cross-generation behavior: ${forbidden}.`);
 }
 for (const marker of [
   'OFFLINE_UPDATE_EVENT = "unreached:offline-update-ready"',
@@ -53,4 +55,4 @@ for (const marker of [
   if (!browser.includes(marker)) throw new Error(`Phase 2 browser certification missing ${marker}.`);
 }
 
-console.log("Phase 2 service-worker source checks passed: build-fingerprinted generations, waiting activation, update-cache bypass, immutable bundle precache, mutable-data network-first handling, and browser lifecycle coverage.");
+console.log("Phase 2 service-worker source checks passed: build-fingerprinted and generation-isolated caches, waiting activation, update-cache bypass, immutable bundle precache, mutable-data network-first handling, and browser lifecycle coverage.");
