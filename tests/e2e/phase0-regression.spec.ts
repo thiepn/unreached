@@ -1,10 +1,16 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { installPeopleGroupsFixture } from "./peoplegroups-fixture";
+
 const PERSONAL_STORAGE = "unreached.personal.v2";
+
+test.beforeEach(({ browserName }) => {
+  test.skip(browserName !== "chromium", "Phase 0 observational baselines run once in Chromium; the existing release suite owns the full browser matrix.");
+});
 
 async function clearMissionCache(page: Page) {
   await page.addInitScript(() => {
-    indexedDB.deleteDatabase("unreached-peoplegroups");
+    indexedDB.deleteDatabase("unreached-peoplegroups-v1");
   });
 }
 
@@ -35,7 +41,7 @@ async function attachBrowserBaseline(page: Page, label: string) {
 
 test.describe("Phase 0 observational baseline", () => {
   test("core shell remains usable at desktop and records resource timing", async ({ page }) => {
-    await page.goto("./#/");
+    await page.goto("./#/about");
     await expect(page.locator("main#main-content")).toBeVisible();
     await expect(page.getByRole("link", { name: /Unreached/i })).toBeVisible();
     await attachBrowserBaseline(page, "desktop-shell-baseline");
@@ -112,6 +118,7 @@ test.describe("Phase 0 observational baseline", () => {
   });
 
   test("search control stays compact after the sr-only regression fix", async ({ page }) => {
+    await installPeopleGroupsFixture(page);
     await page.goto("./#/peoples");
     const search = page.locator(".people-search").first();
     await expect(search).toBeVisible();
@@ -124,17 +131,17 @@ test.describe("Phase 0 observational baseline", () => {
 test.describe("Phase 0 known-defect contracts", () => {
   test("skip-to-content keeps the current route and focuses the main landmark", async ({ page }) => {
     test.fail(true, "Known Phase 0 defect: hash-based skip link currently mutates the application route.");
-    await page.goto("./#/peoples");
+    await page.goto("./#/about");
     await page.keyboard.press("Tab");
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#\/peoples$/);
+    await expect(page).toHaveURL(/#\/about$/);
     await expect(page.locator("main#main-content")).toBeFocused();
   });
 
   test("mobile bottom navigation allocates one column per rendered destination", async ({ page }) => {
     test.fail(true, "Known Phase 0 UX defect: mobile navigation defines five columns for four destinations.");
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("./#/");
+    await page.goto("./#/about");
     const nav = page.locator(".mobile-nav");
     const destinations = nav.locator(".nav-link");
     const columns = await nav.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(" ").filter(Boolean).length);
@@ -143,12 +150,14 @@ test.describe("Phase 0 known-defect contracts", () => {
 
   test("browser Back restores people-search context", async ({ page }) => {
     test.fail(true, "Known Phase 0 UX defect: discovery filters live only in component state and are lost after route navigation.");
+    await installPeopleGroupsFixture(page);
     await page.goto("./#/peoples");
     const input = page.locator("#people-search");
-    await input.fill("Fon");
+    await expect(input).toBeVisible();
+    await input.fill("Browser Test");
     await page.goto("./#/about");
     await page.goBack();
-    await expect(input).toHaveValue("Fon");
+    await expect(page.locator("#people-search")).toHaveValue("Browser Test");
   });
 
   test("document title identifies the active route", async ({ page }) => {
