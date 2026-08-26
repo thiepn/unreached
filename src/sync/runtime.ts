@@ -3,13 +3,24 @@ import {
   persistBrowserPersonalizationState,
   readBrowserPersonalizationState,
 } from "../personalization/runtime";
-import type { PersonalizationState, PrayerListEntry, SavedPersonSnapshot } from "../personalization/types";
+import type { PersonalizationState } from "../personalization/types";
 import {
+  clearSyncAccessToken,
   deleteRemoteAccount,
   getRemoteSyncState,
   pushRemoteMutations,
-  type SyncApiError,
+  readSyncAccessToken,
+  takeSyncMutationBatch,
+  SyncApiError,
 } from "./client";
+import {
+  currentItems,
+  equivalentDesired,
+  mergeForFirstActivation,
+  mirrorFromSnapshot,
+  reconcileSnapshot,
+  syncKey,
+} from "./reconcile";
 import type { LocalSyncState, SyncItem, SyncKind, SyncMutation, SyncRuntimeStatus, SyncSnapshot } from "./types";
 
 export const SYNC_STORAGE_KEY = "unreached.sync.v1";
@@ -18,12 +29,26 @@ export const SYNC_CHANGE_EVENT = "unreached:sync-change";
 let applyingRemoteState = false;
 let inFlight: Promise<void> | null = null;
 let scheduled: number | null = null;
+let initialized = false;
+let memoryFallbackSyncState: LocalSyncState | null = null;
+
+interface LegacyLocalSyncStateV1 {
+  version: 1;
+  enabled: boolean;
+  accountEmail: string | null;
+  lastServerRevision: number;
+  mirror: Record<string, SyncItem>;
+  pending: SyncMutation[];
+  lastSyncedAt: string | null;
+  lastError: string | null;
+}
 
 function emptySyncState(): LocalSyncState {
   return {
-    version: 1,
+    version: 2,
     enabled: false,
     accountEmail: null,
+    accountMismatchEmail: null,
     lastServerRevision: 0,
     mirror: {},
     pending: [],
@@ -32,26 +57,52 @@ function emptySyncState(): LocalSyncState {
   };
 }
 
-function syncKey(kind: SyncKind, sourcePeopleId: number): string {
-  return `${kind}:${sourcePeopleId}`;
+function validSyncStateShape(candidate: Partial<LegacyLocalSyncStateV1 & LocalSyncState>): boolean {
+  return typeof candidate.enabled === "boolean"
+    && Array.isArray(candidate.pending)
+    && Boolean(candidate.mirror && typeof candidate.mirror === "object")
+    && (candidate.accountEmail === null || typeof candidate.accountEmail === "string")
+    && typeof candidate.lastServerRevision === "number";
 }
 
-function isSyncState(value: unknown): value is LocalSyncState {
-  if (!value || typeof value !== "object") return false;
-  const candidate = value as Partial<LocalSyncState>;
-  return candidate.version === 1
-    && typeof candidate.enabled === "boolean"
-    && Array.isArray(candidate.pending)
-    && Boolean(candidate.mirror && typeof candidate.mirror === "object");
+function normalizeSyncState(value: unknown): LocalSyncState | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<LegacyLocalSyncStateV1 & LocalSyncState>;
+  if (!validSyncStateShape(candidate)) return null;
+
+  if (candidate.version === 2) {
+    return {
+      ...emptySyncState(),
+      ...(candidate as LocalSyncState),
+      accountMismatchEmail: candidate.accountMismatchEmail ?? null,
+    };
+  }
+
+  if (candidate.version === 1) {
+    const legacy = candidate as LegacyLocalSyncStateV1;
+    return {
+      version: 2,
+      enabled: legacy.enabled,
+      accountEmail: legacy.accountEmail,
+      accountMismatchEmail: null,
+      lastServerRevision: legacy.lastServerRevision,
+      mirror: legacy.mirror,
+      pending: legacy.pending,
+      lastSyncedAt: legacy.lastSyncedAt,
+      lastError: legacy.lastError,
+    };
+  }
+
+  return null;
 }
 
 export function readLocalSyncState(): LocalSyncState {
   if (typeof window === "undefined") return emptySyncState();
+  if (memoryFallbackSyncState) return memoryFallbackSyncState;
   try {
     const raw = window.localStorage.getItem(SYNC_STORAGE_KEY);
     if (!raw) return emptySyncState();
-    const parsed = JSON.parse(raw) as unknown;
-    return isSyncState(parsed) ? parsed : emptySyncState();
+    return normalizeSyncState(JSON.parse(raw) as unknown) ?? emptySyncState();
   } catch {
     return emptySyncState();
   }
@@ -59,85 +110,24 @@ export function readLocalSyncState(): LocalSyncState {
 
 function persistLocalSyncState(state: LocalSyncState): void {
   if (typeof window === "undefined") return;
+  memoryFallbackSyncState = state;
   try {
     window.localStorage.setItem(SYNC_STORAGE_KEY, JSON.stringify(state));
-    window.dispatchEvent(new Event(SYNC_CHANGE_EVENT));
+    memoryFallbackSyncState = null;
   } catch {
-    // Private sync is optional. Local personalization remains the source of truth if storage is unavailable.
+    // Sync metadata remains available for the current tab. If the tab closes,
+    // browser-local personalization is still authoritative and no remote write is
+    // attempted without a newly established session/account binding.
+  } finally {
+    window.dispatchEvent(new Event(SYNC_CHANGE_EVENT));
   }
 }
 
-function mirrorFromSnapshot(snapshot: SyncSnapshot): Record<string, SyncItem> {
-  return Object.fromEntries(snapshot.items.map((item) => [syncKey(item.kind, item.sourcePeopleId), item]));
-}
-
-function latestTimestamp(a: string | null, b: string | null): string | null {
-  if (!a) return b;
-  if (!b) return a;
-  return Date.parse(a) >= Date.parse(b) ? a : b;
-}
-
-function mergeRemoteIntoPersonalization(current: PersonalizationState, snapshot: SyncSnapshot): PersonalizationState {
-  let savedPeoples = [...current.savedPeoples];
-  let prayerList = [...current.prayerList];
-
-  for (const item of snapshot.items) {
-    if (item.kind === "saved") {
-      const existing = savedPeoples.find((person) => person.sourcePeopleId === item.sourcePeopleId);
-      savedPeoples = savedPeoples.filter((person) => person.sourcePeopleId !== item.sourcePeopleId);
-      if (item.present && item.payload && "savedAt" in item.payload) {
-        const remote = item.payload as SavedPersonSnapshot;
-        savedPeoples.push(existing && Date.parse(existing.savedAt) > Date.parse(remote.savedAt) ? existing : remote);
-      }
-      continue;
-    }
-
-    const existing = prayerList.find((person) => person.sourcePeopleId === item.sourcePeopleId);
-    prayerList = prayerList.filter((person) => person.sourcePeopleId !== item.sourcePeopleId);
-    if (item.present && item.payload && "addedAt" in item.payload) {
-      const remote = item.payload as PrayerListEntry;
-      prayerList.push({
-        ...remote,
-        lastPrayedAt: latestTimestamp(existing?.lastPrayedAt ?? null, remote.lastPrayedAt),
-      });
-    }
-  }
-
-  return { ...current, savedPeoples, prayerList };
-}
-
-function currentItems(state: PersonalizationState): Map<string, SyncItem> {
-  const now = new Date().toISOString();
-  const entries: SyncItem[] = [
-    ...state.savedPeoples.map((payload) => ({
-      kind: "saved" as const,
-      sourcePeopleId: payload.sourcePeopleId,
-      present: true,
-      revision: 0,
-      payload,
-      lastPrayedAt: null,
-      updatedAt: payload.savedAt || now,
-    })),
-    ...state.prayerList.map((payload) => ({
-      kind: "prayer" as const,
-      sourcePeopleId: payload.sourcePeopleId,
-      present: true,
-      revision: 0,
-      payload,
-      lastPrayedAt: payload.lastPrayedAt,
-      updatedAt: payload.lastPrayedAt ?? payload.addedAt ?? now,
-    })),
-  ];
-  return new Map(entries.map((item) => [syncKey(item.kind, item.sourcePeopleId), item]));
-}
-
-function equivalentDesired(local: SyncItem | undefined, remote: SyncItem | undefined): boolean {
-  const localPresent = Boolean(local?.present);
-  const remotePresent = Boolean(remote?.present);
-  if (localPresent !== remotePresent) return false;
-  if (!localPresent) return true;
-  return JSON.stringify(local?.payload ?? null) === JSON.stringify(remote?.payload ?? null)
-    && (local?.lastPrayedAt ?? null) === (remote?.lastPrayedAt ?? null);
+function mutationMatchesDesired(mutation: SyncMutation, local: SyncItem | undefined): boolean {
+  if (mutation.action === "delete") return !local?.present;
+  if (!local?.present) return false;
+  return JSON.stringify(mutation.payload ?? null) === JSON.stringify(local.payload ?? null)
+    && (mutation.lastPrayedAt ?? null) === (local.lastPrayedAt ?? null);
 }
 
 function createMutationId(): string {
@@ -170,25 +160,23 @@ function captureLocalDiff(): LocalSyncState {
   if (!sync.enabled) return sync;
 
   const local = currentItems(readBrowserPersonalizationState());
-  const keys = new Set([...Object.keys(sync.mirror), ...local.keys()]);
-  let pending = [...sync.pending];
+  const pendingByKey = new Map(sync.pending.map((mutation) => [syncKey(mutation.kind, mutation.sourcePeopleId), mutation]));
+  const keys = new Set([...Object.keys(sync.mirror), ...local.keys(), ...pendingByKey.keys()]);
+  const pending: SyncMutation[] = [];
 
   for (const key of keys) {
     const [kindValue, idValue] = key.split(":");
-    const kind = kindValue === "prayer" ? "prayer" : "saved";
+    const kind: SyncKind = kindValue === "prayer" ? "prayer" : "saved";
     const sourcePeopleId = Number(idValue);
     if (!Number.isSafeInteger(sourcePeopleId) || sourcePeopleId <= 0) continue;
     const desired = local.get(key);
     const remote = sync.mirror[key];
-    if (equivalentDesired(desired, remote)) {
-      pending = pending.filter((mutation) => syncKey(mutation.kind, mutation.sourcePeopleId) !== key);
-      continue;
-    }
-    const replacement = newMutation(desired, remote, kind, sourcePeopleId);
-    pending = [
-      ...pending.filter((mutation) => syncKey(mutation.kind, mutation.sourcePeopleId) !== key),
-      replacement,
-    ];
+    if (equivalentDesired(desired, remote)) continue;
+
+    const existing = pendingByKey.get(key);
+    pending.push(existing && mutationMatchesDesired(existing, desired)
+      ? existing
+      : newMutation(desired, remote, kind, sourcePeopleId));
   }
 
   const next = { ...sync, pending };
@@ -196,53 +184,113 @@ function captureLocalDiff(): LocalSyncState {
   return next;
 }
 
-function applySnapshot(snapshot: SyncSnapshot, sentMutationIds: Set<string>): void {
-  const currentSync = readLocalSyncState();
-  const mirror = mirrorFromSnapshot(snapshot);
-  const pending = currentSync.pending
-    .filter((mutation) => !sentMutationIds.has(mutation.mutationId))
-    .map((mutation) => ({
-      ...mutation,
-      baseItemRevision: mirror[syncKey(mutation.kind, mutation.sourcePeopleId)]?.revision ?? 0,
-    }));
+function normalizedEmail(value: string): string {
+  return value.trim().toLowerCase();
+}
 
-  persistLocalSyncState({
-    ...currentSync,
-    enabled: true,
-    accountEmail: snapshot.account.email,
-    lastServerRevision: snapshot.revision,
-    mirror,
-    pending,
-    lastSyncedAt: new Date().toISOString(),
-    lastError: null,
+function snapshotMatchesBoundAccount(snapshot: SyncSnapshot): boolean {
+  const sync = readLocalSyncState();
+  const remoteEmail = normalizedEmail(snapshot.account.email);
+  const boundEmail = sync.accountEmail ? normalizedEmail(sync.accountEmail) : null;
+  if (boundEmail && boundEmail !== remoteEmail) {
+    persistLocalSyncState({
+      ...sync,
+      accountMismatchEmail: remoteEmail,
+      lastError: `Private sync is paused because this device is bound to ${sync.accountEmail}, but the current sign-in is ${remoteEmail}. No pending changes were uploaded. Sign in with the bound account or disconnect this device before merging with a different account.`,
+    });
+    return false;
+  }
+  return true;
+}
+
+function applySnapshot(snapshot: SyncSnapshot, sentMutations: SyncMutation[]): void {
+  const currentSync = readLocalSyncState();
+  const result = reconcileSnapshot({
+    personalization: readBrowserPersonalizationState(),
+    previousMirror: currentSync.mirror,
+    currentPending: currentSync.pending,
+    snapshot,
+    sentMutations,
+    mutationId: createMutationId,
   });
 
   applyingRemoteState = true;
   try {
-    persistBrowserPersonalizationState(mergeRemoteIntoPersonalization(readBrowserPersonalizationState(), snapshot));
+    persistBrowserPersonalizationState(result.personalization);
   } finally {
     applyingRemoteState = false;
   }
+
+  persistLocalSyncState({
+    ...currentSync,
+    enabled: true,
+    accountEmail: normalizedEmail(snapshot.account.email),
+    accountMismatchEmail: null,
+    lastServerRevision: snapshot.revision,
+    mirror: result.mirror,
+    pending: result.pending,
+    lastSyncedAt: new Date().toISOString(),
+    lastError: null,
+  });
+}
+
+function storeAuthenticationRequired(): void {
+  const sync = readLocalSyncState();
+  persistLocalSyncState({
+    ...sync,
+    lastError: "Private sync is paused in this tab until you sign in again. Local Saved and prayer-list changes remain available and will not be uploaded to another account automatically.",
+  });
 }
 
 function storeSyncError(error: unknown): void {
   const sync = readLocalSyncState();
+  if (error instanceof SyncApiError && error.status === 401) clearSyncAccessToken();
   const message = error instanceof Error ? error.message : "Private sync failed.";
-  persistLocalSyncState({ ...sync, lastError: message });
+  persistLocalSyncState({
+    ...sync,
+    lastError: error instanceof SyncApiError && error.status === 401
+      ? "Private sync is paused because the sign-in session expired. Sign in again; local changes remain pending."
+      : message,
+  });
+}
+
+function online(): boolean {
+  return typeof navigator === "undefined" || navigator.onLine !== false;
 }
 
 export async function syncNow(): Promise<void> {
   if (inFlight) return inFlight;
   inFlight = (async () => {
     const captured = captureLocalDiff();
-    if (!captured.enabled || typeof navigator !== "undefined" && navigator.onLine === false) return;
-    const sent = [...captured.pending];
-    const sentIds = new Set(sent.map((mutation) => mutation.mutationId));
+    if (!captured.enabled || !online()) return;
+    if (!readSyncAccessToken()) {
+      storeAuthenticationRequired();
+      return;
+    }
+
     try {
-      const snapshot = sent.length > 0 ? await pushRemoteMutations(sent) : await getRemoteSyncState();
-      applySnapshot(snapshot, sentIds);
+      // Never upload a pending mutation before verifying that the current Access
+      // identity still matches the account this browser sync state is bound to.
+      const initialSnapshot = await getRemoteSyncState();
+      if (!readLocalSyncState().enabled || !snapshotMatchesBoundAccount(initialSnapshot)) return;
+      applySnapshot(initialSnapshot, []);
+
+      let batches = 0;
+      while (online()) {
+        const current = captureLocalDiff();
+        if (!current.enabled || current.pending.length === 0) break;
+        const batch = takeSyncMutationBatch(current.pending);
+        if (batch.length === 0) break;
+
+        const snapshot = await pushRemoteMutations(batch);
+        if (!readLocalSyncState().enabled || !snapshotMatchesBoundAccount(snapshot)) return;
+        applySnapshot(snapshot, batch);
+
+        batches += 1;
+        if (batches >= 1_000) throw new Error("Private sync stopped after an unusually large number of batches. Remaining changes are still pending locally.");
+      }
     } catch (error) {
-      storeSyncError(error as SyncApiError);
+      storeSyncError(error);
     }
   })().finally(() => {
     inFlight = null;
@@ -252,11 +300,13 @@ export async function syncNow(): Promise<void> {
 
 export async function enablePrivateSyncWithMerge(): Promise<void> {
   const snapshot = await getRemoteSyncState();
-  const merged = mergeRemoteIntoPersonalization(readBrowserPersonalizationState(), snapshot);
+  const merged = mergeForFirstActivation(readBrowserPersonalizationState(), snapshot);
+
   persistLocalSyncState({
-    version: 1,
+    version: 2,
     enabled: true,
-    accountEmail: snapshot.account.email,
+    accountEmail: normalizedEmail(snapshot.account.email),
+    accountMismatchEmail: null,
     lastServerRevision: snapshot.revision,
     mirror: mirrorFromSnapshot(snapshot),
     pending: [],
@@ -290,6 +340,8 @@ export function getSyncRuntimeStatus(): SyncRuntimeStatus {
     configured: true,
     enabled: state.enabled,
     accountEmail: state.accountEmail,
+    accountMismatchEmail: state.accountMismatchEmail,
+    authenticationRequired: state.enabled && !readSyncAccessToken(),
     pending: state.pending.length,
     lastSyncedAt: state.lastSyncedAt,
     lastError: state.lastError,
@@ -305,13 +357,16 @@ function scheduleSync(): void {
 }
 
 export function initializePrivateSyncRuntime(): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || initialized) return;
+  initialized = true;
   window.addEventListener(PERSONALIZATION_CHANGE_EVENT, () => {
-    if (!applyingRemoteState && readLocalSyncState().enabled) scheduleSync();
+    if (!applyingRemoteState && readLocalSyncState().enabled && readSyncAccessToken()) scheduleSync();
   });
-  window.addEventListener("online", scheduleSync);
+  window.addEventListener("online", () => {
+    if (readLocalSyncState().enabled && readSyncAccessToken()) scheduleSync();
+  });
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible" && readLocalSyncState().enabled) scheduleSync();
+    if (document.visibilityState === "visible" && readLocalSyncState().enabled && readSyncAccessToken()) scheduleSync();
   });
-  if (readLocalSyncState().enabled) scheduleSync();
+  if (readLocalSyncState().enabled && readSyncAccessToken()) scheduleSync();
 }
