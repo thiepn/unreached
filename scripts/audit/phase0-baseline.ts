@@ -73,7 +73,7 @@ const tsTsxFiles = srcFiles.filter((path) => path.endsWith(".ts") || path.endsWi
 const cssMetrics = await Promise.all(cssFiles.map(fileMetric));
 const versionCssFiles = cssMetrics
   .map((item) => item.path)
-  .filter((path) => /\/v(?:\d|\d{2,})[^/]*\.css$/i.test(path));
+  .filter((path) => /\/v\d[^/]*\.css$/i.test(path));
 
 const peopleApi = await readFile(resolve(root, "src/providers/peoplegroups/api.ts"), "utf8");
 const syncWorker = await readFile(resolve(root, "worker/src/index.ts"), "utf8");
@@ -113,12 +113,12 @@ const report: BaselineReport = {
     peopleGroupsMaxRecords: numberFrom(peopleApi, /PEOPLE_GROUPS_MAX_RECORDS\s*=\s*([\d_]+)/),
     privateSyncMaxMutations: numberFrom(syncWorker, /MAX_MUTATIONS\s*=\s*([\d_]+)/),
     privateSyncMaxBodyBytes: numberFrom(syncWorker, /MAX_BODY_BYTES\s*=\s*([\d_]+)/),
-    prayerListMaxItems: numberFrom(personalizationTypes, /MAX_PRAYER_LIST\s*=\s*([\d_]+)/),
+    prayerListMaxItems: numberFrom(personalizationTypes, /prayerList:\s*z\.array\(prayerListEntrySchema\)\.max\(([\d_]+)\)/),
     peopleListPageSize: numberFrom(peoplesPage, /PEOPLE_PAGE_SIZE\s*=\s*([\d_]+)/),
   },
   notes: [
     productionDist ? "Production dist metrics were captured from the existing dist directory." : "No dist directory existed. Run `npm run build && npm run audit:baseline` to capture production bundle metrics.",
-    "Browser timing, storage-failure, slow-provider, navigation-state and large-list regressions are covered by tests/e2e/phase0-regression.spec.ts.",
+    "Browser timing, blocked-storage, slow-provider, navigation-state and large-personalization regressions are covered by tests/e2e/phase0-regression.spec.ts.",
     "Phase 0 is observational: it must not change product runtime behavior.",
   ],
 };
