@@ -10,36 +10,9 @@ const VALID_SHAPE_TOKEN = "aaaaaaaaaa.bbbbbbbbbb.cccccccccc";
 async function seedBoundDevice(page: Page, withToken: boolean) {
   await page.addInitScript(({ syncKey, personalKey, tokenKey, token, useToken }) => {
     const id = 900001;
-    const payload = {
-      sourcePeopleId: id,
-      peopleGroupId: `people-entity:peoplegroups:${id}`,
-      name: `Bound person ${id}`,
-      largestCountryName: "Testland",
-      primaryLanguageName: "Test",
-      classification: "unreached",
-      frontier: false,
-      savedAt: "2026-08-26T12:00:00.000Z",
-    };
-    const item = {
-      kind: "saved",
-      sourcePeopleId: id,
-      present: true,
-      revision: 1,
-      payload,
-      lastPrayedAt: null,
-      updatedAt: "2026-08-26T12:00:00.000Z",
-    };
-    localStorage.setItem(syncKey, JSON.stringify({
-      version: 2,
-      enabled: true,
-      accountEmail: "owner@example.com",
-      accountMismatchEmail: null,
-      lastServerRevision: 1,
-      mirror: { [`saved:${id}`]: item },
-      pending: [],
-      lastSyncedAt: "2026-08-26T12:00:00.000Z",
-      lastError: null,
-    }));
+    const payload = { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Bound person ${id}`, largestCountryName: "Testland", primaryLanguageName: "Test", classification: "unreached", frontier: false, savedAt: "2026-08-26T12:00:00.000Z" };
+    const item = { kind: "saved", sourcePeopleId: id, present: true, revision: 1, payload, lastPrayedAt: null, updatedAt: "2026-08-26T12:00:00.000Z" };
+    localStorage.setItem(syncKey, JSON.stringify({ version: 2, enabled: true, accountEmail: "owner@example.com", accountMismatchEmail: null, lastServerRevision: 1, mirror: { [`saved:${id}`]: item }, pending: [], lastSyncedAt: "2026-08-26T12:00:00.000Z", lastError: null }));
     localStorage.setItem(personalKey, JSON.stringify({ version: 2, savedPeoples: [], prayerList: [], recent: [] }));
     if (useToken) sessionStorage.setItem(tokenKey, token);
   }, { syncKey: SYNC_STORAGE_KEY, personalKey: PERSONALIZATION_STORAGE_KEY, tokenKey: TOKEN_KEY, token: VALID_SHAPE_TOKEN, useToken: withToken });
