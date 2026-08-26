@@ -109,7 +109,7 @@ function mutation(kind: "saved" | "prayer", id: number, action: "upsert" | "dele
 }
 
 // 4. If the user deletes while an older pull request is in flight, the stale
-// response must not re-add the item; a rebased delete stays pending.
+// response must not re-add the item; a newly detected delete stays pending.
 {
   const previous = item("saved", 2, true, 4, saved(2));
   const result = reconcileSnapshot({
@@ -122,7 +122,7 @@ function mutation(kind: "saved" | "prayer", id: number, action: "upsert" | "dele
   });
   assert(result.personalization.savedPeoples.length === 0, "An in-flight stale pull must not undo a newer local delete.");
   assert(result.pending.length === 1 && result.pending[0]?.action === "delete", "The newer local delete must remain queued.");
-  assert(result.pending[0]?.baseItemRevision === 4, "The protected delete must be based on the latest observed remote revision.");
+  assert(result.pending[0]?.baseItemRevision === 4, "The newly detected delete must be based on the current returned revision.");
 }
 
 // 5. If a delete was sent and the user intentionally re-adds before its response
@@ -162,7 +162,67 @@ function mutation(kind: "saved" | "prayer", id: number, action: "upsert" | "dele
   assert(result.pending[0]?.baseItemRevision === 11, "The later delete must rebase onto the returned present revision.");
 }
 
-// 7. Pending queues must drain in bounded requests rather than permanently fail
+// 7. Exact audit scenario: device A queued a delete at revision 1 while offline;
+// device B later deleted and intentionally re-added the item at revision 3. The
+// reconnect pull must NOT rebase A's old delete to revision 3. The Worker can then
+// reject base 1 against the newer present revision, after which A converges to B.
+{
+  const original = item("saved", 5, true, 1, saved(5));
+  const staleOfflineDelete = mutation("saved", 5, "delete", 1);
+  const newerReAdd = item("saved", 5, true, 3, saved(5, "2026-08-26T13:00:00.000Z"));
+  const pulled = reconcileSnapshot({
+    personalization: state([]),
+    previousMirror: { [syncKey("saved", 5)]: original },
+    currentPending: [staleOfflineDelete],
+    snapshot: snapshot([newerReAdd], 3),
+    sentMutations: [],
+    mutationId,
+  });
+  assert(pulled.personalization.savedPeoples.length === 0, "The local offline delete stays protected until the server judges its causal base.");
+  assert(pulled.pending[0]?.mutationId === staleOfflineDelete.mutationId, "The old pending mutation identity must be preserved across the reconnect pull.");
+  assert(pulled.pending[0]?.baseItemRevision === 1, "A reconnect pull must not rebase an old offline delete onto the newer re-add revision.");
+
+  const afterConflict = reconcileSnapshot({
+    personalization: pulled.personalization,
+    previousMirror: pulled.mirror,
+    currentPending: pulled.pending,
+    snapshot: snapshot([newerReAdd], 3),
+    sentMutations: [staleOfflineDelete],
+    mutationId,
+  });
+  assert(afterConflict.pending.length === 0, "Once the stale delete is rejected, it must not retry forever.");
+  assert(afterConflict.personalization.savedPeoples[0]?.sourcePeopleId === 5, "The newer intentional re-add must win over the old offline delete.");
+}
+
+// 8. Symmetric stale case: an old offline upsert must keep its original base so a
+// newer remote tombstone can reject it instead of being silently resurrected.
+{
+  const originalTombstone = item("saved", 6, false, 1);
+  const staleOfflineUpsert = mutation("saved", 6, "upsert", 1, saved(6));
+  const newerDelete = item("saved", 6, false, 3);
+  const pulled = reconcileSnapshot({
+    personalization: state([saved(6)]),
+    previousMirror: { [syncKey("saved", 6)]: originalTombstone },
+    currentPending: [staleOfflineUpsert],
+    snapshot: snapshot([newerDelete], 3),
+    sentMutations: [],
+    mutationId,
+  });
+  assert(pulled.pending[0]?.baseItemRevision === 1, "A reconnect pull must not rebase an old offline upsert onto a newer tombstone.");
+
+  const afterConflict = reconcileSnapshot({
+    personalization: pulled.personalization,
+    previousMirror: pulled.mirror,
+    currentPending: pulled.pending,
+    snapshot: snapshot([newerDelete], 3),
+    sentMutations: [staleOfflineUpsert],
+    mutationId,
+  });
+  assert(afterConflict.pending.length === 0, "A rejected stale upsert must clear after the authoritative snapshot is returned.");
+  assert(afterConflict.personalization.savedPeoples.length === 0, "The newer tombstone must win over the stale offline upsert.");
+}
+
+// 9. Pending queues must drain in bounded requests rather than permanently fail
 // once they exceed either the 200-mutation or 64 KiB server limit.
 {
   const queue = Array.from({ length: 450 }, (_, index) => mutation("saved", 10_000 + index, "delete", index));
@@ -183,7 +243,7 @@ function mutation(kind: "saved" | "prayer", id: number, action: "upsert" | "dele
   assert(drainedIds.join("|") === originalIds.join("|"), "Batching must preserve every mutation exactly once and in order.");
 }
 
-// 8. Byte size, not just mutation count, must constrain batches.
+// 10. Byte size, not just mutation count, must constrain batches.
 {
   const bulky = Array.from({ length: 200 }, (_, index) => {
     const payload = saved(20_000 + index);
@@ -202,4 +262,4 @@ function mutation(kind: "saved" | "prayer", id: number, action: "upsert" | "dele
   assert(total === bulky.length, "Byte-constrained batching must drain the complete queue.");
 }
 
-console.log("Phase 1 sync integrity scenarios passed: capacity-safe first activation, remote-only convergence, two-device/in-flight local-change protection, symmetric rebase behavior, and mutation queues bounded by count and bytes.");
+console.log("Phase 1 sync integrity scenarios passed: capacity-safe activation, remote-only convergence, in-flight local-change protection, stale offline mutation bases preserved against newer opposing state, symmetric conflict convergence, and mutation queues bounded by count and bytes.");
