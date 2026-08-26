@@ -3,6 +3,8 @@ import type { SyncMutation, SyncSnapshot } from "./types";
 export const SYNC_BACKEND_ORIGIN = "https://unreached-private-continuity.thiepn.workers.dev";
 export const SYNC_API_BASE = `${SYNC_BACKEND_ORIGIN}/unreached-sync`;
 export const SYNC_ACCESS_TOKEN_KEY = "unreached.sync.access.v1";
+export const SYNC_MAX_MUTATIONS = 200;
+export const SYNC_MAX_BODY_BYTES = 64 * 1024;
 
 export class SyncApiError extends Error {
   status: number | null;
@@ -45,6 +47,26 @@ export function clearSyncAccessToken(): void {
   } catch {
     // The token is session-only. A failed removal does not affect browser-local personalization.
   }
+}
+
+export function syncMutationRequestBytes(mutations: SyncMutation[]): number {
+  return new TextEncoder().encode(JSON.stringify({ mutations })).byteLength;
+}
+
+export function takeSyncMutationBatch(mutations: SyncMutation[]): SyncMutation[] {
+  const batch: SyncMutation[] = [];
+  for (const mutation of mutations) {
+    if (batch.length >= SYNC_MAX_MUTATIONS) break;
+    const candidate = [...batch, mutation];
+    if (syncMutationRequestBytes(candidate) > SYNC_MAX_BODY_BYTES) {
+      if (batch.length === 0) {
+        throw new SyncApiError("One private-sync change is too large to send safely. Local data was kept and the change remains pending.", 413);
+      }
+      break;
+    }
+    batch.push(mutation);
+  }
+  return batch;
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -111,6 +133,10 @@ export function getRemoteSyncState(): Promise<SyncSnapshot> {
 }
 
 export function pushRemoteMutations(mutations: SyncMutation[]): Promise<SyncSnapshot> {
+  if (mutations.length < 1) throw new SyncApiError("Private sync requires at least one pending change.");
+  if (mutations.length > SYNC_MAX_MUTATIONS || syncMutationRequestBytes(mutations) > SYNC_MAX_BODY_BYTES) {
+    throw new SyncApiError("Private sync attempted to send an oversized change batch. Local data was kept and the changes remain pending.", 413);
+  }
   return request<SyncSnapshot>("/private/sync", {
     method: "POST",
     body: JSON.stringify({ mutations }),
