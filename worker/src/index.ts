@@ -83,18 +83,6 @@ function json(value: unknown, status = 200): Response {
   });
 }
 
-function text(value: string, status = 200, contentType = "text/plain; charset=utf-8"): Response {
-  return new Response(value, {
-    status,
-    headers: {
-      "Cache-Control": "no-store",
-      "Content-Type": contentType,
-      "Referrer-Policy": "no-referrer",
-      "X-Content-Type-Options": "nosniff",
-    },
-  });
-}
-
 function corsHeaders(env: Env): Record<string, string> {
   return {
     "Access-Control-Allow-Origin": env.APP_ORIGIN,
@@ -275,14 +263,6 @@ async function currentUserRevision(env: Env, userId: string): Promise<number> {
   return row?.revision ?? 0;
 }
 
-async function nextRevision(env: Env, userId: string): Promise<number> {
-  const row = await env.DB.prepare(`
-    UPDATE sync_users SET revision = revision + 1, updated_at = ?2 WHERE user_id = ?1 RETURNING revision
-  `).bind(userId, new Date().toISOString()).first<UserRow>();
-  if (!row) throw new HttpError(500, "Private sync revision could not be advanced.");
-  return row.revision;
-}
-
 function parsePayload(row: ItemRow): AllowedPayload | null {
   if (!row.payload_json) return null;
   try {
@@ -317,69 +297,134 @@ async function snapshot(env: Env, identity: { email: string; userId: string }) {
   };
 }
 
-function laterTimestamp(a: string | null, b: string | null): string | null {
-  if (!a) return b;
-  if (!b) return a;
-  return Date.parse(a) >= Date.parse(b) ? a : b;
-}
-
-async function recordMutation(env: Env, userId: string, mutationId: string): Promise<void> {
-  await env.DB.prepare(`
-    INSERT OR IGNORE INTO sync_mutations (user_id, mutation_id, created_at) VALUES (?1, ?2, ?3)
-  `).bind(userId, mutationId, new Date().toISOString()).run();
+function claimToken(): string {
+  if (typeof crypto.randomUUID !== "function") throw new HttpError(500, "Private sync could not create a mutation claim.");
+  return crypto.randomUUID();
 }
 
 async function applyMutation(env: Env, userId: string, mutation: Mutation): Promise<void> {
-  const duplicate = await env.DB.prepare(`
-    SELECT mutation_id FROM sync_mutations WHERE user_id = ?1 AND mutation_id = ?2
-  `).bind(userId, mutation.mutationId).first<{ mutation_id: string }>();
-  if (duplicate) return;
-
-  const current = await env.DB.prepare(`
-    SELECT kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at
-    FROM sync_items WHERE user_id = ?1 AND kind = ?2 AND source_people_id = ?3
-  `).bind(userId, mutation.kind, mutation.sourcePeopleId).first<ItemRow>();
-
-  // A deletion created by another device after this mutation's base revision wins. This prevents
-  // an old offline upsert from silently resurrecting an item. A user can intentionally re-add it
-  // after receiving the tombstone in a later sync, which gives the new upsert the current revision.
-  if (mutation.action === "upsert" && current && current.present === 0 && current.revision > mutation.baseItemRevision) {
-    await recordMutation(env, userId, mutation.mutationId);
-    return;
-  }
-
-  const revision = await nextRevision(env, userId);
+  const claim = claimToken();
   const now = new Date().toISOString();
+  const conflictSql = `
+    SELECT 1 FROM sync_items
+    WHERE user_id = ?1 AND kind = ?4 AND source_people_id = ?5
+      AND revision > ?6
+      AND ((?7 = 'upsert' AND present = 0) OR (?7 = 'delete' AND present = 1))
+  `;
+
+  const statements: D1PreparedStatement[] = [
+    env.DB.prepare(`
+      INSERT INTO sync_mutations (user_id, mutation_id, created_at, claim_token, outcome, applied_revision)
+      VALUES (?1, ?2, ?3, ?4, 'claimed', NULL)
+      ON CONFLICT(user_id, mutation_id) DO NOTHING
+    `).bind(userId, mutation.mutationId, now, claim),
+
+    env.DB.prepare(`
+      UPDATE sync_users
+      SET revision = revision + 1, updated_at = ?4
+      WHERE user_id = ?1
+        AND EXISTS (
+          SELECT 1 FROM sync_mutations
+          WHERE user_id = ?1 AND mutation_id = ?2 AND claim_token = ?3 AND outcome = 'claimed'
+        )
+        AND NOT EXISTS (${conflictSql})
+    `).bind(
+      userId,
+      mutation.mutationId,
+      claim,
+      now,
+      mutation.kind,
+      mutation.sourcePeopleId,
+      mutation.baseItemRevision,
+      mutation.action,
+    ),
+
+    env.DB.prepare(`
+      UPDATE sync_mutations
+      SET applied_revision = (SELECT revision FROM sync_users WHERE user_id = ?1), outcome = 'applied'
+      WHERE user_id = ?1 AND mutation_id = ?2 AND claim_token = ?3 AND outcome = 'claimed'
+        AND NOT EXISTS (${conflictSql})
+    `).bind(
+      userId,
+      mutation.mutationId,
+      claim,
+      mutation.kind,
+      mutation.sourcePeopleId,
+      mutation.baseItemRevision,
+      mutation.action,
+    ),
+  ];
 
   if (mutation.action === "delete") {
-    await env.DB.prepare(`
+    statements.push(env.DB.prepare(`
       INSERT INTO sync_items (user_id, kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at)
-      VALUES (?1, ?2, ?3, 0, NULL, NULL, ?4, ?5)
+      SELECT ?1, ?2, ?3, 0, NULL, NULL, m.applied_revision, ?6
+      FROM sync_mutations m
+      WHERE m.user_id = ?1 AND m.mutation_id = ?4 AND m.claim_token = ?5
+        AND m.outcome = 'applied' AND m.applied_revision IS NOT NULL
       ON CONFLICT(user_id, kind, source_people_id) DO UPDATE SET
-        present = 0, payload_json = NULL, last_prayed_at = NULL, revision = excluded.revision, updated_at = excluded.updated_at
-    `).bind(userId, mutation.kind, mutation.sourcePeopleId, revision, now).run();
-    await recordMutation(env, userId, mutation.mutationId);
-    return;
+        present = 0,
+        payload_json = NULL,
+        last_prayed_at = NULL,
+        revision = excluded.revision,
+        updated_at = excluded.updated_at
+    `).bind(userId, mutation.kind, mutation.sourcePeopleId, mutation.mutationId, claim, now));
+  } else {
+    const payloadJson = JSON.stringify(mutation.payload);
+    statements.push(env.DB.prepare(`
+      INSERT INTO sync_items (user_id, kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at)
+      SELECT ?1, ?2, ?3, 1, ?6, ?7, m.applied_revision, ?8
+      FROM sync_mutations m
+      WHERE m.user_id = ?1 AND m.mutation_id = ?4 AND m.claim_token = ?5
+        AND m.outcome = 'applied' AND m.applied_revision IS NOT NULL
+      ON CONFLICT(user_id, kind, source_people_id) DO UPDATE SET
+        present = 1,
+        payload_json = excluded.payload_json,
+        last_prayed_at = CASE
+          WHEN ?2 = 'prayer' AND sync_items.present = 1 THEN
+            CASE
+              WHEN sync_items.last_prayed_at IS NULL THEN excluded.last_prayed_at
+              WHEN excluded.last_prayed_at IS NULL THEN sync_items.last_prayed_at
+              WHEN sync_items.last_prayed_at >= excluded.last_prayed_at THEN sync_items.last_prayed_at
+              ELSE excluded.last_prayed_at
+            END
+          ELSE excluded.last_prayed_at
+        END,
+        revision = excluded.revision,
+        updated_at = excluded.updated_at
+    `).bind(
+      userId,
+      mutation.kind,
+      mutation.sourcePeopleId,
+      mutation.mutationId,
+      claim,
+      payloadJson,
+      mutation.lastPrayedAt,
+      now,
+    ));
+
+    if (mutation.kind === "prayer") {
+      statements.push(env.DB.prepare(`
+        UPDATE sync_items
+        SET payload_json = json_set(payload_json, '$.lastPrayedAt', last_prayed_at)
+        WHERE user_id = ?1 AND kind = 'prayer' AND source_people_id = ?2
+          AND revision = (
+            SELECT applied_revision FROM sync_mutations
+            WHERE user_id = ?1 AND mutation_id = ?3 AND claim_token = ?4 AND outcome = 'applied'
+          )
+      `).bind(userId, mutation.sourcePeopleId, mutation.mutationId, claim));
+    }
   }
 
-  let payload = mutation.payload;
-  let lastPrayedAt = mutation.lastPrayedAt;
-  if (mutation.kind === "prayer" && current?.present === 1 && current.revision > mutation.baseItemRevision) {
-    lastPrayedAt = laterTimestamp(current.last_prayed_at, mutation.lastPrayedAt);
-    if (payload && "addedAt" in payload) payload = { ...payload, lastPrayedAt };
-  }
+  statements.push(env.DB.prepare(`
+    UPDATE sync_mutations
+    SET outcome = 'conflict'
+    WHERE user_id = ?1 AND mutation_id = ?2 AND claim_token = ?3 AND outcome = 'claimed'
+  `).bind(userId, mutation.mutationId, claim));
 
-  await env.DB.prepare(`
-    INSERT INTO sync_items (user_id, kind, source_people_id, present, payload_json, last_prayed_at, revision, updated_at)
-    VALUES (?1, ?2, ?3, 1, ?4, ?5, ?6, ?7)
-    ON CONFLICT(user_id, kind, source_people_id) DO UPDATE SET
-      present = 1,
-      payload_json = excluded.payload_json,
-      last_prayed_at = excluded.last_prayed_at,
-      revision = excluded.revision,
-      updated_at = excluded.updated_at
-  `).bind(userId, mutation.kind, mutation.sourcePeopleId, JSON.stringify(payload), lastPrayedAt, revision, now).run();
-  await recordMutation(env, userId, mutation.mutationId);
+  // D1 batch() is one database transaction: the claim, revision increment, item
+  // mutation and idempotency ledger either commit together or roll back together.
+  await env.DB.batch(statements);
 }
 
 function authCompletionPage(origin: string, token: string): Response {
