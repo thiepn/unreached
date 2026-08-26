@@ -111,10 +111,10 @@ export function AccountPage() {
   };
 
   const signOut = () => {
-    disconnectPrivateSync();
-    setRuntime(getSyncRuntimeStatus());
+    clearSyncAccessToken();
     setAuthenticated(false);
-    setAccountEmail(null);
+    setAccountEmail(readLocalSyncState().accountEmail);
+    setRuntime(getSyncRuntimeStatus());
     openSyncLogout();
   };
 
@@ -221,7 +221,7 @@ export function AccountPage() {
         <div>
           <p class="eyebrow">Controls</p>
           <h2>Your data remains usable without the service.</h2>
-          <p>Signing out or disconnecting sync does not erase this browser’s local Saved or prayer data. The Cloudflare Access identity token is kept only for this browser-tab session.</p>
+          <p>Signing out pauses private sync on this tab but keeps this device bound to the same account. Disconnecting sync removes that binding. Neither action erases this browser’s local Saved or prayer data. The Cloudflare Access identity token is kept only for this browser-tab session.</p>
         </div>
         <div class="account-actions">
           {backend === "checking" ? <button class="button button--secondary" type="button" disabled><RefreshCw size={16} aria-hidden="true" /> Checking service…</button> : null}
