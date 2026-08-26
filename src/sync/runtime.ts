@@ -3,7 +3,6 @@ import {
   persistBrowserPersonalizationState,
   readBrowserPersonalizationState,
 } from "../personalization/runtime";
-import type { PersonalizationState } from "../personalization/types";
 import {
   clearSyncAccessToken,
   deleteRemoteAccount,
@@ -32,15 +31,16 @@ let scheduled: number | null = null;
 let initialized = false;
 let memoryFallbackSyncState: LocalSyncState | null = null;
 
-interface LegacyLocalSyncStateV1 {
-  version: 1;
-  enabled: boolean;
-  accountEmail: string | null;
-  lastServerRevision: number;
-  mirror: Record<string, SyncItem>;
-  pending: SyncMutation[];
-  lastSyncedAt: string | null;
-  lastError: string | null;
+interface StoredSyncStateCandidate {
+  version?: unknown;
+  enabled?: unknown;
+  accountEmail?: unknown;
+  accountMismatchEmail?: unknown;
+  lastServerRevision?: unknown;
+  mirror?: unknown;
+  pending?: unknown;
+  lastSyncedAt?: unknown;
+  lastError?: unknown;
 }
 
 function emptySyncState(): LocalSyncState {
@@ -57,43 +57,33 @@ function emptySyncState(): LocalSyncState {
   };
 }
 
-function validSyncStateShape(candidate: Partial<LegacyLocalSyncStateV1 & LocalSyncState>): boolean {
-  return typeof candidate.enabled === "boolean"
-    && Array.isArray(candidate.pending)
-    && Boolean(candidate.mirror && typeof candidate.mirror === "object")
-    && (candidate.accountEmail === null || typeof candidate.accountEmail === "string")
-    && typeof candidate.lastServerRevision === "number";
+function stringOrNull(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
 }
 
 function normalizeSyncState(value: unknown): LocalSyncState | null {
   if (!value || typeof value !== "object") return null;
-  const candidate = value as Partial<LegacyLocalSyncStateV1 & LocalSyncState>;
-  if (!validSyncStateShape(candidate)) return null;
+  const candidate = value as StoredSyncStateCandidate;
+  if (candidate.version !== 1 && candidate.version !== 2) return null;
+  if (typeof candidate.enabled !== "boolean") return null;
+  if (!stringOrNull(candidate.accountEmail ?? null)) return null;
+  if (!Number.isSafeInteger(candidate.lastServerRevision) || Number(candidate.lastServerRevision) < 0) return null;
+  if (!candidate.mirror || typeof candidate.mirror !== "object" || Array.isArray(candidate.mirror)) return null;
+  if (!Array.isArray(candidate.pending)) return null;
+  if (!stringOrNull(candidate.lastSyncedAt ?? null) || !stringOrNull(candidate.lastError ?? null)) return null;
+  if (candidate.version === 2 && !stringOrNull(candidate.accountMismatchEmail ?? null)) return null;
 
-  if (candidate.version === 2) {
-    return {
-      ...emptySyncState(),
-      ...(candidate as LocalSyncState),
-      accountMismatchEmail: candidate.accountMismatchEmail ?? null,
-    };
-  }
-
-  if (candidate.version === 1) {
-    const legacy = candidate as LegacyLocalSyncStateV1;
-    return {
-      version: 2,
-      enabled: legacy.enabled,
-      accountEmail: legacy.accountEmail,
-      accountMismatchEmail: null,
-      lastServerRevision: legacy.lastServerRevision,
-      mirror: legacy.mirror,
-      pending: legacy.pending,
-      lastSyncedAt: legacy.lastSyncedAt,
-      lastError: legacy.lastError,
-    };
-  }
-
-  return null;
+  return {
+    version: 2,
+    enabled: candidate.enabled,
+    accountEmail: (candidate.accountEmail ?? null) as string | null,
+    accountMismatchEmail: candidate.version === 2 ? (candidate.accountMismatchEmail ?? null) as string | null : null,
+    lastServerRevision: Number(candidate.lastServerRevision),
+    mirror: candidate.mirror as Record<string, SyncItem>,
+    pending: candidate.pending as SyncMutation[],
+    lastSyncedAt: (candidate.lastSyncedAt ?? null) as string | null,
+    lastError: (candidate.lastError ?? null) as string | null,
+  };
 }
 
 export function readLocalSyncState(): LocalSyncState {
