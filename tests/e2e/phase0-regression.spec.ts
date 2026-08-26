@@ -139,7 +139,6 @@ test.describe("Phase 0 known-defect contracts", () => {
   });
 
   test("mobile bottom navigation allocates one column per rendered destination", async ({ page }) => {
-    test.fail(true, "Known Phase 0 UX defect: mobile navigation defines five columns for four destinations.");
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("./#/about");
     const nav = page.locator(".mobile-nav");
