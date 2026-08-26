@@ -32,17 +32,10 @@ test.describe("Phase 0 observational baseline", () => {
     await expect(page.getByRole("link", { name: /Unreached/i })).toBeVisible();
     await attachBrowserBaseline(page, "desktop-shell-baseline");
   });
-
   test("300 saved + 100 prayer entries remain parseable as a stress fixture", async ({ page }) => {
     await page.addInitScript(({ key }) => {
-      const savedPeoples = Array.from({ length: 300 }, (_, index) => {
-        const id = 50_000 + index;
-        return { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Phase 0 saved person ${index + 1}`, largestCountryName: "Baseline Country", primaryLanguageName: "Baseline Language", classification: "unreached", frontier: false, savedAt: "2026-08-26T00:00:00.000Z" };
-      });
-      const prayerList = Array.from({ length: 100 }, (_, index) => {
-        const id = 70_000 + index;
-        return { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Phase 0 prayer person ${index + 1}`, countryName: "Baseline Country", languageName: "Baseline Language", addedAt: "2026-08-26T00:00:00.000Z", lastPrayedAt: null };
-      });
+      const savedPeoples = Array.from({ length: 300 }, (_, index) => { const id = 50_000 + index; return { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Phase 0 saved person ${index + 1}`, largestCountryName: "Baseline Country", primaryLanguageName: "Baseline Language", classification: "unreached", frontier: false, savedAt: "2026-08-26T00:00:00.000Z" }; });
+      const prayerList = Array.from({ length: 100 }, (_, index) => { const id = 70_000 + index; return { sourcePeopleId: id, peopleGroupId: `people-entity:peoplegroups:${id}`, name: `Phase 0 prayer person ${index + 1}`, countryName: "Baseline Country", languageName: "Baseline Language", addedAt: "2026-08-26T00:00:00.000Z", lastPrayedAt: null }; });
       localStorage.setItem(key, JSON.stringify({ version: 2, savedPeoples, prayerList, recent: [] }));
     }, { key: PERSONAL_STORAGE });
     await page.goto("./#/saved");
@@ -52,35 +45,23 @@ test.describe("Phase 0 observational baseline", () => {
     await expect(page.locator("main#main-content")).toBeVisible();
     await attachBrowserBaseline(page, "large-personalization-baseline");
   });
-
   test("blocked localStorage writes are reproducible for failure-mode testing", async ({ page }) => {
     await page.addInitScript(({ key }) => {
       const original = Storage.prototype.setItem;
-      Storage.prototype.setItem = function (name: string, value: string) {
-        if (name === key) throw new DOMException("Phase 0 blocked storage fixture", "QuotaExceededError");
-        return original.call(this, name, value);
-      };
+      Storage.prototype.setItem = function (name: string, value: string) { if (name === key) throw new DOMException("Phase 0 blocked storage fixture", "QuotaExceededError"); return original.call(this, name, value); };
     }, { key: PERSONAL_STORAGE });
     await page.goto("./#/saved");
-    const result = await page.evaluate((key) => {
-      try { localStorage.setItem(key, "test"); return "unexpected-success"; }
-      catch (error) { return error instanceof DOMException ? error.name : "other-error"; }
-    }, PERSONAL_STORAGE);
+    const result = await page.evaluate((key) => { try { localStorage.setItem(key, "test"); return "unexpected-success"; } catch (error) { return error instanceof DOMException ? error.name : "other-error"; } }, PERSONAL_STORAGE);
     expect(result).toBe("QuotaExceededError");
   });
-
   test("slow first-time provider leaves the shell responsive", async ({ page }) => {
     await clearMissionCache(page);
-    await page.route("https://peoplegroups.org/wp-json/pg/v1/**", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 1_500));
-      await route.abort("timedout");
-    });
+    await page.route("https://peoplegroups.org/wp-json/pg/v1/**", async (route) => { await new Promise((resolve) => setTimeout(resolve, 1_500)); await route.abort("timedout"); });
     await page.goto("./#/peoples");
     await expect(page.getByRole("link", { name: /Unreached/i })).toBeVisible();
     await expect(page.locator("main#main-content")).toBeVisible();
     await attachBrowserBaseline(page, "slow-provider-baseline");
   });
-
   test("search control stays compact after the sr-only regression fix", async ({ page }) => {
     await installPeopleGroupsFixture(page);
     await page.goto("./#/peoples");
@@ -101,7 +82,6 @@ test.describe("Phase 0 known-defect contracts", () => {
     await expect(page).toHaveURL(/#\/about$/);
     await expect(page.locator("main#main-content")).toBeFocused();
   });
-
   test("mobile bottom navigation allocates one column per rendered destination", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("./#/about");
@@ -110,7 +90,6 @@ test.describe("Phase 0 known-defect contracts", () => {
     const columns = await nav.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(" ").filter(Boolean).length);
     expect(columns).toBe(await destinations.count());
   });
-
   test("browser Back restores people-search context", async ({ page }) => {
     test.fail(true, "Known Phase 0 UX defect: discovery filters live only in component state and are lost after route navigation.");
     await installPeopleGroupsFixture(page);
@@ -122,7 +101,6 @@ test.describe("Phase 0 known-defect contracts", () => {
     await page.goBack();
     await expect(page.locator("#people-search")).toHaveValue("Browser Test");
   });
-
   test("document title identifies the active route", async ({ page }) => {
     test.fail(true, "Known Phase 0 UX defect: hash routes currently share a static document title.");
     await page.goto("./#/about");
