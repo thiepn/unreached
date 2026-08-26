@@ -62,10 +62,8 @@ test.describe("Phase 0 observational baseline", () => {
           sourcePeopleId: id,
           peopleGroupId: `people-entity:peoplegroups:${id}`,
           name: `Phase 0 prayer person ${index + 1}`,
-          largestCountryName: "Baseline Country",
-          primaryLanguageName: "Baseline Language",
-          classification: "unreached",
-          frontier: false,
+          countryName: "Baseline Country",
+          languageName: "Baseline Language",
           addedAt: "2026-08-26T00:00:00.000Z",
           lastPrayedAt: null,
         };
@@ -79,6 +77,26 @@ test.describe("Phase 0 observational baseline", () => {
     expect(state.prayerList).toHaveLength(100);
     await expect(page.locator("main#main-content")).toBeVisible();
     await attachBrowserBaseline(page, "large-personalization-baseline");
+  });
+
+  test("blocked localStorage writes are reproducible for failure-mode testing", async ({ page }) => {
+    await page.addInitScript(({ key }) => {
+      const original = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (name: string, value: string) {
+        if (name === key) throw new DOMException("Phase 0 blocked storage fixture", "QuotaExceededError");
+        return original.call(this, name, value);
+      };
+    }, { key: PERSONAL_STORAGE });
+    await page.goto("./#/saved");
+    const result = await page.evaluate((key) => {
+      try {
+        localStorage.setItem(key, "test");
+        return "unexpected-success";
+      } catch (error) {
+        return error instanceof DOMException ? error.name : "other-error";
+      }
+    }, PERSONAL_STORAGE);
+    expect(result).toBe("QuotaExceededError");
   });
 
   test("slow first-time provider leaves the shell responsive", async ({ page }) => {
@@ -118,9 +136,9 @@ test.describe("Phase 0 known-defect contracts", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("./#/");
     const nav = page.locator(".mobile-nav");
-    const links = nav.locator("a.nav-link");
+    const destinations = nav.locator(".nav-link");
     const columns = await nav.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(" ").filter(Boolean).length);
-    expect(columns).toBe(await links.count());
+    expect(columns).toBe(await destinations.count());
   });
 
   test("browser Back restores people-search context", async ({ page }) => {
