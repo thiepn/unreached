@@ -2,35 +2,6 @@ import { expect, test, type Page } from "@playwright/test";
 
 const PERSONAL_STORAGE = "unreached.personal.v2";
 
-function savedPerson(index: number) {
-  const id = 50_000 + index;
-  return {
-    sourcePeopleId: id,
-    peopleGroupId: `people-entity:peoplegroups:${id}`,
-    name: `Phase 0 saved person ${index + 1}`,
-    largestCountryName: "Baseline Country",
-    primaryLanguageName: "Baseline Language",
-    classification: "unreached",
-    frontier: false,
-    savedAt: "2026-08-26T00:00:00.000Z",
-  };
-}
-
-function prayerPerson(index: number) {
-  const id = 70_000 + index;
-  return {
-    sourcePeopleId: id,
-    peopleGroupId: `people-entity:peoplegroups:${id}`,
-    name: `Phase 0 prayer person ${index + 1}`,
-    largestCountryName: "Baseline Country",
-    primaryLanguageName: "Baseline Language",
-    classification: "unreached",
-    frontier: false,
-    addedAt: "2026-08-26T00:00:00.000Z",
-    lastPrayedAt: null,
-  };
-}
-
 async function clearMissionCache(page: Page) {
   await page.addInitScript(() => {
     indexedDB.deleteDatabase("unreached-peoplegroups");
