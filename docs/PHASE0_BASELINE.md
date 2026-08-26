@@ -45,13 +45,19 @@ npm run audit:baseline
 npm run audit:phase0
 ```
 
-The browser harness attaches navigation/resource timing snapshots and includes stress scenarios for:
+The browser harness attaches timing/resource snapshots and includes reproducible stress scenarios for:
 
 - desktop shell startup;
 - 300 locally saved people;
 - a full 100-entry prayer-list boundary;
+- blocked `localStorage` writes;
 - slow/unavailable first-time PeopleGroups provider access;
+- 550 people records represented by one language and rendered on a language profile;
+- a 48-hour prepared PeopleGroups snapshot surfaced as stale cache;
+- a 390×844 mobile viewport under 4× Chromium CPU throttling;
 - compact search-control geometry.
+
+These observational stress tests run once in Chromium. The existing release suite remains responsible for the full Chromium, Firefox, WebKit, Pixel and iPhone browser matrix.
 
 ## Known-defect contracts
 
@@ -74,7 +80,11 @@ Later phases should preserve or extend these stress boundaries:
 | --- | ---: |
 | Saved people | 300 |
 | Prayer-list entries | 100 |
+| One-language people records | 550 |
+| Stale prepared cache | 48 hours old |
 | Slow provider | 1.5 s delayed failure |
+| Mobile CPU throttle | 4× |
+| Mobile viewport | 390×844 |
 | People list visible batch | source-defined baseline |
 | PeopleGroups provider | source-defined page, concurrency and maximum-record budgets |
 | Private sync | source-defined body and mutation limits |
@@ -94,9 +104,10 @@ Phase 0 is complete when:
 - the baseline collector is runnable from `package.json`;
 - production bundle metrics can be captured after `npm run build`;
 - browser timing/resource snapshots are attached by Playwright;
-- large personalization and slow-provider states are reproducible;
+- large personalization, large-language, stale-cache, blocked-storage, slow-provider and throttled-mobile states are reproducible;
 - confirmed UX defects exist as explicit expected-failure contracts;
 - the existing search-box regression has a geometry guard;
-- normal CI/build behavior remains unchanged except for the addition of the optional audit commands.
+- heavy observational baselines do not multiply across the normal five-browser matrix;
+- normal product behavior remains unchanged.
 
 Phase 0 must not fix runtime behavior. That work begins in Phase 1.
