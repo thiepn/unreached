@@ -179,7 +179,7 @@ export function PrayPage() {
 
       <footer class="prayer-principle">
         <strong>Prayer wording is template-certified, not person-by-person AI-generated.</strong>
-        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} was release-certified on {LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt}. Runtime interpolation is limited to source-backed identity, country, GSEC, and resource information. The optional prayer list and rotation stay only in this browser and create no prayer score, streak, leaderboard, public activity record, mission-priority signal, or spiritual completion metric.</p>
+        <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} was release-certified on {LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt}. Runtime interpolation is limited to source-backed identity, country, GSEC, and resource information. Prayer-list membership and the latest prayer timestamp are local by default; if you explicitly enable Private Sync, only those supported private fields can be copied to your account. Recent browsing never syncs, and no prayer score, streak, leaderboard, mission-priority signal, or spiritual completion metric is created.</p>
       </footer>
     </section>
   );

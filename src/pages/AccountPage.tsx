@@ -115,7 +115,14 @@ export function AccountPage() {
     setAuthenticated(false);
     setAccountEmail(readLocalSyncState().accountEmail);
     setRuntime(getSyncRuntimeStatus());
+    setNotice("Signed out in this tab. Local data was kept.");
     openSyncLogout();
+  };
+
+  const disconnectDevice = () => {
+    disconnectPrivateSync();
+    setRuntime(getSyncRuntimeStatus());
+    setNotice("Private sync disconnected from this device. Local Saved and prayer data was kept.");
   };
 
   const deleteAccount = async () => {
@@ -147,6 +154,20 @@ export function AccountPage() {
   const canSyncNow = runtime.enabled && authenticated && !accountMismatch;
   const canManageRemoteAccount = authenticated && !accountMismatch;
 
+  const accountState = backend === "unavailable"
+    ? "unavailable"
+    : accountMismatch
+      ? "mismatch"
+      : needsAuthentication
+        ? "reauth"
+        : runtime.enabled
+          ? "enabled"
+          : authenticated
+            ? "ready-to-enable"
+            : backend === "checking"
+              ? "checking"
+              : "local";
+
   const statusTitle = backend === "unavailable"
     ? "Local-only mode"
     : accountMismatch
@@ -162,21 +183,21 @@ export function AccountPage() {
   const statusDescription = backend === "unavailable"
     ? "The private sync service is unavailable. Your browser-local data continues to work normally."
     : accountMismatch
-      ? `This device is bound to ${runtime.accountEmail ?? "another private account"}, but the current sign-in is ${mismatchEmail ?? accountEmail ?? "different"}. Pending changes remain local and are not uploaded. Sign in with the bound account, or disconnect this device before explicitly merging with another account.`
+      ? `This device is bound to ${runtime.accountEmail ?? "another private account"}, while the current sign-in is ${mismatchEmail ?? accountEmail ?? "different"}. Nothing uploads until the account mismatch is resolved.`
       : needsAuthentication
-        ? `${runtime.accountEmail ?? "This private account"} remains bound to this device, but this tab has no active sign-in token. Local changes remain pending until you sign in again.`
+        ? `${runtime.accountEmail ?? "This private account"} remains linked to this device. Local changes stay queued until you sign in again.`
         : runtime.enabled
-          ? `${accountEmail ?? runtime.accountEmail ?? "Private account"} · ${formatTime(runtime.lastSyncedAt)}`
+          ? `${accountEmail ?? runtime.accountEmail ?? "Private account"} · last sync ${formatTime(runtime.lastSyncedAt)}`
           : authenticated
-            ? `${accountEmail ?? "Authenticated account"}. Choose the explicit merge below before any local Saved or prayer data is uploaded.`
+            ? `${accountEmail ?? "Authenticated account"}. Nothing is uploaded until you explicitly merge this device and enable sync.`
             : "Nothing is uploaded while you remain signed out.";
 
   return (
-    <div class="account-page page-stack">
+    <div class="account-page page-stack" data-account-state={accountState}>
       <header class="page-hero account-hero">
-        <p class="eyebrow">Optional private continuity</p>
-        <h1>Use Unreached locally, or carry a small private list across devices.</h1>
-        <p class="lede">An account is never required. Explore, understand, pray, save people and use prayer rotation locally exactly as before.</p>
+        <p class="eyebrow">Account</p>
+        <h1>Private sync is optional.</h1>
+        <p class="lede">Unreached works locally without an account. Sign in only if you want your limited Saved and prayer-list data available across devices.</p>
       </header>
 
       <section class="account-status-card" aria-live="polite">
@@ -199,52 +220,99 @@ export function AccountPage() {
         </div>
       </section>
 
-      <section class="account-grid">
-        <article class="account-panel">
-          <h2>What can sync</h2>
-          <ul class="account-plain-list">
-            <li>Saved people membership and its existing source-backed snapshot.</li>
-            <li>Private prayer-list membership.</li>
-            <li>Only the latest <code>lastPrayedAt</code> timestamp for a listed person.</li>
-          </ul>
-        </article>
-        <article class="account-panel">
-          <h2>What never syncs</h2>
-          <ul class="account-plain-list">
-            <li>Recent browsing history stays on this device.</li>
-            <li>No prayer history, prayer counts, streaks, scores or completion metrics exist.</li>
-            <li>The PeopleGroups.org corpus and offline provider cache are never uploaded.</li>
-          </ul>
-        </article>
-      </section>
-
-      <section class="account-panel account-actions-panel">
+      <section class="account-next-step" aria-labelledby="account-next-step-heading">
         <div>
-          <p class="eyebrow">Controls</p>
-          <h2>Your data remains usable without the service.</h2>
-          <p>Signing out pauses private sync on this tab but keeps this device bound to the same account. Disconnecting sync removes that binding. Neither action erases this browser’s local Saved or prayer data. The Cloudflare Access identity token is kept only for this browser-tab session.</p>
+          <p class="eyebrow">Next step</p>
+          <h2 id="account-next-step-heading">
+            {backend === "checking"
+              ? "Checking private sync."
+              : backend === "unavailable"
+                ? "Keep using Unreached locally."
+                : accountMismatch
+                  ? "Resolve the account mismatch before syncing."
+                  : needsAuthentication
+                    ? "Restore this tab’s private sign-in."
+                    : runtime.enabled
+                      ? "No action needed."
+                      : authenticated
+                        ? "Choose whether to enable cross-device sync."
+                        : "Stay local, or sign in for cross-device continuity."}
+          </h2>
+          <p>
+            {runtime.enabled && authenticated && !accountMismatch
+              ? "Sync runs automatically after local changes, reconnects, and when this page becomes active."
+              : accountMismatch
+                ? "Pending changes remain on this device. Sign out of the different account or disconnect this device before using another account."
+                : "Your local Saved and prayer data remains usable regardless of account status."}
+          </p>
         </div>
-        <div class="account-actions">
+        <div class="account-primary-actions">
           {backend === "checking" ? <button class="button button--secondary" type="button" disabled><RefreshCw size={16} aria-hidden="true" /> Checking service…</button> : null}
-          {backend === "unavailable" ? <button class="button button--secondary" type="button" onClick={() => void probe()}><RefreshCw size={16} aria-hidden="true" /> Recheck service</button> : null}
-          {backend === "ready" && !authenticated ? <button class="button button--primary" type="button" onClick={openSyncSignIn}><LogIn size={16} aria-hidden="true" /> {runtime.enabled ? "Sign in again" : "Sign in privately"}</button> : null}
-          {backend === "ready" && !authenticated ? <button class="button button--secondary" type="button" onClick={() => void probe()}><RefreshCw size={16} aria-hidden="true" /> I finished signing in</button> : null}
+          {backend === "unavailable" ? <button class="button button--primary" type="button" onClick={() => void probe()}><RefreshCw size={16} aria-hidden="true" /> Recheck service</button> : null}
+          {backend === "ready" && accountMismatch ? <button class="button button--primary" type="button" onClick={signOut}><LogOut size={16} aria-hidden="true" /> Sign out & switch account</button> : null}
+          {backend === "ready" && accountMismatch ? <button class="button button--secondary" type="button" onClick={disconnectDevice}><CloudOff size={16} aria-hidden="true" /> Disconnect this device</button> : null}
+          {backend === "ready" && !accountMismatch && !authenticated ? <button class="button button--primary" type="button" onClick={openSyncSignIn}><LogIn size={16} aria-hidden="true" /> {runtime.enabled ? "Sign in again" : "Sign in privately"}</button> : null}
           {backend === "ready" && authenticated && !runtime.enabled ? (
             <button class="button button--primary" type="button" disabled={busy !== null} onClick={() => void run("merge", enablePrivateSyncWithMerge)}>
               <ShieldCheck size={16} aria-hidden="true" /> Merge this device & enable sync
             </button>
           ) : null}
-          {canSyncNow ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("sync", syncNow)}><RefreshCw size={16} aria-hidden="true" /> Sync now</button> : null}
-          {canManageRemoteAccount ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("export", async () => downloadJson(await exportRemoteAccount()))}><Download size={16} aria-hidden="true" /> Export private data</button> : null}
-          {runtime.enabled ? <button class="button button--secondary" type="button" onClick={() => { disconnectPrivateSync(); setRuntime(getSyncRuntimeStatus()); }}><CloudOff size={16} aria-hidden="true" /> Disconnect this device</button> : null}
-          {authenticated ? <button class="button button--secondary" type="button" onClick={signOut}><LogOut size={16} aria-hidden="true" /> Sign out</button> : null}
-          {canManageRemoteAccount ? <button class="button button--danger" type="button" disabled={busy !== null} onClick={() => void deleteAccount()}><Trash2 size={16} aria-hidden="true" /> Delete private account data</button> : null}
+          {backend === "ready" && runtime.enabled && authenticated && !accountMismatch ? <span class="account-ok"><ShieldCheck size={17} aria-hidden="true" /> Automatic sync is active</span> : null}
         </div>
       </section>
 
-      <aside class="account-privacy-note">
-        <strong>Merge behavior:</strong> first activation combines this device with the private account instead of silently replacing local data. If the two prayer lists would exceed the 100-person local limit, activation stops before changing either side. Server-side conflict records prevent older offline changes from overriding newer opposing changes; intentionally acting again after receiving the newer state creates a current change.
-      </aside>
+      <details class="account-disclosure account-privacy-disclosure">
+        <summary>What private sync includes</summary>
+        <div class="account-boundary-grid">
+          <section>
+            <h2>What can sync</h2>
+            <ul class="account-plain-list">
+              <li>Saved people membership and its existing source-backed snapshot.</li>
+              <li>Private prayer-list membership.</li>
+              <li>Only the latest <code>lastPrayedAt</code> timestamp for a listed person.</li>
+            </ul>
+          </section>
+          <section>
+            <h2>What never syncs</h2>
+            <ul class="account-plain-list">
+              <li>Recent browsing history stays on this device.</li>
+              <li>No prayer history, prayer counts, streaks, scores or completion metrics exist.</li>
+              <li>The PeopleGroups.org corpus and offline provider cache are never uploaded.</li>
+            </ul>
+          </section>
+        </div>
+      </details>
+
+      <details class="account-disclosure account-controls-disclosure">
+        <summary>Account & device controls</summary>
+        <div class="account-disclosure-body">
+          <p>Signing out pauses private sync on this tab but keeps the device bound to the same account. Disconnecting removes that binding. Neither action erases this browser’s local Saved or prayer data. The Cloudflare Access identity token is kept only for this browser-tab session.</p>
+          <div class="account-secondary-actions">
+            {backend === "ready" && !authenticated ? <button class="button button--secondary" type="button" onClick={() => void probe()}><RefreshCw size={16} aria-hidden="true" /> Check sign-in status</button> : null}
+            {canSyncNow ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("sync", syncNow)}><RefreshCw size={16} aria-hidden="true" /> Sync now</button> : null}
+            {canManageRemoteAccount ? <button class="button button--secondary" type="button" disabled={busy !== null} onClick={() => void run("export", async () => downloadJson(await exportRemoteAccount()))}><Download size={16} aria-hidden="true" /> Export private data</button> : null}
+            {runtime.enabled && !accountMismatch ? <button class="button button--secondary" type="button" onClick={disconnectDevice}><CloudOff size={16} aria-hidden="true" /> Disconnect this device</button> : null}
+            {authenticated && !accountMismatch ? <button class="button button--secondary" type="button" onClick={signOut}><LogOut size={16} aria-hidden="true" /> Sign out</button> : null}
+          </div>
+        </div>
+      </details>
+
+      <details class="account-disclosure account-merge-disclosure">
+        <summary>How first merge and conflicts work</summary>
+        <div class="account-disclosure-body">
+          <p><strong>Merge behavior:</strong> first activation combines this device with the private account instead of silently replacing local data. If the two prayer lists would exceed the 100-person local limit, activation stops before changing either side. Server-side conflict records prevent older offline changes from overriding newer opposing changes; intentionally acting again after receiving the newer state creates a current change.</p>
+        </div>
+      </details>
+
+      {canManageRemoteAccount ? (
+        <details class="account-disclosure account-danger-disclosure">
+          <summary>Delete private account data</summary>
+          <div class="account-disclosure-body">
+            <p>This deletes the synced account copy and disconnects this device. Saved and prayer data already stored in this browser remains local.</p>
+            <button class="button button--danger" type="button" disabled={busy !== null} onClick={() => void deleteAccount()}><Trash2 size={16} aria-hidden="true" /> Delete private account data</button>
+          </div>
+        </details>
+      ) : null}
     </div>
   );
 }

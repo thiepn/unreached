@@ -92,9 +92,9 @@ test("release transparency page contains definitions and permission state", asyn
   await expectNoHorizontalOverflow(page);
 });
 
-test("saved page is private-browser local and empty-safe", async ({ page }) => {
+test("saved page is local-by-default and empty-safe", async ({ page }) => {
   await page.goto("./#/saved");
-  await expect(page.getByText(/browser/i).first()).toBeVisible();
+  await expect(page.getByText(/local by default/i).first()).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
