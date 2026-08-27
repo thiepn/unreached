@@ -49,7 +49,7 @@ function normalizeRoutePath(value: string): string {
 function positiveSourceId(value: string | undefined): number | null {
   if (!value) return null;
   const sourceId = Number(value);
-  return Number.isSafeInteger(value) && value > 0 ? value : null;
+  return Number.isSafeInteger(sourceId) && sourceId > 0 ? sourceId : null;
 }
 
 function emptyState(id: RouteId, path: string): RouteState {
