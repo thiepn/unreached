@@ -68,15 +68,30 @@ test("visible primary interactive targets are at least 44px", async ({ page }) =
 
 test("skip navigation exposes visible focus on exactly one main landmark", async ({ page }) => {
   await page.goto("./#/countries");
+  const main = page.locator("#main-content");
+  const skip = page.locator(".skip-link");
+
   await expect(page.locator("main")).toHaveCount(1);
-  await expect(page.locator("#main-content")).toBeVisible();
+  await expect(main).toBeVisible();
 
+  // Route changes intentionally focus main for SPA navigation. Certify that
+  // behavior first, then reset to the document start to exercise the skip link.
+  await expect(main).toBeFocused();
+  let focusStyle = await main.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { outlineStyle: style.outlineStyle, outlineWidth: Number.parseFloat(style.outlineWidth) };
+  });
+  expect(focusStyle.outlineStyle).not.toBe("none");
+  expect(focusStyle.outlineWidth).toBeGreaterThanOrEqual(3);
+
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await page.keyboard.press("Tab");
-  await expect(page.locator(".skip-link")).toBeFocused();
+  await expect(skip).toBeFocused();
   await page.keyboard.press("Enter");
-  await expect(page.locator("#main-content")).toBeFocused();
+  await expect(main).toBeFocused();
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe("#/countries");
 
-  const focusStyle = await page.locator("#main-content").evaluate((element) => {
+  focusStyle = await main.evaluate((element) => {
     const style = getComputedStyle(element);
     return { outlineStyle: style.outlineStyle, outlineWidth: Number.parseFloat(style.outlineWidth) };
   });
