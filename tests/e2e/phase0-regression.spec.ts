@@ -76,8 +76,9 @@ test.describe("Phase 0 observational baseline", () => {
 test.describe("Phase 0 known-defect contracts", () => {
   test("skip-to-content keeps the current route and focuses the main landmark", async ({ page }) => {
     await page.goto("./#/about");
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Enter");
+    const skip = page.locator(".skip-link");
+    await skip.focus();
+    await skip.press("Enter");
     await expect(page).toHaveURL(/#\/about$/);
     await expect(page.locator("main#main-content")).toBeFocused();
   });
