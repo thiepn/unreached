@@ -96,11 +96,12 @@ The file runs automatically through the existing full `npm run e2e` Browser Cert
 Phase 14 must not weaken or bypass any existing gate. In particular:
 
 - Phase 13 Account UX and Private Sync behavior remain unchanged;
-- all sync certification stays blocking;
+- `npm run sync:check` remains part of every blocking production build;
+- the dedicated Private Sync Certification remains path-scoped to Worker, sync runtime, Account-page and sync-certification changes and is therefore not artificially triggered by accessibility-only files;
 - PeopleGroups.org and mission-classification semantics remain unchanged;
 - offline/PWA, navigation, prayer and release checks remain part of `npm run build`;
 - accessibility fixes must not be implemented by hiding document overflow that would conceal a real layout defect.
 
 ## Exit criterion
 
-Phase 14 is complete only when the Phase 14 static gate, the full production CI build, Private Sync Certification and the complete desktop/mobile Browser Certification all pass on the same Phase 14 head SHA, after which the Phase 14 PR may be merged into `main`.
+Phase 14 is complete only when the Phase 14 static gate, the full production CI build (including existing sync integrity checks) and the complete desktop/mobile Browser Certification all pass on the same Phase 14 head SHA. The dedicated Private Sync Certification must also pass when its path-scoped trigger applies; for an accessibility-only diff with no Worker, sync runtime, Account-page or sync-certification changes, that workflow is correctly not applicable. The Phase 14 PR may be merged only after these applicable gates are green.
