@@ -31,6 +31,7 @@ import "./styles/v17.css";
 import "./styles/v18.css";
 import "./styles/v19.css";
 import "./styles/v20.css";
+import "./styles/v21-navigation.css";
 
 initializeOfflineRuntime();
 initializePrivateSyncRuntime();
