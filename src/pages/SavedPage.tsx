@@ -44,8 +44,8 @@ export function SavedPage() {
       <header class="saved-hero">
         <div>
           <div class="eyebrow">Private browser workspace</div>
-          <h1 class="display-title">Saved & prayer</h1>
-          <p class="lead">Keep people you want to revisit and a separate private prayer list. Everything on this page stays in this browser; Unreached does not require an account or upload this activity.</p>
+          <h1 class="display-title">My lists</h1>
+          <p class="lead">Your saved people and private prayer list live together here. Recent profile visits also appear below so this page is a return point, not a second prayer destination.</p>
         </div>
         <Bookmark size={30} aria-hidden="true" />
       </header>
