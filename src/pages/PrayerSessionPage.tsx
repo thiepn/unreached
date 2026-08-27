@@ -55,7 +55,7 @@ export function PrayerSessionPage() {
         <h1 class="display-title">Live prayer subjects are unavailable.</h1>
         <p>{prayer.error}</p>
         <button type="button" class="people-reset-filters" onClick={prayer.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
-        <a class="inline-link" href={hrefFor("/saved")}><ArrowLeft size={16} aria-hidden="true" /> Back to Saved & prayer</a>
+        <a class="inline-link" href={hrefFor("/saved")}><ArrowLeft size={16} aria-hidden="true" /> Back to My lists</a>
       </section>
     );
   }
@@ -68,7 +68,7 @@ export function PrayerSessionPage() {
         <h1 class="display-title">No eligible people are in your prayer list.</h1>
         <p>Add current GSEC 0–3 people to your private prayer list first. Session planning stays local to this browser.</p>
         <a class="prayer-session__primary-link" href={hrefFor("/pray")}>Choose people to pray for</a>
-        <a class="inline-link" href={hrefFor("/saved")}>Back to Saved & prayer</a>
+        <a class="inline-link" href={hrefFor("/saved")}>Back to My lists</a>
       </section>
     );
   }
@@ -79,8 +79,8 @@ export function PrayerSessionPage() {
         <Database size={25} aria-hidden="true" />
         <div class="eyebrow">Guided prayer session</div>
         <h1 class="display-title">A session person is no longer available.</h1>
-        <p>The frozen session plan points to a person whose current live record could not be resolved. Return to the prayer list to start a fresh session from current source data.</p>
-        <a class="prayer-session__primary-link" href={hrefFor("/saved")}>Return to prayer list</a>
+        <p>The frozen session plan points to a person whose current live record could not be resolved. Return to My lists to start a fresh session from current source data.</p>
+        <a class="prayer-session__primary-link" href={hrefFor("/saved")}>Return to My lists</a>
       </section>
     );
   }
@@ -91,7 +91,7 @@ export function PrayerSessionPage() {
   return (
     <article class="prayer-session" data-prayer-session-plan={planIds.join(",")}>
       <nav class="prayer-session__back" aria-label="Prayer session navigation">
-        <a href={hrefFor("/saved")}><ArrowLeft size={15} aria-hidden="true" /> Saved & prayer</a>
+        <a href={hrefFor("/saved")}><ArrowLeft size={15} aria-hidden="true" /> My lists</a>
         <span>/</span>
         <a href={hrefFor("/pray")}>Prayer</a>
       </nav>
@@ -162,7 +162,7 @@ export function PrayerSessionPage() {
         {canGoNext ? (
           <button type="button" onClick={() => setActiveIndex((index) => Math.min(planIds.length - 1, index + 1))}>Next person <ChevronRight size={18} aria-hidden="true" /></button>
         ) : (
-          <a href={hrefFor("/saved")}>Return to prayer list</a>
+          <a href={hrefFor("/saved")}>Return to My lists</a>
         )}
       </div>
 
