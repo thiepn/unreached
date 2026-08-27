@@ -45,9 +45,9 @@ test.describe("Phase 6 URL-backed discovery state", () => {
   });
 
   test("Reviewed Coverage and Prayer initialize from hash query state", async ({ page }) => {
-    await page.goto("./#/coverage?q=Armenian&region=Caucasus");
-    await expect(page.locator("#editorial-coverage-search")).toHaveValue("Armenian");
-    await expect(page.locator(".editorial-coverage-controls label").filter({ hasText: "Region" }).locator("select")).toHaveValue("Caucasus");
+    await page.goto("./#/coverage?q=Kazakh&region=Central%20Asia");
+    await expect(page.locator("#editorial-coverage-search")).toHaveValue("Kazakh");
+    await expect(page.locator(".editorial-coverage-controls label").filter({ hasText: "Region" }).locator("select")).toHaveValue("Central Asia");
 
     await page.goto("./#/pray?country=BEN&q=Browser");
     await expect(page.locator("#prayer-search")).toHaveValue("Browser");
