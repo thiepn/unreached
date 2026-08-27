@@ -4,17 +4,20 @@ function isPhone(page: Page): boolean {
   return (page.viewportSize()?.width ?? 1280) <= 760;
 }
 
+const desktopBrowseTrigger = (page: Page) => page.locator(".desktop-nav .browse-trigger");
+const mobileMoreTrigger = (page: Page) => page.locator(".mobile-nav .mobile-browse-trigger");
+
 test("Account is a utility and is not duplicated inside Browse", async ({ page }) => {
   await page.goto("./#/about");
   await expect(page.locator(".header-actions").getByRole("link", { name: "Account and private sync" })).toHaveCount(1);
 
   if (isPhone(page)) {
-    await page.locator(".mobile-browse-trigger").click();
+    await mobileMoreTrigger(page).click();
     const dialog = page.getByRole("dialog", { name: "Browse more sections" });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("link", { name: /Account/i })).toHaveCount(0);
   } else {
-    await page.locator(".browse-trigger").click();
+    await desktopBrowseTrigger(page).click();
     const panel = page.locator("#desktop-browse-menu");
     await expect(panel).toBeVisible();
     await expect(panel.getByRole("link", { name: /Account/i })).toHaveCount(0);
@@ -24,7 +27,7 @@ test("Account is a utility and is not duplicated inside Browse", async ({ page }
 test("desktop Browse supports disclosure keyboard navigation and focus return", async ({ page }) => {
   test.skip(isPhone(page), "Desktop Browse disclosure is replaced by the mobile modal sheet on phone layouts.");
   await page.goto("./#/about");
-  const trigger = page.locator(".browse-trigger");
+  const trigger = desktopBrowseTrigger(page);
   await trigger.focus();
   await page.keyboard.press("ArrowDown");
   await expect(page.getByRole("link", { name: /Reviewed coverage/i })).toBeFocused();
@@ -40,7 +43,7 @@ test("desktop Browse supports disclosure keyboard navigation and focus return", 
 test("desktop Browse closes on outside interaction", async ({ page }) => {
   test.skip(isPhone(page), "Outside-click disclosure behavior is desktop/tablet only.");
   await page.goto("./#/about");
-  await page.locator(".browse-trigger").click();
+  await desktopBrowseTrigger(page).click();
   await expect(page.locator("#desktop-browse-menu")).toBeVisible();
   await page.locator("main#main-content").click({ position: { x: 10, y: 10 } });
   await expect(page.locator("#desktop-browse-menu")).toHaveCount(0);
@@ -51,14 +54,14 @@ test("tablet widths retain primary navigation", async ({ page }) => {
   await page.goto("./#/about");
   await expect(page.locator(".desktop-nav")).toBeVisible();
   await expect(page.locator(".desktop-nav").getByRole("link", { name: "Explore" })).toBeVisible();
-  await expect(page.locator(".browse-trigger")).toBeVisible();
+  await expect(desktopBrowseTrigger(page)).toBeVisible();
   await expect(page.locator(".mobile-nav")).toBeHidden();
 });
 
 test("mobile More is modal and returns focus on Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("./#/about");
-  const trigger = page.locator(".mobile-browse-trigger");
+  const trigger = mobileMoreTrigger(page);
   await trigger.click();
   const dialog = page.getByRole("dialog", { name: "Browse more sections" });
   await expect(dialog).toBeVisible();
@@ -74,7 +77,7 @@ test("mobile More is modal and returns focus on Escape", async ({ page }) => {
 test("detail routes retain their parent navigation state", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("./#/countries/USA");
-  const browse = page.locator(".browse-trigger");
+  const browse = desktopBrowseTrigger(page);
   await expect(browse).toHaveClass(/is-active/);
   await browse.click();
   await expect(page.locator("#desktop-browse-menu").getByRole("link", { name: /^Countries/i })).toHaveAttribute("aria-current", "page");
