@@ -193,7 +193,8 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
 
   const onDesktopPanelKeyDown = (event: KeyboardEvent) => {
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-    const links = Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>(".browse-link"));
+    const panel = event.currentTarget as HTMLElement;
+    const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>(".browse-link"));
     if (!links.length) return;
     const currentIndex = links.indexOf(document.activeElement as HTMLAnchorElement);
     let nextIndex = currentIndex;
