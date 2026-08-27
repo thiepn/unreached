@@ -41,15 +41,16 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 test.beforeEach(async ({ page }) => { await installLargeCorpus(page); });
 
-test("primary navigation emphasizes Explore, Peoples and Pray while Browse keeps secondary destinations reachable", async ({ page }) => {
+test("primary navigation emphasizes Explore, Peoples and Pray while responsive overflow keeps secondary destinations reachable", async ({ page }) => {
   await page.goto("./#/countries");
-  const primary = page.getByRole("navigation", { name: "Primary navigation" }).first();
+  const primary = page.getByRole("navigation", { name: "Primary navigation" }).filter({ visible: true }).first();
   await expect(primary.getByRole("link", { name: "Explore", exact: true })).toBeVisible();
   await expect(primary.getByRole("link", { name: "Peoples", exact: true })).toBeVisible();
   await expect(primary.getByRole("link", { name: "Pray", exact: true })).toBeVisible();
-  const browse = primary.getByRole("button", { name: "Browse", exact: true });
-  await expect(browse).toBeVisible();
-  await browse.click();
+  const mobile = (page.viewportSize()?.width ?? 1280) <= 760;
+  const overflowButton = primary.getByRole("button", { name: mobile ? "More" : "Browse", exact: true });
+  await expect(overflowButton).toBeVisible();
+  await overflowButton.click();
   await expect(page.getByRole("link", { name: /Countries/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Languages/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Search people, countries and languages" })).toBeVisible();
@@ -73,12 +74,14 @@ test("tablet and small-laptop widths keep compact desktop navigation without dup
 test("People Explorer bounds the initial DOM, hides advanced controls and progressively reveals results", async ({ page }) => {
   await page.goto("./#/peoples");
   await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
-  await expect(page.locator(".people-filter-panel")).not.toHaveAttribute("open", "");
-  await expect(page.locator(".people-card")).toHaveCount(48);
-  await expect(page.getByText(/Showing 48 of 120 matches/)).toBeVisible();
+  await expect(page.locator(".people-filter-panel--advanced")).not.toHaveAttribute("open", "");
+  await expect(page.locator(".people-card--explorer")).toHaveCount(48);
+  await expect(page.locator(".people-result-count")).toContainText("120 matches");
+  await expect(page.locator(".people-visible-count")).toHaveText("Showing first 48");
   const more = page.getByRole("button", { name: "Show 48 more" });
   await more.click();
-  await expect(page.locator(".people-card")).toHaveCount(96);
+  await expect(page.locator(".people-card--explorer")).toHaveCount(96);
+  await expect(page.locator(".people-visible-count")).toHaveText("Showing first 96");
   await expectNoHorizontalOverflow(page);
 });
 

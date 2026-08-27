@@ -83,7 +83,8 @@ test.describe("Phase 5 prepared search responsiveness", () => {
       await expect(prayerSearch).toBeVisible();
       started = Date.now();
       await prayerSearch.fill("Synthetic People 3997");
-      await expect(page.getByText("1 matching people entities. Showing up to 60 at once.")).toBeVisible({ timeout: 2_000 });
+      await expect(page.locator(".prayer-library-progress")).toContainText("Showing 1 of 1", { timeout: 2_000 });
+      await expect(page.getByRole("heading", { name: "Synthetic People 3997" })).toBeVisible({ timeout: 2_000 });
       expect(Date.now() - started).toBeLessThan(800);
 
       await page.locator("#main-content").focus();

@@ -43,6 +43,7 @@ test("people profile makes Explore Understand Pray progression explicit", async 
   await expect(journey.getByText("1 · Explore", { exact: true })).toBeVisible();
   await expect(journey.getByText("2 · Understand", { exact: true })).toBeVisible();
   await expect(journey.getByText("3 · Pray", { exact: true })).toBeVisible();
-  await expect(journey.locator("[aria-current='step']")).toContainText("This source record");
-  await expect(journey.getByRole("link", { name: /Focused prayer guide/i })).toHaveAttribute("href", `#/pray/${VISIBLE_TEST_PEID}`);
+  await expect(journey.locator("[aria-current='step']")).toContainText("Understand");
+  await expect(journey.getByText("Source context reviewed", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Pray with this context/i })).toHaveAttribute("href", `#/pray/${VISIBLE_TEST_PEID}`);
 });

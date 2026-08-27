@@ -51,7 +51,7 @@ test("v1.8 Saved workspace exposes 3, 5 and full guided-session launchers", asyn
   await expect(page.locator('[data-prayer-session-size="3"]')).toHaveAttribute("href", /#\/pray\/session\?size=3$/);
   await expect(page.locator('[data-prayer-session-size="5"]')).toHaveAttribute("href", /#\/pray\/session\?size=5$/);
   await expect(page.locator('[data-prayer-session-size="all"]')).toHaveAttribute("href", /#\/pray\/session\?size=all$/);
-  await expect(page.getByText(/creates no session history or completion record/i)).toBeVisible();
+  await expect(page.getByText(/No session history or completion record is created/i)).toBeVisible();
 });
 
 test("v1.8 3-person session freezes the current rotation plan and opens the first person", async ({ page }) => {
