@@ -70,8 +70,21 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
 
   const results = useMemo(() => searchDocuments(sharedSearch.documents, debouncedQuery, 18), [sharedSearch.documents, debouncedQuery]);
   const grouped = useMemo(() => (["people", "country", "language"] as const).map((domain) => ({ domain, results: results.filter((result) => result.domain === domain) })).filter((group) => group.results.length), [results]);
+  const visualResults = useMemo(() => grouped.flatMap((group) => group.results), [grouped]);
+  const visualIndexById = useMemo(() => new Map(visualResults.map((result, index) => [result.id, index])), [visualResults]);
 
   useEffect(() => setActiveIndex(0), [debouncedQuery]);
+  useEffect(() => {
+    if (activeIndex >= visualResults.length) setActiveIndex(0);
+  }, [activeIndex, visualResults.length]);
+  useEffect(() => {
+    const active = visualResults[activeIndex];
+    if (!active) return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(`search-result-${active.id}`)?.scrollIntoView({ block: "nearest" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeIndex, visualResults]);
 
   const activate = (href: string) => {
     onClose();
@@ -93,14 +106,14 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
             value={query}
             onInput={(event) => setQuery(event.currentTarget.value)}
             onKeyDown={(event) => {
-              if (event.key === "ArrowDown" && results.length) { event.preventDefault(); setActiveIndex((index) => (index + 1) % results.length); }
-              if (event.key === "ArrowUp" && results.length) { event.preventDefault(); setActiveIndex((index) => (index - 1 + results.length) % results.length); }
-              if (event.key === "Enter" && results[activeIndex]) { event.preventDefault(); activate(results[activeIndex]!.href); }
+              if (event.key === "ArrowDown" && visualResults.length) { event.preventDefault(); setActiveIndex((index) => (index + 1) % visualResults.length); }
+              if (event.key === "ArrowUp" && visualResults.length) { event.preventDefault(); setActiveIndex((index) => (index - 1 + visualResults.length) % visualResults.length); }
+              if (event.key === "Enter" && visualResults[activeIndex]) { event.preventDefault(); activate(visualResults[activeIndex]!.href); }
             }}
             type="search"
             placeholder="People, country, language or ID…"
             aria-label="Search peoples, countries or languages"
-            aria-activedescendant={results[activeIndex] ? `search-result-${results[activeIndex]!.id}` : undefined}
+            aria-activedescendant={visualResults[activeIndex] ? `search-result-${visualResults[activeIndex]!.id}` : undefined}
           />
           <kbd>Esc</kbd>
         </div>
@@ -123,7 +136,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
                 <section class="search-group" key={group.domain} aria-label={domainLabel(group.domain)}>
                   <div class="search-section-label">{domainLabel(group.domain)}</div>
                   {group.results.map((result) => {
-                    const index = results.indexOf(result);
+                    const index = visualIndexById.get(result.id) ?? -1;
                     const Icon = domainIcon(result.domain);
                     return (
                       <a id={`search-result-${result.id}`} href={result.href} class={`search-result-row${index === activeIndex ? " is-active" : ""}`} key={result.id} onMouseEnter={() => setActiveIndex(index)} onClick={onClose}>

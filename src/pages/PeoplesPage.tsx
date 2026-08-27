@@ -1,6 +1,7 @@
 import { ArrowRight, BookOpenText, Database, Filter, RefreshCw, Search, UsersRound } from "lucide-preact";
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useLayoutEffect, useMemo, useState } from "preact/hooks";
 
+import { positiveHashPage, readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
 import { hrefFor } from "../app/router";
 import { GuidedPeopleStarts } from "../components/GuidedPeopleStarts";
 import { useEditorialContext } from "../context";
@@ -12,6 +13,8 @@ import {
   livePeopleStatusLabel,
   useLivePeopleExplorer,
   type LivePeopleFilterState,
+  type LivePeopleSort,
+  type LivePeopleStatusFilter,
 } from "../peoples";
 import { entityGsecRange } from "../providers/peoplegroups";
 
@@ -28,6 +31,30 @@ const DEFAULT_FILTERS: LivePeopleFilterState = {
   sort: "population-desc",
 };
 
+const PEOPLE_STATUSES = new Set<LivePeopleStatusFilter>(["all", "unreached-only", "other-only", "unknown"]);
+const PEOPLE_SORTS = new Set<LivePeopleSort>(["population-desc", "name", "gsec-asc"]);
+
+function initialPeopleState(): { filters: LivePeopleFilterState; reviewedOnly: boolean; page: number } {
+  const params = readHashSearchParams();
+  const statusCandidate = params.get("status") as LivePeopleStatusFilter | null;
+  const sortCandidate = params.get("sort") as LivePeopleSort | null;
+  const populationCandidate = Number(params.get("population") ?? 0);
+  return {
+    filters: {
+      query: params.get("q") ?? "",
+      status: statusCandidate && PEOPLE_STATUSES.has(statusCandidate) ? statusCandidate : DEFAULT_FILTERS.status,
+      countryIso3: params.get("country")?.toUpperCase() ?? "",
+      language: params.get("language") ?? "",
+      religion: params.get("religion") ?? "",
+      bibleAvailability: params.get("bible") ?? "",
+      minimumPopulation: Number.isFinite(populationCandidate) && populationCandidate >= 0 ? populationCandidate : 0,
+      sort: sortCandidate && PEOPLE_SORTS.has(sortCandidate) ? sortCandidate : DEFAULT_FILTERS.sort,
+    },
+    reviewedOnly: params.get("reviewed") === "1",
+    page: positiveHashPage(params),
+  };
+}
+
 function loadingLabel(loadedPages: number | undefined, totalPages: number | undefined): string {
   if (!loadedPages || !totalPages) return "Loading people-group records…";
   return `Loading people-group records… ${loadedPages} of ${totalPages} source pages`;
@@ -36,9 +63,11 @@ function loadingLabel(loadedPages: number | undefined, totalPages: number | unde
 export function PeoplesPage() {
   const explorer = useLivePeopleExplorer();
   const editorial = useEditorialContext();
-  const [filters, setFilters] = useState<LivePeopleFilterState>(DEFAULT_FILTERS);
-  const [reviewedOnly, setReviewedOnly] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(PEOPLE_PAGE_SIZE);
+  const initial = useMemo(initialPeopleState, []);
+  const [filters, setFilters] = useState<LivePeopleFilterState>(initial.filters);
+  const [reviewedOnly, setReviewedOnly] = useState(initial.reviewedOnly);
+  const [page, setPage] = useState(initial.page);
+  const visibleCount = page * PEOPLE_PAGE_SIZE;
   const debouncedQuery = useDebouncedValue(filters.query, 100);
   const options = explorer.peopleSearchIndex.options;
 
@@ -61,10 +90,30 @@ export function PeoplesPage() {
   const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
   const showGuidedStarts = !filters.query.trim() && activeFilterCount === 0;
 
-  useEffect(() => setVisibleCount(PEOPLE_PAGE_SIZE), [debouncedQuery, filters.status, filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation, filters.sort, reviewedOnly]);
+  // URL state is part of the current history entry, so commit it before paint.
+  // This prevents a fast navigation immediately after typing from racing a
+  // passive effect and leaving Back with the previous discovery state.
+  useLayoutEffect(() => {
+    const params = new URLSearchParams();
+    setOptionalHashParam(params, "q", filters.query);
+    setOptionalHashParam(params, "status", filters.status, DEFAULT_FILTERS.status);
+    setOptionalHashParam(params, "country", filters.countryIso3);
+    setOptionalHashParam(params, "language", filters.language);
+    setOptionalHashParam(params, "religion", filters.religion);
+    setOptionalHashParam(params, "bible", filters.bibleAvailability);
+    setOptionalHashParam(params, "population", filters.minimumPopulation, DEFAULT_FILTERS.minimumPopulation);
+    setOptionalHashParam(params, "sort", filters.sort, DEFAULT_FILTERS.sort);
+    setOptionalHashParam(params, "reviewed", reviewedOnly ? "1" : "");
+    setOptionalHashParam(params, "page", page, 1);
+    replaceHashSearchParams(params);
+  }, [filters.query, filters.status, filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation, filters.sort, reviewedOnly, page]);
 
-  const update = <K extends keyof LivePeopleFilterState>(key: K, value: LivePeopleFilterState[K]) => setFilters((current) => ({ ...current, [key]: value }));
-  const resetFilters = () => { setFilters(DEFAULT_FILTERS); setReviewedOnly(false); };
+  const update = <K extends keyof LivePeopleFilterState>(key: K, value: LivePeopleFilterState[K]) => {
+    setFilters((current) => ({ ...current, [key]: value }));
+    setPage(1);
+  };
+  const setReviewed = (value: boolean) => { setReviewedOnly(value); setPage(1); };
+  const resetFilters = () => { setFilters(DEFAULT_FILTERS); setReviewedOnly(false); setPage(1); };
 
   return (
     <section class="peoples-page" aria-labelledby="peoples-title">
@@ -119,7 +168,7 @@ export function PeoplesPage() {
               <label>Language<select value={filters.language} onChange={(event) => update("language", event.currentTarget.value)}><option value="">All languages</option>{options.languages.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
               <label>Bible label<select value={filters.bibleAvailability} onChange={(event) => update("bibleAvailability", event.currentTarget.value)}><option value="">Any source label</option>{options.bibleStatuses.map((status) => <option value={status} key={status}>{status}</option>)}</select></label>
               <label>Known population<select value={String(filters.minimumPopulation)} onChange={(event) => update("minimumPopulation", Number(event.currentTarget.value))}><option value="0">Any population</option><option value="10000">10K+</option><option value="100000">100K+</option><option value="1000000">1M+</option><option value="10000000">10M+</option></select></label>
-              <label class="people-reviewed-filter"><span>Editorial coverage</span><span class="people-reviewed-filter__control"><input type="checkbox" checked={reviewedOnly} disabled={editorial.loading || Boolean(editorial.error)} onChange={(event) => setReviewedOnly(event.currentTarget.checked)} /> Reviewed context only</span></label>
+              <label class="people-reviewed-filter"><span>Editorial coverage</span><span class="people-reviewed-filter__control"><input type="checkbox" checked={reviewedOnly} disabled={editorial.loading || Boolean(editorial.error)} onChange={(event) => setReviewed(event.currentTarget.checked)} /> Reviewed context only</span></label>
             </div>
             <button class="people-reset-filters" type="button" onClick={resetFilters}>Reset filters</button>
           </details>
@@ -150,7 +199,7 @@ export function PeoplesPage() {
                 })}
               </div>
               {visibleResults.length < results.length ? (
-                <div class="result-load-more"><button type="button" onClick={() => setVisibleCount((count) => Math.min(count + PEOPLE_PAGE_SIZE, results.length))}>Show {Math.min(PEOPLE_PAGE_SIZE, results.length - visibleResults.length)} more</button><span>{results.length - visibleResults.length} remaining</span></div>
+                <div class="result-load-more"><button type="button" onClick={() => setPage((current) => current + 1)}>Show {Math.min(PEOPLE_PAGE_SIZE, results.length - visibleResults.length)} more</button><span>{results.length - visibleResults.length} remaining</span></div>
               ) : null}
             </>
           ) : (

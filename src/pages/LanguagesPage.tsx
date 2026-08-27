@@ -1,6 +1,7 @@
 import { BookOpen, Database, Filter, Languages, Search } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
+import { positiveHashPage, readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
 import { hrefFor } from "../app/router";
 import { useDebouncedValue } from "../hooks/useResponsiveWork";
 import {
@@ -9,6 +10,8 @@ import {
   rawResourceSummary,
   useLiveLanguageExplorer,
   type LiveLanguageFilterState,
+  type LiveLanguageReachFilter,
+  type LiveLanguageSort,
 } from "../languages";
 
 const LANGUAGE_PAGE_SIZE = 48;
@@ -20,10 +23,30 @@ const initialFilters: LiveLanguageFilterState = {
   sort: "name",
 };
 
+const LANGUAGE_REACH_FILTERS = new Set<LiveLanguageReachFilter>(["all", "has-unreached", "no-unreached", "unknown-only"]);
+const LANGUAGE_SORTS = new Set<LiveLanguageSort>(["name", "people-count-desc", "represented-population-desc", "unreached-contexts-desc"]);
+
+function initialLanguageState(): { filters: LiveLanguageFilterState; page: number } {
+  const params = readHashSearchParams();
+  const reachCandidate = params.get("reach") as LiveLanguageReachFilter | null;
+  const sortCandidate = params.get("sort") as LiveLanguageSort | null;
+  return {
+    filters: {
+      query: params.get("q") ?? "",
+      reach: reachCandidate && LANGUAGE_REACH_FILTERS.has(reachCandidate) ? reachCandidate : initialFilters.reach,
+      bible: params.get("bible") ?? initialFilters.bible,
+      sort: sortCandidate && LANGUAGE_SORTS.has(sortCandidate) ? sortCandidate : initialFilters.sort,
+    },
+    page: positiveHashPage(params),
+  };
+}
+
 export function LanguagesPage() {
   const explorer = useLiveLanguageExplorer();
-  const [filters, setFilters] = useState<LiveLanguageFilterState>(initialFilters);
-  const [visibleCount, setVisibleCount] = useState(LANGUAGE_PAGE_SIZE);
+  const initial = useMemo(initialLanguageState, []);
+  const [filters, setFilters] = useState<LiveLanguageFilterState>(initial.filters);
+  const [page, setPage] = useState(initial.page);
+  const visibleCount = page * LANGUAGE_PAGE_SIZE;
   const debouncedQuery = useDebouncedValue(filters.query, 100);
   const effectiveFilters = useMemo<LiveLanguageFilterState>(() => ({ ...filters, query: debouncedQuery }), [debouncedQuery, filters.reach, filters.bible, filters.sort]);
   const records = useMemo(
@@ -33,7 +56,21 @@ export function LanguagesPage() {
   const visibleRecords = useMemo(() => records.slice(0, visibleCount), [records, visibleCount]);
   const activeFilterCount = Number(filters.reach !== "all") + Number(filters.bible !== "all");
 
-  useEffect(() => setVisibleCount(LANGUAGE_PAGE_SIZE), [debouncedQuery, filters.reach, filters.bible, filters.sort]);
+  useEffect(() => {
+    const params = new URLSearchParams();
+    setOptionalHashParam(params, "q", filters.query);
+    setOptionalHashParam(params, "reach", filters.reach, initialFilters.reach);
+    setOptionalHashParam(params, "bible", filters.bible, initialFilters.bible);
+    setOptionalHashParam(params, "sort", filters.sort, initialFilters.sort);
+    setOptionalHashParam(params, "page", page, 1);
+    replaceHashSearchParams(params);
+  }, [filters.query, filters.reach, filters.bible, filters.sort, page]);
+
+  const update = <K extends keyof LiveLanguageFilterState>(key: K, value: LiveLanguageFilterState[K]) => {
+    setFilters((current) => ({ ...current, [key]: value }));
+    setPage(1);
+  };
+  const resetFilters = () => { setFilters(initialFilters); setPage(1); };
 
   return (
     <section class="languages-page" aria-labelledby="languages-title">
@@ -55,17 +92,17 @@ export function LanguagesPage() {
           <label class="language-search language-search--primary">
             <Search size={18} aria-hidden="true" />
             <span class="sr-only">Search languages</span>
-            <input value={filters.query} onInput={(event) => setFilters({ ...filters, query: event.currentTarget.value })} placeholder="Search language, ISO code, people or country" />
+            <input value={filters.query} onInput={(event) => update("query", event.currentTarget.value)} placeholder="Search language, ISO code, people or country" />
           </label>
 
           <details class="language-filter-panel">
             <summary><Filter size={17} aria-hidden="true" /> Filters & sort{activeFilterCount ? ` · ${activeFilterCount} active` : ""}</summary>
             <div class="language-filter-grid">
-              <label><span>Mission context</span><select value={filters.reach} onChange={(event) => setFilters({ ...filters, reach: event.currentTarget.value as LiveLanguageFilterState["reach"] })}><option value="all">All languages</option><option value="has-unreached">Has GSEC 0–3 context</option><option value="no-unreached">No GSEC 0–3 context</option><option value="unknown-only">GSEC entirely unknown</option></select></label>
-              <label><span>Bible label</span><select value={filters.bible} onChange={(event) => setFilters({ ...filters, bible: event.currentTarget.value })}><option value="all">Any reported label</option>{explorer.bibleLabels.map((label) => <option value={label} key={label}>{label}</option>)}</select></label>
-              <label><span>Sort</span><select value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.currentTarget.value as LiveLanguageFilterState["sort"] })}><option value="name">Alphabetical</option><option value="people-count-desc">Most people-group records</option><option value="represented-population-desc">Largest represented population</option><option value="unreached-contexts-desc">Most GSEC 0–3 contexts</option></select></label>
+              <label><span>Mission context</span><select value={filters.reach} onChange={(event) => update("reach", event.currentTarget.value as LiveLanguageFilterState["reach"])}><option value="all">All languages</option><option value="has-unreached">Has GSEC 0–3 context</option><option value="no-unreached">No GSEC 0–3 context</option><option value="unknown-only">GSEC entirely unknown</option></select></label>
+              <label><span>Bible label</span><select value={filters.bible} onChange={(event) => update("bible", event.currentTarget.value)}><option value="all">Any reported label</option>{explorer.bibleLabels.map((label) => <option value={label} key={label}>{label}</option>)}</select></label>
+              <label><span>Sort</span><select value={filters.sort} onChange={(event) => update("sort", event.currentTarget.value as LiveLanguageFilterState["sort"])}><option value="name">Alphabetical</option><option value="people-count-desc">Most people-group records</option><option value="represented-population-desc">Largest represented population</option><option value="unreached-contexts-desc">Most GSEC 0–3 contexts</option></select></label>
             </div>
-            <button class="people-reset-filters" type="button" onClick={() => setFilters(initialFilters)}>Reset filters</button>
+            <button class="people-reset-filters" type="button" onClick={resetFilters}>Reset filters</button>
           </details>
 
           <div class="language-results-heading" aria-live="polite"><strong>Showing {visibleRecords.length} of {records.length} matches</strong><span>{explorer.languages.length} ISO-coded languages total</span></div>
@@ -84,7 +121,7 @@ export function LanguagesPage() {
             ))}
           </div>
           {!records.length ? <p class="language-empty">No current language records match this search and filters.</p> : null}
-          {visibleRecords.length < records.length ? <div class="result-load-more"><button type="button" onClick={() => setVisibleCount((count) => Math.min(count + LANGUAGE_PAGE_SIZE, records.length))}>Show {Math.min(LANGUAGE_PAGE_SIZE, records.length - visibleRecords.length)} more</button><span>{records.length - visibleRecords.length} remaining</span></div> : null}
+          {visibleRecords.length < records.length ? <div class="result-load-more"><button type="button" onClick={() => setPage((current) => current + 1)}>Show {Math.min(LANGUAGE_PAGE_SIZE, records.length - visibleRecords.length)} more</button><span>{records.length - visibleRecords.length} remaining</span></div> : null}
         </>
       ) : null}
 

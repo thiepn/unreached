@@ -1,6 +1,7 @@
 import { ArrowRight, Bookmark, CalendarDays, Compass, Database, Globe2, List, RefreshCw, RotateCcw, Search } from "lucide-preact";
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 
+import { readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
 import { hrefFor } from "../app/router";
 import { useDebouncedValue } from "../hooks/useResponsiveWork";
 import { prayerSnapshotFromEntity, selectNextPrayerRotationEntry, usePersonalization } from "../personalization";
@@ -31,8 +32,7 @@ function categoryLabel(category: PrayerCategory): string {
 }
 
 function countryFilterFromHash(): string | null {
-  const query = window.location.hash.split("?", 2)[1] ?? "";
-  const country = new URLSearchParams(query).get("country")?.toUpperCase() ?? null;
+  const country = readHashSearchParams().get("country")?.toUpperCase() ?? null;
   return country && /^[A-Z]{3}$/.test(country) ? country : null;
 }
 
@@ -84,7 +84,7 @@ export function PrayPage() {
   const prayer = useLivePrayerExperience();
   const personalization = usePersonalization();
   const countryIso3 = countryFilterFromHash();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(() => readHashSearchParams().get("q") ?? "");
   const debouncedQuery = useDebouncedValue(query, 100);
 
   const prayerListIds = useMemo(() => new Set(personalization.state.prayerList.map((item) => item.sourcePeopleId)), [personalization.state.prayerList]);
@@ -102,6 +102,13 @@ export function PrayPage() {
     [prayer.eligible, prayer.peopleSearchIndex, countryIso3, debouncedQuery],
   );
 
+  useEffect(() => {
+    const params = new URLSearchParams();
+    setOptionalHashParam(params, "country", countryIso3);
+    setOptionalHashParam(params, "q", query);
+    replaceHashSearchParams(params);
+  }, [countryIso3, query]);
+
   const dailyEntity = prayer.ready
     ? rotationEntity ?? selectDailyLivePrayerEntity(prayer.eligible, dateKeyLocal(), countryIso3)
     : null;
@@ -110,6 +117,7 @@ export function PrayPage() {
   const visible = scoped.slice(0, 60);
 
   const togglePrayer = (entity: RuntimePeopleEntity) => personalization.togglePrayer(prayerSnapshotFromEntity(entity));
+  const clearCountryHref = hrefFor(`/pray${query ? `?q=${encodeURIComponent(query)}` : ""}`);
 
   return (
     <section class="prayer-page" aria-labelledby="prayer-page-title">
@@ -127,7 +135,7 @@ export function PrayPage() {
         <div class="prayer-scope-banner">
           <Globe2 size={18} aria-hidden="true" />
           <span>Showing GSEC 0–3 people contexts connected to <strong>{countryIso3}</strong>.</span>
-          <a href={hrefFor("/pray")}>Clear country filter</a>
+          <a href={clearCountryHref}>Clear country filter</a>
         </div>
       ) : null}
 

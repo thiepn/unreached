@@ -75,10 +75,10 @@ test.describe("Phase 0 observational baseline", () => {
 
 test.describe("Phase 0 known-defect contracts", () => {
   test("skip-to-content keeps the current route and focuses the main landmark", async ({ page }) => {
-    test.fail(true, "Known Phase 0 defect: hash-based skip link currently mutates the application route.");
     await page.goto("./#/about");
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Enter");
+    const skip = page.locator(".skip-link");
+    await skip.focus();
+    await skip.press("Enter");
     await expect(page).toHaveURL(/#\/about$/);
     await expect(page.locator("main#main-content")).toBeFocused();
   });
@@ -91,7 +91,6 @@ test.describe("Phase 0 known-defect contracts", () => {
     expect(columns).toBe(await destinations.count());
   });
   test("browser Back restores people-search context", async ({ page }) => {
-    test.fail(true, "Known Phase 0 UX defect: discovery filters live only in component state and are lost after route navigation.");
     await installPeopleGroupsFixture(page);
     await page.goto("./#/peoples");
     const input = page.locator("#people-search");
@@ -102,7 +101,6 @@ test.describe("Phase 0 known-defect contracts", () => {
     await expect(page.locator("#people-search")).toHaveValue("Browser Test");
   });
   test("document title identifies the active route", async ({ page }) => {
-    test.fail(true, "Known Phase 0 UX defect: hash routes currently share a static document title.");
     await page.goto("./#/about");
     await expect(page).toHaveTitle(/About.+Unreached/i);
   });
