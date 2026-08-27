@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const LARGE_CORPUS_SIZE = 4_000;
+const PEOPLE_GROUPS_PAGE_SIZE = 250;
 
 function languageCode(index: number): string {
   const value = index % (26 * 26 * 26);
@@ -36,8 +37,14 @@ function record(index: number) {
 }
 
 async function installLargeCorpus(page: Page): Promise<void> {
-  const body = JSON.stringify(Array.from({ length: LARGE_CORPUS_SIZE }, (_, index) => record(index)));
+  const records = Array.from({ length: LARGE_CORPUS_SIZE }, (_, index) => record(index));
+  const totalPages = Math.ceil(records.length / PEOPLE_GROUPS_PAGE_SIZE);
   await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
+    const requestUrl = new URL(route.request().url());
+    const requestedPage = Number(requestUrl.searchParams.get("page") ?? "1");
+    const requestedPageSize = Number(requestUrl.searchParams.get("per_page") ?? String(PEOPLE_GROUPS_PAGE_SIZE));
+    const start = (requestedPage - 1) * requestedPageSize;
+    const body = JSON.stringify(records.slice(start, start + requestedPageSize));
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -45,7 +52,7 @@ async function installLargeCorpus(page: Page): Promise<void> {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "X-WP-Total, X-WP-TotalPages",
         "X-WP-Total": String(LARGE_CORPUS_SIZE),
-        "X-WP-TotalPages": "1",
+        "X-WP-TotalPages": String(totalPages),
       },
       body,
     });
