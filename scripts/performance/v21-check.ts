@@ -24,12 +24,13 @@ const legal = await readText("docs/PEOPLEGROUPS_DATA_SOURCE.md");
 
 for (const marker of [
   'PEOPLE_GROUPS_PREPARED_STORE = "prepared"',
+  'PEOPLE_GROUPS_RECORD_STORE = "records"',
   "PreparedPeopleGroupsSnapshot",
   "createIndexedDbPreparedPeopleGroupsCache",
   "preparedPeopleGroupsSnapshotIsUsable",
-  "indexedDB.open(PEOPLE_GROUPS_CACHE_DB, 2)",
+  "indexedDB.open(PEOPLE_GROUPS_CACHE_DB, 3)",
 ]) {
-  if (!cache.includes(marker)) throw new Error(`P2.1 prepared cache missing ${marker}.`);
+  if (!cache.includes(marker)) throw new Error(`P2.1 prepared/cache architecture missing ${marker}.`);
 }
 
 for (const marker of [
@@ -59,7 +60,7 @@ for (const marker of [
 }
 
 if (!api.includes('cache: "no-store"')) throw new Error("P2.1 must preserve direct-provider no-store semantics; local prepared data is the cache boundary.");
-if (!api.includes("fetchByPgid")) throw new Error("P2.1 must preserve the provider-supported single-PGID request path for future route-specific activation.");
+if (!api.includes("fetchByPgid")) throw new Error("P2.1 must preserve the provider-supported single-PGID request path for route-specific activation.");
 if (!legal.includes("static browser-accessible mirror of the complete API dataset")) {
   throw new Error("P2.1 must preserve the documented no-static-mirror data boundary.");
 }
@@ -74,4 +75,4 @@ for (const forbidden of [
   }
 }
 
-console.log("P2.1 instant-data checks passed: prepared one-read hydration, local-only idle startup, non-blocking stale-while-revalidate on demand, reconnect refresh, and no static provider mirror.");
+console.log("P2.1 instant-data checks passed: prepared one-read hydration, local-only idle startup, non-blocking stale-while-revalidate on demand, version-3 cache stores, reconnect refresh, and no static provider mirror.");
