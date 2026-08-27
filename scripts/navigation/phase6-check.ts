@@ -10,7 +10,14 @@ for (const marker of ["readHashSearchParams", "positiveHashPage", "replaceHashSe
 }
 
 const router = await readText("src/app/router.ts");
-for (const marker of ["popstate", 'scrollRestoration = "auto"', "titleForRoute", 'emptyState("not-found", path)', "resetViewportRef.current = !historyTraversalRef.current"]) {
+for (const marker of [
+  "popstate",
+  'scrollRestoration = "auto"',
+  "titleForRoute",
+  'emptyState("not-found", path)',
+  "const resetViewportRef = useRef(true)",
+  "resetViewportRef.current = !historyTraversalRef.current",
+]) {
   if (!router.includes(marker)) throw new Error(`Phase 6 router navigation behavior missing ${marker}.`);
 }
 if (router.includes('window.scrollTo({ top: 0, behavior: "auto" });\n  }, [route.path])')) {
@@ -49,8 +56,13 @@ for (const obsolete of [
   if (phase0.includes(obsolete)) throw new Error(`Phase 6 must promote the repaired Phase 0 contract: ${obsolete}.`);
 }
 
+const phase6Browser = await readText("tests/e2e/phase6-navigation-state.spec.ts");
+if (!phase6Browser.includes("fresh direct route loads establish main-content keyboard focus")) {
+  throw new Error("Phase 6 must certify direct-route main-content focus in the browser suite.");
+}
+
 const packageJson = JSON.parse(await readText("package.json")) as { scripts?: Record<string, string> };
 if (!packageJson.scripts?.["navigation:check"]?.includes("scripts/navigation/phase6-check.ts")) throw new Error("Phase 6 navigation:check is not wired.");
 if (!packageJson.scripts?.build?.includes("navigation:check")) throw new Error("Phase 6 navigation gate must run in the production build.");
 
-console.log("Phase 6 navigation checks passed: URL-backed discovery state, history-safe scrolling, dynamic titles, valid deep-link rejection, route-safe skip navigation, and visual-order global-search keyboard navigation are enforced.");
+console.log("Phase 6 navigation checks passed: URL-backed discovery state, direct-load focus, history-safe scrolling, dynamic titles, valid deep-link rejection, route-safe skip navigation, and visual-order global-search keyboard navigation are enforced.");
