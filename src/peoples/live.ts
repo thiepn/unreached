@@ -3,6 +3,7 @@ import {
   usePeopleGroupsRuntimeStore,
   type RuntimePeopleEntity,
   type RuntimePeopleSearchIndex,
+  type RuntimePeopleSearchRecord,
 } from "../providers/peoplegroups";
 
 export type LivePeopleStatusFilter = "all" | "unreached-only" | "other-only" | "unknown";
@@ -25,17 +26,20 @@ export function filterLivePeople(
   preparedIndex: RuntimePeopleSearchIndex = getRuntimePeopleSearchIndex(entities),
 ): RuntimePeopleEntity[] {
   const query = state.query.trim().toLocaleLowerCase("en");
-  const filtered = preparedIndex.records.filter((record) => {
-    const entity = record.entity;
-    if (query && !record.searchText.includes(query)) return false;
-    if (state.status !== "all" && entity.reach.classification !== state.status) return false;
-    if (state.countryIso3 && !record.countryIso3s.has(state.countryIso3)) return false;
-    if (state.language && !record.languageKeys.has(state.language)) return false;
-    if (state.religion && !record.religionKeys.has(state.religion)) return false;
-    if (state.bibleAvailability && !record.bibleAvailability.has(state.bibleAvailability)) return false;
-    if (state.minimumPopulation > 0 && record.population < state.minimumPopulation) return false;
-    return true;
-  });
+  const filtered: RuntimePeopleSearchRecord[] = [];
+
+  for (const entity of entities) {
+    const record = preparedIndex.byRouteKey.get(entity.routeKey);
+    if (!record || record.entity.peid !== entity.peid) continue;
+    if (query && !record.searchText.includes(query)) continue;
+    if (state.status !== "all" && entity.reach.classification !== state.status) continue;
+    if (state.countryIso3 && !record.countryIso3s.has(state.countryIso3)) continue;
+    if (state.language && !record.languageKeys.has(state.language)) continue;
+    if (state.religion && !record.religionKeys.has(state.religion)) continue;
+    if (state.bibleAvailability && !record.bibleAvailability.has(state.bibleAvailability)) continue;
+    if (state.minimumPopulation > 0 && record.population < state.minimumPopulation) continue;
+    filtered.push(record);
+  }
 
   filtered.sort((a, b) => {
     if (state.sort === "name") return a.entity.displayName.localeCompare(b.entity.displayName, "en");
