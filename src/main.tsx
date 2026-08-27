@@ -32,6 +32,7 @@ import "./styles/v18.css";
 import "./styles/v19.css";
 import "./styles/v20.css";
 import "./styles/v21-navigation.css";
+import "./styles/v22-peoples-explorer.css";
 
 initializeOfflineRuntime();
 initializePrivateSyncRuntime();

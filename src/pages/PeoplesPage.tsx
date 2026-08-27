@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpenText, Database, Filter, RefreshCw, Search, UsersRound } from "lucide-preact";
+import { ArrowRight, BookOpenText, Database, Filter, RefreshCw, Search, UsersRound, X } from "lucide-preact";
 import { useLayoutEffect, useMemo, useState } from "preact/hooks";
 
 import { positiveHashPage, readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
@@ -33,6 +33,12 @@ const DEFAULT_FILTERS: LivePeopleFilterState = {
 
 const PEOPLE_STATUSES = new Set<LivePeopleStatusFilter>(["all", "unreached-only", "other-only", "unknown"]);
 const PEOPLE_SORTS = new Set<LivePeopleSort>(["population-desc", "name", "gsec-asc"]);
+const STATUS_CHOICES: Array<{ value: LivePeopleStatusFilter; label: string; hint: string }> = [
+  { value: "all", label: "All", hint: "All source records" },
+  { value: "unreached-only", label: "Unreached", hint: "GSEC 0–3" },
+  { value: "other-only", label: "Other", hint: "GSEC 4–6" },
+  { value: "unknown", label: "Unknown", hint: "No GSEC value" },
+];
 
 function initialPeopleState(): { filters: LivePeopleFilterState; reviewedOnly: boolean; page: number } {
   const params = readHashSearchParams();
@@ -60,6 +66,18 @@ function loadingLabel(loadedPages: number | undefined, totalPages: number | unde
   return `Loading people-group records… ${loadedPages} of ${totalPages} source pages`;
 }
 
+function optionLabel(options: Array<[string, string]>, value: string, fallback: string): string {
+  return options.find(([id]) => id === value)?.[1] ?? fallback;
+}
+
+function populationLabel(value: number): string {
+  if (value >= 10_000_000) return "10M+ population";
+  if (value >= 1_000_000) return "1M+ population";
+  if (value >= 100_000) return "100K+ population";
+  if (value >= 10_000) return "10K+ population";
+  return "Any population";
+}
+
 export function PeoplesPage() {
   const explorer = useLivePeopleExplorer();
   const editorial = useEditorialContext();
@@ -85,9 +103,13 @@ export function PeoplesPage() {
     () => filterLivePeople(explorer.peoples, effectiveFilters, explorer.peopleSearchIndex),
     [explorer.peoples, explorer.peopleSearchIndex, effectiveFilters],
   );
-  const results = useMemo(() => reviewedOnly ? filteredResults.filter((people) => editorial.profilesByPeid.has(people.peid)) : filteredResults, [filteredResults, reviewedOnly, editorial.profilesByPeid]);
+  const results = useMemo(
+    () => reviewedOnly ? filteredResults.filter((people) => editorial.profilesByPeid.has(people.peid)) : filteredResults,
+    [filteredResults, reviewedOnly, editorial.profilesByPeid],
+  );
   const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
   const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
+  const advancedFilterCount = [filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
   const showGuidedStarts = !filters.query.trim() && activeFilterCount === 0;
 
   // URL state is part of the current history entry, so commit it before paint.
@@ -115,13 +137,22 @@ export function PeoplesPage() {
   const setReviewed = (value: boolean) => { setReviewedOnly(value); setPage(1); };
   const resetFilters = () => { setFilters(DEFAULT_FILTERS); setReviewedOnly(false); setPage(1); };
 
+  const activeChips: Array<{ id: string; label: string; clear: () => void }> = [];
+  if (filters.status !== "all") activeChips.push({ id: "status", label: STATUS_CHOICES.find((choice) => choice.value === filters.status)?.label ?? "Status", clear: () => update("status", "all") });
+  if (filters.countryIso3) activeChips.push({ id: "country", label: optionLabel(options.countries, filters.countryIso3, filters.countryIso3), clear: () => update("countryIso3", "") });
+  if (filters.language) activeChips.push({ id: "language", label: optionLabel(options.languages, filters.language, filters.language), clear: () => update("language", "") });
+  if (filters.religion) activeChips.push({ id: "religion", label: optionLabel(options.religions, filters.religion, filters.religion), clear: () => update("religion", "") });
+  if (filters.bibleAvailability) activeChips.push({ id: "bible", label: filters.bibleAvailability, clear: () => update("bibleAvailability", "") });
+  if (filters.minimumPopulation > 0) activeChips.push({ id: "population", label: populationLabel(filters.minimumPopulation), clear: () => update("minimumPopulation", 0) });
+  if (reviewedOnly) activeChips.push({ id: "reviewed", label: "Reviewed context", clear: () => setReviewed(false) });
+
   return (
     <section class="peoples-page" aria-labelledby="peoples-title">
-      <header class="peoples-hero">
+      <header class="peoples-hero peoples-hero--explorer">
         <div>
           <div class="eyebrow">People Group Explorer</div>
           <h1 id="peoples-title" class="display-title">Find a people group.</h1>
-          <p class="lead">Search when you know what you want, or use a guided starting point when you do not. Every path opens the same source-backed profile and prayer flow.</p>
+          <p class="lead">Search the source dataset directly, narrow it only as much as you need, then open a profile for context and prayer.</p>
         </div>
         <div class="peoples-hero__mark" aria-hidden="true"><UsersRound size={35} /></div>
       </header>
@@ -132,7 +163,7 @@ export function PeoplesPage() {
         <div class="people-index-state people-index-state--loading" role="status">
           <span class="loading-pulse" aria-hidden="true" />
           <strong>{loadingLabel(explorer.progress?.loadedPages, explorer.progress?.totalPages)}</strong>
-          <small>Search and guided starting points appear when the shared source dataset is ready.</small>
+          <small>Search and discovery controls appear when the shared source dataset is ready.</small>
         </div>
       ) : null}
 
@@ -142,53 +173,84 @@ export function PeoplesPage() {
 
       {explorer.ready ? (
         <>
+          <section class="people-discovery-workspace" aria-label="Find and filter people groups">
+            <div class="people-search-wrap">
+              <label class="people-search people-search--primary" for="people-search">
+                <Search size={20} aria-hidden="true" />
+                <span class="sr-only">Search people groups</span>
+                <input id="people-search" type="search" value={filters.query} onInput={(event) => update("query", event.currentTarget.value)} placeholder="Search people, country, language or PEID" autoComplete="off" />
+              </label>
+              {filters.query ? <button type="button" class="people-search-clear" aria-label="Clear people search" onClick={() => update("query", "")}><X size={17} aria-hidden="true" /></button> : null}
+            </div>
+
+            <div class="people-discovery-toolbar">
+              <div class="people-status-choices" role="group" aria-label="Reach status">
+                {STATUS_CHOICES.map((choice) => (
+                  <button key={choice.value} type="button" class={`people-status-choice${filters.status === choice.value ? " is-active" : ""}`} aria-pressed={filters.status === choice.value} title={choice.hint} onClick={() => update("status", choice.value)}>{choice.label}</button>
+                ))}
+              </div>
+              <label class="people-sort-control people-sort-control--compact">
+                <span>Sort</span>
+                <select value={filters.sort} onChange={(event) => update("sort", event.currentTarget.value as LivePeopleFilterState["sort"])}>
+                  <option value="population-desc">Largest population</option>
+                  <option value="gsec-asc">Lowest GSEC</option>
+                  <option value="name">Alphabetical</option>
+                </select>
+              </label>
+            </div>
+
+            <details class="people-filter-panel people-filter-panel--advanced" open={advancedFilterCount > 0}>
+              <summary><Filter size={17} aria-hidden="true" /><span>More filters</span>{advancedFilterCount ? <span class="people-filter-count">{advancedFilterCount}</span> : <span class="people-filter-hint">Country, language, religion, Bible label and more</span>}</summary>
+              <div class="people-filter-grid people-filter-grid--advanced">
+                <label>Country<select value={filters.countryIso3} onChange={(event) => update("countryIso3", event.currentTarget.value)}><option value="">All countries</option>{options.countries.map(([iso3, name]) => <option value={iso3} key={iso3}>{name}</option>)}</select></label>
+                <label>Language<select value={filters.language} onChange={(event) => update("language", event.currentTarget.value)}><option value="">All languages</option>{options.languages.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
+                <label>Religion<select value={filters.religion} onChange={(event) => update("religion", event.currentTarget.value)}><option value="">All religions</option>{options.religions.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
+                <label>Bible label<select value={filters.bibleAvailability} onChange={(event) => update("bibleAvailability", event.currentTarget.value)}><option value="">Any source label</option>{options.bibleStatuses.map((status) => <option value={status} key={status}>{status}</option>)}</select></label>
+                <label>Known population<select value={String(filters.minimumPopulation)} onChange={(event) => update("minimumPopulation", Number(event.currentTarget.value))}><option value="0">Any population</option><option value="10000">10K+</option><option value="100000">100K+</option><option value="1000000">1M+</option><option value="10000000">10M+</option></select></label>
+                <label class="people-reviewed-filter"><span>Editorial coverage</span><span class="people-reviewed-filter__control"><input type="checkbox" checked={reviewedOnly} disabled={editorial.loading || Boolean(editorial.error)} onChange={(event) => setReviewed(event.currentTarget.checked)} /> Reviewed context only</span></label>
+              </div>
+              <div class="people-filter-actions"><button class="people-reset-filters" type="button" onClick={resetFilters}>Reset all filters</button></div>
+            </details>
+
+            {activeChips.length ? (
+              <div class="people-active-filters" aria-label="Active filters">
+                <span>Active</span>
+                {activeChips.map((chip) => <button type="button" key={chip.id} onClick={chip.clear}>{chip.label}<X size={13} aria-hidden="true" /><span class="sr-only">Remove filter</span></button>)}
+                {activeChips.length > 1 ? <button type="button" class="people-active-filters__clear" onClick={resetFilters}>Clear all</button> : null}
+              </div>
+            ) : null}
+
+            <div class="people-results-header">
+              <div class="people-result-count" aria-live="polite"><strong>{results.length}</strong> matches <span>from {explorer.peoples.length} source records</span>{reviewedOnly ? <span> · reviewed context only</span> : null}</div>
+              {visibleResults.length < results.length ? <span class="people-visible-count">Showing first {visibleResults.length}</span> : null}
+            </div>
+          </section>
+
           {showGuidedStarts ? <GuidedPeopleStarts peoples={explorer.peoples} /> : null}
 
-          {!editorial.loading && !editorial.error && editorial.dataset?.profiles.length ? (
-            <a class="people-editorial-discovery" href={hrefFor("/coverage")}>
+          {showGuidedStarts && !editorial.loading && !editorial.error && editorial.dataset?.profiles.length ? (
+            <a class="people-editorial-discovery people-editorial-discovery--secondary" href={hrefFor("/coverage")}>
               <BookOpenText size={20} aria-hidden="true" />
-              <span><strong>Browse reviewed context</strong><small>{editorial.dataset.profiles.length} people-group source records currently have deeper, cited editorial articles.</small></span>
+              <span><strong>Prefer researched context?</strong><small>Browse {editorial.dataset.profiles.length} people-group records with deeper, cited editorial articles.</small></span>
               <ArrowRight size={17} aria-hidden="true" />
             </a>
           ) : null}
 
-          <label class="people-search people-search--primary" for="people-search">
-            <Search size={19} aria-hidden="true" />
-            <span class="sr-only">Search people groups</span>
-            <input id="people-search" type="search" value={filters.query} onInput={(event) => update("query", event.currentTarget.value)} placeholder="Search people, country, language or PEID" autoComplete="off" />
-          </label>
-
-          <details class="people-filter-panel">
-            <summary><Filter size={17} aria-hidden="true" /> Filters & sort{activeFilterCount ? ` · ${activeFilterCount} active` : ""}</summary>
-            <div class="people-filter-grid">
-              <label>Sort<select value={filters.sort} onChange={(event) => update("sort", event.currentTarget.value as LivePeopleFilterState["sort"])}><option value="population-desc">Largest known population</option><option value="gsec-asc">Lowest GSEC first</option><option value="name">Alphabetical</option></select></label>
-              <label>Status<select value={filters.status} onChange={(event) => update("status", event.currentTarget.value as LivePeopleFilterState["status"])}><option value="all">All statuses</option><option value="unreached-only">GSEC 0–3</option><option value="other-only">GSEC 4–6</option><option value="unknown">GSEC unknown</option></select></label>
-              <label>Country<select value={filters.countryIso3} onChange={(event) => update("countryIso3", event.currentTarget.value)}><option value="">All countries</option>{options.countries.map(([iso3, name]) => <option value={iso3} key={iso3}>{name}</option>)}</select></label>
-              <label>Religion<select value={filters.religion} onChange={(event) => update("religion", event.currentTarget.value)}><option value="">All religions</option>{options.religions.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
-              <label>Language<select value={filters.language} onChange={(event) => update("language", event.currentTarget.value)}><option value="">All languages</option>{options.languages.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></label>
-              <label>Bible label<select value={filters.bibleAvailability} onChange={(event) => update("bibleAvailability", event.currentTarget.value)}><option value="">Any source label</option>{options.bibleStatuses.map((status) => <option value={status} key={status}>{status}</option>)}</select></label>
-              <label>Known population<select value={String(filters.minimumPopulation)} onChange={(event) => update("minimumPopulation", Number(event.currentTarget.value))}><option value="0">Any population</option><option value="10000">10K+</option><option value="100000">100K+</option><option value="1000000">1M+</option><option value="10000000">10M+</option></select></label>
-              <label class="people-reviewed-filter"><span>Editorial coverage</span><span class="people-reviewed-filter__control"><input type="checkbox" checked={reviewedOnly} disabled={editorial.loading || Boolean(editorial.error)} onChange={(event) => setReviewed(event.currentTarget.checked)} /> Reviewed context only</span></label>
-            </div>
-            <button class="people-reset-filters" type="button" onClick={resetFilters}>Reset filters</button>
-          </details>
-
-          <div class="people-result-count" aria-live="polite">Showing {visibleResults.length} of {results.length} matches <span>· {explorer.peoples.length} total source records</span>{reviewedOnly ? <span> · reviewed editorial coverage only</span> : null}</div>
-
           {results.length ? (
             <>
-              <div class="people-card-grid people-card-grid--concise">
+              <div class="people-card-grid people-card-grid--concise people-card-grid--explorer">
                 {visibleResults.map((people) => {
                   const gsec = entityGsecRange(people);
                   const context = people.contexts[0]!;
                   const hasReviewedContext = editorial.profilesByPeid.has(people.peid);
                   return (
-                    <a class="people-card people-card--concise" href={hrefFor(`/peoples/${people.routeKey}`)} key={people.id}>
+                    <a class="people-card people-card--concise people-card--explorer" href={hrefFor(`/peoples/${people.routeKey}`)} key={people.id}>
                       <div class="people-card__head">
-                        <div><div class="people-card__badges"><span class={`people-status people-status--${livePeopleStatusClass(people)}`}>{livePeopleStatusLabel(people)}</span>{hasReviewedContext ? <span class="people-editorial-badge"><BookOpenText size={12} aria-hidden="true" /> Reviewed context</span> : null}</div><h2>{people.displayName}</h2></div>
+                        <div><div class="people-card__badges"><span class={`people-status people-status--${livePeopleStatusClass(people)}`}>{livePeopleStatusLabel(people)}</span>{hasReviewedContext ? <span class="people-editorial-badge"><BookOpenText size={12} aria-hidden="true" /> Reviewed</span> : null}</div><h2>{people.displayName}</h2></div>
                         <ArrowRight size={18} aria-hidden="true" />
                       </div>
-                      <p class="people-card__summary">{context.country.name} · {people.primaryReligion?.name ?? "Religion unknown"} · {people.primaryLanguage?.name ?? "Language unknown"}</p>
+                      <p class="people-card__summary">{context.country.name} · {people.primaryLanguage?.name ?? "Language unknown"}</p>
+                      <p class="people-card__religion">{people.primaryReligion?.name ?? "Religion unknown"}</p>
                       <div class="people-card__keyfacts">
                         <div><span>Population</span><strong>{people.population.complete ? formatPeopleCount(people.population.knownValue) : "Unknown"}</strong></div>
                         <div><span>GSEC</span><strong>{gsec ? String(gsec.min) : "Unknown"}</strong></div>
@@ -205,7 +267,7 @@ export function PeoplesPage() {
           ) : (
             <div class="people-index-empty people-index-empty--recover">
               <strong>No people groups match this search.</strong>
-              <p>{reviewedOnly ? "No currently published reviewed editorial profile matches these source filters. Coverage is limited and is not a mission-priority ranking." : "Clear the current search and filters to return to the guided starting points and full live index."}</p>
+              <p>{reviewedOnly ? "No currently published reviewed editorial profile matches these source filters. Coverage is limited and is not a mission-priority ranking." : "Remove one or more filters, or clear the search, to return to the full live index."}</p>
               <button type="button" class="people-reset-filters" onClick={resetFilters}>Clear search & filters</button>
             </div>
           )}

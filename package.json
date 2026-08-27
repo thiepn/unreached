@@ -20,7 +20,7 @@
     "visualization:check": "tsx scripts/visualization/check.ts",
     "visualization:live-check": "tsx scripts/visualization/live-check.ts",
     "country:check": "tsx scripts/countries/check.ts",
-    "people:check": "tsx scripts/peoples/check.ts",
+    "people:check": "tsx scripts/peoples/check.ts && tsx scripts/peoples/phase8-check.ts",
     "context:check": "tsx scripts/context/check.ts",
     "editorial-expansion:check": "tsx scripts/context/v15-check.ts",
     "prayer:check": "tsx scripts/prayer/check.ts",
