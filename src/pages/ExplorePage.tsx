@@ -1,4 +1,4 @@
-import { Database, Globe2, Info, Layers3, RotateCcw, Search } from "lucide-preact";
+import { Database, Globe2, Info, RotateCcw, Search } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 
 import { useAfterFirstPaint } from "../hooks/useResponsiveWork";
@@ -91,15 +91,32 @@ function LayerSelector({ activeLayer, onChange, compact = false }: { activeLayer
   );
 }
 
-function MissionLegend({ activeLayer }: { activeLayer: LiveMissionLayerId }) {
+function MissionViewInfo({ activeLayer }: { activeLayer: LiveMissionLayerId }) {
   const layer = getLiveMissionLayer(activeLayer);
   return (
-    <div class="mission-legend" aria-label={`${layer.label} legend`}>
-      <div class="mission-legend__heading"><strong>{layer.label}</strong><span>{layer.description}</span></div>
-      <div class="mission-legend__items">
-        {layer.legend.map((item) => <span key={`${activeLayer}-${item.label}`} class="mission-legend__item"><i style={{ backgroundColor: item.color }} aria-hidden="true" />{item.label}</span>)}
+    <details class="mission-view-info">
+      <summary>About this view</summary>
+      <div>
+        <p>{layer.description}</p>
+        <p><strong>Method:</strong> {layer.methodology}</p>
       </div>
-      <details class="mission-methodology"><summary>Methodology</summary><p>{layer.methodology}</p></details>
+    </details>
+  );
+}
+
+function MissionMapKey({ activeLayer, compact = false }: { activeLayer: LiveMissionLayerId; compact?: boolean }) {
+  const layer = getLiveMissionLayer(activeLayer);
+  return (
+    <div class={`mission-map-key${compact ? " mission-map-key--compact" : ""}`} aria-label={`${layer.label} map key`}>
+      <strong>{compact ? "Map key" : layer.shortLabel}</strong>
+      <div class="mission-map-key__items">
+        {layer.legend.map((item) => (
+          <span key={`${activeLayer}-${item.label}`} class="mission-map-key__item">
+            <i style={{ backgroundColor: item.color }} aria-hidden="true" />
+            <span>{item.label}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -116,19 +133,22 @@ function supportingCoverageText(value: number | null): string | null {
 function SelectedMissionSummary({ summary, activeLayer }: { summary: LiveMissionCountrySummary; activeLayer: LiveMissionLayerId }) {
   const supportingCoverage = supportingCoverageForLiveLayer(summary, activeLayer);
   return (
-    <div class="selected-mission-summary">
+    <div class="selected-mission-summary selected-mission-summary--phase10">
       <div class="selected-mission-primary">
         <span>{getLiveMissionLayer(activeLayer).label}</span>
         <strong>{formatLiveMissionLayerValue(summary, activeLayer)}</strong>
         {supportingCoverageText(supportingCoverage) ? <small>{supportingCoverageText(supportingCoverage)}</small> : null}
       </div>
-      <dl class="selected-mission-grid">
-        <div><dt>People contexts</dt><dd>{summary.peopleContextCount}</dd></div>
-        <div><dt>GSEC 0–3</dt><dd>{summary.unreachedContextCount}</dd></div>
-        <div><dt>Unknown GSEC</dt><dd>{summary.unknownContextCount}</dd></div>
-        <div><dt>Known population</dt><dd>{compactNumber(summary.knownPopulation)}</dd></div>
-      </dl>
-      <p class="selected-area__no-data">Denominator: {summary.denominator}.</p>
+      <details class="selected-mission-details">
+        <summary>Source breakdown</summary>
+        <dl class="selected-mission-grid">
+          <div><dt>People contexts</dt><dd>{summary.peopleContextCount}</dd></div>
+          <div><dt>GSEC 0–3</dt><dd>{summary.unreachedContextCount}</dd></div>
+          <div><dt>Unknown GSEC</dt><dd>{summary.unknownContextCount}</dd></div>
+          <div><dt>Known population</dt><dd>{compactNumber(summary.knownPopulation)}</dd></div>
+        </dl>
+        <p class="selected-area__no-data">Denominator: {summary.denominator}.</p>
+      </details>
     </div>
   );
 }
@@ -196,16 +216,17 @@ export function ExplorePage() {
   const progressText = mission.progress ? `Loading source page ${mission.progress.loadedPages} of ${mission.progress.totalPages}.` : "Loading live mission records.";
 
   return (
-    <section class="explore-screen" aria-labelledby="explore-title">
-      <aside class="explore-panel explore-panel--map" aria-label="Map controls and country list">
-        <div class="eyebrow">Global Mission Atlas</div>
-        <h1 id="explore-title" class="display-title">Explore the map.</h1>
-        <p class="lead">Choose a country, compare one mission view at a time, then open its profile for the underlying people-group records.</p>
+    <section class="explore-screen explore-screen--phase10" aria-labelledby="explore-title">
+      <aside class="explore-panel explore-panel--map explore-panel--phase10" aria-label="Map controls and country list">
+        <div class="explore-panel__intro">
+          <div class="eyebrow">Global Mission Atlas</div>
+          <h1 id="explore-title" class="display-title">Explore the map.</h1>
+          <p class="lead">Choose a country and one mission view. Open the country profile when you need the underlying records.</p>
+        </div>
 
-        <div class="control-group control-group--compact">
-          <div class="control-group__heading"><Layers3 size={16} aria-hidden="true" /><span>What the map shows</span></div>
+        <div class="control-group control-group--compact mission-view-control">
           <LayerSelector activeLayer={activeLayer} onChange={changeLayer} />
-          <MissionLegend activeLayer={activeLayer} />
+          <MissionViewInfo activeLayer={activeLayer} />
         </div>
 
         {missionStart && mission.loading && !missionAvailable ? (
@@ -221,22 +242,24 @@ export function ExplorePage() {
         ) : null}
 
         {selected ? (
-          <div class="selected-area" aria-live="polite">
+          <div class="selected-area selected-area--phase10" aria-live="polite">
             <div class="selected-area__heading"><div><span class="eyebrow">Selected area</span><h2>{selected.properties.name}</h2></div><button type="button" class="text-button" onClick={clearSelection}>Clear</button></div>
             {selectedSummary ? <SelectedMissionSummary summary={selectedSummary} activeLayer={activeLayer} /> : <p class="selected-area__no-data">Mission metrics are still loading or no PeopleGroups.org country-context summary is available for this area.</p>}
-            <dl class="selected-area-geography">
-              <div><dt>Map code</dt><dd>{selected.properties.iso3 ?? selected.properties.adminA3 ?? "—"}</dd></div>
-              {selected.properties.continent ? <div><dt>Continent</dt><dd>{selected.properties.continent}</dd></div> : null}
-            </dl>
-            {selectedRouteCode && /^[A-Z]{3}$/.test(selectedRouteCode) ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Open country profile →</a> : null}
+            <div class="selected-area__actions">
+              {selectedRouteCode && /^[A-Z]{3}$/.test(selectedRouteCode) ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Open country profile →</a> : null}
+              <span>{selected.properties.iso3 ?? selected.properties.adminA3 ?? selected.properties.type}{selected.properties.continent ? ` · ${selected.properties.continent}` : ""}</span>
+            </div>
             {selected.properties.boundaryNote ? <p class="boundary-specific-note">{selected.properties.boundaryNote}</p> : null}
           </div>
         ) : null}
 
-        <details class="country-index" open>
-          <summary>Find a country</summary>
+        <section class="country-index country-index--primary" aria-labelledby="country-index-heading">
+          <div class="country-index__heading">
+            <strong id="country-index-heading">Find a country</strong>
+            <span>Search or select directly on the map</span>
+          </div>
           <CountryBrowser countries={countries} query={query} selectedKey={selectedKey} summaries={mission.countriesByIso3} activeLayer={activeLayer} showMetrics={missionAvailable} onQueryChange={setQuery} onSelect={selectCountry} idPrefix="desktop" />
-        </details>
+        </section>
 
         <details class="map-provenance">
           <summary>Sources & boundaries</summary>
@@ -248,7 +271,7 @@ export function ExplorePage() {
         </details>
       </aside>
 
-      <div class="map-stage map-stage--live" aria-label="World mission map workspace">
+      <div class="map-stage map-stage--live map-stage--phase10" aria-label="World mission map workspace">
         <div class="map-stage__toolbar map-stage__toolbar--live">
           <button type="button" class="map-tool" onClick={resetView} aria-label="Reset world map view" title="Reset map"><RotateCcw size={18} aria-hidden="true" /></button>
         </div>
@@ -265,15 +288,18 @@ export function ExplorePage() {
           <div class="map-hover-readout" aria-hidden="true"><span>{hovered.properties.name}</span><strong>{missionStarting ? "Loading mission data…" : missionAvailable ? formatLiveMissionLayerValue(hoveredSummary, activeLayer) : "Mission data unavailable"}</strong></div>
         ) : null}
 
-        <div class="map-legend-floating"><span>{getLiveMissionLayer(activeLayer).label}</span><div>{getLiveMissionLayer(activeLayer).legend.map((item) => <i key={item.label} title={item.label} style={{ backgroundColor: item.color }} />)}</div></div>
+        <div class="mission-map-key-floating"><MissionMapKey activeLayer={activeLayer} /></div>
 
         {mapError ? <div class="map-render-warning" role="status">Interactive rendering reported an issue. The searchable area list remains available.</div> : null}
 
-        <details class="mobile-map-sheet">
+        <details class="mobile-map-sheet mobile-map-sheet--phase10">
           <summary><span><small>{selected ? "Selected area" : getLiveMissionLayer(activeLayer).shortLabel}</small><strong>{selected?.properties.name ?? "Explore mission geography"}</strong></span><span aria-hidden="true">↑</span></summary>
           <div class="mobile-map-sheet__body">
-            <LayerSelector activeLayer={activeLayer} onChange={changeLayer} compact />
-            <MissionLegend activeLayer={activeLayer} />
+            <div class="mobile-map-sheet__controls">
+              <LayerSelector activeLayer={activeLayer} onChange={changeLayer} compact />
+              <MissionMapKey activeLayer={activeLayer} compact />
+              <MissionViewInfo activeLayer={activeLayer} />
+            </div>
             {missionStarting ? <p class="mobile-data-note">{missionStart ? progressText : "Preparing live mission data…"}</p> : null}
             {mission.error && !missionAvailable ? <p class="mobile-data-note">Live PeopleGroups.org mission data is unavailable.</p> : null}
             {selected ? (
@@ -283,7 +309,7 @@ export function ExplorePage() {
               </div>
             ) : null}
             <CountryBrowser countries={countries} query={query} selectedKey={selectedKey} summaries={mission.countriesByIso3} activeLayer={activeLayer} showMetrics={missionAvailable} onQueryChange={setQuery} onSelect={selectCountry} idPrefix="mobile" />
-            <p class="mobile-boundary-note">Natural Earth geography. Mission metrics: PeopleGroups.org.</p>
+            <p class="mobile-boundary-note">Natural Earth geography · PeopleGroups.org mission metrics</p>
           </div>
         </details>
       </div>
