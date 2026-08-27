@@ -49,7 +49,7 @@ function normalizeRoutePath(value: string): string {
 function positiveSourceId(value: string | undefined): number | null {
   if (!value) return null;
   const sourceId = Number(value);
-  return Number.isSafeInteger(sourceId) && sourceId > 0 ? sourceId : null;
+  return Number.isSafeInteger(value) && value > 0 ? value : null;
 }
 
 function emptyState(id: RouteId, path: string): RouteState {
@@ -86,7 +86,7 @@ function titleForRoute(route: RouteState): string {
   if (route.id === "languages") return route.languageIso6393 ? `${route.languageIso6393.toUpperCase()} Language | Unreached` : "Languages | Unreached";
   if (route.id === "coverage") return "Reviewed Coverage | Unreached";
   if (route.id === "pray") return route.prayerSourceId ? `Prayer for PEID ${route.prayerSourceId} | Unreached` : "Prayer | Unreached";
-  if (route.id === "saved") return "Saved & Prayer | Unreached";
+  if (route.id === "saved") return "My Lists | Unreached";
   if (route.id === "account") return "Account & Sync | Unreached";
   if (route.id === "about") return "About & Sources | Unreached";
   return "Page Not Found | Unreached";
