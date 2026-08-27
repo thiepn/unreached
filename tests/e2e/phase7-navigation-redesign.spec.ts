@@ -64,11 +64,11 @@ test("mobile More is modal and returns focus on Escape", async ({ page }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute("aria-modal", "true");
   await expect(dialog.getByRole("link", { name: /Reviewed coverage/i })).toBeFocused();
-  await expect(page.locator("body")).toHaveJSProperty("style.overflow", "hidden");
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
   await expect(trigger).toBeFocused();
-  await expect(page.locator("body")).not.toHaveJSProperty("style.overflow", "hidden");
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
 });
 
 test("detail routes retain their parent navigation state", async ({ page }) => {
