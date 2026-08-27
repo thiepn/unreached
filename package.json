@@ -23,7 +23,7 @@
     "people:check": "tsx scripts/peoples/check.ts && tsx scripts/peoples/phase8-check.ts && tsx scripts/peoples/phase9-check.ts",
     "context:check": "tsx scripts/context/check.ts",
     "editorial-expansion:check": "tsx scripts/context/v15-check.ts",
-    "prayer:check": "tsx scripts/prayer/check.ts",
+    "prayer:check": "tsx scripts/prayer/check.ts && tsx scripts/prayer/phase12-release-check.ts",
     "prayer-practice:check": "tsx scripts/prayer/v16-check.ts",
     "prayer-rotation:check": "tsx scripts/prayer/v17-check.ts",
     "prayer-session:check": "tsx scripts/prayer/v18-check.ts",
