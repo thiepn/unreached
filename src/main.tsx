@@ -36,6 +36,7 @@ import "./styles/v22-peoples-explorer.css";
 import "./styles/v23-people-profile.css";
 import "./styles/v24-explore-map.css";
 import "./styles/v25-countries-languages.css";
+import "./styles/v26-prayer-saved.css";
 
 initializeOfflineRuntime();
 initializePrivateSyncRuntime();
