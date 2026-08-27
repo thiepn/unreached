@@ -96,15 +96,22 @@ async function seedStalePreparedSnapshot(page: Page) {
 }
 
 test.describe("Phase 0 stress envelope", () => {
-  test("550 people records in one language produce a measurable large-table baseline", async ({ page }) => {
+  test("550 people records in one language produce a measurable bounded-table baseline", async ({ page }) => {
     await installLargeLanguageFixture(page);
     const startedAt = Date.now();
     await page.goto("./#/languages/bas");
     const rows = page.locator(".language-table tbody tr");
-    await expect(rows).toHaveCount(550, { timeout: 20_000 });
+    await expect(rows).toHaveCount(40, { timeout: 20_000 });
+    await expect(page.locator(".detail-record-progress")).toContainText("Showing 40 of 550");
     const durationMs = Date.now() - startedAt;
+    const initialRenderedRows = await rows.count();
+
+    await page.getByRole("button", { name: "Show 40 more" }).click();
+    await expect(rows).toHaveCount(80);
+    await expect(page.locator(".detail-record-progress")).toContainText("Showing 80 of 550");
+
     await test.info().attach("large-language-baseline.json", {
-      body: Buffer.from(JSON.stringify({ records: 550, renderedRows: await rows.count(), routeReadyMs: durationMs }, null, 2)),
+      body: Buffer.from(JSON.stringify({ records: 550, initialRenderedRows, renderedAfterReveal: await rows.count(), routeReadyMs: durationMs }, null, 2)),
       contentType: "application/json",
     });
   });
