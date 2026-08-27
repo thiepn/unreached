@@ -86,9 +86,11 @@ test("v1.6 migrates v1 local personalization without losing saved or recent data
   });
 
   await page.goto("./#/saved", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", { name: "Saved & prayer" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "My lists" })).toBeVisible();
   await expect(page.locator(".saved-person-card").getByText("Fon", { exact: true })).toBeVisible();
-  await expect(page.locator(".recent-list").getByText("Fon", { exact: true })).toBeVisible();
+  const recent = page.locator("details.saved-recent-section");
+  await recent.locator("summary").click();
+  await expect(recent.locator(".recent-list").getByText("Fon", { exact: true })).toBeVisible();
   await expect(page.getByText("Your private prayer list is empty.")).toBeVisible();
 });
 
