@@ -62,6 +62,11 @@ test.describe("Phase 6 router and search contracts", () => {
     await installPeopleGroupsFixture(page);
   });
 
+  test("fresh direct route loads establish main-content keyboard focus", async ({ page }) => {
+    await page.goto("./#/countries");
+    await expect(page.locator("#main-content")).toBeFocused();
+  });
+
   test("zero-valued people and prayer routes are not silently treated as list routes", async ({ page }) => {
     await page.goto("./#/peoples/0");
     await expect(page.getByRole("heading", { name: "This route is not on the map." })).toBeVisible();
