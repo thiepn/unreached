@@ -1,6 +1,7 @@
 import { ArrowRight, BookOpenText, Database, Search, ShieldCheck } from "lucide-preact";
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 
+import { readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
 import { hrefFor } from "../app/router";
 import { editorialCoverageRegionFor, useEditorialContext } from "../context";
 import { useWorldGeography } from "../map/geography";
@@ -10,12 +11,22 @@ function countryNameFor(iso3: string, countries: ReturnType<typeof useWorldGeogr
   return match?.properties.name ?? iso3;
 }
 
+function initialCoverageState(): { query: string; country: string; region: string } {
+  const params = readHashSearchParams();
+  return {
+    query: params.get("q") ?? "",
+    country: params.get("country")?.toUpperCase() ?? "",
+    region: params.get("region") ?? "",
+  };
+}
+
 export function EditorialCoveragePage() {
   const editorial = useEditorialContext();
   const geography = useWorldGeography();
-  const [query, setQuery] = useState("");
-  const [country, setCountry] = useState("");
-  const [region, setRegion] = useState("");
+  const initial = useMemo(initialCoverageState, []);
+  const [query, setQuery] = useState(initial.query);
+  const [country, setCountry] = useState(initial.country);
+  const [region, setRegion] = useState(initial.region);
 
   const profiles = useMemo(() => [...(editorial.dataset?.profiles ?? [])].sort((a, b) => a.identity.verifiedPeopleName.localeCompare(b.identity.verifiedPeopleName, "en")), [editorial.dataset]);
   const countries = useMemo(() => {
@@ -62,6 +73,14 @@ export function EditorialCoveragePage() {
       return haystack.includes(needle);
     });
   }, [profiles, query, country, region, geography.countries]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    setOptionalHashParam(params, "q", query);
+    setOptionalHashParam(params, "country", country);
+    setOptionalHashParam(params, "region", region);
+    replaceHashSearchParams(params);
+  }, [query, country, region]);
 
   if (editorial.loading || geography.loading) {
     return <section class="editorial-coverage-page editorial-coverage-page--state" role="status">Loading reviewed editorial coverage…</section>;
