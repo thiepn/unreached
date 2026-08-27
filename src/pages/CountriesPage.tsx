@@ -1,6 +1,7 @@
 import { ArrowRight, Database, Globe2, RefreshCw, Search } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
+import { positiveHashPage, readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
 import { hrefFor } from "../app/router";
 import { formatCount, useLiveCountryExplorer } from "../countries";
 import { useAfterFirstPaint } from "../hooks/useResponsiveWork";
@@ -14,12 +15,19 @@ function routeCode(country: MapCountryFeature): string | null {
   return code && /^[A-Z]{3}$/.test(code) ? code : null;
 }
 
+function initialCountryState(): { query: string; page: number } {
+  const params = readHashSearchParams();
+  return { query: params.get("q") ?? "", page: positiveHashPage(params) };
+}
+
 export function CountriesPage() {
   const geography = useWorldGeography();
   const dataStart = useAfterFirstPaint();
   const intelligence = useLiveCountryExplorer(dataStart);
-  const [query, setQuery] = useState("");
-  const [visibleCount, setVisibleCount] = useState(COUNTRY_PAGE_SIZE);
+  const initial = useMemo(initialCountryState, []);
+  const [query, setQueryState] = useState(initial.query);
+  const [page, setPage] = useState(initial.page);
+  const visibleCount = page * COUNTRY_PAGE_SIZE;
 
   const countries = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("en");
@@ -30,7 +38,14 @@ export function CountriesPage() {
   }, [geography.countries, query]);
   const visibleCountries = useMemo(() => countries.slice(0, visibleCount), [countries, visibleCount]);
 
-  useEffect(() => setVisibleCount(COUNTRY_PAGE_SIZE), [query]);
+  useEffect(() => {
+    const params = new URLSearchParams();
+    setOptionalHashParam(params, "q", query);
+    setOptionalHashParam(params, "page", page, 1);
+    replaceHashSearchParams(params);
+  }, [query, page]);
+
+  const setQuery = (value: string) => { setQueryState(value); setPage(1); };
 
   return (
     <section class="countries-page" aria-labelledby="countries-title">
@@ -78,7 +93,7 @@ export function CountriesPage() {
               );
             })}
           </div>
-          {visibleCountries.length < countries.length ? <div class="result-load-more"><button type="button" onClick={() => setVisibleCount((count) => Math.min(count + COUNTRY_PAGE_SIZE, countries.length))}>Show {Math.min(COUNTRY_PAGE_SIZE, countries.length - visibleCountries.length)} more</button><span>{countries.length - visibleCountries.length} remaining</span></div> : null}
+          {visibleCountries.length < countries.length ? <div class="result-load-more"><button type="button" onClick={() => setPage((current) => current + 1)}>Show {Math.min(COUNTRY_PAGE_SIZE, countries.length - visibleCountries.length)} more</button><span>{countries.length - visibleCountries.length} remaining</span></div> : null}
         </>
       ) : null}
     </section>
