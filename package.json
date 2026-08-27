@@ -17,7 +17,7 @@
     "data:build:fixtures": "tsx scripts/data/build-fixtures.ts",
     "geography:build": "tsx scripts/geography/build-natural-earth.ts",
     "geography:check": "tsx scripts/geography/check.ts",
-    "visualization:check": "tsx scripts/visualization/check.ts",
+    "visualization:check": "tsx scripts/visualization/check.ts && tsx scripts/visualization/phase10-check.ts",
     "visualization:live-check": "tsx scripts/visualization/live-check.ts",
     "country:check": "tsx scripts/countries/check.ts",
     "people:check": "tsx scripts/peoples/check.ts && tsx scripts/peoples/phase8-check.ts && tsx scripts/peoples/phase9-check.ts",
