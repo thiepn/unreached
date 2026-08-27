@@ -83,14 +83,16 @@ test("v1.4 reviewed coverage remains a first-class local discovery surface", asy
 test("v1.4 people discovery can explicitly filter to reviewed context without changing default ranking", async ({ page }) => {
   await page.goto("./#/peoples", { waitUntil: "domcontentloaded" });
 
-  await expect(page.getByRole("link", { name: /Browse reviewed context/i })).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText("Reviewed context", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Prefer researched context/i })).toBeVisible({ timeout: 15_000 });
+  const filters = page.locator(".people-filter-panel--advanced");
+  await filters.locator("summary").click();
+  await filters.getByLabel("Reviewed context only").check();
 
-  await page.locator(".people-filter-panel").evaluate((element: HTMLDetailsElement) => { element.open = true; });
-  await page.getByLabel("Reviewed context only").check();
-  await expect(page.getByText(/reviewed editorial coverage only/i)).toBeVisible();
-  await expect(page.locator(".people-card")).toHaveCount(1);
-  await expect(page.locator(".people-card").getByText("Fon", { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/reviewed=1/);
+  await expect(page.locator(".people-active-filters").getByRole("button", { name: /Reviewed context/ })).toBeVisible();
+  await expect(page.locator(".people-result-count")).toContainText("reviewed context only");
+  await expect(page.locator(".people-card--explorer")).toHaveCount(1);
+  await expect(page.locator(".people-card--explorer").getByText("Fon", { exact: true })).toBeVisible();
 });
 
 test("v1.4 country pages expose reviewed articles for that country", async ({ page }) => {
