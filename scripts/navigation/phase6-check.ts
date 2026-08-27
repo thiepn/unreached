@@ -30,7 +30,7 @@ for (const marker of ["skipToContent", "event.preventDefault()", 'main?.focus({ 
 }
 
 const pageContracts: Array<[string, string[]]> = [
-  ["src/pages/PeoplesPage.tsx", ["initialPeopleState", "positiveHashPage", "replaceHashSearchParams", 'setOptionalHashParam(params, "page", page, 1)']],
+  ["src/pages/PeoplesPage.tsx", ["initialPeopleState", "positiveHashPage", "replaceHashSearchParams", "useLayoutEffect", 'setOptionalHashParam(params, "page", page, 1)']],
   ["src/pages/CountriesPage.tsx", ["initialCountryState", "positiveHashPage", "replaceHashSearchParams"]],
   ["src/pages/LanguagesPage.tsx", ["initialLanguageState", "positiveHashPage", "replaceHashSearchParams"]],
   ["src/pages/EditorialCoveragePage.tsx", ["initialCoverageState", "replaceHashSearchParams", 'setOptionalHashParam(params, "region", region)']],
@@ -55,6 +55,7 @@ for (const obsolete of [
 ]) {
   if (phase0.includes(obsolete)) throw new Error(`Phase 6 must promote the repaired Phase 0 contract: ${obsolete}.`);
 }
+if (!phase0.includes('page.locator(".skip-link")')) throw new Error("Phase 6 skip-link regression must activate the actual skip link, independent of initial-route focus.");
 
 const phase6Browser = await readText("tests/e2e/phase6-navigation-state.spec.ts");
 if (!phase6Browser.includes("fresh direct route loads establish main-content keyboard focus")) {
@@ -65,4 +66,4 @@ const packageJson = JSON.parse(await readText("package.json")) as { scripts?: Re
 if (!packageJson.scripts?.["navigation:check"]?.includes("scripts/navigation/phase6-check.ts")) throw new Error("Phase 6 navigation:check is not wired.");
 if (!packageJson.scripts?.build?.includes("navigation:check")) throw new Error("Phase 6 navigation gate must run in the production build.");
 
-console.log("Phase 6 navigation checks passed: URL-backed discovery state, direct-load focus, history-safe scrolling, dynamic titles, valid deep-link rejection, route-safe skip navigation, and visual-order global-search keyboard navigation are enforced.");
+console.log("Phase 6 navigation checks passed: URL-backed discovery state is committed before paint where fast navigation can race it, direct-load focus and history-safe scrolling are distinct, dynamic titles and valid deep links are enforced, skip navigation is route-safe, and global-search keyboard navigation follows visual order.");
