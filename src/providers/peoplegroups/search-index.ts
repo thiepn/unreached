@@ -1,4 +1,4 @@
-import { entityGsecRange, entityTaxonomy } from "./model";
+import { entityGsecRange, entityTaxonomy } from "./visible";
 import type { RuntimePeopleEntity } from "./types";
 
 const FIELD_SEPARATOR = "\u0000";
