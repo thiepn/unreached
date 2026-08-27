@@ -29,12 +29,17 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
   if (!mobile) {
     await expect(page.getByRole("heading", { name: "Benin" })).toBeVisible();
     const selectedSummary = page.locator(".selected-mission-summary");
-    await expect(selectedSummary.locator(".selected-mission-primary")).toContainText("170K", { timeout: 15_000 });
+    const primaryMetric = selectedSummary.locator(".selected-mission-primary");
+    await expect(primaryMetric).toContainText("GSEC 0–3 population share", { timeout: 15_000 });
+    await expect(primaryMetric).toContainText("100%");
+
     const sourceBreakdown = selectedSummary.locator(".selected-mission-details");
     await expect(sourceBreakdown).not.toHaveAttribute("open", "");
     await sourceBreakdown.locator("summary").click();
     await expect(sourceBreakdown.getByText("People contexts", { exact: true })).toBeVisible();
     await expect(sourceBreakdown.getByText("GSEC 0–3", { exact: true })).toBeVisible();
+    await expect(sourceBreakdown.getByText("Known population", { exact: true })).toBeVisible();
+    await expect(sourceBreakdown.getByText("170K", { exact: true })).toBeVisible();
     await expect(sourceBreakdown.getByText(/people-group-in-country records returned by PeopleGroups\.org/i)).toBeVisible();
   } else {
     await expect(mobileSheet.getByText("Benin", { exact: true }).first()).toBeVisible();
