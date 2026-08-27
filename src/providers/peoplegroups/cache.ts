@@ -8,6 +8,7 @@ import type {
 export const PEOPLE_GROUPS_CACHE_DB = "unreached-peoplegroups-v1";
 export const PEOPLE_GROUPS_CACHE_STORE = "pages";
 export const PEOPLE_GROUPS_PREPARED_STORE = "prepared";
+export const PEOPLE_GROUPS_RECORD_STORE = "records";
 export const PEOPLE_GROUPS_CACHE_FRESH_MS = 24 * 60 * 60 * 1000;
 export const PEOPLE_GROUPS_CACHE_STALE_MAX_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -18,6 +19,13 @@ export interface CachedPeopleGroupsPage {
   totalRecords: number | null;
   storedAt: string;
   records: PeopleGroupsApiRecord[];
+}
+
+export interface CachedPeopleGroupsRecord {
+  schemaVersion: 1;
+  pgid: string;
+  storedAt: string;
+  record: PeopleGroupsApiRecord;
 }
 
 export interface PreparedPeopleGroupsSnapshot {
@@ -38,6 +46,12 @@ export interface PeopleGroupsPageCache {
   clear(): Promise<void>;
 }
 
+export interface PeopleGroupsRecordCache {
+  read(pgid: string): Promise<CachedPeopleGroupsRecord | null>;
+  write(value: CachedPeopleGroupsRecord): Promise<void>;
+  clear(): Promise<void>;
+}
+
 export interface PreparedPeopleGroupsCache {
   read(): Promise<PreparedPeopleGroupsSnapshot | null>;
   write(value: PreparedPeopleGroupsSnapshot): Promise<void>;
@@ -53,6 +67,15 @@ export function createMemoryPeopleGroupsCache(): PeopleGroupsPageCache {
   };
 }
 
+export function createMemoryPeopleGroupsRecordCache(): PeopleGroupsRecordCache {
+  const records = new Map<string, CachedPeopleGroupsRecord>();
+  return {
+    read: async (pgid) => records.get(pgid) ? structuredClone(records.get(pgid)!) : null,
+    write: async (value) => { records.set(value.pgid, structuredClone(value)); },
+    clear: async () => { records.clear(); },
+  };
+}
+
 export function createMemoryPreparedPeopleGroupsCache(): PreparedPeopleGroupsCache {
   let active: PreparedPeopleGroupsSnapshot | null = null;
   return {
@@ -64,12 +87,13 @@ export function createMemoryPreparedPeopleGroupsCache(): PreparedPeopleGroupsCac
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(PEOPLE_GROUPS_CACHE_DB, 2);
+    const request = indexedDB.open(PEOPLE_GROUPS_CACHE_DB, 3);
     request.onerror = () => reject(request.error ?? new Error("PeopleGroups cache could not be opened."));
     request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains(PEOPLE_GROUPS_CACHE_STORE)) db.createObjectStore(PEOPLE_GROUPS_CACHE_STORE, { keyPath: "page" });
       if (!db.objectStoreNames.contains(PEOPLE_GROUPS_PREPARED_STORE)) db.createObjectStore(PEOPLE_GROUPS_PREPARED_STORE, { keyPath: "key" });
+      if (!db.objectStoreNames.contains(PEOPLE_GROUPS_RECORD_STORE)) db.createObjectStore(PEOPLE_GROUPS_RECORD_STORE, { keyPath: "pgid" });
     };
     request.onsuccess = () => resolve(request.result);
   });
@@ -85,9 +109,12 @@ async function withStore<T>(
     return await new Promise<T>((resolve, reject) => {
       const transaction = db.transaction(storeName, mode);
       const request = action(transaction.objectStore(storeName));
-      request.onsuccess = () => resolve(request.result);
+      let result: T;
+      request.onsuccess = () => { result = request.result; };
       request.onerror = () => reject(request.error ?? new Error("PeopleGroups cache operation failed."));
+      transaction.oncomplete = () => resolve(result!);
       transaction.onerror = () => reject(transaction.error ?? new Error("PeopleGroups cache transaction failed."));
+      transaction.onabort = () => reject(transaction.error ?? new Error("PeopleGroups cache transaction aborted."));
     });
   } finally {
     db.close();
@@ -104,6 +131,19 @@ export function createIndexedDbPeopleGroupsCache(): PeopleGroupsPageCache {
     },
     write: async (value) => { await withStore<IDBValidKey>(PEOPLE_GROUPS_CACHE_STORE, "readwrite", (store) => store.put(value)); },
     clear: async () => { await withStore<undefined>(PEOPLE_GROUPS_CACHE_STORE, "readwrite", (store) => store.clear()); },
+  };
+}
+
+export function createIndexedDbPeopleGroupsRecordCache(): PeopleGroupsRecordCache {
+  if (typeof indexedDB === "undefined") return createMemoryPeopleGroupsRecordCache();
+
+  return {
+    read: async (pgid) => {
+      const value = await withStore<CachedPeopleGroupsRecord | undefined>(PEOPLE_GROUPS_RECORD_STORE, "readonly", (store) => store.get(pgid));
+      return value ?? null;
+    },
+    write: async (value) => { await withStore<IDBValidKey>(PEOPLE_GROUPS_RECORD_STORE, "readwrite", (store) => store.put(value)); },
+    clear: async () => { await withStore<undefined>(PEOPLE_GROUPS_RECORD_STORE, "readwrite", (store) => store.clear()); },
   };
 }
 

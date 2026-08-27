@@ -1,15 +1,12 @@
 import { ArrowRight, Bookmark, BookmarkCheck, Compass, Eye, HeartHandshake } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
-import { useLivePeopleExplorer } from "../peoples";
 import { isPersonSaved, usePersonalization } from "../personalization";
+import type { RuntimePeopleEntity } from "../providers/peoplegroups";
 
-export function ProfileLocalActions({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const people = useLivePeopleExplorer();
+export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity }) {
   const personalization = usePersonalization();
-  const record = people.peopleByRouteKey.get(sourcePeopleId) ?? null;
-  if (!record) return null;
-
+  const sourcePeopleId = record.routeKey;
   const saved = isPersonSaved(personalization.state, sourcePeopleId);
   const prayerEligible = record.reach.unreachedContexts > 0;
   const Icon = saved ? BookmarkCheck : Bookmark;

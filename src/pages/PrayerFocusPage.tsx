@@ -8,9 +8,9 @@ import {
   buildLivePrayerProfile,
   isLivePrayerEligible,
   livePrayerFlow,
-  useLivePrayerExperience,
   type PrayerCategory,
 } from "../prayer";
+import { usePeopleGroupsRouteRecord } from "../providers/peoplegroups";
 
 type PrayerMinutes = 2 | 5 | 10;
 
@@ -19,11 +19,11 @@ function categoryLabel(category: PrayerCategory): string {
 }
 
 export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const prayer = useLivePrayerExperience();
+  const route = usePeopleGroupsRouteRecord(sourcePeopleId);
   const personalization = usePersonalization();
   const [minutes, setMinutes] = useState<PrayerMinutes>(5);
   const [activeIndex, setActiveIndex] = useState(0);
-  const entity = prayer.peopleByRouteKey.get(sourcePeopleId) ?? null;
+  const entity = route.entity;
   const profile = entity && isLivePrayerEligible(entity) ? buildLivePrayerProfile(entity) : null;
   const flow = useMemo(() => profile ? livePrayerFlow(profile, minutes) : [], [profile, minutes]);
   const activePrompt = flow[activeIndex] ?? null;
@@ -31,28 +31,26 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
   const prayerListEntry = personalization.state.prayerList.find((item) => item.sourcePeopleId === sourcePeopleId) ?? null;
   const listed = Boolean(prayerListEntry);
   const recordedToday = isSameLocalDate(prayerListEntry?.lastPrayedAt ?? null);
-  const eligiblePrayerListIds = useMemo(() => new Set(prayer.eligible.map((item) => item.routeKey)), [prayer.eligible]);
   const nextPrayerEntry = useMemo(() => selectNextPrayerRotationEntry(personalization.state.prayerList, {
-    eligibleSourcePeopleIds: eligiblePrayerListIds,
     excludeSourcePeopleId: sourcePeopleId,
-  }), [personalization.state.prayerList, eligiblePrayerListIds, sourcePeopleId]);
+  }), [personalization.state.prayerList, sourcePeopleId]);
 
   useEffect(() => setActiveIndex(0), [minutes, sourcePeopleId]);
 
-  if (prayer.loading) return <section class="prayer-focus prayer-state" role="status">Loading live prayer guide{prayer.progress ? `… ${prayer.progress.loadedPages}/${prayer.progress.totalPages}` : "…"}</section>;
-  if (prayer.error) {
+  if (route.loading) return <section class="prayer-focus prayer-state" role="status">Loading live prayer record…</section>;
+  if (route.error) {
     return (
       <section class="prayer-focus prayer-focus--state">
         <Database size={24} aria-hidden="true" />
         <div class="eyebrow">Focused prayer</div>
         <h1 class="display-title">Live prayer guide unavailable.</h1>
-        <p>{prayer.error}</p>
-        <button type="button" class="people-reset-filters" onClick={prayer.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
+        <p>{route.error}</p>
+        <button type="button" class="people-reset-filters" onClick={route.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button>
         <a class="inline-link" href={hrefFor("/pray")}><ArrowLeft size={16} aria-hidden="true" /> Back to Prayer</a>
       </section>
     );
   }
-  if (!profile || !activePrompt || !entity || !prayerSnapshot) {
+  if (route.notFound || !profile || !activePrompt || !entity || !prayerSnapshot) {
     return (
       <section class="prayer-focus prayer-focus--state">
         <div class="eyebrow">Focused prayer</div>
@@ -65,10 +63,10 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
 
   const secondsPerPrompt = Math.max(20, Math.round((minutes * 60) / flow.length));
   return (
-    <article class="prayer-focus">
+    <article class="prayer-focus" data-prayer-data-source={route.source ?? "unknown"} data-prayer-pgid={entity.contexts[0]?.pgid ?? ""}>
       <nav class="prayer-focus__back" aria-label="Prayer navigation"><a href={hrefFor("/pray")}><ArrowLeft size={15} aria-hidden="true" /> Prayer</a><span>/</span><a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>{profile.peopleName}</a></nav>
 
-      {prayer.warning ? <div class="prayer-release-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{prayer.warning}</p></div></div> : null}
+      {route.warning ? <div class="prayer-release-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{route.warning}</p></div></div> : null}
 
       <header class="prayer-focus__hero">
         <div>
@@ -140,7 +138,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
         {recordedToday && nextPrayerEntry ? (
           <a class="prayer-rotation-next" data-next-prayer-peid={nextPrayerEntry.sourcePeopleId} href={hrefFor(`/pray/${nextPrayerEntry.sourcePeopleId}`)}>
             <RotateCcw size={16} aria-hidden="true" />
-            <span><strong>Continue with {nextPrayerEntry.name}</strong><small>Next return point from your private prayer rotation</small></span>
+            <span><strong>Continue with {nextPrayerEntry.name}</strong><small>Next return point from your private prayer rotation; current eligibility is rechecked when opened</small></span>
             <ChevronRight size={17} aria-hidden="true" />
           </a>
         ) : null}

@@ -8,7 +8,7 @@ const PREPARED_STORE = "prepared";
 async function waitForPreparedSnapshot(page: Page): Promise<void> {
   await expect.poll(async () => page.evaluate(async ({ dbName, storeName }) => {
     return await new Promise<boolean>((resolve) => {
-      const request = indexedDB.open(dbName, 2);
+      const request = indexedDB.open(dbName);
       request.onerror = () => resolve(false);
       request.onsuccess = () => {
         const db = request.result;
@@ -29,10 +29,15 @@ async function waitForPreparedSnapshot(page: Page): Promise<void> {
 async function agePreparedSnapshot(page: Page, ageMs: number): Promise<void> {
   await page.evaluate(async ({ dbName, storeName, storedAt }) => {
     await new Promise<void>((resolve, reject) => {
-      const request = indexedDB.open(dbName, 2);
+      const request = indexedDB.open(dbName);
       request.onerror = () => reject(request.error ?? new Error("cache open failed"));
       request.onsuccess = () => {
         const db = request.result;
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.close();
+          reject(new Error("prepared snapshot store missing"));
+          return;
+        }
         const transaction = db.transaction(storeName, "readwrite");
         const store = transaction.objectStore(storeName);
         const get = store.get("active");

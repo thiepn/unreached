@@ -4,13 +4,13 @@ import { hrefFor, type RouteState } from "../app/router";
 import { useLiveCountryExplorer } from "../countries";
 import { useLiveLanguageExplorer } from "../languages";
 import { useWorldGeography } from "../map/geography";
-import { useLivePeopleExplorer } from "../peoples";
 import { usePersonalization } from "../personalization";
+import { usePeopleGroupsRouteRecord } from "../providers/peoplegroups";
 
 function PeopleRecentTracker({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const peoples = useLivePeopleExplorer();
+  const route = usePeopleGroupsRouteRecord(sourcePeopleId);
   const { recordRecent } = usePersonalization();
-  const people = peoples.peopleByRouteKey.get(sourcePeopleId) ?? null;
+  const people = route.entity;
   useEffect(() => {
     if (!people) return;
     recordRecent({

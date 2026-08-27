@@ -75,11 +75,12 @@ async function seedStalePreparedSnapshot(page: Page) {
   await page.goto("./#/about");
   await page.evaluate(async (preparedSnapshot) => {
     await new Promise<void>((resolve, reject) => {
-      const request = indexedDB.open("unreached-peoplegroups-v1", 2);
+      const request = indexedDB.open("unreached-peoplegroups-v1", 3);
       request.onupgradeneeded = () => {
         const db = request.result;
         if (!db.objectStoreNames.contains("pages")) db.createObjectStore("pages", { keyPath: "page" });
         if (!db.objectStoreNames.contains("prepared")) db.createObjectStore("prepared", { keyPath: "key" });
+        if (!db.objectStoreNames.contains("records")) db.createObjectStore("records", { keyPath: "pgid" });
       };
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
