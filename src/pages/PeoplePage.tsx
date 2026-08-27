@@ -41,20 +41,29 @@ function EssentialMetrics({ record }: { record: RuntimePeopleEntity }) {
   const context = record.contexts[0]!;
   const gsec = entityGsecRange(record);
   return (
-    <div class="people-metric-grid people-metric-grid--essential" aria-label="People-group overview">
-      <div class="people-metric"><span>Population estimate</span><strong>{record.population.complete ? formatPeopleCount(record.population.knownValue) : "Unknown"}</strong><small>{record.population.complete ? `PeopleGroups.org estimate for ${context.country.name}` : "Not reported for this source record"}</small></div>
-      <div class="people-metric"><span>GSEC</span><strong>{gsec ? gsec.min : "Unknown"}</strong><small>{livePeopleStatusLabel(record)}</small></div>
-      <div class="people-metric"><span>Country</span><strong>{context.country.name}</strong><small>{context.country.iso3}</small></div>
-      <div class="people-metric"><span>Language</span><strong>{record.primaryLanguage?.name ?? "Unknown"}</strong><small>{record.primaryLanguage?.iso6393 ?? "ISO code not reported"}</small></div>
-    </div>
+    <section class="people-profile-overview" aria-labelledby="people-overview-heading">
+      <div class="people-profile-overview__heading">
+        <div>
+          <span class="eyebrow">At a glance</span>
+          <h2 id="people-overview-heading">Start with the basic source facts.</h2>
+        </div>
+        <p>These values orient the record before the detailed context and prayer actions below.</p>
+      </div>
+      <div class="people-metric-grid people-metric-grid--essential" aria-label="People-group overview">
+        <div class="people-metric"><span>Population estimate</span><strong>{record.population.complete ? formatPeopleCount(record.population.knownValue) : "Unknown"}</strong><small>{record.population.complete ? `PeopleGroups.org estimate for ${context.country.name}` : "Not reported for this source record"}</small></div>
+        <div class="people-metric"><span>GSEC</span><strong>{gsec ? gsec.min : "Unknown"}</strong><small>{livePeopleStatusLabel(record)}</small></div>
+        <div class="people-metric"><span>Country</span><strong>{context.country.name}</strong><small>{context.country.iso3}</small></div>
+        <div class="people-metric"><span>Language</span><strong>{record.primaryLanguage?.name ?? "Unknown"}</strong><small>{record.primaryLanguage?.iso6393 ?? "ISO code not reported"}</small></div>
+      </div>
+    </section>
   );
 }
 
 function SourceRecord({ record }: { record: RuntimePeopleEntity }) {
   const context = record.contexts[0]!;
   return (
-    <section class="people-section" aria-labelledby="people-source-record-heading">
-      <div class="people-section__heading"><div><span class="eyebrow">Source record</span><h2 id="people-source-record-heading">What PeopleGroups.org reports</h2></div><MapPinned size={21} aria-hidden="true" /></div>
+    <section class="people-section people-section--source" aria-labelledby="people-source-record-heading">
+      <div class="people-section__heading"><div><span class="eyebrow">1 · Understand</span><h2 id="people-source-record-heading">Read the source context first</h2></div><MapPinned size={21} aria-hidden="true" /></div>
       <p class="people-section__intro">The current PeopleGroups.org API returns one PGID country-context record for this PEID. Population, GSEC, religion and resource fields below belong to this record only.</p>
       <div class="people-source-record-grid">
         <div><span>Country</span><strong><a href={hrefFor(`/countries/${context.country.iso3}`)}>{context.country.name}</a></strong><small>{context.country.iso3}</small></div>
@@ -66,7 +75,27 @@ function SourceRecord({ record }: { record: RuntimePeopleEntity }) {
         <div><span>Bible</span><strong>Bible: {context.resources.bibleAvailability ?? "Unknown"}</strong><small>Raw availability label</small></div>
         <div><span>Engagement</span><strong>{context.reach.engagementStatus ?? "Unknown"}</strong></div>
       </div>
-      <div class="people-source-record-actions"><a href={`#/?country=${encodeURIComponent(context.country.iso3)}`}>View on map <ArrowUpRight size={13} aria-hidden="true" /></a></div>
+      <div class="people-source-record-actions"><a href={`#/?country=${encodeURIComponent(context.country.iso3)}`}>View this country on the map <ArrowUpRight size={13} aria-hidden="true" /></a></div>
+    </section>
+  );
+}
+
+function ProviderContext({ record }: { record: RuntimePeopleEntity }) {
+  const editorial = entityEditorialContext(record);
+  if (!editorial.length) {
+    return (
+      <div class="people-context-absence" role="note">
+        <strong>No provider description is available for this record.</strong>
+        <p>Use the structured source facts above as the available context. Unreached does not invent a narrative when PeopleGroups.org does not supply one.</p>
+      </div>
+    );
+  }
+
+  return (
+    <section class="people-section people-section--provider" aria-labelledby="people-source-context-heading">
+      <div class="people-section__heading"><div><span class="eyebrow">Provider context</span><h2 id="people-source-context-heading">Source description</h2></div><Globe2 size={21} aria-hidden="true" /></div>
+      <p class="people-section__intro">This text is supplied by PeopleGroups.org and shown as attributed provider material. Read it as source context, not as an Unreached-authored community profile.</p>
+      {editorial.map((item) => <p class="people-provider-description" key={item.pgid}>{item.peopleDescription ?? item.locationDescription}</p>)}
     </section>
   );
 }
@@ -76,7 +105,7 @@ function DeepSourceDetails({ record, loadedAt, stale }: { record: RuntimePeopleE
   const taxonomy = entityTaxonomy(record);
   const resources = entityResourceBreakdown(record);
   return (
-    <details class="people-disclosure">
+    <details class="people-disclosure people-disclosure--sources">
       <summary><Link2 size={18} aria-hidden="true" /> Sources, taxonomy & methodology</summary>
       <div class="people-disclosure__body">
         <p>This profile is assembled at runtime from one PeopleGroups.org people-group-in-country record. Complete-corpus certification on 23 August 2026 found PEID and PGID to be 1:1 across all 12,370 current records, so Unreached does not treat PEID as a cross-country grouping key.</p>
@@ -127,17 +156,16 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
   }
 
   const taxonomy = entityTaxonomy(record);
-  const editorial = entityEditorialContext(record);
   const related = corpus.ready ? relatedRuntimePeople(record, corpus.entities).slice(0, 8) : [];
   const context = record.contexts[0]!;
 
   return (
-    <article class="people-profile people-profile--v11" data-people-data-source={route.source ?? "unknown"} data-people-pgid={context.pgid}>
+    <article class="people-profile people-profile--v11 people-profile--phase9" data-people-data-source={route.source ?? "unknown"} data-people-pgid={context.pgid}>
       <nav class="people-breadcrumb" aria-label="Breadcrumb"><a href={hrefFor("/peoples")}><ArrowLeft size={15} aria-hidden="true" /> Peoples</a><span>/</span><span aria-current="page">{record.displayName}</span></nav>
 
       {route.warning ? <div class="people-data-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{route.warning}</p></div></div> : null}
 
-      <header class="people-profile-hero people-profile-hero--focused">
+      <header class="people-profile-hero people-profile-hero--focused people-profile-hero--phase9">
         <div>
           <div class="eyebrow">{taxonomy.peopleName ?? taxonomy.peopleCluster ?? taxonomy.affinityBloc ?? "PeopleGroups.org source record"}</div>
           <div class="people-profile-title-line"><h1 class="display-title">{record.displayName}</h1><span class={`people-status people-status--${livePeopleStatusClass(record)}`}>{livePeopleStatusLabel(record)}</span></div>
@@ -148,33 +176,33 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
       </header>
 
       <EssentialMetrics record={record} />
-      <ProfileLocalActions record={record} />
 
-      <div class="people-profile-flow">
-        <SourceRecord record={record} />
+      <div class="people-profile-flow people-profile-flow--phase9">
+        <div class="people-profile-context" data-profile-stage="understand">
+          <SourceRecord record={record} />
+          <ProviderContext record={record} />
+        </div>
 
-        {editorial.length ? (
-          <section class="people-section" aria-labelledby="people-source-context-heading">
-            <div class="people-section__heading"><div><span class="eyebrow">Provider context</span><h2 id="people-source-context-heading">Source description</h2></div><Globe2 size={21} aria-hidden="true" /></div>
-            <p class="people-section__intro">This text is supplied by PeopleGroups.org and shown as attributed provider material.</p>
-            {editorial.map((item) => <p class="people-provider-description" key={item.pgid}>{item.peopleDescription ?? item.locationDescription}</p>)}
-          </section>
-        ) : null}
+        <div class="people-profile-action-stage" data-profile-stage="act">
+          <ProfileLocalActions record={record} />
+        </div>
 
-        <details class="people-disclosure">
-          <summary><UsersRound size={18} aria-hidden="true" /> Related source records{related.length ? ` · ${related.length}` : ""}</summary>
-          <div class="people-disclosure__body">
-            <p>Relationships use explicit source taxonomy such as ROP3 people name, cluster or affinity bloc. They are not PEID rollups.</p>
-            {related.length ? <div class="people-related-grid">{related.map((item) => <a href={hrefFor(`/peoples/${item.entity.routeKey}`)} class="people-related-card" key={item.entity.id}><span>{item.relationship === "same-rop3-name" ? "Same ROP3 people name" : item.relationship === "same-cluster" ? "Same source cluster" : "Same affinity bloc"}</span><strong>{item.entity.displayName}</strong><small>{item.entity.contexts[0]?.country.name ?? "Country unknown"}</small></a>)}</div> : <p class="people-empty">{corpus.ready ? "No related records are available from the current source taxonomy." : "Related records become available after a full people explorer dataset has been loaded in this session."}</p>}
-          </div>
-        </details>
+        <div class="people-profile-reference-stage" data-profile-stage="reference">
+          <details class="people-disclosure">
+            <summary><UsersRound size={18} aria-hidden="true" /> Related source records{related.length ? ` · ${related.length}` : ""}</summary>
+            <div class="people-disclosure__body">
+              <p>Relationships use explicit source taxonomy such as ROP3 people name, cluster or affinity bloc. They are not PEID rollups.</p>
+              {related.length ? <div class="people-related-grid">{related.map((item) => <a href={hrefFor(`/peoples/${item.entity.routeKey}`)} class="people-related-card" key={item.entity.id}><span>{item.relationship === "same-rop3-name" ? "Same ROP3 people name" : item.relationship === "same-cluster" ? "Same source cluster" : "Same affinity bloc"}</span><strong>{item.entity.displayName}</strong><small>{item.entity.contexts[0]?.country.name ?? "Country unknown"}</small></a>)}</div> : <p class="people-empty">{corpus.ready ? "No related records are available from the current source taxonomy." : "Related records become available after a full people explorer dataset has been loaded in this session."}</p>}
+            </div>
+          </details>
 
-        <DeepSourceDetails record={record} loadedAt={route.loadedAt} stale={route.stale} />
+          <DeepSourceDetails record={record} loadedAt={route.loadedAt} stale={route.stale} />
 
-        <details class="people-disclosure">
-          <summary><BookOpen size={18} aria-hidden="true" /> Why raw resource labels are preserved</summary>
-          <div class="people-disclosure__body"><p>Bible and media availability values are displayed as PeopleGroups.org reports them. Unreached does not convert them into “portions,” “New Testament,” or “complete Bible” milestones.</p></div>
-        </details>
+          <details class="people-disclosure">
+            <summary><BookOpen size={18} aria-hidden="true" /> Why raw resource labels are preserved</summary>
+            <div class="people-disclosure__body"><p>Bible and media availability values are displayed as PeopleGroups.org reports them. Unreached does not convert them into “portions,” “New Testament,” or “complete Bible” milestones.</p></div>
+          </details>
+        </div>
       </div>
     </article>
   );
