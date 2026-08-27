@@ -1,10 +1,13 @@
 import { ArrowLeft, ArrowUpRight, BookOpen, Compass, Database, Globe2, Languages, RefreshCw, UsersRound } from "lucide-preact";
+import { useEffect, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
 import { CountryGuidedStart } from "../components/CountryGuidedStart";
 import { formatCount, formatPercent, useLiveCountryExplorer } from "../countries";
 import { useWorldGeography } from "../map/geography";
 import { PEOPLE_GROUPS_ATTRIBUTION, type VisibleCountryRecord } from "../providers/peoplegroups";
+
+const DETAIL_RECORD_BATCH_SIZE = 40;
 
 function sourceDate(value: string | null): string {
   if (!value) return "Not supplied";
@@ -64,6 +67,12 @@ export function CountryPage({ iso3 }: { iso3: string }) {
   const geography = useWorldGeography();
   const intelligence = useLiveCountryExplorer();
   const code = iso3.toUpperCase();
+  const [visiblePeopleCount, setVisiblePeopleCount] = useState(DETAIL_RECORD_BATCH_SIZE);
+
+  useEffect(() => {
+    setVisiblePeopleCount(DETAIL_RECORD_BATCH_SIZE);
+  }, [code]);
+
   const feature = geography.countries.find((country) => country.properties.iso3 === code || country.properties.adminA3 === code) ?? null;
   const record = intelligence.countriesByIso3.get(code) ?? null;
 
@@ -82,6 +91,8 @@ export function CountryPage({ iso3 }: { iso3: string }) {
 
   const name = record?.name ?? feature.properties.name;
   const unreachedPeople = record?.contexts.filter((context) => context.reach.classification === "unreached") ?? [];
+  const visibleUnreachedPeople = unreachedPeople.slice(0, visiblePeopleCount);
+  const remainingUnreachedPeople = Math.max(0, unreachedPeople.length - visibleUnreachedPeople.length);
   const mapHref = `#/?country=${encodeURIComponent(feature.properties.mapKey)}`;
   const prayerHref = `#/pray?country=${encodeURIComponent(code)}`;
 
@@ -116,32 +127,36 @@ export function CountryPage({ iso3 }: { iso3: string }) {
           <CountryGuidedStart countryName={name} contexts={record.contexts} />
 
           <div class="country-content-grid">
-            <main class="country-content-main">
+            <div class="country-content-main">
               <section class="country-section" aria-labelledby="unreached-people-heading">
                 <div class="country-section__heading">
                   <div><span class="eyebrow">GSEC 0–3</span><h2 id="unreached-people-heading">Unreached people contexts</h2></div>
                   <UsersRound size={21} aria-hidden="true" />
                 </div>
-                <p class="country-section__intro">Rows are country-specific PGID records. A PEID can appear in multiple countries; population and status are therefore shown at the country-context level.</p>
+                <p class="country-section__intro">Rows are current PeopleGroups.org PEID/PGID records for this country. The certified runtime validates PEID and PGID as a one-to-one record identity; it does not infer a separate cross-country people identity from a repeated name.</p>
                 {unreachedPeople.length ? (
-                  <div class="country-people-table-wrap">
-                    <table class="country-people-table">
-                      <thead><tr><th>People</th><th>Population</th><th>Religion</th><th>Language</th><th>GSEC</th><th>Evangelical level</th><th>Bible</th></tr></thead>
-                      <tbody>
-                        {unreachedPeople.slice(0, 40).map((people) => (
-                          <tr key={people.pgid}>
-                            <th scope="row"><a class="country-people-link" href={hrefFor(`/peoples/${people.peid}`)}>{people.displayName}</a><small>PGID {people.pgid} · PEID {people.peid}</small></th>
-                            <td>{formatCount(people.population.value)}</td>
-                            <td>{people.religion.name ?? people.religion.displayName ?? "Unknown"}</td>
-                            <td>{people.language.name ?? people.language.iso6393 ?? "Unknown"}</td>
-                            <td>{people.reach.gsec.code ?? "Unknown"}</td>
-                            <td>{people.reach.evangelicalLevel ?? "Unknown"}</td>
-                            <td>{people.resources.bibleAvailability ?? "Unknown"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <>
+                    <div class="detail-record-progress" aria-live="polite"><strong>Showing {visibleUnreachedPeople.length} of {unreachedPeople.length}</strong><span>GSEC 0–3 PEID/PGID records</span></div>
+                    <div class="country-people-table-wrap">
+                      <table class="country-people-table">
+                        <thead><tr><th>People</th><th>Population</th><th>Religion</th><th>Language</th><th>GSEC</th><th>Evangelical level</th><th>Bible</th></tr></thead>
+                        <tbody>
+                          {visibleUnreachedPeople.map((people) => (
+                            <tr key={people.pgid}>
+                              <th scope="row"><a class="country-people-link" href={hrefFor(`/peoples/${people.peid}`)}>{people.displayName}</a><small>PGID {people.pgid} · PEID {people.peid}</small></th>
+                              <td>{formatCount(people.population.value)}</td>
+                              <td>{people.religion.name ?? people.religion.displayName ?? "Unknown"}</td>
+                              <td>{people.language.name ?? people.language.iso6393 ?? "Unknown"}</td>
+                              <td>{people.reach.gsec.code ?? "Unknown"}</td>
+                              <td>{people.reach.evangelicalLevel ?? "Unknown"}</td>
+                              <td>{people.resources.bibleAvailability ?? "Unknown"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {remainingUnreachedPeople ? <div class="result-load-more result-load-more--detail"><button type="button" onClick={() => setVisiblePeopleCount((current) => Math.min(current + DETAIL_RECORD_BATCH_SIZE, unreachedPeople.length))}>Show {Math.min(DETAIL_RECORD_BATCH_SIZE, remainingUnreachedPeople)} more</button><span>{remainingUnreachedPeople} remaining</span></div> : null}
+                  </>
                 ) : <p class="country-empty">No current country-context record is classified GSEC 0–3.</p>}
               </section>
 
@@ -157,7 +172,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
                   ))}
                 </div>
               </section>
-            </main>
+            </div>
 
             <aside class="country-content-rail">
               <section class="country-section" aria-labelledby="languages-heading">
@@ -165,6 +180,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
                 <div class="country-compact-list">
                   {record.languages.slice(0, 12).map((language) => <div key={language.key}><strong>{language.name}</strong><span>{formatCount(language.knownPopulation)} represented · {language.contextCount} contexts{language.code ? ` · ${language.code}` : ""}</span></div>)}
                 </div>
+                {record.languages.length > 12 ? <p class="country-section__intro country-section__intro--compact">Showing 12 of {record.languages.length} source-language aggregations. <a href={hrefFor("/languages")}>Browse all languages</a>.</p> : null}
               </section>
 
               <section class="country-section" aria-labelledby="scripture-heading">
