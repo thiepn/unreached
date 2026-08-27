@@ -1,5 +1,5 @@
 import { useWorldGeography } from "../map/geography";
-import { usePeopleGroupsRuntimeStore, entityTaxonomy } from "../providers/peoplegroups";
+import { usePeopleGroupsRuntimeStore } from "../providers/peoplegroups";
 import { getSharedLiveLanguageData } from "../languages/live";
 import { buildSearchDocuments, type SearchDocument } from "./search";
 
@@ -31,18 +31,15 @@ export function useSharedSearchDocuments(enabled = true) {
       peopleGeneration: runtime.generation,
       geographyGeneration: geography.generation,
       documents: buildSearchDocuments({
-        peoples: runtime.entities.map((people) => {
-          const taxonomy = entityTaxonomy(people);
-          return {
-            sourcePeopleId: people.routeKey,
-            name: people.displayName,
-            primaryLanguageName: people.primaryLanguage?.name ?? null,
-            primaryReligionName: people.primaryReligion?.name ?? null,
-            largestCountryName: people.contexts[0]?.country.name ?? null,
-            cluster: taxonomy.peopleCluster,
-            affinityBloc: taxonomy.affinityBloc,
-          };
-        }),
+        peoples: runtime.peopleSearchIndex.records.map((prepared) => ({
+          sourcePeopleId: prepared.entity.routeKey,
+          name: prepared.entity.displayName,
+          primaryLanguageName: prepared.entity.primaryLanguage?.name ?? null,
+          primaryReligionName: prepared.entity.primaryReligion?.name ?? null,
+          largestCountryName: prepared.entity.contexts[0]?.country.name ?? null,
+          cluster: prepared.peopleCluster,
+          affinityBloc: prepared.affinityBloc,
+        })),
         countries: geographicCountries,
         languages: languages.languages.map((language) => ({
           iso6393: language.iso6393,

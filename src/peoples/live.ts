@@ -1,8 +1,8 @@
 import {
-  entityGsecRange,
-  entityTaxonomy,
+  getRuntimePeopleSearchIndex,
   usePeopleGroupsRuntimeStore,
   type RuntimePeopleEntity,
+  type RuntimePeopleSearchIndex,
 } from "../providers/peoplegroups";
 
 export type LivePeopleStatusFilter = "all" | "unreached-only" | "other-only" | "unknown";
@@ -19,66 +19,35 @@ export interface LivePeopleFilterState {
   sort: LivePeopleSort;
 }
 
-function text(value: string | null | undefined): string {
-  return value?.toLocaleLowerCase("en") ?? "";
-}
+export function filterLivePeople(
+  entities: RuntimePeopleEntity[],
+  state: LivePeopleFilterState,
+  preparedIndex: RuntimePeopleSearchIndex = getRuntimePeopleSearchIndex(entities),
+): RuntimePeopleEntity[] {
+  const query = state.query.trim().toLocaleLowerCase("en");
+  const filtered = preparedIndex.records.filter((record) => {
+    const entity = record.entity;
+    if (query && !record.searchText.includes(query)) return false;
+    if (state.status !== "all" && entity.reach.classification !== state.status) return false;
+    if (state.countryIso3 && !record.countryIso3s.has(state.countryIso3)) return false;
+    if (state.language && !record.languageKeys.has(state.language)) return false;
+    if (state.religion && !record.religionKeys.has(state.religion)) return false;
+    if (state.bibleAvailability && !record.bibleAvailability.has(state.bibleAvailability)) return false;
+    if (state.minimumPopulation > 0 && record.population < state.minimumPopulation) return false;
+    return true;
+  });
 
-function queryMatches(entity: RuntimePeopleEntity, query: string): boolean {
-  const normalized = query.trim().toLocaleLowerCase("en");
-  if (!normalized) return true;
-  const taxonomy = entityTaxonomy(entity);
-  const haystack = [
-    entity.displayName,
-    String(entity.peid),
-    entity.primaryLanguage?.name,
-    entity.primaryLanguage?.iso6393,
-    entity.primaryReligion?.name,
-    entity.primaryReligion?.code,
-    taxonomy.affinityBloc,
-    taxonomy.peopleCluster,
-    taxonomy.peopleName,
-    taxonomy.ethnographicGroup,
-    ...entity.contexts.flatMap((context) => [
-      context.pgid,
-      context.displayName,
-      context.alternateNames,
-      context.country.name,
-      context.country.iso3,
-      context.language.name,
-      context.language.iso6393,
-      context.religion.name,
-      context.religion.displayName,
-    ]),
-  ];
-  return haystack.some((value) => text(value).includes(normalized));
-}
+  filtered.sort((a, b) => {
+    if (state.sort === "name") return a.entity.displayName.localeCompare(b.entity.displayName, "en");
+    if (state.sort === "gsec-asc") {
+      return a.gsecMin - b.gsecMin
+        || b.population - a.population
+        || a.entity.displayName.localeCompare(b.entity.displayName, "en");
+    }
+    return b.population - a.population || a.entity.displayName.localeCompare(b.entity.displayName, "en");
+  });
 
-function gsecSortValue(entity: RuntimePeopleEntity): number {
-  return entityGsecRange(entity)?.min ?? Number.POSITIVE_INFINITY;
-}
-
-export function filterLivePeople(entities: RuntimePeopleEntity[], state: LivePeopleFilterState): RuntimePeopleEntity[] {
-  return entities
-    .filter((entity) => queryMatches(entity, state.query))
-    .filter((entity) => state.status === "all" || entity.reach.classification === state.status)
-    .filter((entity) => !state.countryIso3 || entity.contexts.some((context) => context.country.iso3 === state.countryIso3))
-    .filter((entity) => !state.language || entity.contexts.some((context) =>
-      context.language.iso6393 === state.language || context.language.name === state.language,
-    ))
-    .filter((entity) => !state.religion || entity.contexts.some((context) =>
-      context.religion.code === state.religion || context.religion.name === state.religion,
-    ))
-    .filter((entity) => !state.bibleAvailability || entity.contexts.some((context) => context.resources.bibleAvailability === state.bibleAvailability))
-    .filter((entity) => state.minimumPopulation <= 0 || entity.population.knownValue >= state.minimumPopulation)
-    .sort((a, b) => {
-      if (state.sort === "name") return a.displayName.localeCompare(b.displayName, "en");
-      if (state.sort === "gsec-asc") {
-        return gsecSortValue(a) - gsecSortValue(b)
-          || b.population.knownValue - a.population.knownValue
-          || a.displayName.localeCompare(b.displayName, "en");
-      }
-      return b.population.knownValue - a.population.knownValue || a.displayName.localeCompare(b.displayName, "en");
-    });
+  return filtered.map((record) => record.entity);
 }
 
 export function useLivePeopleExplorer(enabled = true) {

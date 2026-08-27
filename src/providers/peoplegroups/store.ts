@@ -9,6 +9,7 @@ import {
   type PreparedPeopleGroupsSnapshot,
 } from "./cache";
 import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities, toRuntimePeopleContext } from "./model";
+import { createEmptyRuntimePeopleSearchIndex, getRuntimePeopleSearchIndex, type RuntimePeopleSearchIndex } from "./search-index";
 import { createPeopleGroupsCorpusLoader, type PeopleGroupsCorpusLoadResult } from "./runtime";
 import { buildVisibleCountryRecords, type VisibleCountryRecord } from "./visible";
 import type {
@@ -26,6 +27,7 @@ export interface PeopleGroupsRuntimeProgress {
 interface SharedPeopleGroupsDerivedData {
   peopleByRouteKey: Map<number, RuntimePeopleEntity>;
   peopleByPeid: Map<number, RuntimePeopleEntity>;
+  peopleSearchIndex: RuntimePeopleSearchIndex;
   countries: VisibleCountryRecord[];
   countriesByIso3: Map<string, VisibleCountryRecord>;
   eligiblePrayerPeople: RuntimePeopleEntity[];
@@ -59,6 +61,7 @@ function emptyDerivedData(): SharedPeopleGroupsDerivedData {
   return {
     peopleByRouteKey: new Map(),
     peopleByPeid: new Map(),
+    peopleSearchIndex: createEmptyRuntimePeopleSearchIndex(),
     countries: [],
     countriesByIso3: new Map(),
     eligiblePrayerPeople: [],
@@ -72,10 +75,12 @@ export function buildSharedPeopleGroupsDerivedData(
   countrySummaries: RuntimeCountrySummary[],
 ): SharedPeopleGroupsDerivedData {
   const countries = buildVisibleCountryRecords(contexts, countrySummaries);
+  const peopleSearchIndex = getRuntimePeopleSearchIndex(entities);
   const eligiblePrayerPeople = entities.filter((entity) => entity.reach.unreachedContexts === 1);
   return {
     peopleByRouteKey: new Map(entities.map((entity) => [entity.routeKey, entity])),
     peopleByPeid: new Map(entities.map((entity) => [entity.peid, entity])),
+    peopleSearchIndex,
     countries,
     countriesByIso3: new Map(countries.map((country) => [country.iso3, country])),
     eligiblePrayerPeople,

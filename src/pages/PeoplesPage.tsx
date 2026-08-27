@@ -39,36 +39,8 @@ export function PeoplesPage() {
   const [filters, setFilters] = useState<LivePeopleFilterState>(DEFAULT_FILTERS);
   const [reviewedOnly, setReviewedOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PEOPLE_PAGE_SIZE);
-  const debouncedQuery = useDebouncedValue(filters.query, 120);
-
-  const options = useMemo(() => {
-    const countries = new Map<string, string>();
-    const languages = new Map<string, string>();
-    const religions = new Map<string, string>();
-    const bibleStatuses = new Set<string>();
-
-    for (const people of explorer.peoples) {
-      for (const context of people.contexts) {
-        countries.set(context.country.iso3, context.country.name);
-        if (context.language.iso6393 || context.language.name) {
-          const key = context.language.iso6393 ?? context.language.name!;
-          languages.set(key, context.language.iso6393 ? `${context.language.name ?? context.language.iso6393} (${context.language.iso6393})` : context.language.name!);
-        }
-        if (context.religion.code || context.religion.name) {
-          const key = context.religion.code ?? context.religion.name!;
-          religions.set(key, context.religion.name ?? context.religion.displayName ?? context.religion.code!);
-        }
-        if (context.resources.bibleAvailability) bibleStatuses.add(context.resources.bibleAvailability);
-      }
-    }
-
-    return {
-      countries: [...countries.entries()].sort((a, b) => a[1].localeCompare(b[1], "en")),
-      languages: [...languages.entries()].sort((a, b) => a[1].localeCompare(b[1], "en")),
-      religions: [...religions.entries()].sort((a, b) => a[1].localeCompare(b[1], "en")),
-      bibleStatuses: [...bibleStatuses].sort((a, b) => a.localeCompare(b, "en")),
-    };
-  }, [explorer.peoples]);
+  const debouncedQuery = useDebouncedValue(filters.query, 100);
+  const options = explorer.peopleSearchIndex.options;
 
   const effectiveFilters = useMemo<LivePeopleFilterState>(() => ({ ...filters, query: debouncedQuery }), [
     debouncedQuery,
@@ -80,7 +52,10 @@ export function PeoplesPage() {
     filters.minimumPopulation,
     filters.sort,
   ]);
-  const filteredResults = useMemo(() => filterLivePeople(explorer.peoples, effectiveFilters), [explorer.peoples, effectiveFilters]);
+  const filteredResults = useMemo(
+    () => filterLivePeople(explorer.peoples, effectiveFilters, explorer.peopleSearchIndex),
+    [explorer.peoples, explorer.peopleSearchIndex, effectiveFilters],
+  );
   const results = useMemo(() => reviewedOnly ? filteredResults.filter((people) => editorial.profilesByPeid.has(people.peid)) : filteredResults, [filteredResults, reviewedOnly, editorial.profilesByPeid]);
   const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
   const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;

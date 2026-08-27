@@ -2,11 +2,13 @@ import { ArrowRight, Bookmark, CalendarDays, Compass, Database, Globe2, List, Re
 import { useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
+import { useDebouncedValue } from "../hooks/useResponsiveWork";
 import { prayerSnapshotFromEntity, selectNextPrayerRotationEntry, usePersonalization } from "../personalization";
 import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
   buildLivePrayerProfile,
   dateKeyLocal,
+  filterLivePrayerEntities,
   selectDailyLivePrayerEntity,
   useLivePrayerExperience,
   type LivePrayerProfile,
@@ -78,38 +80,27 @@ function PrayerCard({
   );
 }
 
-function matchesQuery(entity: RuntimePeopleEntity, query: string): boolean {
-  const needle = query.trim().toLocaleLowerCase("en");
-  if (!needle) return true;
-  return [
-    entity.displayName,
-    String(entity.peid),
-    entity.primaryLanguage?.name,
-    entity.primaryReligion?.name,
-    ...entity.contexts.flatMap((context) => [context.country.name, context.country.iso3, context.pgid]),
-  ].some((value) => value?.toLocaleLowerCase("en").includes(needle));
-}
-
 export function PrayPage() {
   const prayer = useLivePrayerExperience();
   const personalization = usePersonalization();
   const countryIso3 = countryFilterFromHash();
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query, 100);
 
   const prayerListIds = useMemo(() => new Set(personalization.state.prayerList.map((item) => item.sourcePeopleId)), [personalization.state.prayerList]);
   const eligibleSourcePeopleIdsInScope = useMemo(() => new Set(prayer.eligible
-    .filter((entity) => !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached"))
-    .map((entity) => entity.routeKey)), [prayer.eligible, countryIso3]);
+    .filter((entity) => !countryIso3 || prayer.peopleSearchIndex.byRouteKey.get(entity.routeKey)?.unreachedCountryIso3s.has(countryIso3))
+    .map((entity) => entity.routeKey)), [prayer.eligible, prayer.peopleSearchIndex, countryIso3]);
 
   const rotationEntry = useMemo(() => selectNextPrayerRotationEntry(personalization.state.prayerList, {
     eligibleSourcePeopleIds: eligibleSourcePeopleIdsInScope,
   }), [personalization.state.prayerList, eligibleSourcePeopleIdsInScope]);
   const rotationEntity = rotationEntry ? prayer.peopleByRouteKey.get(rotationEntry.sourcePeopleId) ?? null : null;
 
-  const scoped = useMemo(() => prayer.eligible
-    .filter((entity) => !countryIso3 || entity.contexts.some((context) => context.country.iso3 === countryIso3 && context.reach.classification === "unreached"))
-    .filter((entity) => matchesQuery(entity, query))
-    .sort((a, b) => b.population.knownValue - a.population.knownValue || a.displayName.localeCompare(b.displayName, "en")), [prayer.eligible, countryIso3, query]);
+  const scoped = useMemo(
+    () => filterLivePrayerEntities(prayer.eligible, debouncedQuery, countryIso3, prayer.peopleSearchIndex),
+    [prayer.eligible, prayer.peopleSearchIndex, countryIso3, debouncedQuery],
+  );
 
   const dailyEntity = prayer.ready
     ? rotationEntity ?? selectDailyLivePrayerEntity(prayer.eligible, dateKeyLocal(), countryIso3)

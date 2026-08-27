@@ -4,6 +4,7 @@ export * from "./model";
 export * from "./record-runtime";
 export * from "./record-store";
 export * from "./runtime";
+export * from "./search-index";
 export * from "./store";
 export * from "./types";
 export * from "./visible";
