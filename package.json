@@ -19,7 +19,7 @@
     "geography:check": "tsx scripts/geography/check.ts",
     "visualization:check": "tsx scripts/visualization/check.ts && tsx scripts/visualization/phase10-check.ts",
     "visualization:live-check": "tsx scripts/visualization/live-check.ts",
-    "country:check": "tsx scripts/countries/check.ts",
+    "country:check": "tsx scripts/countries/check.ts && tsx scripts/countries/phase11-check.ts",
     "people:check": "tsx scripts/peoples/check.ts && tsx scripts/peoples/phase8-check.ts && tsx scripts/peoples/phase9-check.ts",
     "context:check": "tsx scripts/context/check.ts",
     "editorial-expansion:check": "tsx scripts/context/v15-check.ts",
