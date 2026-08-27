@@ -105,9 +105,16 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
     setSearchOpen(true);
   };
 
+  const skipToContent = (event: MouseEvent) => {
+    event.preventDefault();
+    const main = document.getElementById("main-content");
+    main?.focus({ preventScroll: true });
+    main?.scrollIntoView({ block: "start", behavior: "auto" });
+  };
+
   return (
     <div class="site-shell">
-      <a class="skip-link" href="#main-content">Skip to content</a>
+      <a class="skip-link" href="#main-content" onClick={skipToContent}>Skip to content</a>
 
       <header class="site-header">
         <a class="brand" href={hrefFor("/")} aria-label="Unreached home">
