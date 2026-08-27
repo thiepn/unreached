@@ -101,7 +101,10 @@ export function hrefFor(path: string): string {
 export function useHashRoute(): RouteState {
   const [route, setRoute] = useState<RouteState>(() => readRoute());
   const historyTraversalRef = useRef(false);
-  const resetViewportRef = useRef(false);
+  // A fresh direct route load should establish the app's main landmark as the
+  // keyboard focus target. Later browser-history traversals deliberately set
+  // this false so native scroll/focus restoration is not overwritten.
+  const resetViewportRef = useRef(true);
 
   useEffect(() => {
     const previousScrollRestoration = window.history.scrollRestoration;
