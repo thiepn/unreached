@@ -117,7 +117,7 @@ test.describe("v2.0 optional private accounts", () => {
     await installHealth(page, false);
     await page.goto("./#/account");
 
-    await expect(page.getByRole("heading", { name: "Use Unreached locally, or carry a small private list across devices." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Private sync is optional." })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Local-only mode" })).toBeVisible();
     await expect(page.getByText("Your browser-local data continues to work normally.")).toBeVisible();
 
@@ -148,7 +148,7 @@ test.describe("v2.0 optional private accounts", () => {
 
     await page.goto("./#/account");
     await expect(page.getByRole("heading", { name: "Signed in · sync not enabled" })).toBeVisible();
-    await expect(page.getByText(/Choose the explicit merge below before any local Saved or prayer data is uploaded/)).toBeVisible();
+    await expect(page.getByText(/Nothing is uploaded until you explicitly merge this device and enable sync/)).toBeVisible();
 
     await page.getByRole("button", { name: "Merge this device & enable sync" }).click();
     await expect(page.getByRole("heading", { name: "Private sync enabled" })).toBeVisible();
@@ -259,7 +259,9 @@ test.describe("v2.0 optional private accounts", () => {
     await expect.poll(() => page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null").pending.length, SYNC_STORAGE)).toBe(0);
 
     page.on("dialog", (dialog) => void dialog.accept());
-    await page.getByRole("button", { name: "Delete private account data" }).click();
+    const danger = page.locator("details.account-danger-disclosure");
+    await danger.locator("summary").click();
+    await danger.getByRole("button", { name: "Delete private account data" }).click();
     await expect.poll(() => page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null").enabled, SYNC_STORAGE)).toBe(false);
     const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "null"), LOCAL_STORAGE);
     expect(stored.savedPeoples.length).toBeGreaterThan(0);
