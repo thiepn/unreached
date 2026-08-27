@@ -24,9 +24,12 @@ export function LanguagesPage() {
   const explorer = useLiveLanguageExplorer();
   const [filters, setFilters] = useState<LiveLanguageFilterState>(initialFilters);
   const [visibleCount, setVisibleCount] = useState(LANGUAGE_PAGE_SIZE);
-  const debouncedQuery = useDebouncedValue(filters.query, 120);
+  const debouncedQuery = useDebouncedValue(filters.query, 100);
   const effectiveFilters = useMemo<LiveLanguageFilterState>(() => ({ ...filters, query: debouncedQuery }), [debouncedQuery, filters.reach, filters.bible, filters.sort]);
-  const records = useMemo(() => filterLiveLanguages(explorer.languages, effectiveFilters), [explorer.languages, effectiveFilters]);
+  const records = useMemo(
+    () => filterLiveLanguages(explorer.languages, effectiveFilters, explorer.searchIndex),
+    [explorer.languages, explorer.searchIndex, effectiveFilters],
+  );
   const visibleRecords = useMemo(() => records.slice(0, visibleCount), [records, visibleCount]);
   const activeFilterCount = Number(filters.reach !== "all") + Number(filters.bible !== "all");
 

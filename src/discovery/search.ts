@@ -32,6 +32,8 @@ export interface SearchDocument {
   secondary: string | null;
   href: string;
   searchText: string;
+  normalizedLabel: string;
+  compactLabel: string;
 }
 
 export interface SearchResult extends SearchDocument {
@@ -52,7 +54,17 @@ function compact(values: Array<string | null | undefined>): string[] {
 }
 
 function document(domain: SearchDomain, id: string, label: string, secondary: string | null, href: string, aliases: string[]): SearchDocument {
-  return { id, domain, label, secondary, href, searchText: normalize([label, secondary ?? "", ...aliases].join(" ")) };
+  const normalizedLabel = normalize(label);
+  return {
+    id,
+    domain,
+    label,
+    secondary,
+    href,
+    searchText: normalize([label, secondary ?? "", ...aliases].join(" ")),
+    normalizedLabel,
+    compactLabel: normalizedLabel.replaceAll(" ", ""),
+  };
 }
 
 export function buildSearchDocuments(input: {
@@ -95,8 +107,8 @@ function isSubsequence(query: string, value: string): boolean {
   return false;
 }
 
-function scoreDocument(doc: SearchDocument, normalizedQuery: string): number {
-  const label = normalize(doc.label);
+function scoreDocument(doc: SearchDocument, normalizedQuery: string, compactQuery: string): number {
+  const label = doc.normalizedLabel;
   if (label === normalizedQuery) return 1000;
   if (label.startsWith(normalizedQuery)) return 900 - Math.min(80, label.length - normalizedQuery.length);
   if (label.includes(normalizedQuery)) return 800 - Math.min(100, label.indexOf(normalizedQuery));
@@ -105,24 +117,31 @@ function scoreDocument(doc: SearchDocument, normalizedQuery: string): number {
   if (queryTokens.length > 1 && queryTokens.every((token) => doc.searchText.includes(token))) return 720;
   if (doc.searchText.includes(normalizedQuery)) return 650;
 
-  if (normalizedQuery.length >= 3 && isSubsequence(normalizedQuery.replaceAll(" ", ""), label.replaceAll(" ", ""))) {
+  if (normalizedQuery.length >= 3 && isSubsequence(compactQuery, doc.compactLabel)) {
     return 560 - Math.min(120, Math.abs(label.length - normalizedQuery.length) * 4);
   }
 
   return -1;
 }
 
+function insertBest(best: SearchResult[], candidate: SearchResult, limit: number): void {
+  const index = best.findIndex((existing) => candidate.score > existing.score
+    || (candidate.score === existing.score && candidate.label.localeCompare(existing.label) < 0));
+  if (index >= 0) best.splice(index, 0, candidate);
+  else if (best.length < limit) best.push(candidate);
+  if (best.length > limit) best.pop();
+}
+
 export function searchDocuments(documents: SearchDocument[], query: string, limit = 18): SearchResult[] {
   const normalizedQuery = normalize(query);
-  if (!normalizedQuery) return [];
+  if (!normalizedQuery || limit <= 0) return [];
+  const compactQuery = normalizedQuery.replaceAll(" ", "");
   const best: SearchResult[] = [];
 
   for (const doc of documents) {
-    const score = scoreDocument(doc, normalizedQuery);
+    const score = scoreDocument(doc, normalizedQuery, compactQuery);
     if (score < 0) continue;
-    best.push({ ...doc, score });
-    best.sort((a, b) => b.score - a.score || a.label.localeCompare(b.label));
-    if (best.length > limit) best.pop();
+    insertBest(best, { ...doc, score }, limit);
   }
 
   return best;

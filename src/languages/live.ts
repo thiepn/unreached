@@ -56,6 +56,15 @@ export interface LiveLanguageRecord {
   denominator: "PeopleGroups.org PGID country-context records reporting this ISO 639-3 language";
 }
 
+export interface LiveLanguageSearchRecord {
+  searchText: string;
+  bibleLabels: ReadonlySet<string>;
+}
+
+export interface LiveLanguageSearchIndex {
+  byIso: Map<string, LiveLanguageSearchRecord>;
+}
+
 export type LiveLanguageReachFilter = "all" | "has-unreached" | "no-unreached" | "unknown-only";
 export type LiveLanguageSort = "name" | "people-count-desc" | "represented-population-desc" | "unreached-contexts-desc";
 
@@ -182,10 +191,37 @@ export function buildLiveLanguageRecords(contexts: RuntimePeopleContext[]): Live
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+const languageSearchIndexCache = new WeakMap<LiveLanguageRecord[], LiveLanguageSearchIndex>();
+
+export function getLiveLanguageSearchIndex(records: LiveLanguageRecord[]): LiveLanguageSearchIndex {
+  const cached = languageSearchIndexCache.get(records);
+  if (cached) return cached;
+  const byIso = new Map<string, LiveLanguageSearchRecord>();
+  for (const record of records) {
+    const searchText = [
+      record.name,
+      record.iso6393,
+      record.familyName,
+      ...record.countries.map((country) => country.name),
+      ...record.peoples.map((people) => people.name),
+      ...record.bible.breakdown.map((item) => item.label),
+      ...record.jesusFilm.breakdown.map((item) => item.label),
+    ].filter(Boolean).join("\u0000").toLocaleLowerCase("en");
+    byIso.set(record.iso6393, {
+      searchText,
+      bibleLabels: new Set(record.bible.breakdown.map((item) => item.label)),
+    });
+  }
+  const index = { byIso };
+  languageSearchIndexCache.set(records, index);
+  return index;
+}
+
 interface SharedLiveLanguageData {
   languages: LiveLanguageRecord[];
   languagesByIso: Map<string, LiveLanguageRecord>;
   bibleLabels: string[];
+  searchIndex: LiveLanguageSearchIndex;
 }
 
 const sharedLanguageCache = new WeakMap<RuntimePeopleContext[], SharedLiveLanguageData>();
@@ -198,29 +234,26 @@ export function getSharedLiveLanguageData(contexts: RuntimePeopleContext[]): Sha
     languages,
     languagesByIso: new Map(languages.map((language) => [language.iso6393, language])),
     bibleLabels: [...new Set(languages.flatMap((language) => language.bible.breakdown.map((item) => item.label)))].sort(),
+    searchIndex: getLiveLanguageSearchIndex(languages),
   };
   sharedLanguageCache.set(contexts, shared);
   return shared;
 }
 
-export function filterLiveLanguages(records: LiveLanguageRecord[], state: LiveLanguageFilterState): LiveLanguageRecord[] {
+export function filterLiveLanguages(
+  records: LiveLanguageRecord[],
+  state: LiveLanguageFilterState,
+  preparedIndex: LiveLanguageSearchIndex = getLiveLanguageSearchIndex(records),
+): LiveLanguageRecord[] {
   const query = state.query.trim().toLocaleLowerCase("en");
   return records.filter((record) => {
     if (state.reach === "has-unreached" && record.unreachedContextCount === 0) return false;
     if (state.reach === "no-unreached" && record.unreachedContextCount > 0) return false;
     if (state.reach === "unknown-only" && record.unknownContextCount !== record.contextCount) return false;
-    if (state.bible !== "all" && !record.bible.breakdown.some((item) => item.label === state.bible)) return false;
+    const prepared = preparedIndex.byIso.get(record.iso6393);
+    if (state.bible !== "all" && !prepared?.bibleLabels.has(state.bible)) return false;
     if (!query) return true;
-    const haystack = [
-      record.name,
-      record.iso6393,
-      record.familyName,
-      ...record.countries.map((country) => country.name),
-      ...record.peoples.map((people) => people.name),
-      ...record.bible.breakdown.map((item) => item.label),
-      ...record.jesusFilm.breakdown.map((item) => item.label),
-    ].filter(Boolean).join(" ").toLocaleLowerCase("en");
-    return haystack.includes(query);
+    return prepared?.searchText.includes(query) ?? false;
   }).sort((a, b) => {
     if (state.sort === "people-count-desc") return b.peopleEntityCount - a.peopleEntityCount || a.name.localeCompare(b.name);
     if (state.sort === "represented-population-desc") return b.knownPopulation - a.knownPopulation || a.name.localeCompare(b.name);

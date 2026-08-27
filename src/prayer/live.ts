@@ -1,4 +1,10 @@
-import { entityResourceBreakdown, usePeopleGroupsRuntimeStore, type RuntimePeopleEntity } from "../providers/peoplegroups";
+import {
+  entityResourceBreakdown,
+  getRuntimePeopleSearchIndex,
+  usePeopleGroupsRuntimeStore,
+  type RuntimePeopleEntity,
+  type RuntimePeopleSearchIndex,
+} from "../providers/peoplegroups";
 import type { PrayerCategory, ScriptureReference } from "./types";
 
 export const LIVE_PRAYER_TEMPLATE_VERSION = "u12c-v1";
@@ -44,6 +50,29 @@ function scripture(reference: string, purpose: string): ScriptureReference {
 
 export function isLivePrayerEligible(entity: RuntimePeopleEntity): boolean {
   return entity.reach.unreachedContexts === 1;
+}
+
+export function filterLivePrayerEntities(
+  entities: RuntimePeopleEntity[],
+  query: string,
+  countryIso3?: string | null,
+  preparedIndex: RuntimePeopleSearchIndex = getRuntimePeopleSearchIndex(entities),
+): RuntimePeopleEntity[] {
+  const needle = query.trim().toLocaleLowerCase("en");
+  const filtered = entities.filter((entity) => {
+    const prepared = preparedIndex.byRouteKey.get(entity.routeKey);
+    if (!prepared) return false;
+    if (countryIso3 && !prepared.unreachedCountryIso3s.has(countryIso3)) return false;
+    if (needle && !prepared.prayerSearchText.includes(needle)) return false;
+    return true;
+  });
+  filtered.sort((a, b) => {
+    const preparedA = preparedIndex.byRouteKey.get(a.routeKey);
+    const preparedB = preparedIndex.byRouteKey.get(b.routeKey);
+    return (preparedB?.population ?? b.population.knownValue) - (preparedA?.population ?? a.population.knownValue)
+      || a.displayName.localeCompare(b.displayName, "en");
+  });
+  return filtered;
 }
 
 export function buildLivePrayerProfile(entity: RuntimePeopleEntity): LivePrayerProfile {
