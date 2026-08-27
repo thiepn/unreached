@@ -1,4 +1,4 @@
-import { ArrowRight, Bookmark, BookmarkCheck, Compass, Eye, HeartHandshake } from "lucide-preact";
+import { ArrowRight, Bookmark, BookmarkCheck, Check, Compass, Eye, HeartHandshake } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
 import { isPersonSaved, usePersonalization } from "../personalization";
@@ -13,20 +13,33 @@ export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity })
   const country = record.contexts[0]?.country ?? null;
 
   return (
-    <section class="profile-local-actions profile-local-actions--journey" aria-label="Explore understand pray journey">
-      <div class="profile-journey" aria-label="Current journey step">
-        <a class="profile-journey__step" href={country ? `#/?country=${encodeURIComponent(country.iso3)}` : hrefFor("/")}>
+    <section class="profile-local-actions profile-local-actions--journey profile-local-actions--phase9" aria-labelledby="profile-next-step-heading">
+      <div class="profile-action-heading">
+        <div>
+          <span class="eyebrow">2 · Act from context</span>
+          <h2 id="profile-next-step-heading">{prayerEligible ? "Carry what you learned into prayer." : "Keep this source record for reference."}</h2>
+        </div>
+        <p>{prayerEligible
+          ? "Prayer comes after the source context on this profile. The focused guide keeps the same people-group identity and does not add unreviewed community claims."
+          : "This record is outside the GSEC 0–3 focused-prayer flow. You can still save it locally and continue exploring the source context."}</p>
+      </div>
+
+      <div class="profile-journey" aria-label="Explore understand pray journey">
+        <a class="profile-journey__step is-complete" href={country ? `#/?country=${encodeURIComponent(country.iso3)}` : hrefFor("/")}>
           <Compass size={17} aria-hidden="true" />
           <span><small>1 · Explore</small><strong>{country ? country.name : "Mission atlas"}</strong></span>
+          <Check class="profile-journey__check" size={15} aria-hidden="true" />
         </a>
         <div class="profile-journey__step is-current" aria-current="step">
           <Eye size={17} aria-hidden="true" />
-          <span><small>2 · Understand</small><strong>This source record</strong></span>
+          <span><small>2 · Understand</small><strong>Source context reviewed</strong></span>
+          <Check class="profile-journey__check" size={15} aria-hidden="true" />
         </div>
         {prayerEligible ? (
-          <a class="profile-journey__step" href={hrefFor(`/pray/${sourcePeopleId}`)}>
+          <a class="profile-journey__step is-next" href={hrefFor(`/pray/${sourcePeopleId}`)}>
             <HeartHandshake size={17} aria-hidden="true" />
             <span><small>3 · Pray</small><strong>Focused prayer guide</strong></span>
+            <ArrowRight size={15} aria-hidden="true" />
           </a>
         ) : (
           <div class="profile-journey__step is-disabled" aria-disabled="true">
@@ -36,16 +49,15 @@ export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity })
         )}
       </div>
 
-      <div class="profile-next-step">
+      <div class="profile-next-step profile-next-step--phase9">
         <div>
-          <span class="eyebrow">Next step</span>
-          <strong>{prayerEligible ? "You have the source context. Continue into prayer." : "Keep this source record for reference."}</strong>
+          <strong>{prayerEligible ? "Ready for the next step?" : "Want to return to this profile?"}</strong>
           <p>{prayerEligible
-            ? "The prayer guide uses this source-backed identity and a fixed release-certified template; it does not add unreviewed community claims."
-            : "This current source record is not eligible for the GSEC 0–3 focused prayer flow, but you can save the profile locally."}</p>
+            ? "Open the prayer guide when you are ready; saving is optional and stays local unless you have explicitly enabled Private Sync."
+            : "Saving keeps this people-group reference available in your personal list."}</p>
         </div>
         <div class="profile-local-actions__buttons">
-          {prayerEligible ? <a class="profile-pray-button" href={hrefFor(`/pray/${sourcePeopleId}`)}>Pray now <ArrowRight size={17} aria-hidden="true" /></a> : null}
+          {prayerEligible ? <a class="profile-pray-button" href={hrefFor(`/pray/${sourcePeopleId}`)}>Pray with this context <ArrowRight size={17} aria-hidden="true" /></a> : null}
           <button
             type="button"
             class={`profile-save-button${saved ? " is-saved" : ""}`}
