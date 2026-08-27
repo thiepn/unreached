@@ -41,7 +41,7 @@ const main = await readText("src/main.tsx");
 if (!main.includes('import "./styles/v21-navigation.css"')) throw new Error("Phase 7 navigation stylesheet is not loaded last.");
 
 const saved = await readText("src/pages/SavedPage.tsx");
-if (!saved.includes('<h1 class="display-title">My lists</h1>')) throw new Error("Phase 7 private workspace must use the My lists destination name.");
+if (!/<h1\b[^>]*class="display-title"[^>]*>My lists<\/h1>/.test(saved)) throw new Error("Phase 7 private workspace must use the My lists destination name.");
 
 const router = await readText("src/app/router.ts");
 if (!router.includes('if (route.id === "saved") return "My Lists | Unreached"')) throw new Error("Phase 7 saved route title must match My lists navigation.");

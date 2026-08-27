@@ -17,6 +17,8 @@ import {
 } from "../prayer";
 import type { RuntimePeopleEntity } from "../providers/peoplegroups";
 
+const PRAYER_LIBRARY_BATCH_SIZE = 24;
+
 function categoryLabel(category: PrayerCategory): string {
   const labels: Record<PrayerCategory, string> = {
     gospel: "Gospel",
@@ -85,6 +87,7 @@ export function PrayPage() {
   const personalization = usePersonalization();
   const countryIso3 = countryFilterFromHash();
   const [query, setQuery] = useState(() => readHashSearchParams().get("q") ?? "");
+  const [visibleCount, setVisibleCount] = useState(PRAYER_LIBRARY_BATCH_SIZE);
   const debouncedQuery = useDebouncedValue(query, 100);
 
   const prayerListIds = useMemo(() => new Set(personalization.state.prayerList.map((item) => item.sourcePeopleId)), [personalization.state.prayerList]);
@@ -109,12 +112,17 @@ export function PrayPage() {
     replaceHashSearchParams(params);
   }, [countryIso3, query]);
 
+  useEffect(() => {
+    setVisibleCount(PRAYER_LIBRARY_BATCH_SIZE);
+  }, [debouncedQuery, countryIso3]);
+
   const dailyEntity = prayer.ready
     ? rotationEntity ?? selectDailyLivePrayerEntity(prayer.eligible, dateKeyLocal(), countryIso3)
     : null;
   const daily = dailyEntity ? buildLivePrayerProfile(dailyEntity) : null;
   const dailyFromRotation = Boolean(dailyEntity && rotationEntry && dailyEntity.routeKey === rotationEntry.sourcePeopleId);
-  const visible = scoped.slice(0, 60);
+  const visible = scoped.slice(0, visibleCount);
+  const remaining = Math.max(0, scoped.length - visible.length);
 
   const togglePrayer = (entity: RuntimePeopleEntity) => personalization.togglePrayer(prayerSnapshotFromEntity(entity));
   const clearCountryHref = hrefFor(`/pray${query ? `?q=${encodeURIComponent(query)}` : ""}`);
@@ -162,8 +170,9 @@ export function PrayPage() {
           <section class="prayer-library" aria-labelledby="prayer-library-heading">
             <div class="prayer-section-heading"><div><span class="eyebrow">Live prayer subjects</span><h2 id="prayer-library-heading">Choose a people</h2></div><Compass size={21} aria-hidden="true" /></div>
             <label class="countries-search" for="prayer-search"><Search size={18} aria-hidden="true" /><span class="sr-only">Search prayer subjects</span><input id="prayer-search" type="search" value={query} onInput={(event) => setQuery(event.currentTarget.value)} placeholder="Search people, country, language or PEID" /></label>
-            <p class="prayer-empty">{scoped.length} matching people entities. Showing up to 60 at once.</p>
+            {scoped.length ? <div class="detail-record-progress prayer-library-progress" aria-live="polite"><strong>Showing {visible.length} of {scoped.length}</strong><span>Current GSEC 0–3 prayer subjects</span></div> : null}
             {visible.length ? <div class="prayer-card-grid">{visible.map((entity) => <PrayerCard key={entity.id} entity={entity} profile={buildLivePrayerProfile(entity)} listed={prayerListIds.has(entity.routeKey)} onTogglePrayer={togglePrayer} />)}</div> : <p class="prayer-empty">No live prayer subjects match this scope.</p>}
+            {remaining ? <div class="result-load-more result-load-more--detail prayer-library-more"><button type="button" onClick={() => setVisibleCount((current) => Math.min(current + PRAYER_LIBRARY_BATCH_SIZE, scoped.length))}>Show {Math.min(PRAYER_LIBRARY_BATCH_SIZE, remaining)} more</button><span>{remaining} remaining</span></div> : null}
           </section>
         </>
       ) : null}

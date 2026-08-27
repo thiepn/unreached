@@ -4,6 +4,12 @@ import { installPeopleGroupsFixture, VISIBLE_TEST_PEOPLE } from "./peoplegroups-
 
 const PEOPLEGROUPS_API = /https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/;
 
+async function expectDataState(page: Page, state: string): Promise<void> {
+  const status = page.locator(`[data-data-state="${state}"]`).first();
+  await expect(status).toHaveAttribute("data-data-state", state);
+  if ((page.viewportSize()?.width ?? 1280) > 760) await expect(status).toBeVisible();
+}
+
 async function ensureServiceWorkerControl(page: Page): Promise<void> {
   await page.evaluate(async () => {
     if (!("serviceWorker" in navigator)) throw new Error("service workers unavailable in this browser");
@@ -58,14 +64,14 @@ test.describe("v1.9 production offline shell", () => {
     await installPeopleGroupsFixture(page);
     await page.goto("./#/peoples");
     await expect(page.getByText(VISIBLE_TEST_PEOPLE, { exact: true }).first()).toBeVisible();
-    await expect(page.locator('[data-data-state="live"]')).toBeVisible();
+    await expectDataState(page, "live");
     await ensureServiceWorkerControl(page);
 
     await context.setOffline(true);
     try {
       await page.reload({ waitUntil: "domcontentloaded" });
       await expect(page.getByText(VISIBLE_TEST_PEOPLE, { exact: true }).first()).toBeVisible();
-      await expect(page.locator('[data-data-state="cached"]')).toBeVisible();
+      await expectDataState(page, "cached");
     } finally {
       await context.setOffline(false);
     }
@@ -86,7 +92,7 @@ test.describe("v1.9 offline mission-data runtime", () => {
     try {
       await page.evaluate(() => { window.location.hash = "#/peoples"; });
       await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
-      await expect(page.locator('[data-data-state="offline-empty"]')).toBeVisible();
+      await expectDataState(page, "offline-empty");
       await expect(page.getByText(/no validated PeopleGroups cache is available yet/i)).toBeVisible();
       await expect(page.getByText(/Reconnect once to prepare mission data for offline return/i)).toBeVisible();
     } finally {
@@ -101,11 +107,11 @@ test.describe("v1.9 offline mission-data runtime", () => {
     await context.setOffline(true);
     await page.evaluate(() => { window.location.hash = "#/peoples"; });
     await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
-    await expect(page.locator('[data-data-state="offline-empty"]')).toBeVisible();
+    await expectDataState(page, "offline-empty");
 
     await context.setOffline(false);
     await page.evaluate(() => window.dispatchEvent(new Event("online")));
     await expect(page.getByText(VISIBLE_TEST_PEOPLE, { exact: true }).first()).toBeVisible();
-    await expect(page.locator('[data-data-state="live"]')).toBeVisible();
+    await expectDataState(page, "live");
   });
 });

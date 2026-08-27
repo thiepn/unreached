@@ -20,7 +20,7 @@ test("live people and country surfaces preserve one-record PEID, PGID and GSEC s
   await expect(profile.getByText(/PeopleGroups.org estimate for Benin/)).toBeVisible();
   await expect(profile.getByText("Bible: Available", { exact: true })).toBeVisible();
   await expect(profile.getByText(/one PGID country-context record for this PEID/)).toBeVisible();
-  await expect(profile.getByRole("link", { name: /Pray now/ })).toBeVisible();
+  await expect(profile.getByRole("link", { name: /Pray with this context/ })).toBeVisible();
 
   const sourceDetails = profile.locator(".people-disclosure").filter({ hasText: "Sources, taxonomy & methodology" });
   await sourceDetails.locator("summary").click();

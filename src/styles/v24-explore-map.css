@@ -239,18 +239,23 @@
     padding-bottom: var(--space-3);
   }
 
-  .explore-panel--phase10 .country-index--primary,
-  .explore-panel--phase10 .country-browser {
+  .explore-panel--phase10 .country-index--primary {
+    display: flex;
     min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
   }
 
   .explore-panel--phase10 .country-browser {
+    min-height: 0;
     height: auto;
     max-height: none;
+    flex: 1 1 auto;
     overflow: hidden;
   }
 
   .explore-panel--phase10 .country-list {
+    min-height: 0;
     flex: 1 1 auto;
   }
 }

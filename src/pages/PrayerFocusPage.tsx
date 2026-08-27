@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Clock, Compass, Database, RefreshCw, RotateCcw } from "lucide-preact";
+import { ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Compass, Database, RefreshCw, RotateCcw } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
@@ -12,7 +12,13 @@ import {
 } from "../prayer";
 import { usePeopleGroupsRouteRecord } from "../providers/peoplegroups";
 
-type PrayerMinutes = 2 | 5 | 10;
+type PrayerPace = "short" | "standard" | "extended";
+
+const PRAYER_PACES = [
+  { id: "short", label: "Short", prompts: 3, flowValue: 2 },
+  { id: "standard", label: "Standard", prompts: 5, flowValue: 5 },
+  { id: "extended", label: "Extended", prompts: 7, flowValue: 10 },
+] as const satisfies ReadonlyArray<{ id: PrayerPace; label: string; prompts: number; flowValue: 2 | 5 | 10 }>;
 
 function categoryLabel(category: PrayerCategory): string {
   return category === "specific-need" ? "Specific need" : category.charAt(0).toUpperCase() + category.slice(1);
@@ -21,11 +27,12 @@ function categoryLabel(category: PrayerCategory): string {
 export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) {
   const route = usePeopleGroupsRouteRecord(sourcePeopleId);
   const personalization = usePersonalization();
-  const [minutes, setMinutes] = useState<PrayerMinutes>(5);
+  const [pace, setPace] = useState<PrayerPace>("standard");
   const [activeIndex, setActiveIndex] = useState(0);
+  const paceConfig = PRAYER_PACES.find((option) => option.id === pace) ?? PRAYER_PACES[1];
   const entity = route.entity;
   const profile = entity && isLivePrayerEligible(entity) ? buildLivePrayerProfile(entity) : null;
-  const flow = useMemo(() => profile ? livePrayerFlow(profile, minutes) : [], [profile, minutes]);
+  const flow = useMemo(() => profile ? livePrayerFlow(profile, paceConfig.flowValue) : [], [profile, paceConfig.flowValue]);
   const activePrompt = flow[activeIndex] ?? null;
   const prayerSnapshot = entity ? prayerSnapshotFromEntity(entity) : null;
   const prayerListEntry = personalization.state.prayerList.find((item) => item.sourcePeopleId === sourcePeopleId) ?? null;
@@ -35,7 +42,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
     excludeSourcePeopleId: sourcePeopleId,
   }), [personalization.state.prayerList, sourcePeopleId]);
 
-  useEffect(() => setActiveIndex(0), [minutes, sourcePeopleId]);
+  useEffect(() => setActiveIndex(0), [pace, sourcePeopleId]);
 
   if (route.loading) return <section class="prayer-focus prayer-state" role="status">Loading live prayer record…</section>;
   if (route.error) {
@@ -61,7 +68,6 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
     );
   }
 
-  const secondsPerPrompt = Math.max(20, Math.round((minutes * 60) / flow.length));
   return (
     <article class="prayer-focus" data-prayer-data-source={route.source ?? "unknown"} data-prayer-pgid={entity.contexts[0]?.pgid ?? ""}>
       <nav class="prayer-focus__back" aria-label="Prayer navigation"><a href={hrefFor("/pray")}><ArrowLeft size={15} aria-hidden="true" /> Prayer</a><span>/</span><a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>{profile.peopleName}</a></nav>
@@ -86,12 +92,12 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
         <Compass size={32} aria-hidden="true" />
       </header>
 
-      <div class="prayer-duration" aria-label="Prayer mode length">
-        <span><Clock size={16} aria-hidden="true" /> Choose a pace</span>
-        <div role="group" aria-label="Prayer duration">
-          {([2, 5, 10] as const).map((value) => <button type="button" class={minutes === value ? "is-active" : ""} aria-pressed={minutes === value} onClick={() => setMinutes(value)} key={value}>{value} min</button>)}
+      <div class="prayer-duration" aria-label="Prayer guide length">
+        <span>Choose a guide length</span>
+        <div role="group" aria-label="Prayer guide length">
+          {PRAYER_PACES.map((option) => <button type="button" class={pace === option.id ? "is-active" : ""} aria-pressed={pace === option.id} onClick={() => setPace(option.id)} key={option.id}><strong>{option.label}</strong><small>{option.prompts} prompts</small></button>)}
         </div>
-        <small>About {secondsPerPrompt} seconds per prompt. This is a pacing aid, not a timer or completion target.</small>
+        <small>Choose how many prompts to work through. No timer runs, and there is no completion target.</small>
       </div>
 
       <section class="prayer-prompt-stage" aria-live="polite">

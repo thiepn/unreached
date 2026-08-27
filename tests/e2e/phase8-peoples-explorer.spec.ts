@@ -47,7 +47,7 @@ test("advanced filters stay progressive and expose removable active filters", as
   const panel = page.locator(".people-filter-panel--advanced");
   await expect(panel).not.toHaveAttribute("open", "");
   await panel.locator("summary").click();
-  await page.getByLabel("Country", { exact: true }).selectOption("BEN");
+  await panel.getByRole("combobox", { name: "Country" }).selectOption("BEN");
 
   await expect(page).toHaveURL(/country=BEN/);
   await expect(page.locator(".people-filter-count")).toHaveText("1");
