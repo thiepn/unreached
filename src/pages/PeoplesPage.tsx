@@ -1,5 +1,5 @@
 import { ArrowRight, BookOpenText, Database, Filter, RefreshCw, Search, UsersRound } from "lucide-preact";
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useLayoutEffect, useMemo, useState } from "preact/hooks";
 
 import { positiveHashPage, readHashSearchParams, replaceHashSearchParams, setOptionalHashParam } from "../app/hash-state";
 import { hrefFor } from "../app/router";
@@ -90,7 +90,10 @@ export function PeoplesPage() {
   const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
   const showGuidedStarts = !filters.query.trim() && activeFilterCount === 0;
 
-  useEffect(() => {
+  // URL state is part of the current history entry, so commit it before paint.
+  // This prevents a fast navigation immediately after typing from racing a
+  // passive effect and leaving Back with the previous discovery state.
+  useLayoutEffect(() => {
     const params = new URLSearchParams();
     setOptionalHashParam(params, "q", filters.query);
     setOptionalHashParam(params, "status", filters.status, DEFAULT_FILTERS.status);
