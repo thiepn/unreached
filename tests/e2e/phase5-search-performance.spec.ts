@@ -86,6 +86,7 @@ test.describe("Phase 5 prepared search responsiveness", () => {
       await expect(page.getByText("1 matching people entities. Showing up to 60 at once.")).toBeVisible({ timeout: 2_000 });
       expect(Date.now() - started).toBeLessThan(800);
 
+      await page.locator("#main-content").focus();
       await page.keyboard.press("/");
       const dialogSearch = page.getByRole("searchbox", { name: "Search peoples, countries or languages" });
       await expect(dialogSearch).toBeVisible();
