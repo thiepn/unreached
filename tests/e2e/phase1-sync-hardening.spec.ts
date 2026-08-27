@@ -71,7 +71,7 @@ test.describe("Phase 1 private-sync and storage integrity", () => {
     await expect(page.getByRole("button", { name: "Remove from saved" })).toBeVisible();
     expect(await page.evaluate((key) => localStorage.getItem(key), PERSONALIZATION_STORAGE_KEY)).toBeNull();
     await page.goto("./#/saved");
-    await expect(page.getByRole("heading", { name: "Saved & prayer" })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: "My lists" })).toBeVisible({ timeout: 10_000 });
     const savedCard = page.locator(".saved-person-card").filter({ hasText: VISIBLE_TEST_PEOPLE });
     await expect(savedCard).toHaveCount(1);
     await expect(savedCard).toBeVisible();
