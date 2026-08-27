@@ -1,0 +1,160 @@
+.account-page[data-account-state] {
+  max-width: 980px;
+}
+
+.account-hero {
+  max-width: 720px;
+}
+
+.account-hero h1 {
+  max-width: 14ch;
+}
+
+.account-status-card {
+  box-shadow: none;
+}
+
+.account-next-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-6);
+  align-items: center;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.account-next-step h2 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-editorial);
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+  color: var(--ink-0);
+}
+
+.account-next-step p:not(.eyebrow) {
+  max-width: 64ch;
+  margin: 0;
+  color: var(--ink-1);
+  line-height: 1.55;
+}
+
+.account-primary-actions,
+.account-secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.account-primary-actions {
+  justify-content: flex-end;
+}
+
+.account-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--forest-700);
+  background: var(--forest-100);
+  color: var(--forest-900);
+  font-weight: 700;
+}
+
+.account-disclosure {
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.account-disclosure > summary {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 var(--space-5);
+  cursor: pointer;
+  color: var(--ink-0);
+  font-weight: 700;
+  list-style-position: inside;
+}
+
+.account-disclosure > summary:hover,
+.account-disclosure > summary:focus-visible {
+  background: var(--paper-1);
+}
+
+.account-disclosure[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.account-disclosure-body {
+  padding: var(--space-5);
+  color: var(--ink-1);
+}
+
+.account-disclosure-body > p:first-child {
+  margin-top: 0;
+}
+
+.account-boundary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.account-boundary-grid > section {
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.account-boundary-grid > section + section {
+  border-left: 1px solid var(--line);
+}
+
+.account-boundary-grid h2 {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.account-secondary-actions {
+  margin-top: var(--space-4);
+}
+
+.account-danger-disclosure {
+  border-color: color-mix(in srgb, var(--status-frontier) 35%, var(--line));
+}
+
+.account-danger-disclosure > summary {
+  color: var(--status-frontier);
+}
+
+@media (max-width: 760px) {
+  .account-next-step {
+    grid-template-columns: 1fr;
+  }
+
+  .account-primary-actions,
+  .account-secondary-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+  }
+
+  .account-primary-actions .button,
+  .account-secondary-actions .button,
+  .account-ok {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .account-boundary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-boundary-grid > section + section {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
