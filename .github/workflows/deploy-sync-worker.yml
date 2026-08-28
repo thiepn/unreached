@@ -31,7 +31,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: ".nvmrc"
 
       - name: Verify deployment credentials exist
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Worker dependencies
         working-directory: worker
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Create or reuse D1 database
         id: d1
@@ -189,9 +189,32 @@ jobs:
         working-directory: worker
         run: npm run check
 
+      - name: Capture pre-migration D1 Time Travel bookmark
+        working-directory: worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ../.recovery
+          npx wrangler d1 time-travel info "$D1_NAME" --config wrangler.generated.jsonc | tee ../.recovery/d1-pre-migration.txt
+
+      - name: Upload pre-migration recovery reference
+        uses: actions/upload-artifact@v7
+        with:
+          name: d1-pre-migration-bookmark
+          path: .recovery/d1-pre-migration.txt
+          retention-days: 30
+
       - name: Apply D1 migrations
         working-directory: worker
         run: npx wrangler d1 migrations apply "$D1_NAME" --remote --config wrangler.generated.jsonc
+
+      - name: Verify remote hash-only identity invariant
+        working-directory: worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          result=$(npx wrangler d1 execute "$D1_NAME" --remote --config wrangler.generated.jsonc --json --command "SELECT (SELECT COUNT(*) FROM pragma_table_info('sync_users') WHERE name='identity_hash') AS identity_hash_columns, (SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'sync_users_hash_only_%') AS hash_triggers, (SELECT COUNT(*) FROM sync_users WHERE email <> user_id OR identity_hash IS NULL OR identity_hash <> user_id) AS invalid_rows;")
+          printf '%s' "$result" | jq -e '.[0].results[0] | .identity_hash_columns == 1 and .hash_triggers >= 2 and .invalid_rows == 0' >/dev/null
 
       - name: Deploy private sync Worker
         working-directory: worker
@@ -208,10 +231,17 @@ jobs:
       - name: Verify Access protects sign-in bootstrap
         env:
           BACKEND_ORIGIN: ${{ steps.backend.outputs.origin }}
+        shell: bash
         run: |
-          STATUS=$(curl --silent --show-error -o /dev/null -w '%{http_code}' "$BACKEND_ORIGIN/unreached-sync/private/auth/start?returnOrigin=https%3A%2F%2Fwww.thiepn.dev")
+          set -euo pipefail
+          body=$(mktemp)
+          STATUS=$(curl --silent --show-error -o "$body" -w '%{http_code}' "$BACKEND_ORIGIN/unreached-sync/private/auth/start?returnOrigin=https%3A%2F%2Fwww.thiepn.dev")
           case "$STATUS" in
             200|301|302|303|307|308|401|403) ;;
-            *) echo "Unexpected sign-in bootstrap status: $STATUS"; exit 1 ;;
+            *) echo "Unexpected sign-in bootstrap status: $STATUS"; cat "$body"; exit 1 ;;
           esac
-          echo "Unauthenticated sign-in bootstrap returned HTTP $STATUS as expected."
+          if [[ "$STATUS" == "200" ]] && grep -q "Sign-in complete. You can return to Unreached." "$body"; then
+            echo "Authenticated completion page was anonymously reachable." >&2
+            exit 1
+          fi
+          echo "Unauthenticated sign-in bootstrap returned HTTP $STATUS without exposing the authenticated completion page."
