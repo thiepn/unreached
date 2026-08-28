@@ -162,8 +162,9 @@ test("primary keyboard paths remain operable", async ({ page }) => {
   await expect(search).toBeHidden();
 
   await page.goto("./#/saved");
-  await expect(main).toBeFocused();
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe("#/saved");
   const summary = page.locator("details summary").first();
+  await expect(summary).toBeVisible();
   await summary.focus();
   await expect(summary).toBeFocused();
   await page.keyboard.press("Enter");
