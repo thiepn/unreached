@@ -9,7 +9,13 @@ const AccountPage = lazy(() => import("../pages/AccountPage").then((module) => (
 const CountriesPage = lazy(() => import("../pages/CountriesPage").then((module) => ({ default: module.CountriesPage })));
 const CountryPage = lazy(() => import("../pages/CountryPage").then((module) => ({ default: module.CountryPage })));
 const EditorialCoveragePage = lazy(() => import("../pages/EditorialCoveragePage").then((module) => ({ default: module.EditorialCoveragePage })));
-const ExplorePage = lazy(() => import("../pages/ExplorePage").then((module) => ({ default: module.ExplorePage })));
+const ExplorePage = lazy(async () => {
+  const [, module] = await Promise.all([
+    import("maplibre-gl/dist/maplibre-gl.css"),
+    import("../pages/ExplorePage"),
+  ]);
+  return { default: module.ExplorePage };
+});
 const LanguagePage = lazy(() => import("../pages/LanguagePage").then((module) => ({ default: module.LanguagePage })));
 const LanguagesPage = lazy(() => import("../pages/LanguagesPage").then((module) => ({ default: module.LanguagesPage })));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((module) => ({ default: module.NotFoundPage })));
