@@ -44,7 +44,9 @@ Certified Stage 2 SHA: `704eba65af229b340d691f12917033b64e76889a`.
 8. `foundation/result-pagination-mobile.css`
 9. `foundation/loading-motion.css`
 
-The sequence reproduces the source order of the removed file, including the mobile-pagination tail and reduced-motion override. The blocking architecture gate requires SHA-256:
+The sequence reproduces the source order of the removed file, including the mobile-pagination tail and reduced-motion override. To keep both semantic files independently valid, the split closes and reopens the same `@media (max-width: 760px)` block between compact navigation and mobile pagination. The gate collapses only that certified boundary before hashing, recreating the original source exactly.
+
+The blocking architecture gate requires SHA-256:
 
 `cc1e61ba87d4369118f10c7f701857acb7079b6cbfbca29843914347c7a6548d`
 
