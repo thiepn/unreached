@@ -70,8 +70,24 @@ test.describe("Phase 1 private-sync and storage integrity", () => {
     await save.click();
     await expect(page.getByRole("button", { name: "Remove from saved" })).toBeVisible();
     expect(await page.evaluate((key) => localStorage.getItem(key), PERSONALIZATION_STORAGE_KEY)).toBeNull();
-    await page.goto("./#/saved");
+
+    const beforeNavigation = await page.evaluate(() => {
+      const marker = `phase1-${Date.now()}-${Math.random()}`;
+      (window as Window & { __unreachedPhase1DocumentMarker?: string }).__unreachedPhase1DocumentMarker = marker;
+      return { marker, origin: window.location.origin };
+    });
+    await page.evaluate(() => {
+      window.location.hash = "#/saved";
+    });
+
     await expect(page.getByRole("heading", { name: "My lists" })).toBeVisible({ timeout: 10_000 });
+    const afterNavigation = await page.evaluate(() => ({
+      marker: (window as Window & { __unreachedPhase1DocumentMarker?: string }).__unreachedPhase1DocumentMarker ?? null,
+      origin: window.location.origin,
+      hash: window.location.hash,
+    }));
+    expect(afterNavigation).toEqual({ marker: beforeNavigation.marker, origin: beforeNavigation.origin, hash: "#/saved" });
+
     const savedCard = page.locator(".saved-person-card").filter({ hasText: VISIBLE_TEST_PEOPLE });
     await expect(savedCard).toHaveCount(1);
     await expect(savedCard).toBeVisible();

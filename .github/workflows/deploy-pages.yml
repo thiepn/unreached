@@ -55,7 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     env:
-      PLAYWRIGHT_BASE_URL: ${{ needs.deploy.outputs.page_url }}
+      PLAYWRIGHT_BASE_URL: https://www.thiepn.dev/unreached/
+      DEPLOYED_PAGE_URL: ${{ needs.deploy.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -67,7 +68,7 @@ jobs:
           node-version: "22"
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Wait for deployed entry point
+      - name: Wait for canonical deployed entry point
         shell: bash
         run: |
           set -euo pipefail
@@ -78,8 +79,55 @@ jobs:
             fi
             sleep 5
           done
-          echo "Production entry point did not become ready: ${base}" >&2
+          echo "Canonical production entry point did not become ready: ${base}" >&2
           exit 1
+      - name: Verify canonical origin serves the deployed artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const canonical = process.env.PLAYWRIGHT_BASE_URL;
+          const deployed = process.env.DEPLOYED_PAGE_URL;
+          if (!canonical) throw new Error("PLAYWRIGHT_BASE_URL is missing");
+          if (!deployed) throw new Error("GitHub Pages did not report a deployment URL");
+
+          function assetSignature(html) {
+            return [...html.matchAll(/(?:src|href)="(\/unreached\/assets\/[^"?#]+)"/g)]
+              .map((match) => match[1])
+              .sort();
+          }
+
+          async function readHtml(url) {
+            const requestUrl = new URL(url);
+            requestUrl.searchParams.set("production-cert", `${Date.now()}-${Math.random()}`);
+            const response = await fetch(requestUrl, {
+              cache: "no-store",
+              redirect: "follow",
+              headers: { "Cache-Control": "no-cache" },
+            });
+            if (!response.ok) throw new Error(`${requestUrl} returned ${response.status}`);
+            return await response.text();
+          }
+
+          let lastMessage = "Canonical production artifact did not match the Pages deployment";
+          for (let attempt = 1; attempt <= 12; attempt += 1) {
+            try {
+              const [deployedHtml, canonicalHtml] = await Promise.all([readHtml(deployed), readHtml(canonical)]);
+              const deployedAssets = assetSignature(deployedHtml);
+              const canonicalAssets = assetSignature(canonicalHtml);
+              if (deployedAssets.length === 0) throw new Error("Deployment HTML exposes no hashed /unreached/assets/ references");
+              if (JSON.stringify(deployedAssets) === JSON.stringify(canonicalAssets)) {
+                console.log(`Canonical production serves the deployed artifact: ${canonicalAssets.join(", ")}`);
+                process.exit(0);
+              }
+              lastMessage = `Attempt ${attempt}: deployed assets ${JSON.stringify(deployedAssets)}; canonical assets ${JSON.stringify(canonicalAssets)}`;
+            } catch (error) {
+              lastMessage = `Attempt ${attempt}: ${error instanceof Error ? error.message : String(error)}`;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 5_000));
+          }
+          throw new Error(lastMessage);
+          NODE
       - name: Verify deployed release-policy endpoints
         shell: bash
         run: |
@@ -129,7 +177,7 @@ jobs:
           NODE
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit
-      - name: Run browser certification against deployed Pages site
+      - name: Run browser certification against canonical deployed site
         run: npm run e2e
       - name: Upload production Playwright report on failure
         if: failure()
@@ -152,7 +200,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
           CERT_RESULT: ${{ needs.production-cert.result }}
-          TARGET_URL: ${{ needs.deploy.outputs.page_url }}
+          TARGET_URL: https://www.thiepn.dev/unreached/
         run: |
           set -euo pipefail
           state="failure"
