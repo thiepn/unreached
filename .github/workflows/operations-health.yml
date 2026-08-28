@@ -1,0 +1,105 @@
+name: Unreached Operations Health
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 */6 * * *"
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  health:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify canonical Pages application
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://www.thiepn.dev/unreached/"
+          html=$(curl --fail-with-body --silent --show-error --location --retry 3 --retry-delay 2 --header "Cache-Control: no-cache" "$base")
+          grep -q "Unreached" <<<"$html"
+          privacy=$(curl --fail-with-body --silent --show-error --location --retry 3 --retry-delay 2 "${base}privacy.html")
+          grep -q "Privacy notice" <<<"$privacy"
+          manifest=$(curl --fail-with-body --silent --show-error --location --retry 3 --retry-delay 2 "${base}site.webmanifest")
+          jq -e '.name == "Unreached — Explore. Understand. Pray." and .id == "/unreached/" and .scope == "/unreached/"' <<<"$manifest" >/dev/null
+
+      - name: Verify PeopleGroups runtime and production-origin CORS
+        shell: bash
+        run: |
+          set -euo pipefail
+          headers=$(mktemp)
+          body=$(mktemp)
+          curl --fail-with-body --silent --show-error --retry 3 --retry-delay 3 \
+            --header "Origin: https://www.thiepn.dev" \
+            --header "Accept: application/json" \
+            --dump-header "$headers" \
+            --output "$body" \
+            "https://peoplegroups.org/wp-json/pg/v1/people-groups?page=1&per_page=1"
+          jq -e 'type == "array" and length == 1 and .[0].PGID' "$body" >/dev/null
+          tr -d '\r' < "$headers" | grep -Eiq '^access-control-allow-origin:[[:space:]]*https://www\.thiepn\.dev[[:space:]]*$'
+
+      - name: Verify private-sync Worker health and security headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://unreached-private-continuity.thiepn.workers.dev"
+          headers=$(mktemp)
+          body=$(mktemp)
+          curl --fail-with-body --silent --show-error --retry 3 --retry-delay 2 \
+            --dump-header "$headers" --output "$body" "$origin/unreached-sync/health"
+          jq -e '.ok == true and .service == "unreached-private-continuity" and .version == "2.0.0"' "$body" >/dev/null
+          normalized=$(mktemp)
+          tr -d '\r' < "$headers" | tr '[:upper:]' '[:lower:]' > "$normalized"
+          grep -Eq '^cache-control:[[:space:]]*no-store' "$normalized"
+          grep -Eq '^referrer-policy:[[:space:]]*no-referrer' "$normalized"
+          grep -Eq '^x-content-type-options:[[:space:]]*nosniff' "$normalized"
+          grep -Eq '^x-frame-options:[[:space:]]*deny' "$normalized"
+          grep -Eq '^permissions-policy:[[:space:]]*camera=\(\), microphone=\(\), geolocation=\(\), payment=\(\), usb=\(\)' "$normalized"
+
+      - name: Verify Access bootstrap is not anonymously usable
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://unreached-private-continuity.thiepn.workers.dev/unreached-sync/private/auth/start?returnOrigin=https%3A%2F%2Fwww.thiepn.dev"
+          body=$(mktemp)
+          status=$(curl --silent --show-error --output "$body" --write-out '%{http_code}' "$url")
+          case "$status" in
+            200|301|302|303|307|308|401|403) ;;
+            *) echo "Unexpected auth bootstrap HTTP status: $status"; cat "$body"; exit 1 ;;
+          esac
+          if [[ "$status" == "200" ]] && grep -q "Sign-in complete. You can return to Unreached." "$body"; then
+            echo "Authenticated completion page was anonymously reachable." >&2
+            exit 1
+          fi
+
+  report-status:
+    runs-on: ubuntu-24.04
+    needs: health
+    if: always()
+    permissions:
+      statuses: write
+    steps:
+      - name: Publish operations health status
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEALTH_RESULT: ${{ needs.health.result }}
+        run: |
+          set -euo pipefail
+          state="failure"
+          description="Scheduled Pages, PeopleGroups or private-sync health check failed"
+          if [[ "$HEALTH_RESULT" == "success" ]]; then
+            state="success"
+            description="Scheduled Pages, PeopleGroups and private-sync health checks passed"
+          fi
+          target="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          payload=$(jq -nc --arg state "$state" --arg target "$target" --arg description "$description" '{state:$state,target_url:$target,description:$description,context:"unreached/operations-health"}')
+          curl --fail-with-body --silent --show-error --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            --data "$payload"
