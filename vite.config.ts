@@ -26,11 +26,18 @@ function offlineBundlePlugin(): Plugin {
   return {
     name: "unreached-phase2-deployment-safe-offline-shell",
     apply: "build",
+    enforce: "post",
     generateBundle(_options, bundle) {
       const publicRoot = resolve(process.cwd(), "public");
       const publicFiles = listPublicFiles(publicRoot).sort();
       const bundleEntries = Object.entries(bundle)
-        .filter(([fileName]) => !fileName.endsWith(".map") && fileName !== "sw.js")
+        .filter(([fileName, output]) => (
+          !fileName.endsWith(".map")
+          && fileName !== "sw.js"
+          // Vite removes CSS-only facade chunks before writing the final artifact.
+          // They must not enter the service-worker manifest as nonexistent JS files.
+          && !(output.type === "chunk" && output.code.trim().length === 0)
+        ))
         .sort(([a], [b]) => a.localeCompare(b));
 
       const hash = createHash("sha256");
