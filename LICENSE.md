@@ -2,7 +2,7 @@
 
 Copyright © 2026 thiepn. All rights reserved unless a file or directory explicitly states otherwise.
 
-**No general license is granted.**
+**No general license is granted.** For clarity, no general license is granted to project-authored material unless a file or directory explicitly says otherwise.
 
 ## Project-authored material
 
