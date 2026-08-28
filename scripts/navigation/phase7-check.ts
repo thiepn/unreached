@@ -26,7 +26,7 @@ if (!discoverSection.includes('id: "coverage"') || !discoverSection.includes('id
   throw new Error("Phase 7 Browse navigation must contain Coverage, Countries, Languages and About.");
 }
 
-const styles = await readText("src/styles/v21-navigation.css");
+const styles = await readText("src/styles/shell/navigation.css");
 for (const marker of [
   "mobile-nav-backdrop",
   "mobile-browse-sheet",
@@ -38,7 +38,7 @@ for (const marker of [
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes('import "./styles/v21-navigation.css"')) throw new Error("Phase 7 navigation stylesheet is not loaded last.");
+if (!main.includes('import "./styles/shell/navigation.css"')) throw new Error("Phase 7 navigation stylesheet is not loaded last.");
 
 const saved = await readText("src/pages/SavedPage.tsx");
 if (!/<h1\b[^>]*class="display-title"[^>]*>My lists<\/h1>/.test(saved)) throw new Error("Phase 7 private workspace must use the My lists destination name.");
