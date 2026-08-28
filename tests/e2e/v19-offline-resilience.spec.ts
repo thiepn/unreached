@@ -44,14 +44,22 @@ test.describe("v1.9 production offline shell", () => {
   test("owned app shell and reviewed editorial coverage return offline", async ({ page, context, browserName }) => {
     test.skip(browserName !== "chromium", "Playwright Firefox/WebKit offline top-level reload fails before service-worker navigation handling; Chromium certifies the production shell while deterministic dist checks certify the same worker for every engine.");
 
+    const coverageHeading = page.getByRole("heading", { name: "Browse the profiles with deeper context." });
+
     await page.goto("./#/coverage");
-    await expect(page.getByRole("heading", { name: "Browse the profiles with deeper context." })).toBeVisible();
+    await expect(coverageHeading).toBeVisible();
     await ensureServiceWorkerControl(page);
+
+    // Establishing control may require a reload. Wait for that controlled Coverage
+    // visit to finish materializing every owned editorial shard before disconnecting.
+    // The production worker's network-first path awaits cache.put before each fetch
+    // resolves, so this successful route state also proves the offline fallback is warm.
+    await expect(coverageHeading).toBeVisible();
 
     await context.setOffline(true);
     try {
       await page.reload({ waitUntil: "domcontentloaded" });
-      await expect(page.getByRole("heading", { name: "Browse the profiles with deeper context." })).toBeVisible();
+      await expect(coverageHeading).toBeVisible();
       await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
     } finally {
       await context.setOffline(false);
