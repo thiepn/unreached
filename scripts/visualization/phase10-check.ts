@@ -9,7 +9,9 @@ for (const marker of [
   "explore-screen--phase10",
   "explore-panel--phase10",
   "mission-view-control",
+  "mission-data-status",
   "country-index--primary",
+  'key="country-index"',
   "mission-map-key-floating",
   "mobile-map-sheet--phase10",
   "Source breakdown",
@@ -34,6 +36,8 @@ if (!explore.includes(desktopKey) || !explore.includes(mobileKey)) {
 const styles = await readText("src/styles/explore/map-workspace.css");
 for (const marker of [
   ".explore-panel--phase10",
+  ".mission-data-status",
+  "display: contents",
   "overflow: hidden",
   ".country-index--primary",
   ".explore-panel--phase10 .country-list",
@@ -59,10 +63,11 @@ const browserSpec = await readText("tests/e2e/phase10-explore-map.spec.ts");
 for (const marker of [
   "desktop exposes one visible map key",
   "selected country keeps detailed breakdown opt in",
+  "toHaveClass(/is-selected/)",
   "mobile sheet owns the only visible map key",
   "mobile map sheet does not overflow horizontally",
 ]) {
   if (!browserSpec.includes(marker)) throw new Error(`Phase 10 browser certification missing: ${marker}.`);
 }
 
-console.log("Phase 10 Explore/map checks passed: one scroll region per viewport, one visible map key per viewport, progressive source detail, and responsive map-sheet contracts are enforced.");
+console.log("Phase 10 Explore/map checks passed: one scroll region per viewport, stable live-data interaction, one visible map key per viewport, progressive source detail, and responsive map-sheet contracts are enforced.");

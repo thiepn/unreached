@@ -32,6 +32,7 @@ test("selected country keeps detailed breakdown opt in", async ({ page }) => {
   await expect(benin).toBeVisible();
   await benin.click();
 
+  await expect(benin).toHaveClass(/is-selected/);
   await expect(page.locator(".selected-area--phase10")).toContainText("Benin");
   const details = page.locator(".selected-mission-details");
   await expect(details).toBeVisible();

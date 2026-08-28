@@ -229,17 +229,19 @@ export function ExplorePage() {
           <MissionViewInfo activeLayer={activeLayer} />
         </div>
 
-        {missionStart && mission.loading && !missionAvailable ? (
-          <div class="mission-data-notice" role="status"><Database size={17} aria-hidden="true" /><div><strong>Adding live mission data</strong><p>{progressText}</p></div></div>
-        ) : null}
+        <div class="mission-data-status">
+          {missionStart && mission.loading && !missionAvailable ? (
+            <div class="mission-data-notice" role="status"><Database size={17} aria-hidden="true" /><div><strong>Adding live mission data</strong><p>{progressText}</p></div></div>
+          ) : null}
 
-        {mission.error && !missionAvailable ? (
-          <div class="mission-data-notice" role="alert"><Database size={17} aria-hidden="true" /><div><strong>Live mission data unavailable</strong><p>{mission.error}</p><button type="button" class="text-button" onClick={mission.retry}>Retry source</button></div></div>
-        ) : null}
+          {mission.error && !missionAvailable ? (
+            <div class="mission-data-notice" role="alert"><Database size={17} aria-hidden="true" /><div><strong>Live mission data unavailable</strong><p>{mission.error}</p><button type="button" class="text-button" onClick={mission.retry}>Retry source</button></div></div>
+          ) : null}
 
-        {mission.warning ? (
-          <div class="mission-data-notice" role="note"><Database size={17} aria-hidden="true" /><div><strong>{mission.stale ? "Using stale cached mission data" : "Mission source notice"}</strong><p>{mission.warning}</p></div></div>
-        ) : null}
+          {mission.warning ? (
+            <div class="mission-data-notice" role="note"><Database size={17} aria-hidden="true" /><div><strong>{mission.stale ? "Using stale cached mission data" : "Mission source notice"}</strong><p>{mission.warning}</p></div></div>
+          ) : null}
+        </div>
 
         {selected ? (
           <div class="selected-area selected-area--phase10" aria-live="polite">
@@ -253,7 +255,7 @@ export function ExplorePage() {
           </div>
         ) : null}
 
-        <section class="country-index country-index--primary" aria-labelledby="country-index-heading">
+        <section key="country-index" class="country-index country-index--primary" aria-labelledby="country-index-heading">
           <div class="country-index__heading">
             <strong id="country-index-heading">Find a country</strong>
             <span>Search or select directly on the map</span>
@@ -261,7 +263,7 @@ export function ExplorePage() {
           <CountryBrowser countries={countries} query={query} selectedKey={selectedKey} summaries={mission.countriesByIso3} activeLayer={activeLayer} showMetrics={missionAvailable} onQueryChange={setQuery} onSelect={selectCountry} idPrefix="desktop" />
         </section>
 
-        <details class="map-provenance">
+        <details key="map-provenance" class="map-provenance">
           <summary>Sources & boundaries</summary>
           <div class="map-source-stack">
             {mission.status.attributions.map((attribution) => <a key={attribution.sourceId} href={attribution.url} target="_blank" rel="noreferrer">{attribution.label}</a>)}

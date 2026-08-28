@@ -91,6 +91,15 @@ test.describe("Phase 5 prepared search responsiveness", () => {
       await page.keyboard.press("/");
       const dialogSearch = page.getByRole("searchbox", { name: "Search peoples, countries or languages" });
       await expect(dialogSearch).toBeVisible();
+
+      // The first query activates the intentionally lazy cross-domain corpus and
+      // prepares its generation-scoped document index. Measure the prepared query
+      // path here; lazy activation itself is certified separately by the v1.1 test.
+      await dialogSearch.fill("Synthetic People 3998");
+      await expect(page.getByRole("link", { name: /Synthetic People 3998/ }).first()).toBeVisible({ timeout: 5_000 });
+      await dialogSearch.fill("");
+      await expect(page.getByText(/full remote corpus is loaded only when you need it/i)).toBeVisible();
+
       started = Date.now();
       await dialogSearch.fill("Synthetic People 3999");
       await expect(page.getByRole("link", { name: /Synthetic People 3999/ }).first()).toBeVisible({ timeout: 2_000 });
