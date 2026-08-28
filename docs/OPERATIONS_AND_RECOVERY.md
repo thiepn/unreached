@@ -46,10 +46,10 @@ Cloudflare D1 Time Travel is the primary production point-in-time recovery mecha
 Before every production migration, the deployment workflow captures the current Time Travel bookmark with:
 
 ```sh
-npx wrangler d1 time-travel info unreached-private-continuity --remote --config wrangler.generated.jsonc
+npx wrangler d1 time-travel info unreached-private-continuity --config wrangler.generated.jsonc
 ```
 
-The output is uploaded as deployment evidence. This is a recovery reference, not a database export.
+`d1 time-travel info` operates on the remote D1 database; it does not use a `--remote` flag. The output is uploaded as deployment evidence. This is a recovery reference, not a database export.
 
 For recovery beyond the currently available Time Travel window, a manual SQL export may be taken during an announced maintenance window. Do not schedule full D1 exports as a routine high-frequency job: Cloudflare documents that an export can block other database requests while it runs.
 
@@ -61,8 +61,9 @@ For recovery beyond the currently available Time Travel window, a manual SQL exp
 4. Apply remote migrations.
 5. Verify the expected schema/data invariant before deployment continues.
 6. Deploy the Worker.
-7. Verify public health, security headers and Access protection.
-8. Run scheduled/explicit operations health against the public application, PeopleGroups.org and Worker.
+7. Verify the public health endpoint and Access protection in the deployment workflow.
+8. Require **Unreached Worker Production Certification** to verify the deployed Worker security headers, production-origin CORS contract and Access boundary.
+9. Run scheduled/explicit operations health against the public application, PeopleGroups.org and Worker.
 
 For the Phase 4 identity migration specifically, verify:
 
@@ -118,6 +119,8 @@ It publishes the `unreached/operations-health` commit status.
 ### Release/deployment triggered
 
 Normal CI, browser certification, PeopleGroups live certification, private-sync certification/deployment and canonical Pages certification remain blocking release evidence on relevant changes.
+
+`Unreached Worker Production Certification` runs after a successful private-sync deployment and verifies the actual deployed Worker health response, security headers, CORS policy and unauthenticated Access boundary. It publishes `unreached/worker-production` against the deployed Worker SHA.
 
 ## Incident response
 
