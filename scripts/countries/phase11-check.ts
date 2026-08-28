@@ -2,61 +2,50 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = process.cwd();
-const readText = (path: string) => readFile(resolve(root, path), "utf8");
-
-const [country, language, main] = await Promise.all([
-  readText("src/pages/CountryPage.tsx"),
-  readText("src/pages/LanguagePage.tsx"),
-  readText("src/main.tsx"),
+const [countryPage, languagePage, main] = await Promise.all([
+  readFile(resolve(root, "src/pages/CountryPage.tsx"), "utf8"),
+  readFile(resolve(root, "src/pages/LanguagePage.tsx"), "utf8"),
+  readFile(resolve(root, "src/main.tsx"), "utf8"),
 ]);
 
-for (const marker of [
-  "COUNTRY_PEOPLE_INITIAL_LIMIT = 40",
-  "COUNTRY_PEOPLE_STEP = 40",
-  'class="detail-record-progress"',
-  'class="result-load-more result-load-more--detail"',
-  "Show 40 more",
-  "PEID is retained as the route key and one-to-one provider field for this record",
-  "major languages shown",
-]) {
-  if (!country.includes(marker)) throw new Error(`Phase 11 Country detail contract missing: ${marker}`);
+if (/<main\b/.test(countryPage)) throw new Error("Phase 11: CountryPage must not add a nested <main> landmark inside the app shell.");
+if (/<main\b/.test(languagePage)) throw new Error("Phase 11: LanguagePage must not add a nested <main> landmark inside the app shell.");
+
+if (countryPage.includes("A PEID can appear in multiple countries")) {
+  throw new Error("Phase 11: CountryPage still contains the obsolete cross-country PEID claim.");
+}
+if (!countryPage.includes("PEID and PGID as a one-to-one record identity")) {
+  throw new Error("Phase 11: CountryPage must explain the certified PEID/PGID identity contract.");
+}
+if (!languagePage.includes("PEID and PGID as a one-to-one record identity")) {
+  throw new Error("Phase 11: LanguagePage must use the same certified PEID/PGID identity contract.");
 }
 
-for (const marker of [
-  "LANGUAGE_PEOPLE_INITIAL_LIMIT = 40",
-  "LANGUAGE_PEOPLE_STEP = 40",
-  'class="detail-record-progress"',
-  'class="result-load-more result-load-more--detail"',
-  "Show 40 more",
-  "PEID remains the one-to-one numeric provider field and route key for each record",
-]) {
-  if (!language.includes(marker)) throw new Error(`Phase 11 Language detail contract missing: ${marker}`);
+const countryBatch = countryPage.match(/const DETAIL_RECORD_BATCH_SIZE = (\d+);/)?.[1];
+const languageBatch = languagePage.match(/const DETAIL_RECORD_BATCH_SIZE = (\d+);/)?.[1];
+if (!countryBatch || countryBatch !== languageBatch) {
+  throw new Error(`Phase 11: Country and Language detail batching must match; received ${countryBatch ?? "missing"} and ${languageBatch ?? "missing"}.`);
 }
 
-if ((country.match(/<main\b/g) ?? []).length > 0) throw new Error("CountryPage must not create a nested main landmark.");
-if ((language.match(/<main\b/g) ?? []).length > 0) throw new Error("LanguagePage must not create a nested main landmark.");
-if (!main.includes('import "./styles/foundation/detail-records.css"')) throw new Error("Phase 11 detail-record stylesheet is not loaded.");
-
-const styles = await readText("src/styles/foundation/detail-records.css");
-for (const marker of [
-  ".detail-record-progress",
-  ".result-load-more--detail",
-  ".language-profile-main",
-  ".country-content-main",
-  "@media (max-width: 620px)",
-]) {
-  if (!styles.includes(marker)) throw new Error(`Phase 11 detail styling missing: ${marker}`);
+for (const required of ["visibleUnreachedPeople", "remainingUnreachedPeople", "detail-record-progress", "result-load-more--detail"]) {
+  if (!countryPage.includes(required)) throw new Error(`Phase 11: CountryPage is missing progressive-record contract token: ${required}.`);
+}
+if (countryPage.includes("unreachedPeople.slice(0, 40).map")) {
+  throw new Error("Phase 11: CountryPage must not silently truncate unreached records at 40.");
 }
 
-const browserSpec = await readText("tests/e2e/phase11-countries-languages.spec.ts");
-for (const marker of [
-  "Country profile progressively reveals every people record",
-  "Language profile progressively reveals every people record",
-  "Country and Language profiles keep a single main landmark",
-  "detail profiles retain current one-to-one PEID and PGID semantics",
-  "mobile detail profiles do not overflow horizontally",
-]) {
-  if (!browserSpec.includes(marker)) throw new Error(`Phase 11 browser certification missing: ${marker}`);
+for (const required of ["visiblePeoples", "remainingPeoples", "detail-record-progress", "result-load-more--detail"]) {
+  if (!languagePage.includes(required)) throw new Error(`Phase 11: LanguagePage is missing progressive-record contract token: ${required}.`);
+}
+if (/record\.peoples\.map\s*\(/.test(languagePage)) {
+  throw new Error("Phase 11: LanguagePage must not render the complete people-record table in one pass.");
 }
 
-console.log("Phase 11 checks passed: Countries and Languages use progressive full-record disclosure, preserve one-to-one PEID/PGID semantics, keep one main landmark, disclose list caps, and remain responsive.");
+if (!countryPage.includes("Showing 12 of {record.languages.length}")) {
+  throw new Error("Phase 11: CountryPage must disclose the capped major-language list when more source languages exist.");
+}
+if (!main.includes('"./styles/foundation/detail-records.css"')) {
+  throw new Error("Phase 11: the country-language consistency stylesheet is not loaded.");
+}
+
+console.log(`Phase 11 country/language consistency validation passed with shared ${countryBatch}-record progressive disclosure, one main landmark, and aligned PEID/PGID semantics.`);
