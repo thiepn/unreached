@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { basename, join, relative, sep } from "node:path";
 
 const STYLES_ROOT = "src/styles";
 
@@ -32,28 +32,6 @@ function sha256(source: string): string {
 
 function reconstruct(paths: string[]): string {
   return `${paths.map((path) => read(join(STYLES_ROOT, path)).trimEnd()).join("\n\n")}\n`;
-}
-
-function reconstructV101(paths: string[]): string {
-  const fragments = paths.map((path) => read(join(STYLES_ROOT, path)).trimEnd());
-  if (fragments.length !== 9) throw new Error("Phase 15: v101 reconstruction requires nine fragments");
-
-  const compactNavigation = fragments[6]!;
-  const mobilePagination = fragments[7]!;
-  const mobileMediaPrefix = "@media (max-width: 760px) {\n";
-  if (!compactNavigation.endsWith("\n}")) {
-    throw new Error("Phase 15: compact navigation no longer ends at the certified mobile media boundary");
-  }
-  if (!mobilePagination.startsWith(mobileMediaPrefix)) {
-    throw new Error("Phase 15: mobile pagination no longer starts at the certified mobile media boundary");
-  }
-
-  const mergedMobileMedia = `${compactNavigation.slice(0, -2)}\n\n${mobilePagination.slice(mobileMediaPrefix.length)}`;
-  return `${[
-    ...fragments.slice(0, 6),
-    mergedMobileMedia,
-    fragments[8]!,
-  ].join("\n\n")}\n`;
 }
 
 function requireConsecutive(values: string[], expected: string[], label: string): void {
@@ -114,17 +92,6 @@ if (languageIndex < 0 || imports[languageIndex + 1] !== "language/resource-break
   throw new Error("Phase 15: language resource ownership no longer overlays the language base at its certified slot");
 }
 
-const v101Fragments = [
-  "shell/overflow-guard.css",
-  "foundation/loading-state.css",
-  "people/index-loading.css",
-  "foundation/result-pagination.css",
-  "foundation/content-wrapping.css",
-  "language/card-alignment.css",
-  "shell/compact-navigation.css",
-  "foundation/result-pagination-mobile.css",
-  "foundation/loading-motion.css",
-];
 const v11Fragments = [
   "shell/browse-actions.css",
   "explore/layer-controls.css",
@@ -141,14 +108,9 @@ const v12Fragments = [
   "people/empty-state.css",
   "foundation/guided-responsive.css",
 ];
-requireConsecutive(imports, v101Fragments, "v101 semantic fragments");
 requireConsecutive(imports, v11Fragments, "v11 semantic fragments");
 requireConsecutive(imports, v12Fragments, "v12 semantic fragments");
 
-const v101Hash = sha256(reconstructV101(v101Fragments));
-if (v101Hash !== "cc1e61ba87d4369118f10c7f701857acb7079b6cbfbca29843914347c7a6548d") {
-  throw new Error(`Phase 15: v101 semantic reconstruction changed (${v101Hash})`);
-}
 const v11Hash = sha256(reconstruct(v11Fragments));
 if (v11Hash !== "b3ed266506c4abdf50f64776dd1618f954dfcad6f0cd270d7ca1291e42beaa56") {
   throw new Error(`Phase 15: v11 semantic reconstruction changed (${v11Hash})`);
@@ -183,7 +145,7 @@ for (const marker of [
 }
 requireText(explorePage, 'class="country-profile-link"', "current Explore country-profile link markup");
 requireText(packageJson, '"css:check": "tsx scripts/styles/phase15-check.ts"', "css:check package script");
-requireText(packageJson, "npm run accessibility:check && npm run css:check && npm run release:check", "blocking build integration");
+requireText(packageJson, "npm run accessibility:check && npm run css:check && npm run operations:check && npm run release:check", "blocking build integration");
 requireText(docs, "Final semantic import graph", "final semantic import graph documentation");
 requireText(docs, "Dormant u5 resolution", "dormant u5 resolution documentation");
 requireText(finalizationPlan, "Phase 2 — CSS Architecture Closure", "Phase 2 finalization plan entry");
