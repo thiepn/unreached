@@ -6,6 +6,7 @@ export const sourceEntrySchema = z.object({
   provider: z.string().min(1),
   canonicalUrl: z.string().url(),
   termsUrl: z.string().url().optional(),
+  privacyUrl: z.string().url().optional(),
   contentTypes: z.array(z.string().min(1)).min(1),
   status: z.enum(["approved", "conditional", "per-item", "permission-required", "prohibited"]),
   commercialUse: z.boolean().nullable(),
@@ -23,7 +24,7 @@ export const sourceEntrySchema = z.object({
 });
 
 export const sourceRegistrySchema = z.object({
-  schemaVersion: z.literal(2),
+  schemaVersion: z.literal(3),
   reviewedAt: z.string().min(1),
   sources: z.array(sourceEntrySchema).min(1),
 });
@@ -43,7 +44,5 @@ export function assertSourceUseAllowed(registry: SourceRegistry, sourceId: strin
         ? source.publicReleaseAllowed
         : source.browserRedistributionAllowed;
 
-  if (!allowed) {
-    throw new Error(`Source ${sourceId} is not approved for ${mode}. Status: ${source.status}`);
-  }
+  if (!allowed) throw new Error(`Source ${sourceId} is not approved for ${mode}. Status: ${source.status}`);
 }
