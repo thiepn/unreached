@@ -21,14 +21,14 @@ jobs:
       - name: Apply permanent Phase 4 changes
         run: python3 scripts/operations/apply-phase4-hardening.py
 
-      - name: Commit Phase 4 changes
+      - name: Commit non-workflow Phase 4 changes
         shell: bash
         run: |
           set -euo pipefail
-          git add package.json .gitignore index.html public/privacy.html PRIVACY.md docs worker scripts .github/workflows
-          git reset .github/workflows/phase4-apply-hardening.yml scripts/operations/apply-phase4-hardening.py
+          git add package.json .gitignore index.html public/privacy.html PRIVACY.md docs worker scripts
+          git reset scripts/operations/apply-phase4-hardening.py
           if git diff --cached --quiet; then
-            echo "Permanent Phase 4 changes are already applied."
+            echo "Permanent non-workflow Phase 4 changes are already applied."
             exit 0
           fi
           git config user.name "github-actions[bot]"
