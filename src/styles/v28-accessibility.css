@@ -1,0 +1,78 @@
+:root {
+  /* Phase 14: muted text must remain readable on both canonical paper surfaces. */
+  --ink-2: #5f6a63;
+  --interactive-target-min: 44px;
+}
+
+/* Routed/programmatic focus must remain visibly perceivable. */
+.main-content:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ocean-700) 86%, white);
+  outline-offset: -3px;
+}
+
+/* Primary controls and disclosure triggers use a 44px minimum touch target. */
+button,
+input:not([type="hidden"]),
+select,
+textarea,
+summary,
+.nav-link,
+.browse-link,
+.icon-action,
+.button,
+.text-link {
+  min-block-size: var(--interactive-target-min);
+}
+
+.icon-action,
+button[aria-label],
+.mobile-browse-sheet__heading > button {
+  min-inline-size: var(--interactive-target-min);
+}
+
+summary {
+  display: list-item;
+  cursor: pointer;
+  padding-block: 0.625rem;
+  touch-action: manipulation;
+}
+
+button,
+.nav-link,
+.browse-link,
+.icon-action,
+.button,
+.text-link {
+  touch-action: manipulation;
+}
+
+/* Critical labels stay at or above 12 CSS px at the default 16px root size. */
+.eyebrow,
+.rail-label,
+.status-chip,
+.map-foundation__kicker,
+.browse-menu__label,
+.mobile-nav .nav-link,
+.filter-row > span:nth-child(2) {
+  font-size: max(0.75rem, 12px);
+}
+
+/* Prevent iOS/browser text zoom and preserve readable form controls on mobile. */
+@media (max-width: 760px) {
+  input,
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+}
+
+/* The base policy already collapses all motion; these high-visibility affordances
+   are explicitly pinned as a regression guard for Phase 14. */
+@media (prefers-reduced-motion: reduce) {
+  .loading-pulse,
+  .browse-trigger__chevron,
+  .skip-link {
+    animation: none !important;
+    transition: none !important;
+  }
+}
