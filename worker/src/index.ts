@@ -72,6 +72,8 @@ function json(value: unknown, status = 200): Response {
       "Content-Security-Policy": "default-src 'none'",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
     },
   });
 }
@@ -242,13 +244,16 @@ async function authenticate(request: Request, env: Env): Promise<AccessIdentity>
   }
 }
 
-async function ensureUser(env: Env, identity: { email: string; userId: string }): Promise<void> {
+async function ensureUser(env: Env, identity: { userId: string }): Promise<void> {
   const now = new Date().toISOString();
   await env.DB.prepare(`
-    INSERT INTO sync_users (user_id, email, revision, created_at, updated_at)
-    VALUES (?1, ?2, 0, ?3, ?3)
-    ON CONFLICT(user_id) DO UPDATE SET email = excluded.email, updated_at = excluded.updated_at
-  `).bind(identity.userId, identity.email, now).run();
+    INSERT INTO sync_users (user_id, email, identity_hash, revision, created_at, updated_at)
+    VALUES (?1, ?1, ?1, 0, ?2, ?2)
+    ON CONFLICT(user_id) DO UPDATE SET
+      email = excluded.email,
+      identity_hash = excluded.identity_hash,
+      updated_at = excluded.updated_at
+  `).bind(identity.userId, now).run();
 }
 
 async function currentUserRevision(env: Env, userId: string): Promise<number> {
@@ -301,6 +306,8 @@ function authCompletionPage(origin: string, token: string): Response {
       "Content-Security-Policy": `default-src 'none'; script-src 'unsafe-inline'; style-src 'none'; base-uri 'none'; frame-ancestors 'none'`,
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
     },
   });
 }
@@ -362,6 +369,10 @@ export default {
         headers: {
           ...corsHeaders(env),
           "Cache-Control": "no-store",
+          "Referrer-Policy": "no-referrer",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
         },
       });
     }

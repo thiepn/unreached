@@ -32,6 +32,8 @@ When enabled, the private service may store:
 - mutation identifiers used for safe retry/idempotency;
 - an account key derived from the authenticated email by SHA-256 hashing.
 
+The verified email claim is used transiently for authentication and account display/export responses. After the Phase 4 migration, Unreached does not intentionally persist the plaintext email address in D1; persistent identity fields contain the hash-derived user key.
+
 The service is designed **not** to store:
 
 - recent browsing history;

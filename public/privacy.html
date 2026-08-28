@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'self'; form-action 'none'" />
+  <meta name="referrer" content="no-referrer" />
   <meta name="robots" content="index,follow" />
   <title>Privacy | Unreached</title>
   <style>
@@ -18,7 +20,7 @@
     <p>Depending on the features you use, this browser may store Saved/prayer membership, a bounded recent-route list, the latest prayer timestamp you explicitly record, optional sync metadata, and a validated PeopleGroups.org snapshot in IndexedDB for offline resilience. A signed-in session may also keep a Cloudflare Access token in sessionStorage until the browser session ends.</p>
 
     <h2>Optional private continuity</h2>
-    <p>Authentication alone does not enable synchronization. You must separately choose to merge this device and enable sync. When enabled, the private service is limited to Saved/prayer membership and source-backed snapshots, the single latest prayer timestamp, revisions/deletion tombstones, mutation identifiers, and an account key derived by hashing the authenticated email.</p>
+    <p>Authentication alone does not enable synchronization. You must separately choose to merge this device and enable sync. When enabled, the private service is limited to Saved/prayer membership and source-backed snapshots, the single latest prayer timestamp, revisions/deletion tombstones, mutation identifiers, and an account key derived by hashing the authenticated email. The verified email is used transiently for authentication but Unreached does not intentionally persist the plaintext email address in D1.</p>
     <p>The private service is designed not to store recent browsing history, prayer-event history, prayer totals, streaks, scores, rankings, session history, the PeopleGroups.org corpus, or the browser's PeopleGroups cache.</p>
 
     <h2>External services</h2>

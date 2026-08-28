@@ -92,7 +92,7 @@ Cloudflare Access protects the top-level sign-in bootstrap and uses the account'
 
 The frontend keeps that identity token only in `sessionStorage` under `unreached.sync.access.v1`; it is not written to persistent local personalization storage. Subsequent cross-origin private API calls send the token as `Authorization: Bearer <Access JWT>`. The Worker performs the same Access JWT verification before touching D1, so API authorization does not depend on third-party cookies.
 
-CORS is restricted to `https://www.thiepn.dev`, allows only the required methods/headers, and does not enable credentialed cross-origin cookies. The Worker never trusts a client-supplied user ID. The normalized authenticated email is SHA-256 hashed to form the D1 user key.
+CORS is restricted to `https://www.thiepn.dev`, allows only the required methods/headers, and does not enable credentialed cross-origin cookies. The Worker never trusts a client-supplied user ID. The normalized authenticated email is SHA-256 hashed to form the D1 user key. The verified email is used transiently for the authenticated response but, after the Phase 4 migration, D1 persistent identity fields are hash-only; the legacy compatibility column is scrubbed/enforced to the same hash value.
 
 The public GitHub Pages application remains accountless and outside Access.
 
@@ -102,7 +102,7 @@ The private service is an ES-module Cloudflare Worker with D1, deployed on the a
 
 D1 tables:
 
-- `sync_users` — authenticated account identity and global revision;
+- `sync_users` — hash-derived account identity and global revision; the verified plaintext email is not intentionally persisted after the Phase 4 migration;
 - `sync_items` — Saved/prayer current state plus tombstones and item revisions;
 - `sync_mutations` — per-user mutation-id idempotency ledger.
 

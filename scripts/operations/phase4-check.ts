@@ -71,12 +71,14 @@ for (const marker of [
   '"X-Frame-Options": "DENY"',
   "identity_hash",
 ]) requireText(worker, marker, `Worker security marker ${marker}`);
-if (/INSERT INTO sync_users \(user_id, email/.test(worker) || /SET email\s*=/.test(worker)) {
-  throw new Error("Phase 4: Worker must not persist authenticated email addresses.");
-}
+requireText(worker, "VALUES (?1, ?1, ?1, 0, ?2, ?2)", "hash-only Worker identity write");
+if (worker.includes(".bind(identity.userId, identity.email, now)")) throw new Error("Phase 4: Worker must not persist the verified plaintext email.");
 const hashMigration = await read("worker/migrations/0003_hash_only_identity.sql");
-requireText(hashMigration, "RENAME COLUMN email TO identity_hash", "hash-only identity migration rename");
+requireText(hashMigration, "ADD COLUMN identity_hash TEXT", "hash-only identity semantic column");
+requireText(hashMigration, "SET email = user_id", "legacy identity plaintext scrub");
 requireText(hashMigration, "SET identity_hash = user_id", "hash-only identity backfill");
+requireText(hashMigration, "sync_users_hash_only_after_insert", "hash-only insert trigger");
+requireText(hashMigration, "sync_users_hash_only_after_email_update", "hash-only compatibility update trigger");
 
 const gitignore = await read(".gitignore");
 for (const marker of ["worker/wrangler.generated.jsonc", "worker/.wrangler/", "playwright-report/", "test-results/"]) {

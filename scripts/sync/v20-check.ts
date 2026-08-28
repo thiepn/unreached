@@ -28,6 +28,7 @@ const workerMutations = await readText("worker/src/mutations.ts");
 const worker = `${workerRouter}\n${workerMutations}`;
 const migration = await readText("worker/migrations/0001_private_continuity.sql");
 const phase1Migration = await readText("worker/migrations/0002_phase1_atomic_mutations.sql");
+const phase4Migration = await readText("worker/migrations/0003_hash_only_identity.sql");
 const deploy = await readText(".github/workflows/deploy-sync-worker.yml");
 const router = await readText("src/app/router.ts");
 const app = await readText("src/app/App.tsx");
@@ -144,6 +145,8 @@ for (const marker of [
   if (!workerRouter.includes(marker)) throw new Error(`Worker router missing security/protocol marker: ${marker}`);
 }
 if (!workerRouter.includes('request.headers.get("Cf-Access-Jwt-Assertion")')) throw new Error("Sign-in bootstrap must require a Cloudflare Access assertion.");
+if (!workerRouter.includes("identity_hash") || !workerRouter.includes("VALUES (?1, ?1, ?1, 0, ?2, ?2)")) throw new Error("Phase 4 Worker must persist only the hash-derived identity.");
+if (workerRouter.includes(".bind(identity.userId, identity.email, now)")) throw new Error("Phase 4 Worker must not persist the verified plaintext email.");
 
 for (const marker of [
   "env.DB.batch(statements)",
@@ -166,6 +169,10 @@ for (const table of ["sync_users", "sync_items", "sync_mutations"]) if (!migrati
 if (!migration.includes("ON DELETE CASCADE")) throw new Error("Account deletion must cascade private sync rows.");
 for (const column of ["claim_token", "outcome", "applied_revision"]) {
   if (!phase1Migration.includes(`ADD COLUMN ${column}`)) throw new Error(`Phase 1 D1 migration missing ${column}.`);
+}
+if (!phase4Migration.includes("ADD COLUMN identity_hash") || !phase4Migration.includes("SET email = user_id") || !phase4Migration.includes("SET email = NEW.user_id")) throw new Error("Phase 4 D1 migration must scrub and enforce hash-only identity storage.");
+for (const trigger of ["sync_users_hash_only_after_insert", "sync_users_hash_only_after_email_update"]) {
+  if (!phase4Migration.includes(trigger)) throw new Error(`Phase 4 D1 migration missing ${trigger}.`);
 }
 
 for (const marker of ["nodejs_compat", '"workers_dev": true', '"DB"', "__D1_DATABASE_ID__", "__ACCESS_AUD__", "observability"]) {
