@@ -1,165 +1,146 @@
-# Phase 15 — CSS Architecture Cleanup
+# Phase 15 — CSS Architecture Closure
 
 ## Goal
 
-Replace historical release-number CSS layering with semantic ownership while preserving the exact rendered behavior certified through Phase 14.
+Replace historical release/update-number CSS layering with semantic ownership while preserving the rendered behavior certified through Phase 14 and the production-gate repair merged in Finalization Phase 1.
 
-Phase 15 is an architecture cleanup, not a visual redesign. Selector semantics, computed styles, responsive behavior, accessibility guarantees, offline behavior, data semantics, prayer behavior and Private Sync behavior must remain unchanged unless a regression test proves an existing defect requires correction.
+This phase is an architecture migration, not a visual redesign. It does not intentionally change selectors, declarations, breakpoints, responsive behavior, accessibility behavior, product semantics, persistence, sync, prayer behavior, data interpretation or offline behavior.
 
-## Certified baseline
+## Certified baseline and integration point
 
-Phase 15 branches from the fully certified Phase 14 merge:
+Phase 15 began from the fully certified Phase 14 SHA:
 
 `d0dd3f405956a74d03977a4622b9c60d4f6f7af1`
 
-## Pre-audit inventory
+Before closure, current `main` was merged into the Phase 15 branch so the final branch also contains the canonical production-certification repair from:
 
-At the Phase 15 baseline, `src/styles/` contains 33 CSS files. `src/main.tsx` globally imports MapLibre CSS plus 32 application stylesheets. One historical file, `u5-integration.css`, exists on disk but is not imported by the current main entrypoint and is therefore an orphan candidate pending markup verification.
+`005db0b89dce43b15939541fd7769bc8aa425844`
 
-### Semantic baseline files already present
+## Completed migration stages
 
-- `tokens.css`
-- `base.css`
-- `app.css`
-- `map.css`
-- `mission-map.css`
-- `map-layout.css`
-- `countries.css`
-- `peoples.css`
-- `context.css`
-- `prayer.css`
-- `languages.css`
-- `discovery.css`
-- `about.css`
+### Stage 1 — Phase 7–14 semantic relocation
 
-### Historical release/update layers at baseline
+The former `v21`–`v28` files were moved byte-for-byte into semantic shell, people, Explore, foundation, prayer and account paths. Their import order remained unchanged.
 
-Imported:
+Certified Stage 1 SHA: `2858ebeeafe7ded58aec31bce334e2fba2e4c3bc`.
 
-- `u12e-languages.css`
-- `v101-hotfix.css`
-- `v11.css`
-- `v12.css`
-- `v14.css`
-- `v15.css`
-- `v16.css`
-- `v17.css`
-- `v18.css`
-- `v19.css`
-- `v20.css`
-- `v21-navigation.css`
-- `v22-peoples-explorer.css`
-- `v23-people-profile.css`
-- `v24-explore-map.css`
-- `v25-countries-languages.css`
-- `v26-prayer-saved.css`
-- `v27-account-ux.css`
-- `v28-accessibility.css`
+### Stage 2 — single-domain `v14`–`v20` relocation
 
-Present but not imported:
+The editorial, prayer, data-state and account layers were moved byte-for-byte into semantic directories while preserving their exact sequence.
 
-- `u5-integration.css`
+Certified Stage 2 SHA: `704eba65af229b340d691f12917033b64e76889a`.
 
-## Cascade dependency map
+### Stage 3 — mixed `v101-hotfix.css` split
 
-The historical files are not independent. Their import order encodes behavior:
+The mixed hotfix layer was replaced at its original cascade slot by nine semantic fragments. Fragment order reproduces the source order of the removed file, including the mobile-pagination tail and reduced-motion override.
 
-1. `u12e-languages.css` overlays `languages.css`.
-2. `v101-hotfix.css` contains cross-domain shell, loading, list, language and responsive fixes that override earlier semantic files.
-3. `v11.css` is a mixed shell/explore/people/country/language bundle and depends on the earlier base/domain styles.
-4. `v12.css` extends the guided discovery and profile journey introduced by `v11.css`.
-5. `v14.css` creates editorial-discovery/coverage styling; `v15.css` extends it with regional distribution and four-metric layouts.
-6. `v16.css`, `v17.css` and `v18.css` form a sequential prayer-list → rotation → session stack.
-7. `v19.css` owns global mission-data provenance state; the later navigation layer hides that state at mobile widths.
-8. `v20.css` establishes Account layout; the later Account UX layer intentionally overrides it.
-9. Phase 7–14 layers (`v21` through `v28`) are semantically narrow but still rely on earlier layers and on their exact relative order.
-10. The Phase 14 accessibility layer must remain last because it intentionally overrides the muted-text token, minimum target sizing, mobile form sizing and reduced-motion behavior globally.
+### Stage 4 — mixed `v11.css` split
 
-Moving a historical file earlier in the cascade, merging it into a pre-existing file without preserving rule order, or route-loading a rule that affects shared shell state can change computed behavior even when the CSS text itself is unchanged.
+`v11.css` is reconstructed exactly from these ordered fragments:
 
-## Safe migration map
+1. `shell/browse-actions.css`
+2. `explore/layer-controls.css`
+3. `foundation/catalog-search.css`
+4. `foundation/catalog-cards.css`
+5. `country/catalog-cards.css`
+6. `people/profile-flow.css`
+7. `foundation/catalog-responsive.css`
 
-| Historical file | Semantic destination / action |
-| --- | --- |
-| `u5-integration.css` | verify current selector usage; move to `country/` only if still live, otherwise delete as orphan |
-| `u12e-languages.css` | merge into `language/` after selector-order audit |
-| `v101-hotfix.css` | split across `shell/`, `foundation/`, `people/` and `language/` while preserving original fragment order |
-| `v11.css` | split across `shell/`, `explore/`, `people/`, `country/`, `language/` |
-| `v12.css` | split across `people/` and `country/` guided-journey ownership |
-| `v14.css` | `editorial/coverage.css` |
-| `v15.css` | `editorial/coverage-expansion.css`, kept immediately after the coverage base layer |
-| `v16.css` | `prayer/practice.css` |
-| `v17.css` | `prayer/rotation.css`, kept immediately after prayer practice |
-| `v18.css` | `prayer/session.css`, kept immediately after prayer rotation |
-| `v19.css` | `shell/data-state.css` |
-| `v20.css` | `account/base.css` |
-| `v21-navigation.css` | `shell/navigation.css` |
-| `v22-peoples-explorer.css` | `people/explorer.css` |
-| `v23-people-profile.css` | `people/profile.css` |
-| `v24-explore-map.css` | `explore/map-workspace.css` |
-| `v25-countries-languages.css` | `foundation/detail-records.css` pending later country/language split |
-| `v26-prayer-saved.css` | `prayer/guides-and-lists.css` |
-| `v27-account-ux.css` | `account/ux.css` |
-| `v28-accessibility.css` | `foundation/accessibility.css`, kept last globally |
+The blocking architecture gate reconstructs the former file and requires SHA-256:
 
-## Stage 1 — narrow Phase 7–14 relocation
+`b3ed266506c4abdf50f64776dd1618f954dfcad6f0cd270d7ca1291e42beaa56`
 
-The first migration slice moves `v21` through `v28` byte-for-byte into semantic paths. Their position in `src/main.tsx` remains exactly where the historical files were imported, so cascade precedence is unchanged. Existing Phase 7–14 static certification is updated to assert the semantic path rather than the historical filename.
+### Stage 5 — mixed `v12.css` split
 
-No rule declaration is intentionally changed in this stage.
+`v12.css` is reconstructed exactly from these ordered fragments:
 
-Stage 1 is certified on `2858ebeeafe7ded58aec31bce334e2fba2e4c3bc`: Unreached CI #1196, Browser Certification #594 and Private Sync Certification #43 all passed on that exact SHA.
+1. `discovery/guided-start.css`
+2. `people/profile-journey.css`
+3. `country/guided-start.css`
+4. `people/empty-state.css`
+5. `foundation/guided-responsive.css`
 
-## Stage 2 — single-domain v14–v20 relocation
+The blocking architecture gate reconstructs the former file and requires SHA-256:
 
-Stage 2 relocates `v14` through `v20` byte-for-byte while retaining all seven files as separate cascade layers. Keeping the editorial expansion and prayer progression files separate avoids changing intra-stack precedence during the rename-only stage.
+`c44a4a61abaa74ad7535b061bce2c33b8f151a1c324235c4be65d843b295eded`
 
-The preserved order is:
+## Language ownership migration
 
-1. `editorial/coverage.css`
-2. `editorial/coverage-expansion.css`
-3. `prayer/practice.css`
-4. `prayer/rotation.css`
-5. `prayer/session.css`
-6. `shell/data-state.css`
-7. `account/base.css`
+`u12e-languages.css` has been moved byte-for-byte to:
 
-These imports occupy the exact positions previously held by `v14.css` through `v20.css`. Capability gates that asserted the historical filenames are updated only to the corresponding semantic path. The `v19-data-spin` keyframe name remains unchanged because Stage 2 does not alter CSS rule text.
+`language/resource-breakdown.css`
 
-Stage 2 is certified on `704eba65af229b340d691f12917033b64e76889a`: Unreached CI #1202, Browser Certification #597 and Private Sync Certification #46 all passed on that exact SHA. Two browser-test readiness corrections were required while certifying this stage; both were limited to Phase 14 test synchronization and did not change production CSS, runtime behavior or application markup.
+It remains immediately after `languages.css`, preserving the previous overlay position. The gate requires the original content hash:
 
-## Stage 3A — split mixed v101 hotfix ownership
+`33253211cdd98a0c5deedf5e701ae45448be82fcc956399dca82b09f60154073`
 
-Stage 3A removes `v101-hotfix.css` by replacing it at the exact same cascade slot with nine semantic fragments. The fragments are intentionally imported in the historical source order instead of being grouped by domain, because later media-query rules in the original file must retain their precedence relative to earlier base rules.
+## Dormant u5 resolution
 
-The preserved fragment order is:
+`u5-integration.css` was present on disk but was not imported by the certified application entrypoint. Its selectors still occur in Explore markup, but its declarations were dormant and therefore not part of the certified computed-style contract.
 
-1. `shell/overflow-guard.css`
-2. `foundation/loading-state.css`
-3. `people/index-loading.css`
-4. `foundation/result-pagination.css`
-5. `foundation/content-wrapping.css`
-6. `language/card-alignment.css`
-7. `shell/compact-navigation.css`
-8. `foundation/result-pagination-mobile.css`
-9. `foundation/loading-motion.css`
+The file is deleted rather than activated or merged. Moving its dormant declarations into an imported semantic file would introduce a new visual change under the label of architecture cleanup. Current Explore rendering is therefore preserved.
 
-No selector, declaration, keyframe name, breakpoint or responsive behavior is intentionally changed. The mobile pagination tail remains after the mobile shell-navigation rules, and the reduced-motion loading override remains last, matching the original `v101-hotfix.css` source order. `v11.css` and `v12.css` remain untouched until this split passes the full applicable certification suite on one exact SHA.
+## Shared country/language detail review
 
-## Later stages
+`foundation/detail-records.css` remains a shared layer. Its progress disclosure, load-more control, constrained main columns and table-wrapping rules are deliberately used by both country and language detail surfaces. Splitting them would duplicate the same responsive contract without improving ownership clarity.
 
-1. After Stage 3A certification, split `v11.css` by selector ownership and certify it before touching `v12.css`; then split and certify `v12.css`.
-2. Verify and resolve `u5-integration.css`; merge `u12e-languages.css` into the language domain.
-3. Move MapLibre CSS from the global entrypoint into the Explore/map lazy route only after route-loading tests prove first navigation, back/forward navigation, offline shell and map rendering remain stable.
-4. Add the final blocking Phase 15 architecture gate and require no release/update-number CSS filenames or imports to remain.
+The small country-specific intro rule remains adjacent because it is part of the same detail-record disclosure block and does not create cascade ambiguity.
+
+## MapLibre route loading
+
+MapLibre CSS is no longer imported by `src/main.tsx`. The lazy Explore boundary now resolves the MapLibre stylesheet and `ExplorePage` together.
+
+A full-browser regression test verifies:
+
+- the About route initially contains no `.maplibregl-map` stylesheet rule;
+- navigating to Explore loads the MapLibre stylesheet;
+- the Explore heading and searchable area list remain usable;
+- browser back/forward navigation continues to resolve both routes;
+- the map’s searchable fallback remains available independently of interactive rendering.
+
+## Final semantic import graph
+
+The application entrypoint now imports only semantic application stylesheets. Every CSS file under `src/styles/` is imported exactly once, except MapLibre’s third-party stylesheet, which belongs to the lazy Explore boundary.
+
+The final cascade remains ordered by behavior rather than alphabetically:
+
+1. tokens, base and global application foundations;
+2. map, country, people, context, prayer and language bases;
+3. language resource overlay;
+4. discovery and About;
+5. preserved `v101` semantic fragments;
+6. preserved `v11` semantic fragments;
+7. preserved `v12` semantic fragments;
+8. editorial, prayer, data-state and account layers;
+9. Phase 7–13 semantic layers;
+10. Phase 14 accessibility ownership last.
+
+`foundation/accessibility.css` remains the final application stylesheet because it intentionally owns global target sizing, focus behavior, form text sizing, contrast corrections and reduced-motion overrides.
+
+## Blocking architecture gate
+
+`scripts/styles/phase15-check.ts` is executed by `npm run css:check` inside the production build. It blocks release when any of the following occurs:
+
+- a `v*` or `u*` release/update-number CSS filename remains;
+- source code imports a numbered stylesheet;
+- a CSS file is unimported, imported twice or missing on disk;
+- accessibility is no longer the final application layer;
+- the language overlay moves away from its certified position;
+- the former `v11` or `v12` content cannot be reconstructed exactly;
+- the language-resource content changes during migration;
+- MapLibre returns to the global entrypoint or leaves the Explore lazy boundary;
+- the shared country/language detail contract disappears;
+- the browser route-loading regression test or phase documentation is missing.
 
 ## Exit criterion
 
-Phase 15 is complete only when:
+Phase 15 is complete when one exact PR head SHA satisfies all of the following:
 
-- no release/update-number CSS files remain;
-- no global import refers to a release/update-number stylesheet;
-- semantic ownership is documented and enforced;
-- MapLibre CSS is route-loaded with Explore/map where practical and certified;
-- production build and the complete desktop/mobile Browser Certification pass on the same final SHA;
-- all existing Phase 1–14 gates still pass without weakening their behavioral contracts.
+- no release/update-number CSS file or import remains;
+- every application stylesheet has documented semantic ownership;
+- legacy mixed layers reconstruct to their certified hashes;
+- MapLibre CSS is loaded through the lazy Explore boundary;
+- `npm run build` passes with the blocking CSS architecture gate;
+- the complete desktop/mobile Browser Certification passes;
+- all applicable Phase 1–14 and Private Sync gates remain green;
+- the PR is reviewed before any explicit merge into `main`.
