@@ -34,6 +34,28 @@ function reconstruct(paths: string[]): string {
   return `${paths.map((path) => read(join(STYLES_ROOT, path)).trimEnd()).join("\n\n")}\n`;
 }
 
+function reconstructV101(paths: string[]): string {
+  const fragments = paths.map((path) => read(join(STYLES_ROOT, path)).trimEnd());
+  if (fragments.length !== 9) throw new Error("Phase 15: v101 reconstruction requires nine fragments");
+
+  const compactNavigation = fragments[6]!;
+  const mobilePagination = fragments[7]!;
+  const mobileMediaPrefix = "@media (max-width: 760px) {\n";
+  if (!compactNavigation.endsWith("\n}")) {
+    throw new Error("Phase 15: compact navigation no longer ends at the certified mobile media boundary");
+  }
+  if (!mobilePagination.startsWith(mobileMediaPrefix)) {
+    throw new Error("Phase 15: mobile pagination no longer starts at the certified mobile media boundary");
+  }
+
+  const mergedMobileMedia = `${compactNavigation.slice(0, -2)}\n\n${mobilePagination.slice(mobileMediaPrefix.length)}`;
+  return `${[
+    ...fragments.slice(0, 6),
+    mergedMobileMedia,
+    fragments[8]!,
+  ].join("\n\n")}\n`;
+}
+
 function requireConsecutive(values: string[], expected: string[], label: string): void {
   const start = values.indexOf(expected[0]!);
   if (start < 0 || expected.some((value, index) => values[start + index] !== value)) {
@@ -123,7 +145,7 @@ requireConsecutive(imports, v101Fragments, "v101 semantic fragments");
 requireConsecutive(imports, v11Fragments, "v11 semantic fragments");
 requireConsecutive(imports, v12Fragments, "v12 semantic fragments");
 
-const v101Hash = sha256(reconstruct(v101Fragments));
+const v101Hash = sha256(reconstructV101(v101Fragments));
 if (v101Hash !== "cc1e61ba87d4369118f10c7f701857acb7079b6cbfbca29843914347c7a6548d") {
   throw new Error(`Phase 15: v101 semantic reconstruction changed (${v101Hash})`);
 }
