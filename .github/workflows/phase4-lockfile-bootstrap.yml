@@ -1,0 +1,46 @@
+name: Phase 4 Lockfile Bootstrap
+
+on:
+  push:
+    branches:
+      - phase/phase4-repro-security-operations
+
+permissions:
+  contents: write
+
+jobs:
+  lockfiles:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout phase branch
+        uses: actions/checkout@v7
+        with:
+          ref: phase/phase4-repro-security-operations
+          fetch-depth: 0
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22.23.2"
+
+      - name: Generate root lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Generate Worker lockfile
+        working-directory: worker
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Commit generated lockfiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add package-lock.json worker/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfiles are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: commit reproducible npm lockfiles"
+          git push origin HEAD:phase/phase4-repro-security-operations
