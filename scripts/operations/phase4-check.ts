@@ -76,7 +76,7 @@ if (worker.includes(".bind(identity.userId, identity.email, now)")) throw new Er
 const hashMigration = await read("worker/migrations/0003_hash_only_identity.sql");
 requireText(hashMigration, "ADD COLUMN identity_hash TEXT", "hash-only identity semantic column");
 requireText(hashMigration, "SET email = user_id", "legacy identity plaintext scrub");
-requireText(hashMigration, "SET identity_hash = user_id", "hash-only identity backfill");
+requireText(hashMigration, "identity_hash = user_id", "hash-only identity backfill");
 requireText(hashMigration, "sync_users_hash_only_after_insert", "hash-only insert trigger");
 requireText(hashMigration, "sync_users_hash_only_after_email_update", "hash-only compatibility update trigger");
 
