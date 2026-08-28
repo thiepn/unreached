@@ -61,7 +61,7 @@ for (const marker of ["data-data-state", "Live mission data", "Cached mission da
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes("initializeOfflineRuntime();") || !main.includes('"./styles/v19.css"')) throw new Error("v1.9 runtime/style entrypoint wiring is incomplete.");
+if (!main.includes("initializeOfflineRuntime();") || !main.includes('"./styles/shell/data-state.css"')) throw new Error("v1.9 runtime/style entrypoint wiring is incomplete.");
 
 const manifest = JSON.parse(await readText("public/site.webmanifest")) as { id?: string; start_url?: string; scope?: string; display?: string; shortcuts?: unknown[] };
 if (manifest.id !== "/unreached/" || manifest.start_url !== "/unreached/#/" || manifest.scope !== "/unreached/" || manifest.display !== "standalone") throw new Error("v1.9 installable manifest scope/start/display contract failed.");

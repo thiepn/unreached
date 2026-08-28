@@ -44,7 +44,7 @@ for (const required of ["context-coverage-nav", "Previous reviewed profile", "Ne
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes('"./styles/v14.css"')) throw new Error("v1.4 discovery stylesheet is not loaded.");
+if (!main.includes('"./styles/editorial/coverage.css"')) throw new Error("v1.4 discovery stylesheet is not loaded.");
 
 const manifest = await readJson<{ fixture?: boolean; profileCount?: number; profileUrls?: string[] }>("public/data/context/manifest.v1.json");
 if (manifest.fixture !== false || !manifest.profileCount || manifest.profileCount < 6 || manifest.profileUrls?.length !== manifest.profileCount) {

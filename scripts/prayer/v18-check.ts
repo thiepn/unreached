@@ -53,6 +53,6 @@ const sessionPage = await readText("src/pages/PrayerSessionPage.tsx");
 for (const marker of ["data-prayer-session-plan", "was frozen when this session opened", "Three prayer prompts", "Record prayer today", "stores no session history", "page state"]) if (!sessionPage.includes(marker)) throw new Error(`v1.8 prayer-session surface missing: ${marker}`);
 
 const main = await readText("src/main.tsx");
-if (!main.includes('"./styles/v18.css"')) throw new Error("v1.8 stylesheet is not loaded.");
+if (!main.includes('"./styles/prayer/session.css"')) throw new Error("v1.8 stylesheet is not loaded.");
 
 console.log("v1.8+ guided prayer-session checks passed: frozen rotation plan, 3/5/full sizing, eligibility filtering, schema-v2 reuse, latest-only recording, and zero persisted session/performance state.");

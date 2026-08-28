@@ -86,13 +86,13 @@ Moving a historical file earlier in the cascade, merging it into a pre-existing 
 | `v101-hotfix.css` | split across `shell/`, `foundation/`, `people/`, `language/` and prayer/list ownership |
 | `v11.css` | split across `shell/`, `explore/`, `people/`, `country/`, `language/` |
 | `v12.css` | split across `people/` and `country/` guided-journey ownership |
-| `v14.css` | move to `editorial/coverage.css` plus scoped people/country/context integration where useful |
-| `v15.css` | merge after `v14` into `editorial/coverage.css` preserving order |
-| `v16.css` | move to `prayer/` |
-| `v17.css` | move after v16 prayer rules |
-| `v18.css` | move after v17 prayer rules |
-| `v19.css` | move to `shell/data-state.css` |
-| `v20.css` | move to `account/base.css` |
+| `v14.css` | `editorial/coverage.css` |
+| `v15.css` | `editorial/coverage-expansion.css`, kept immediately after the coverage base layer |
+| `v16.css` | `prayer/practice.css` |
+| `v17.css` | `prayer/rotation.css`, kept immediately after prayer practice |
+| `v18.css` | `prayer/session.css`, kept immediately after prayer rotation |
+| `v19.css` | `shell/data-state.css` |
+| `v20.css` | `account/base.css` |
 | `v21-navigation.css` | `shell/navigation.css` |
 | `v22-peoples-explorer.css` | `people/explorer.css` |
 | `v23-people-profile.css` | `people/profile.css` |
@@ -108,13 +108,30 @@ The first migration slice moves `v21` through `v28` byte-for-byte into semantic 
 
 No rule declaration is intentionally changed in this stage.
 
+Stage 1 is certified on `2858ebeeafe7ded58aec31bce334e2fba2e4c3bc`: Unreached CI #1196, Browser Certification #594 and Private Sync Certification #43 all passed on that exact SHA.
+
+## Stage 2 — single-domain v14–v20 relocation
+
+Stage 2 relocates `v14` through `v20` byte-for-byte while retaining all seven files as separate cascade layers. Keeping the editorial expansion and prayer progression files separate avoids changing intra-stack precedence during the rename-only stage.
+
+The preserved order is:
+
+1. `editorial/coverage.css`
+2. `editorial/coverage-expansion.css`
+3. `prayer/practice.css`
+4. `prayer/rotation.css`
+5. `prayer/session.css`
+6. `shell/data-state.css`
+7. `account/base.css`
+
+These imports occupy the exact positions previously held by `v14.css` through `v20.css`. Capability gates that asserted the historical filenames are updated only to the corresponding semantic path. The `v19-data-spin` keyframe name remains unchanged because Stage 2 does not alter CSS rule text.
+
 ## Later stages
 
-1. Move the clearly single-domain `v14`–`v20` layers while preserving their relative order.
-2. Split mixed `v101`, `v11` and `v12` bundles by selector ownership, using browser certification after each split.
-3. Verify and resolve `u5-integration.css`; merge `u12e-languages.css` into the language domain.
-4. Move MapLibre CSS from the global entrypoint into the Explore/map lazy route only after route-loading tests prove first navigation, back/forward navigation, offline shell and map rendering remain stable.
-5. Add the final blocking Phase 15 architecture gate and require no release/update-number CSS filenames or imports to remain.
+1. Split mixed `v101`, `v11` and `v12` bundles by selector ownership, using browser certification after each split.
+2. Verify and resolve `u5-integration.css`; merge `u12e-languages.css` into the language domain.
+3. Move MapLibre CSS from the global entrypoint into the Explore/map lazy route only after route-loading tests prove first navigation, back/forward navigation, offline shell and map rendering remain stable.
+4. Add the final blocking Phase 15 architecture gate and require no release/update-number CSS filenames or imports to remain.
 
 ## Exit criterion
 

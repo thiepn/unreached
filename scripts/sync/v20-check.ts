@@ -191,7 +191,7 @@ for (const marker of [
 
 if (!router.includes('"/account": "account"')) throw new Error("Account route is not registered.");
 if (!app.includes("AccountPage") || !app.includes('case "account"')) throw new Error("Account page is not materialized by the app.");
-if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styles/v20.css"')) throw new Error("Private sync runtime/style is not initialized.");
+if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styles/account/base.css"')) throw new Error("Private sync runtime/style is not initialized.");
 
 const offlineGate = await readText("scripts/offline/v19-check.ts");
 if (offlineGate.includes('pkg.version !== "1.9.0"')) throw new Error("v1.9 capability gate must remain forward-compatible.");
