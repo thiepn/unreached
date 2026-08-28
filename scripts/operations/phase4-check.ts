@@ -38,6 +38,7 @@ for (const name of workflowNames) {
 for (const required of [
   ".github/workflows/dependency-audit.yml",
   ".github/workflows/operations-health.yml",
+  ".github/workflows/worker-production-cert.yml",
   "docs/OPERATIONS_AND_RECOVERY.md",
   "docs/PHASE4_REPRO_SECURITY_OPERATIONS.md",
   "SECURITY.md",
@@ -55,6 +56,16 @@ requireText(operationsWorkflow, "unreached/operations-health", "operations healt
 const dependencyWorkflow = await read(".github/workflows/dependency-audit.yml");
 requireText(dependencyWorkflow, "npm audit --audit-level=high", "high-severity dependency audit");
 requireText(dependencyWorkflow, "npm run audit:licenses", "dependency license audit workflow step");
+const workerProductionWorkflow = await read(".github/workflows/worker-production-cert.yml");
+for (const marker of [
+  "workflow_run:",
+  "Unreached Private Sync Deployment",
+  "unreached/worker-production",
+  "permissions-policy",
+  "x-frame-options",
+  "access-control-allow-origin",
+  "Sign-in complete. You can return to Unreached.",
+]) requireText(workerProductionWorkflow.toLowerCase(), marker.toLowerCase(), `Worker production certification marker ${marker}`);
 
 const indexHtml = await read("index.html");
 requireText(indexHtml, 'http-equiv="Content-Security-Policy"', "application CSP meta policy");
@@ -86,11 +97,13 @@ for (const marker of ["worker/wrangler.generated.jsonc", "worker/.wrangler/", "p
 }
 
 const operationsDoc = await read("docs/OPERATIONS_AND_RECOVERY.md");
-for (const marker of ["Time Travel", "tombstone", "mutation", "rollback", "incident", "account deletion", "plaintext email"]) {
+for (const marker of ["Time Travel", "tombstone", "mutation", "rollback", "incident", "account deletion", "plaintext email", "Unreached Worker Production Certification"]) {
   requireText(operationsDoc.toLowerCase(), marker.toLowerCase(), `operations documentation topic ${marker}`);
 }
+requireText(operationsDoc, "npx wrangler d1 time-travel info unreached-private-continuity --config wrangler.generated.jsonc", "correct D1 Time Travel bookmark command");
+if (/d1 time-travel info[^\n]*--remote/.test(operationsDoc)) throw new Error("Phase 4: D1 Time Travel info documentation must not use the unsupported --remote flag.");
 const phase4Doc = await read("docs/PHASE4_REPRO_SECURITY_OPERATIONS.md");
 requireText(phase4Doc, "22.23.2", "Phase 4 pinned Node documentation");
 requireText(phase4Doc, "GitHub Pages", "GitHub Pages security-header limitation documentation");
 
-console.log("Phase 4 reproducibility/security/operations checks passed: lockfiles and Node are pinned, workflows use npm ci, privacy identity storage is hash-only, static and Worker security policies are present, and scheduled recovery/health controls are wired.");
+console.log("Phase 4 reproducibility/security/operations checks passed: lockfiles and Node are pinned, workflows use npm ci, privacy identity storage is hash-only, static and deployed Worker security policies are certified, and scheduled recovery/health controls are wired.");
