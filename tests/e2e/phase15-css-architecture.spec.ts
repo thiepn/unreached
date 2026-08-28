@@ -4,7 +4,10 @@ async function hasMapLibreCss(page: Page): Promise<boolean> {
   return await page.evaluate(() => {
     function containsMapLibreRule(rules: CSSRuleList): boolean {
       for (const rule of Array.from(rules)) {
-        if (rule instanceof CSSStyleRule && rule.selectorText.includes(".maplibregl-map")) return true;
+        if (
+          rule instanceof CSSStyleRule
+          && rule.selectorText.includes(".maplibregl-canvas-container.maplibregl-interactive")
+        ) return true;
         const nested = (rule as CSSRule & { cssRules?: CSSRuleList }).cssRules;
         if (nested && containsMapLibreRule(nested)) return true;
       }
