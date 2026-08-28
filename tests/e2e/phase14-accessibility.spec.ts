@@ -75,7 +75,8 @@ test("skip navigation exposes visible focus on exactly one main landmark", async
   await expect(main).toBeVisible();
 
   // Route changes intentionally focus main for SPA navigation. Certify that
-  // behavior first, then reset to the document start to exercise the skip link.
+  // behavior first, then use real reverse keyboard traversal to reach the
+  // document-start skip link without resetting the browser's tab origin.
   await expect(main).toBeFocused();
   let focusStyle = await main.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -84,8 +85,13 @@ test("skip navigation exposes visible focus on exactly one main landmark", async
   expect(focusStyle.outlineStyle).not.toBe("none");
   expect(focusStyle.outlineWidth).toBeGreaterThanOrEqual(3);
 
-  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-  await page.keyboard.press("Tab");
+  let reachedSkip = false;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    await page.keyboard.press("Shift+Tab");
+    reachedSkip = await page.evaluate(() => document.activeElement?.classList.contains("skip-link") === true);
+    if (reachedSkip) break;
+  }
+  expect(reachedSkip).toBe(true);
   await expect(skip).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(main).toBeFocused();
