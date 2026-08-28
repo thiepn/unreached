@@ -1,5 +1,5 @@
 import { readFile, stat } from "node:fs/promises";
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 
 const dist = resolve(process.cwd(), "dist");
 const swPath = resolve(dist, "sw.js");
@@ -22,6 +22,23 @@ const precache = JSON.parse(precacheMatch[1]!) as string[];
 if (!precache.includes("./index.html") || !precache.includes("./site.webmanifest") || !precache.includes("./icon.svg")) throw new Error("Phase 2 essential shell assets are missing from the install precache.");
 if (!precache.some((entry) => entry.startsWith("./assets/"))) throw new Error("Phase 2 must precache versioned build assets for old-tab lazy-route compatibility.");
 if (precache.some((entry) => entry.startsWith("./data/") || entry.startsWith("./maps/"))) throw new Error("Phase 2 must not eagerly precache mutable editorial/data or geography trees.");
+if (new Set(precache).size !== precache.length) throw new Error("Phase 2 production service-worker precache contains duplicate entries.");
+
+const missingPrecacheEntries: string[] = [];
+for (const entry of precache) {
+  if (!entry.startsWith("./")) throw new Error(`Phase 2 precache entry must be relative to the application root: ${entry}`);
+  const target = resolve(dist, entry.slice(2));
+  if (target !== dist && !target.startsWith(`${dist}${sep}`)) throw new Error(`Phase 2 precache entry escapes the production artifact: ${entry}`);
+  try {
+    const info = await stat(target);
+    if (!info.isFile()) missingPrecacheEntries.push(entry);
+  } catch {
+    missingPrecacheEntries.push(entry);
+  }
+}
+if (missingPrecacheEntries.length > 0) {
+  throw new Error(`Phase 2 service-worker precache references files absent from dist: ${missingPrecacheEntries.join(", ")}`);
+}
 
 const manifest = JSON.parse(await readFile(resolve(dist, "site.webmanifest"), "utf8")) as { id?: string; start_url?: string; scope?: string; display?: string; icons?: unknown[] };
 if (manifest.id !== "/unreached/" || manifest.start_url !== "/unreached/#/" || manifest.scope !== "/unreached/" || manifest.display !== "standalone") throw new Error("v1.9 production manifest is not installable under /unreached/.");
@@ -35,4 +52,4 @@ for (const domain of ["mission", "countries", "peoples", "prayer", "languages"])
   if (status.mode !== "runtime-api" || status.datasetUrl !== null || status.fixture !== false) throw new Error(`v1.9 ${domain} must remain runtime-only and must not become a bundled PeopleGroups mirror.`);
 }
 
-console.log(`Phase 2 production offline checks passed: ${(swInfo.size / 1024).toFixed(1)} KiB worker, build-fingerprinted cache, safe waiting activation, bundle-chunk precache, mutable-data network-first boundary, and no bundled PeopleGroups corpus.`);
+console.log(`Phase 2 production offline checks passed: ${(swInfo.size / 1024).toFixed(1)} KiB worker, build-fingerprinted cache, complete on-disk precache, safe waiting activation, bundle-chunk precache, mutable-data network-first boundary, and no bundled PeopleGroups corpus.`);
