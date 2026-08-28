@@ -2,6 +2,8 @@
 
 Copyright © 2026 thiepn. All rights reserved unless a file or directory explicitly states otherwise.
 
+**No general license is granted.**
+
 ## Project-authored material
 
 The public availability of this repository does **not** grant a general license to copy, modify, redistribute, sublicense, sell, or create derivative works from project-authored source code, documentation, design, or editorial content.
