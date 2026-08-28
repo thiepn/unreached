@@ -67,7 +67,7 @@ for (const domain of ["mission", "countries", "peoples", "prayer", "languages"])
 }
 
 const prayerStatus = await readJson<PublicationStatus>("public/data/prayer/status.json");
-if (prayerStatus.templateVersion !== "u12c-v1" || prayerStatus.templateReviewedAt !== "2026-08-22") throw new Error("Prayer template certification metadata is missing or stale.");
+if (prayerStatus.templateVersion !== "u12c-v1" || prayerStatus.templateReviewedAt !== "2026-08-29") throw new Error("Prayer template certification metadata is missing or stale.");
 
 interface RegistrySource {
   id: string;
