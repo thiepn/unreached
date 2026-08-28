@@ -45,7 +45,7 @@ test.describe("Phase 15 CSS architecture", () => {
     await page.evaluate(() => {
       window.location.hash = "#/explore";
     });
-    await expect(page.getByRole("heading", { name: "Explore the map." })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("region", { name: "Explore the map." })).toBeVisible({ timeout: 15_000 });
     await expect.poll(() => hasMapLibreCss(page)).toBe(true);
     await openVisibleAreaList(page);
 
@@ -53,7 +53,7 @@ test.describe("Phase 15 CSS architecture", () => {
     await expect(page.getByRole("heading", { name: "Know what the map means—and what it cannot prove." })).toBeVisible();
 
     await page.goForward();
-    await expect(page.getByRole("heading", { name: "Explore the map." })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("region", { name: "Explore the map." })).toBeVisible({ timeout: 15_000 });
     await expect.poll(() => hasMapLibreCss(page)).toBe(true);
     await openVisibleAreaList(page);
   });
