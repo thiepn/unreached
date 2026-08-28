@@ -83,7 +83,7 @@ Moving a historical file earlier in the cascade, merging it into a pre-existing 
 | --- | --- |
 | `u5-integration.css` | verify current selector usage; move to `country/` only if still live, otherwise delete as orphan |
 | `u12e-languages.css` | merge into `language/` after selector-order audit |
-| `v101-hotfix.css` | split across `shell/`, `foundation/`, `people/`, `language/` and prayer/list ownership |
+| `v101-hotfix.css` | split across `shell/`, `foundation/`, `people/` and `language/` while preserving original fragment order |
 | `v11.css` | split across `shell/`, `explore/`, `people/`, `country/`, `language/` |
 | `v12.css` | split across `people/` and `country/` guided-journey ownership |
 | `v14.css` | `editorial/coverage.css` |
@@ -126,9 +126,29 @@ The preserved order is:
 
 These imports occupy the exact positions previously held by `v14.css` through `v20.css`. Capability gates that asserted the historical filenames are updated only to the corresponding semantic path. The `v19-data-spin` keyframe name remains unchanged because Stage 2 does not alter CSS rule text.
 
+Stage 2 is certified on `704eba65af229b340d691f12917033b64e76889a`: Unreached CI #1202, Browser Certification #597 and Private Sync Certification #46 all passed on that exact SHA. Two browser-test readiness corrections were required while certifying this stage; both were limited to Phase 14 test synchronization and did not change production CSS, runtime behavior or application markup.
+
+## Stage 3A — split mixed v101 hotfix ownership
+
+Stage 3A removes `v101-hotfix.css` by replacing it at the exact same cascade slot with nine semantic fragments. The fragments are intentionally imported in the historical source order instead of being grouped by domain, because later media-query rules in the original file must retain their precedence relative to earlier base rules.
+
+The preserved fragment order is:
+
+1. `shell/overflow-guard.css`
+2. `foundation/loading-state.css`
+3. `people/index-loading.css`
+4. `foundation/result-pagination.css`
+5. `foundation/content-wrapping.css`
+6. `language/card-alignment.css`
+7. `shell/compact-navigation.css`
+8. `foundation/result-pagination-mobile.css`
+9. `foundation/loading-motion.css`
+
+No selector, declaration, keyframe name, breakpoint or responsive behavior is intentionally changed. The mobile pagination tail remains after the mobile shell-navigation rules, and the reduced-motion loading override remains last, matching the original `v101-hotfix.css` source order. `v11.css` and `v12.css` remain untouched until this split passes the full applicable certification suite on one exact SHA.
+
 ## Later stages
 
-1. Split mixed `v101`, `v11` and `v12` bundles by selector ownership, using browser certification after each split.
+1. After Stage 3A certification, split `v11.css` by selector ownership and certify it before touching `v12.css`; then split and certify `v12.css`.
 2. Verify and resolve `u5-integration.css`; merge `u12e-languages.css` into the language domain.
 3. Move MapLibre CSS from the global entrypoint into the Explore/map lazy route only after route-loading tests prove first navigation, back/forward navigation, offline shell and map rendering remain stable.
 4. Add the final blocking Phase 15 architecture gate and require no release/update-number CSS filenames or imports to remain.
