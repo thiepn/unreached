@@ -1,0 +1,76 @@
+name: Dependency Security and License Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 3 * * 1"
+  pull_request:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "worker/package.json"
+      - "worker/package-lock.json"
+      - "scripts/operations/dependency-license-audit.mjs"
+      - ".github/workflows/dependency-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "worker/package.json"
+      - "worker/package-lock.json"
+      - "scripts/operations/dependency-license-audit.mjs"
+      - ".github/workflows/dependency-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            worker/package-lock.json
+
+      - name: Install application dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Worker dependencies reproducibly
+        working-directory: worker
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit application dependency vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Audit Worker dependency vulnerabilities
+        working-directory: worker
+        run: npm audit --audit-level=high
+
+      - name: Audit dependency licenses
+        run: npm run audit:licenses
+
+      - name: Generate CycloneDX SBOMs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .audit
+          npm sbom --sbom-format cyclonedx > .audit/application.cdx.json
+          (cd worker && npm sbom --sbom-format cyclonedx) > .audit/worker.cdx.json
+
+      - name: Upload SBOM evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-sboms
+          path: .audit/*.cdx.json
+          retention-days: 30
