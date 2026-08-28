@@ -20,9 +20,9 @@ Historical numbered CSS ownership was replaced by semantic ownership, MapLibre C
 
 ## Phase 3 — Release Truth, Privacy and Licensing
 
-**Status:** implementation complete; exact-SHA PR and post-merge certification required  
-**Release target:** `2.1.1`  
-**Branch:** `phase/phase3-release-truth-privacy-licensing`
+**Status:** completed  
+**Merged SHA:** `ae0a5654ea149ccec27b3b331384b13895392b48`  
+**Release:** `2.1.1`
 
 ### Implemented scope
 
@@ -44,6 +44,9 @@ Historical numbered CSS ownership was replaced by semantic ownership, MapLibre C
 - post-merge CI, Browser Certification, PeopleGroups live certification, Pages deployment and canonical production browser certification pass on the merged SHA.
 
 ## Phase 4 — Reproducibility, Security and Operations
+
+**Status:** implementation complete; certification required  
+**Branch:** `phase/phase4-repro-security-operations`
 
 ### Goal
 

@@ -7,3 +7,11 @@ dist/
 .DS_Store
 Thumbs.db
 /public/maps/world-countries.geojson
+worker/wrangler.generated.jsonc
+worker/.wrangler/
+.wrangler/
+playwright-report/
+test-results/
+coverage/
+.audit/
+.recovery/

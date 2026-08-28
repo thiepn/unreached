@@ -28,6 +28,8 @@ Eligible server-held continuity is limited to:
 - revisions, deletion tombstones and idempotency mutation IDs;
 - a SHA-256-derived account key based on the authenticated email.
 
+The verified email is used transiently for authentication but is not intentionally persisted as plaintext in D1 after the Phase 4 hash-only identity migration.
+
 Not synced:
 
 - recent browsing history;
