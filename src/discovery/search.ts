@@ -107,13 +107,17 @@ function isSubsequence(query: string, value: string): boolean {
   return false;
 }
 
-function scoreDocument(doc: SearchDocument, normalizedQuery: string, compactQuery: string): number {
+function scoreDocument(
+  doc: SearchDocument,
+  normalizedQuery: string,
+  compactQuery: string,
+  queryTokens: string[],
+): number {
   const label = doc.normalizedLabel;
   if (label === normalizedQuery) return 1000;
   if (label.startsWith(normalizedQuery)) return 900 - Math.min(80, label.length - normalizedQuery.length);
   if (label.includes(normalizedQuery)) return 800 - Math.min(100, label.indexOf(normalizedQuery));
 
-  const queryTokens = normalizedQuery.split(" ").filter(Boolean);
   if (queryTokens.length > 1 && queryTokens.every((token) => doc.searchText.includes(token))) return 720;
   if (doc.searchText.includes(normalizedQuery)) return 650;
 
@@ -136,10 +140,11 @@ export function searchDocuments(documents: SearchDocument[], query: string, limi
   const normalizedQuery = normalize(query);
   if (!normalizedQuery || limit <= 0) return [];
   const compactQuery = normalizedQuery.replaceAll(" ", "");
+  const queryTokens = normalizedQuery.split(" ").filter(Boolean);
   const best: SearchResult[] = [];
 
   for (const doc of documents) {
-    const score = scoreDocument(doc, normalizedQuery, compactQuery);
+    const score = scoreDocument(doc, normalizedQuery, compactQuery, queryTokens);
     if (score < 0) continue;
     insertBest(best, { ...doc, score }, limit);
   }
