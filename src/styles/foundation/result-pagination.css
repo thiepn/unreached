@@ -1,0 +1,26 @@
+.result-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+}
+
+.result-load-more button {
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--forest-700);
+  background: var(--paper-0);
+  color: var(--forest-700);
+  font: inherit;
+  font-weight: 750;
+}
+
+.result-load-more button:hover,
+.result-load-more button:focus-visible {
+  background: var(--forest-100);
+}

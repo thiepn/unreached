@@ -138,8 +138,14 @@ test("primary keyboard paths remain operable", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("./#/countries");
 
+  const main = page.locator("#main-content");
+  // Direct route loads intentionally schedule main focus in requestAnimationFrame.
+  // Wait for that lifecycle to finish before moving focus into keyboard controls.
+  await expect(main).toBeFocused();
+
   const browse = page.getByRole("button", { name: "Browse" });
   await browse.focus();
+  await expect(browse).toBeFocused();
   await page.keyboard.press("ArrowDown");
   const panel = page.locator("#desktop-browse-menu");
   await expect(panel).toBeVisible();
@@ -156,8 +162,11 @@ test("primary keyboard paths remain operable", async ({ page }) => {
   await expect(search).toBeHidden();
 
   await page.goto("./#/saved");
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe("#/saved");
   const summary = page.locator("details summary").first();
+  await expect(summary).toBeVisible();
   await summary.focus();
+  await expect(summary).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(summary.locator("..")).toHaveAttribute("open", "");
 });

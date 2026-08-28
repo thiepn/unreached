@@ -6,50 +6,52 @@ Unreached is feature-complete. Finalization adds no new product surface. The rem
 
 ## Phase 1 — Release-Gate Repair
 
-**Status:** in progress  
-**Branch:** `phase/finalization-1-release-gate-repair`
+**Status:** completed  
+**Merged SHA:** `005db0b89dce43b15939541fd7769bc8aa425844`
 
-### Goal
+### Result
 
-Restore deterministic post-deployment certification without weakening the blocked-storage integrity contract.
-
-### Scope
-
-1. Keep the blocked-personalization-storage journey within the same browser document so its intentionally non-persistent in-memory state is tested correctly.
-2. Assert that the document marker, origin and target hash remain stable across the route transition.
-3. Run production certification against the canonical HTTPS `www` origin rather than a redirecting deployment alias.
-4. Verify the deployment output resolves to the canonical production origin before browser certification begins.
-5. Require core CI, the complete browser matrix and Private Sync certification on the final branch SHA.
-6. After merge, require a green GitHub Pages deployment and `unreached/pages-production` status on `main`.
-
-### Exit criterion
-
-- the blocked-storage test passes deterministically in desktop and mobile Chromium;
-- no persistence fallback is introduced merely to satisfy the test;
-- the canonical deployed site passes the full Playwright matrix;
-- `unreached/pages-production` is green on the merged SHA.
+- blocked-personalization-storage certification now uses same-document hash routing;
+- document, origin and route continuity are asserted explicitly;
+- deployed browser certification runs against the canonical HTTPS `www` origin;
+- the canonical site is verified to serve the exact GitHub Pages artifact before testing;
+- core CI, Browser Certification, Private Sync, PeopleGroups live certification and Pages production certification passed on the merged SHA;
+- `unreached/pages-production` is green.
 
 ## Phase 2 — CSS Architecture Closure
 
+**Status:** implementation complete; exact-SHA certification and explicit PR integration required  
+**PR:** `#62`  
+**Branch:** `phase/phase15-css-architecture-cleanup`
+
 ### Goal
 
-Finish Phase 15 and remove every historical release/update-number stylesheet while preserving the certified Phase 14 rendering contract.
+Finish Phase 15 and remove every historical release/update-number stylesheet while preserving the certified Phase 14 rendering contract and the Phase 1 production-gate repair.
 
-### Scope
+### Implemented scope
 
-- certify the completed `v101-hotfix.css` split;
-- split and certify `v11.css`;
-- split and certify `v12.css`;
-- resolve or delete `u5-integration.css`;
-- merge `u12e-languages.css` into semantic language ownership;
-- review the shared country/language detail layer;
-- route-load MapLibre CSS where practical and safe;
-- add the blocking Phase 15 architecture gate;
-- merge the completed Phase 15 PR.
+- certified Stage 1 relocation of `v21`–`v28` into semantic ownership;
+- certified Stage 2 relocation of `v14`–`v20` into semantic ownership;
+- split `v101-hotfix.css` into ordered semantic fragments;
+- split `v11.css` into shell, Explore, foundation, country and people ownership with checksum reconstruction;
+- split `v12.css` into discovery, people, country and responsive ownership with checksum reconstruction;
+- moved `u12e-languages.css` byte-for-byte into semantic language ownership;
+- deleted dormant, unimported `u5-integration.css` without activating its previously inactive declarations;
+- reviewed and retained the genuinely shared country/language detail-record layer;
+- moved MapLibre CSS from the global entrypoint to the lazy Explore boundary;
+- added full-browser MapLibre route-loading and searchable-fallback certification;
+- added a blocking architecture gate that rejects numbered CSS files, incomplete import graphs, cascade-order drift and legacy-content drift;
+- merged current `main` into the phase branch before final certification.
 
 ### Exit criterion
 
-No release-numbered CSS file or import remains, semantic ownership is enforced, and all Phase 1–14 behavioral checks still pass.
+- no release/update-number CSS file or import remains;
+- semantic ownership and intentional cascade order are enforced;
+- former mixed layers reconstruct to their certified hashes;
+- MapLibre CSS is route-loaded with Explore;
+- build, full browser matrix and all applicable existing gates pass on one exact PR head SHA;
+- PR #62 is reviewed before any explicit merge into `main`;
+- after merge, GitHub Pages and `unreached/pages-production` pass on the merged SHA.
 
 ## Phase 3 — Release Truth, Privacy and Licensing
 

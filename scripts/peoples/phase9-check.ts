@@ -41,7 +41,7 @@ for (const marker of [
   if (!actions.includes(marker)) throw new Error(`Phase 9 profile action flow missing ${marker}.`);
 }
 
-const styles = await readText("src/styles/v23-people-profile.css");
+const styles = await readText("src/styles/people/profile.css");
 for (const marker of [
   ".people-profile-overview",
   ".people-profile-context",
@@ -55,7 +55,7 @@ for (const marker of [
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes('import "./styles/v23-people-profile.css"')) {
+if (!main.includes('import "./styles/people/profile.css"')) {
   throw new Error("Phase 9 people profile stylesheet is not loaded.");
 }
 

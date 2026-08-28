@@ -42,11 +42,11 @@ const packageJson = read("package.json");
 const main = read("src/main.tsx");
 const base = read("src/styles/base.css");
 const tokens = read("src/styles/tokens.css");
-const accessibility = read("src/styles/v28-accessibility.css");
+const accessibility = read("src/styles/foundation/accessibility.css");
 const browserSpec = read("tests/e2e/phase14-accessibility.spec.ts");
 const docs = read("docs/PHASE14_ACCESSIBILITY.md");
 
-requireText(main, 'import "./styles/v28-accessibility.css";', "accessibility stylesheet import");
+requireText(main, 'import "./styles/foundation/accessibility.css";', "accessibility stylesheet import");
 requireText(packageJson, '"accessibility:check": "tsx scripts/accessibility/phase14-check.ts"', "accessibility:check script");
 requireText(packageJson, "npm run accessibility:check", "blocking build integration");
 requireText(base, "@media (prefers-reduced-motion: reduce)", "base reduced-motion policy");

@@ -29,6 +29,6 @@ for (const marker of ["How prayer-list data is stored", "How saved-profile data 
 }
 if (!savedPage.includes('<details class="saved-section saved-recent-section">')) throw new Error("Phase 12 Recents must be collapsed by default.");
 if (sessionPage.includes("Saved & prayer")) throw new Error("Phase 12 session navigation must consistently use My lists naming.");
-if (!main.includes('"./styles/v26-prayer-saved.css"')) throw new Error("Phase 12 stylesheet is not loaded.");
+if (!main.includes('"./styles/prayer/guides-and-lists.css"')) throw new Error("Phase 12 stylesheet is not loaded.");
 
 console.log("Phase 12 release gate passed.");

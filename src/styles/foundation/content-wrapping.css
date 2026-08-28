@@ -1,0 +1,19 @@
+.people-card,
+.language-card,
+.saved-person-card,
+.search-result-row,
+.search-recent-row {
+  min-width: 0;
+}
+
+.people-card__countries,
+.language-card h2,
+.language-card__top span,
+.language-card dt,
+.language-card dd,
+.prayer-card,
+.saved-person-card,
+.about-page,
+.search-dialog {
+  overflow-wrap: anywhere;
+}

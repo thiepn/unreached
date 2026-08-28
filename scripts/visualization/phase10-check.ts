@@ -31,7 +31,7 @@ if (!explore.includes(desktopKey) || !explore.includes(mobileKey)) {
   throw new Error("Phase 10 requires one desktop map key and one mobile-sheet map key for mutually exclusive viewports.");
 }
 
-const styles = await readText("src/styles/v24-explore-map.css");
+const styles = await readText("src/styles/explore/map-workspace.css");
 for (const marker of [
   ".explore-panel--phase10",
   "overflow: hidden",
@@ -46,7 +46,7 @@ for (const marker of [
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes('import "./styles/v24-explore-map.css"')) {
+if (!main.includes('import "./styles/explore/map-workspace.css"')) {
   throw new Error("Phase 10 stylesheet is not loaded.");
 }
 

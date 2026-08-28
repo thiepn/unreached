@@ -1,0 +1,9 @@
+.people-index-state--loading {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+
+.people-index-state--loading small {
+  color: var(--ink-2);
+}

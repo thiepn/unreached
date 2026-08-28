@@ -1,0 +1,7 @@
+.language-card__top span {
+  min-width: 0;
+}
+
+.language-card__top span:last-child {
+  text-align: right;
+}

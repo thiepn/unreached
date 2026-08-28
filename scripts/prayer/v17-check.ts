@@ -40,6 +40,6 @@ for (const marker of ["No prayer date recorded yet", "least-recently recorded", 
 for (const marker of ["Next from your private prayer rotation", "selectNextPrayerRotationEntry", "not a priority ranking"]) if (!prayPage.includes(marker)) throw new Error(`v1.7 Prayer integration missing: ${marker}`);
 for (const marker of ["Prayer rotation", "Next return point", "data-prayer-rotation-next", "does not rank urgency"]) if (!savedPage.includes(marker)) throw new Error(`v1.7 Saved rotation workspace missing: ${marker}`);
 for (const marker of ["Continue with", "data-next-prayer-peid", "selectNextPrayerRotationEntry"]) if (!focusPage.includes(marker)) throw new Error(`v1.7 focused-prayer continuation missing: ${marker}`);
-if (!main.includes('"./styles/v17.css"')) throw new Error("v1.7 stylesheet is not loaded.");
+if (!main.includes('"./styles/prayer/rotation.css"')) throw new Error("v1.7 stylesheet is not loaded.");
 
 console.log("v1.7 prayer rotation checks passed: derived oldest-return ordering, eligibility filtering, guided continuation, schema-v2 reuse, and non-priority/non-performance guardrails.");

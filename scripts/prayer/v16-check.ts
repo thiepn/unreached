@@ -29,6 +29,6 @@ const localSource = `${types}\n${model}\n${runtime}`;
 for (const forbidden of ["prayerCount", "totalPrayers", "prayerScore", "prayerStreak", "leaderboardRank"]) if (localSource.includes(forbidden)) throw new Error(`Forbidden prayer metric field: ${forbidden}`);
 for (const network of ["fetch(", "XMLHttpRequest", "sendBeacon", "WebSocket("]) if (runtime.includes(network)) throw new Error(`Personalization runtime must remain browser-local: ${network}`);
 if (!runtime.includes("unreached.personal.v2") || !runtime.includes("unreached.personal.v1")) throw new Error("v2 storage + v1 fallback contract missing.");
-for (const [source, marker] of [[prayPage, "private prayer list"], [focusPage, "Record prayer today"], [focusPage, "recordPrayer(prayerSnapshot)"], [savedPage, "data-prayer-list-peid"], [main, '"./styles/v16.css"']] as const) if (!source.includes(marker)) throw new Error(`v1.6 retained capability missing: ${marker}`);
+for (const [source, marker] of [[prayPage, "private prayer list"], [focusPage, "Record prayer today"], [focusPage, "recordPrayer(prayerSnapshot)"], [savedPage, "data-prayer-list-peid"], [main, '"./styles/prayer/practice.css"']] as const) if (!source.includes(marker)) throw new Error(`v1.6 retained capability missing: ${marker}`);
 
 console.log("v1.6 private prayer practice capability gate passed on current release.");

@@ -44,7 +44,7 @@ if (/record\.peoples\.map\s*\(/.test(languagePage)) {
 if (!countryPage.includes("Showing 12 of {record.languages.length}")) {
   throw new Error("Phase 11: CountryPage must disclose the capped major-language list when more source languages exist.");
 }
-if (!main.includes('"./styles/v25-countries-languages.css"')) {
+if (!main.includes('"./styles/foundation/detail-records.css"')) {
   throw new Error("Phase 11: the country-language consistency stylesheet is not loaded.");
 }
 
