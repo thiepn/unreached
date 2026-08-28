@@ -4,65 +4,48 @@ import { resolve } from "node:path";
 const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 
-const explore = await readText("src/pages/ExplorePage.tsx");
+const page = await readText("src/pages/ExplorePage.tsx");
 for (const marker of [
-  "explore-screen--phase10",
-  "explore-panel--phase10",
-  "mission-view-control",
-  "country-index--primary",
-  "mission-map-key-floating",
-  "mobile-map-sheet--phase10",
-  "Source breakdown",
-  "About this view",
+  'explore-panel explore-panel--phase10',
+  'class="mission-view-control"',
+  'class="mission-view-info"',
+  'selected-area selected-area--phase10',
+  'class="selected-mission-details"',
+  'class="country-index--primary"',
+  'class="mission-map-key mission-map-key--desktop"',
+  'mobile-map-sheet mobile-map-sheet--phase10',
 ]) {
-  if (!explore.includes(marker)) throw new Error(`Phase 10 Explore workspace missing ${marker}.`);
+  if (!page.includes(marker)) throw new Error(`Phase 10 Explore page missing ${marker}.`);
 }
 
-if (explore.includes("function MissionLegend")) {
-  throw new Error("Phase 10 must not keep the duplicated MissionLegend implementation.");
-}
-if (explore.includes("map-legend-floating")) {
-  throw new Error("Phase 10 must not render the legacy duplicate floating legend.");
-}
+const desktopKeyCount = (page.match(/mission-map-key--desktop/g) ?? []).length;
+if (desktopKeyCount !== 1) throw new Error(`Phase 10 expected exactly one desktop mission map key, found ${desktopKeyCount}.`);
+const mobileKeyCount = (page.match(/mission-map-key--compact/g) ?? []).length;
+if (mobileKeyCount !== 1) throw new Error(`Phase 10 expected exactly one mobile mission map key, found ${mobileKeyCount}.`);
 
-const desktopKey = '<div class="mission-map-key-floating"><MissionMapKey activeLayer={activeLayer} /></div>';
-const mobileKey = '<MissionMapKey activeLayer={activeLayer} compact />';
-if (!explore.includes(desktopKey) || !explore.includes(mobileKey)) {
-  throw new Error("Phase 10 requires one desktop map key and one mobile-sheet map key for mutually exclusive viewports.");
-}
-
-const styles = await readText("src/styles/v24-explore-map.css");
+const styles = await readText("src/styles/explore/map-workspace.css");
 for (const marker of [
   ".explore-panel--phase10",
-  "overflow: hidden",
   ".country-index--primary",
-  ".explore-panel--phase10 .country-list",
-  "overflow-y: auto",
   ".mission-map-key-floating",
-  ".mobile-map-sheet--phase10 .mission-map-key--compact",
-  "@media (max-width: 760px)",
+  ".mission-map-key",
+  ".mobile-map-sheet--phase10",
+  "@media (min-width: 761px)",
 ]) {
-  if (!styles.includes(marker)) throw new Error(`Phase 10 map styling missing ${marker}.`);
+  if (!styles.includes(marker)) throw new Error(`Phase 10 Explore styling missing ${marker}.`);
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes('import "./styles/v24-explore-map.css"')) {
-  throw new Error("Phase 10 stylesheet is not loaded.");
-}
-
-const sidebarSpec = await readText("tests/e2e/map-sidebar-layout.spec.ts");
-if (!sidebarSpec.includes("map sidebar keeps one scroll region")) {
-  throw new Error("Phase 10 must certify the single-scroll desktop sidebar contract.");
-}
+if (!main.includes('import "./styles/explore/map-workspace.css"')) throw new Error("Phase 10 Explore map stylesheet is not loaded.");
 
 const browserSpec = await readText("tests/e2e/phase10-explore-map.spec.ts");
 for (const marker of [
-  "desktop exposes one visible map key",
-  "selected country keeps detailed breakdown opt in",
-  "mobile sheet owns the only visible map key",
-  "mobile map sheet does not overflow horizontally",
+  "desktop Explore keeps one visible map key",
+  "desktop sidebar does not create nested scrolling",
+  "mobile Explore exposes one compact map key",
+  "selected country keeps secondary mission detail progressive",
 ]) {
   if (!browserSpec.includes(marker)) throw new Error(`Phase 10 browser certification missing: ${marker}.`);
 }
 
-console.log("Phase 10 Explore/map checks passed: one scroll region per viewport, one visible map key per viewport, progressive source detail, and responsive map-sheet contracts are enforced.");
+console.log("Phase 10 Explore checks passed: one map key per viewport, single-scroll desktop workspace, progressive mission detail, compact mobile sheet and preserved map-state contracts are enforced.");

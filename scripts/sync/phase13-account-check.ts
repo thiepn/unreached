@@ -43,6 +43,6 @@ for (const marker of ["local by default", "Private Sync", "Recent browsing never
   if (!saved.includes(marker)) throw new Error(`Phase 13 My lists privacy copy missing: ${marker}`);
 }
 
-if (!main.includes('"./styles/v27-account-ux.css"')) throw new Error("Phase 13 Account UX stylesheet is not loaded.");
+if (!main.includes('"./styles/account/ux.css"')) throw new Error("Phase 13 Account UX stylesheet is not loaded.");
 
 console.log("Phase 13 Account UX gate passed: local-first status/action hierarchy, progressive advanced controls, preserved recovery actions, and sync-aware privacy copy are enforced.");
