@@ -28,7 +28,7 @@ if (searchIndex < 0 || guidedIndex < 0 || editorialIndex < 0 || searchIndex > gu
 if (page.includes('<label>Status<select')) throw new Error("Phase 8 reach status must not be buried in the advanced filter grid.");
 if (page.includes('<label>Sort<select')) throw new Error("Phase 8 sort must remain visible outside the advanced filter grid.");
 
-const styles = await readText("src/styles/v22-peoples-explorer.css");
+const styles = await readText("src/styles/people/explorer.css");
 for (const marker of [
   ".people-discovery-workspace",
   ".people-status-choices",
@@ -41,7 +41,7 @@ for (const marker of [
 }
 
 const main = await readText("src/main.tsx");
-if (!main.includes('import "./styles/v22-peoples-explorer.css"')) throw new Error("Phase 8 Peoples Explorer stylesheet is not loaded last.");
+if (!main.includes('import "./styles/people/explorer.css"')) throw new Error("Phase 8 Peoples Explorer stylesheet is not loaded last.");
 
 const browserSpec = await readText("tests/e2e/phase8-peoples-explorer.spec.ts");
 for (const marker of [
