@@ -26,9 +26,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Typecheck, validate and build
         run: npm run build
       - name: Configure Pages
@@ -65,9 +65,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Wait for canonical deployed entry point
         shell: bash
         run: |
@@ -144,6 +144,8 @@ jobs:
           const html = await (await get("./")).text();
           if (!html.includes("Unreached")) throw new Error("Production HTML does not identify Unreached");
           if (!html.includes("/unreached/")) throw new Error("Production HTML is missing /unreached/ scoped assets");
+          if (!html.includes('http-equiv="Content-Security-Policy"')) throw new Error("Production HTML is missing the document CSP policy");
+          if (!html.includes('name="referrer" content="no-referrer"')) throw new Error("Production HTML is missing the referrer policy");
           const webmanifest = await (await get("site.webmanifest")).json();
           if (webmanifest.name !== "Unreached — Explore. Understand. Pray." || webmanifest.short_name !== "Unreached") throw new Error("Unexpected production manifest identity");
           if (webmanifest.id !== "/unreached/" || webmanifest.scope !== "/unreached/" || webmanifest.start_url !== "/unreached/#/") throw new Error("Unexpected production manifest scope");
