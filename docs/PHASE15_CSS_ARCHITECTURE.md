@@ -32,7 +32,21 @@ Certified Stage 2 SHA: `704eba65af229b340d691f12917033b64e76889a`.
 
 ### Stage 3 — mixed `v101-hotfix.css` split
 
-The mixed hotfix layer was replaced at its original cascade slot by nine semantic fragments. Fragment order reproduces the source order of the removed file, including the mobile-pagination tail and reduced-motion override.
+`v101-hotfix.css` is reconstructed exactly from these ordered fragments:
+
+1. `shell/overflow-guard.css`
+2. `foundation/loading-state.css`
+3. `people/index-loading.css`
+4. `foundation/result-pagination.css`
+5. `foundation/content-wrapping.css`
+6. `language/card-alignment.css`
+7. `shell/compact-navigation.css`
+8. `foundation/result-pagination-mobile.css`
+9. `foundation/loading-motion.css`
+
+The sequence reproduces the source order of the removed file, including the mobile-pagination tail and reduced-motion override. The blocking architecture gate requires SHA-256:
+
+`cc1e61ba87d4369118f10c7f701857acb7079b6cbfbca29843914347c7a6548d`
 
 ### Stage 4 — mixed `v11.css` split
 
@@ -92,9 +106,9 @@ MapLibre CSS is no longer imported by `src/main.tsx`. The lazy Explore boundary 
 
 A full-browser regression test verifies:
 
-- the About route initially contains no `.maplibregl-map` stylesheet rule;
+- the About route initially contains no MapLibre interaction rule;
 - navigating to Explore loads the MapLibre stylesheet;
-- the Explore heading and searchable area list remain usable;
+- the Explore map landmark and searchable area list remain usable;
 - browser back/forward navigation continues to resolve both routes;
 - the map’s searchable fallback remains available independently of interactive rendering.
 
@@ -126,7 +140,7 @@ The final cascade remains ordered by behavior rather than alphabetically:
 - a CSS file is unimported, imported twice or missing on disk;
 - accessibility is no longer the final application layer;
 - the language overlay moves away from its certified position;
-- the former `v11` or `v12` content cannot be reconstructed exactly;
+- the former `v101`, `v11` or `v12` content cannot be reconstructed exactly;
 - the language-resource content changes during migration;
 - MapLibre returns to the global entrypoint or leaves the Explore lazy boundary;
 - the shared country/language detail contract disappears;
