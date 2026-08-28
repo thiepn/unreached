@@ -2,76 +2,46 @@
 
 ## Finalization rule
 
-Unreached is feature-complete. Finalization adds no new product surface. The remaining work closes release blockers, removes structural debt, aligns public policy with production behavior, hardens operations and certifies one exact release SHA.
+Unreached is feature-complete. Finalization adds no new mission/prayer product surface. The remaining work closes release blockers, removes structural debt, aligns public policy with production behavior, hardens operations and certifies one exact release SHA.
 
 ## Phase 1 — Release-Gate Repair
 
 **Status:** completed  
 **Merged SHA:** `005db0b89dce43b15939541fd7769bc8aa425844`
 
-### Result
-
-- blocked-personalization-storage certification now uses same-document hash routing;
-- document, origin and route continuity are asserted explicitly;
-- deployed browser certification runs against the canonical HTTPS `www` origin;
-- the canonical site is verified to serve the exact GitHub Pages artifact before testing;
-- core CI, Browser Certification, Private Sync, PeopleGroups live certification and Pages production certification passed on the merged SHA;
-- `unreached/pages-production` is green.
+Production/browser gate races were repaired and canonical Pages certification was made authoritative.
 
 ## Phase 2 — CSS Architecture Closure
 
-**Status:** implementation complete; exact-SHA certification and explicit PR integration required  
-**PR:** `#62`  
-**Branch:** `phase/phase15-css-architecture-cleanup`
+**Status:** completed  
+**Merged through:** PR #65 production-certification hotfix
 
-### Goal
-
-Finish Phase 15 and remove every historical release/update-number stylesheet while preserving the certified Phase 14 rendering contract and the Phase 1 production-gate repair.
-
-### Implemented scope
-
-- certified Stage 1 relocation of `v21`–`v28` into semantic ownership;
-- certified Stage 2 relocation of `v14`–`v20` into semantic ownership;
-- split `v101-hotfix.css` into ordered semantic fragments;
-- split `v11.css` into shell, Explore, foundation, country and people ownership with checksum reconstruction;
-- split `v12.css` into discovery, people, country and responsive ownership with checksum reconstruction;
-- moved `u12e-languages.css` byte-for-byte into semantic language ownership;
-- deleted dormant, unimported `u5-integration.css` without activating its previously inactive declarations;
-- reviewed and retained the genuinely shared country/language detail-record layer;
-- moved MapLibre CSS from the global entrypoint to the lazy Explore boundary;
-- added full-browser MapLibre route-loading and searchable-fallback certification;
-- added a blocking architecture gate that rejects numbered CSS files, incomplete import graphs, cascade-order drift and legacy-content drift;
-- merged current `main` into the phase branch before final certification.
-
-### Exit criterion
-
-- no release/update-number CSS file or import remains;
-- semantic ownership and intentional cascade order are enforced;
-- former mixed layers reconstruct to their certified hashes;
-- MapLibre CSS is route-loaded with Explore;
-- build, full browser matrix and all applicable existing gates pass on one exact PR head SHA;
-- PR #62 is reviewed before any explicit merge into `main`;
-- after merge, GitHub Pages and `unreached/pages-production` pass on the merged SHA.
+Historical numbered CSS ownership was replaced by semantic ownership, MapLibre CSS became Explore-route-loaded, service-worker precache integrity was repaired, search/map production-certification races were closed, and the canonical production matrix passed on the integrated line.
 
 ## Phase 3 — Release Truth, Privacy and Licensing
 
-### Goal
+**Status:** implementation complete; exact-SHA PR and post-merge certification required  
+**Release target:** `2.1.1`  
+**Branch:** `phase/phase3-release-truth-privacy-licensing`
 
-Make every public and repository statement accurately describe the shipped application.
+### Implemented scope
 
-### Scope
-
-- choose and apply the final patch version;
-- align README, package metadata, changelog, release state and certification documents;
-- replace obsolete local-only privacy documentation with a current public privacy notice;
-- reconcile data/licensing policy and source registry with the PeopleGroups.org runtime architecture;
-- refresh provider-term and editorial review dates;
-- remove brittle historical release assertions;
-- add explicit code, content and third-party licensing documents.
+- selected 2.1.1 as the finalization patch version;
+- aligned package metadata and README with the shipped 2.1 product;
+- replaced obsolete local-only privacy documentation;
+- added repository and deployed public privacy notices;
+- reconciled PeopleGroups.org public runtime use with the separate static-redistribution boundary;
+- refreshed source/provider review dates to 28 August 2026;
+- replaced obsolete Joshua-Project-primary-source legal policy;
+- added explicit project-authored licensing and third-party notices;
+- refreshed public About/source language and attribution;
+- upgraded the blocking release gate to enforce version/privacy/licensing/source-policy truth.
 
 ### Exit criterion
 
-Version, privacy, data use, licensing, attribution and release documentation agree with actual production behavior and pass blocking policy checks.
+- deterministic build and full browser matrix pass on one exact PR head SHA;
+- PR is reviewed and integrated;
+- post-merge CI, Browser Certification, PeopleGroups live certification, Pages deployment and canonical production browser certification pass on the merged SHA.
 
 ## Phase 4 — Reproducibility, Security and Operations
 
@@ -84,7 +54,7 @@ Make the final release reproducible, defensible and maintainable after active de
 - commit root and Worker lockfiles;
 - use `npm ci` in every workflow;
 - standardize the Node version;
-- run dependency, vulnerability and license audits;
+- run dependency, vulnerability and dependency-license audits;
 - add appropriate CSP/referrer/security hardening;
 - define D1 retention, tombstone, mutation-ledger, backup, restore and rollback policies;
 - add scheduled PeopleGroups, Pages and Worker health certification;
@@ -112,4 +82,4 @@ Promote one frozen SHA into the final maintained release.
 
 ### Exit criterion
 
-The exact tagged SHA is live, fully automated- and manually-certified, documented, recoverable and accepted as the maintenance baseline.
+The exact tagged SHA is live, automated- and manually-certified, documented, recoverable and accepted as the maintenance baseline.
