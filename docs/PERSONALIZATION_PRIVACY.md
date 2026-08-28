@@ -1,20 +1,50 @@
-# Local Personalization Privacy
+# Personalization & Privacy Architecture
 
-U10 personalization is intentionally browser-local.
+**Reviewed:** 28 August 2026
 
-Stored locally:
+Unreached remains local-first, but the old statement that no account or cloud synchronization state exists is no longer true after optional private continuity was introduced.
 
-- people groups explicitly saved for prayer
-- up to 12 recently opened people, country and language profiles
+## Browser-local state
 
-Not stored or transmitted by U10:
+The browser is the primary source of truth for normal use. Depending on features used, local storage can contain:
 
-- prayer completion history
-- prayer duration
-- prayer frequency
-- account identity
-- device identity
-- cloud synchronization state
-- analytics events
+- Saved-person membership and source-backed snapshots;
+- private prayer-list membership and source-backed snapshots;
+- the single latest `lastPrayedAt` timestamp explicitly recorded for a prayer entry;
+- up to the bounded recent-route limit used for navigation convenience;
+- optional sync configuration, revisions and pending mutations;
+- a validated PeopleGroups.org IndexedDB snapshot used for offline resilience;
+- a session-only Cloudflare Access token while signed in.
 
-Clearing the browser's site storage removes this local state. The application treats failure or denial of localStorage access as a recoverable condition rather than a fatal error.
+## Optional private continuity
+
+Private sync is opt-in and requires an explicit **Merge this device & enable sync** action after authentication.
+
+Eligible server-held continuity is limited to:
+
+- Saved membership/snapshots;
+- prayer-list membership/snapshots;
+- latest `lastPrayedAt`;
+- revisions, deletion tombstones and idempotency mutation IDs;
+- a SHA-256-derived account key based on the authenticated email.
+
+Not synced:
+
+- recent browsing history;
+- prayer-event history;
+- prayer counts, totals, streaks or scores;
+- session history/completion state;
+- mission-priority or spiritual-performance metrics;
+- PeopleGroups.org corpus/cache;
+- Natural Earth geography;
+- reviewed editorial publication data.
+
+## Telemetry
+
+Unreached implements no first-party analytics events, advertising trackers, profiling pixels or prayer-performance telemetry. Infrastructure providers may maintain operational/security logs under their own policies.
+
+## Deletion boundary
+
+Deleting private account data removes server-held continuity records but does not silently erase browser-local Saved/prayer state. Clearing browser site data removes local state independently.
+
+See the current public notice at [`../PRIVACY.md`](../PRIVACY.md) and the protocol detail in [`V20_PRIVATE_CONTINUITY.md`](V20_PRIVATE_CONTINUITY.md).
