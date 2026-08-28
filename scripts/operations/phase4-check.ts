@@ -101,7 +101,9 @@ for (const marker of ["Time Travel", "tombstone", "mutation", "rollback", "incid
   requireText(operationsDoc.toLowerCase(), marker.toLowerCase(), `operations documentation topic ${marker}`);
 }
 requireText(operationsDoc, "npx wrangler d1 time-travel info unreached-private-continuity --config wrangler.generated.jsonc", "correct D1 Time Travel bookmark command");
-if (/d1 time-travel info[^\n]*--remote/.test(operationsDoc)) throw new Error("Phase 4: D1 Time Travel info documentation must not use the unsupported --remote flag.");
+if (operationsDoc.includes("npx wrangler d1 time-travel info unreached-private-continuity --remote")) {
+  throw new Error("Phase 4: D1 Time Travel info documentation must not use the unsupported --remote flag.");
+}
 const phase4Doc = await read("docs/PHASE4_REPRO_SECURITY_OPERATIONS.md");
 requireText(phase4Doc, "22.23.2", "Phase 4 pinned Node documentation");
 requireText(phase4Doc, "GitHub Pages", "GitHub Pages security-header limitation documentation");
