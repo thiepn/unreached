@@ -10,14 +10,13 @@ This release does **not** bundle or redistribute the PeopleGroups.org corpus. It
 
 The production Vite build emits `/unreached/sw.js`.
 
-The service worker precaches only same-origin Unreached-owned production assets:
+The service worker install precache contains only same-origin Unreached-owned shell assets that are safe to pin to a build generation:
 
 - the application HTML shell;
 - hashed JavaScript/CSS/font assets emitted by Vite;
-- the web manifest and icon;
-- Natural Earth geography shipped by Unreached;
-- reviewed editorial context shards and their manifest;
-- existing local status/methodology assets.
+- the web manifest and icon.
+
+Mutable same-origin Unreached-owned publications and data — including reviewed editorial context, Natural Earth geography and local status/methodology assets — use a network-first strategy. A successful controlled visit stores those responses in the current build-fingerprinted service-worker cache, and later offline visits fall back to that cached copy. Public-file contents still contribute to the build fingerprint so a changed publication creates a new cache generation even though mutable data is not eagerly precached.
 
 It does not intercept, proxy, precache, or runtime-cache cross-origin PeopleGroups.org API requests.
 
@@ -101,7 +100,9 @@ No accounts or cloud synchronization are introduced.
 `scripts/offline/v19-dist-check.ts` verifies the actual production bundle contains:
 
 - a bounded-size `sw.js`;
-- the application shell, manifest, icon, geography, and reviewed editorial manifest in the precache list;
+- the application shell, manifest, icon and versioned build assets in the install precache;
+- no mutable `data/` or geography tree in the eager precache;
+- the network-first runtime fallback path for mutable owned resources;
 - no PeopleGroups.org API URL in the worker;
 - runtime-only publication status for mission/country/people/prayer/language source domains.
 
@@ -109,12 +110,14 @@ No accounts or cloud synchronization are introduced.
 
 `tests/e2e/v19-offline-resilience.spec.ts` verifies:
 
-- the owned app shell and reviewed editorial coverage reopen offline;
+- the owned app shell and reviewed editorial coverage reopen offline after a successful **service-worker-controlled** Coverage visit has fully materialized the reviewed publication;
 - a previously validated PeopleGroups snapshot powers an offline people-index return;
 - an offline browser with no mission cache fails clearly and safely;
 - reconnecting revalidates the failed mission-data surface and returns it to live data.
 
-These journeys run through the existing Chromium, Firefox, WebKit, mobile Chromium, and mobile WebKit certification matrix.
+For the production-shell journey, certification waits for the controlled Coverage route to return to its successful rendered state before connectivity is disabled. This is required because acquiring service-worker control can itself reload the route; going offline immediately when `navigator.serviceWorker.controller` becomes non-null can interrupt the network-first editorial shard requests before their `cache.put` operations complete. The test therefore certifies the intended user contract — offline return **after a successful prior controlled visit** — rather than racing the worker warmup.
+
+These journeys run through the existing Chromium, Firefox, WebKit, mobile Chromium, and mobile WebKit certification matrix. The real top-level offline service-worker reload is executed in Chromium projects; deterministic production-bundle checks certify the same generated worker contract independently of browser engine.
 
 ## Non-goals
 
