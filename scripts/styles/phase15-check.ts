@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { basename, join, relative, sep } from "node:path";
+import { join, relative, sep } from "node:path";
 
 const STYLES_ROOT = "src/styles";
 
@@ -92,6 +92,17 @@ if (languageIndex < 0 || imports[languageIndex + 1] !== "language/resource-break
   throw new Error("Phase 15: language resource ownership no longer overlays the language base at its certified slot");
 }
 
+const v101Fragments = [
+  "shell/overflow-guard.css",
+  "foundation/loading-state.css",
+  "people/index-loading.css",
+  "foundation/result-pagination.css",
+  "foundation/content-wrapping.css",
+  "language/card-alignment.css",
+  "shell/compact-navigation.css",
+  "foundation/result-pagination-mobile.css",
+  "foundation/loading-motion.css",
+];
 const v11Fragments = [
   "shell/browse-actions.css",
   "explore/layer-controls.css",
@@ -108,9 +119,14 @@ const v12Fragments = [
   "people/empty-state.css",
   "foundation/guided-responsive.css",
 ];
+requireConsecutive(imports, v101Fragments, "v101 semantic fragments");
 requireConsecutive(imports, v11Fragments, "v11 semantic fragments");
 requireConsecutive(imports, v12Fragments, "v12 semantic fragments");
 
+const v101Hash = sha256(reconstruct(v101Fragments));
+if (v101Hash !== "cc1e61ba87d4369118f10c7f701857acb7079b6cbfbca29843914347c7a6548d") {
+  throw new Error(`Phase 15: v101 semantic reconstruction changed (${v101Hash})`);
+}
 const v11Hash = sha256(reconstruct(v11Fragments));
 if (v11Hash !== "b3ed266506c4abdf50f64776dd1618f954dfcad6f0cd270d7ca1291e42beaa56") {
   throw new Error(`Phase 15: v11 semantic reconstruction changed (${v11Hash})`);
