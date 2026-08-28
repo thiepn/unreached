@@ -87,8 +87,13 @@ test("release transparency page contains definitions and permission state", asyn
   await page.goto("./#/about");
   await expect(page.getByRole("heading", { name: /Know what the map means/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Core terms" })).toBeVisible();
-  await expect(page.getByText("Joshua Project API", { exact: true })).toBeVisible();
-  await expect(page.getByText("Release gated", { exact: true })).toBeVisible();
+
+  const sources = page.locator('section[aria-labelledby="sources-heading"]');
+  await expect(sources.getByText("PeopleGroups.org / IMB Global Research", { exact: true })).toBeVisible();
+  await expect(sources.getByText("Runtime active", { exact: true })).toBeVisible();
+  await expect(sources.getByText("Joshua Project API", { exact: true })).toBeVisible();
+  await expect(sources.getByText("Not active", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Release 2\.1\.1 separates runtime access, privacy and redistribution/ })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 

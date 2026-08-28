@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index,follow" />
+  <title>Privacy | Unreached</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1d1d1b;background:#f7f4ed}body{margin:0}.wrap{max-width:760px;margin:auto;padding:48px 24px 72px}a{color:inherit}h1{font-size:clamp(2rem,6vw,3.5rem);line-height:1;margin:0 0 12px}h2{margin-top:36px;font-size:1.2rem}p,li{line-height:1.65}header p{max-width:62ch;color:#5b5a55}.meta{font-size:.9rem;color:#68665f}.back{display:inline-block;margin-bottom:36px;font-weight:650}.note{border-top:1px solid #d7d2c7;border-bottom:1px solid #d7d2c7;padding:18px 0;margin:28px 0}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="back" href="/unreached/#/about">← Back to Unreached</a>
+    <header><h1>Privacy notice</h1><p class="meta">Effective and reviewed 28 August 2026</p><p>Unreached is designed to work without an account. Local-only use is the default.</p></header>
+
+    <h2>Browser-local data</h2>
+    <p>Depending on the features you use, this browser may store Saved/prayer membership, a bounded recent-route list, the latest prayer timestamp you explicitly record, optional sync metadata, and a validated PeopleGroups.org snapshot in IndexedDB for offline resilience. A signed-in session may also keep a Cloudflare Access token in sessionStorage until the browser session ends.</p>
+
+    <h2>Optional private continuity</h2>
+    <p>Authentication alone does not enable synchronization. You must separately choose to merge this device and enable sync. When enabled, the private service is limited to Saved/prayer membership and source-backed snapshots, the single latest prayer timestamp, revisions/deletion tombstones, mutation identifiers, and an account key derived by hashing the authenticated email.</p>
+    <p>The private service is designed not to store recent browsing history, prayer-event history, prayer totals, streaks, scores, rankings, session history, the PeopleGroups.org corpus, or the browser's PeopleGroups cache.</p>
+
+    <h2>External services</h2>
+    <p>The public application is hosted through GitHub Pages. Live mission data is requested from PeopleGroups.org. Optional authentication and the private continuity service use Cloudflare. Those providers receive ordinary network/request information under their own privacy and security policies.</p>
+
+    <h2>Analytics and advertising</h2>
+    <p>Unreached does not currently implement its own analytics, advertising, profiling pixels, cross-site behavioral tracking, or prayer-performance telemetry. Infrastructure providers may maintain operational or security logs under their own policies.</p>
+
+    <h2>Your controls</h2>
+    <ul><li>Use the application without an account.</li><li>Enable or disconnect private sync explicitly.</li><li>Export server-held private continuity data.</li><li>Sign out and clear the session token.</li><li>Delete server-held private account data.</li><li>Clear browser site data to remove device-local state.</li></ul>
+    <p class="note">Deleting server-held account data does not automatically erase local Saved/prayer data. Local browser state remains until you clear it separately.</p>
+
+    <h2>Mission-data cache</h2>
+    <p>The validated PeopleGroups.org snapshot is a device-local resilience cache. It is not uploaded to the private continuity service and is not exposed by Unreached as a public dataset download or API.</p>
+
+    <h2>Changes</h2>
+    <p>Material privacy changes must update this public notice and the release-policy checks before deployment.</p>
+  </main>
+</body>
+</html>

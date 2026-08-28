@@ -28,15 +28,18 @@ test("desktop Browse supports disclosure keyboard navigation and focus return", 
   test.skip(isPhone(page), "Desktop Browse disclosure is replaced by the mobile modal sheet on phone layouts.");
   await page.goto("./#/about");
   const trigger = desktopBrowseTrigger(page);
-  await trigger.focus();
+  await expect(trigger).toBeVisible();
+  await trigger.press("ArrowDown");
+
+  const panel = page.locator("#desktop-browse-menu");
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole("link", { name: /Reviewed coverage/i })).toBeFocused();
   await page.keyboard.press("ArrowDown");
-  await expect(page.getByRole("link", { name: /Reviewed coverage/i })).toBeFocused();
-  await page.keyboard.press("ArrowDown");
-  await expect(page.getByRole("link", { name: /^Countries/i })).toBeFocused();
+  await expect(panel.getByRole("link", { name: /^Countries/i })).toBeFocused();
   await page.keyboard.press("End");
-  await expect(page.getByRole("link", { name: /About & sources/i })).toBeFocused();
+  await expect(panel.getByRole("link", { name: /About & sources/i })).toBeFocused();
   await page.keyboard.press("Escape");
-  await expect(page.locator("#desktop-browse-menu")).toHaveCount(0);
+  await expect(panel).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
 
