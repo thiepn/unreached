@@ -5,14 +5,16 @@
 Unreached is a browser-based Christian mission atlas for discovering people groups, understanding source-backed context, and moving from information into prayer.
 
 - **Live site:** https://www.thiepn.dev/unreached/
-- **Current version:** **2.1.2**
+- **Current version:** **2.1.3**
 - **Platform:** Preact/Vite on GitHub Pages
 - **Optional continuity:** Cloudflare Worker + D1 + Cloudflare Access
 - **Core loop:** **Explore → Understand → Pray**
 
 ## Current production behavior
 
-Version 2.1.2 is a maintenance performance patch on the certified 2.1 line. It preserves the v2.1.1 product, privacy and data contracts while reducing perceived loading latency: prepared PeopleGroups data hydrates immediately from IndexedDB, provider connection setup and signaled route chunks can prewarm opportunistically, and a true cold People Explorer can become searchable after the first validated provider page while the remaining corpus continues loading.
+Version 2.1.3 is a maintenance UI hotfix on the certified 2.1 line. It preserves the v2.1.2 loading, product, privacy and data contracts while fixing the narrow Explore-sidebar methodology layout so an opened “About this view” explainer occupies a full-width row instead of being compressed into the selector’s narrow auxiliary column.
+
+The v2.1.2 loading improvements remain intact: prepared PeopleGroups data hydrates immediately from IndexedDB, provider connection setup and signaled route chunks can prewarm opportunistically, and a true cold People Explorer can become searchable after the first validated provider page while the remaining corpus continues loading.
 
 Any cold partial catalog is explicitly labeled as incomplete. Complete-world map, country, language and prayer aggregates remain gated on the full validated PeopleGroups corpus, and partial network data is never persisted as a complete prepared snapshot.
 
@@ -60,7 +62,7 @@ Optional private sync is additive. Authentication alone does not enable it. Serv
 
 Release candidates pass deterministic build/policy gates, desktop/mobile Chromium/Firefox/WebKit tests, offline-resilience tests, private-sync certification, live PeopleGroups corpus/CORS checks, GitHub Pages deployment checks, and canonical production browser certification.
 
-Maintenance release publication remains exact-SHA gated. See [`docs/releases/v2.1.2.md`](docs/releases/v2.1.2.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
+Maintenance release publication remains exact-SHA gated. See [`docs/releases/v2.1.3.md`](docs/releases/v2.1.3.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
 
 ## Local development
 
