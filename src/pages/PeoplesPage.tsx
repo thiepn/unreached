@@ -110,7 +110,7 @@ export function PeoplesPage() {
   const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
   const activeFilterCount = [filters.status !== "all", filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
   const advancedFilterCount = [filters.countryIso3, filters.language, filters.religion, filters.bibleAvailability, filters.minimumPopulation > 0, reviewedOnly].filter(Boolean).length;
-  const showGuidedStarts = !filters.query.trim() && activeFilterCount === 0;
+  const showGuidedStarts = explorer.ready && !filters.query.trim() && activeFilterCount === 0;
 
   // URL state is part of the current history entry, so commit it before paint.
   // This prevents a fast navigation immediately after typing from racing a
@@ -159,11 +159,21 @@ export function PeoplesPage() {
 
       {explorer.warning ? <div class="people-data-notice" role="status"><Database size={20} aria-hidden="true" /><div><strong>Showing cached source data</strong><p>{explorer.warning}</p></div></div> : null}
 
-      {explorer.loading && !explorer.ready ? (
+      {explorer.partial ? (
+        <div class="people-data-notice people-data-notice--progressive" role="status" data-progressive-catalog="true">
+          <Database size={20} aria-hidden="true" />
+          <div>
+            <strong>Loading the complete catalog</strong>
+            <p>Showing {explorer.previewRecordCount} validated source records received so far. Search, filters and match counts are temporary until all {explorer.progress?.totalPages ?? "remaining"} source pages finish loading.</p>
+          </div>
+        </div>
+      ) : null}
+
+      {explorer.loading && !explorer.interactive ? (
         <div class="people-index-state people-index-state--loading" role="status">
           <span class="loading-pulse" aria-hidden="true" />
           <strong>{loadingLabel(explorer.progress?.loadedPages, explorer.progress?.totalPages)}</strong>
-          <small>Search and discovery controls appear when the shared source dataset is ready.</small>
+          <small>Search and discovery controls appear as soon as the first validated source page arrives.</small>
         </div>
       ) : null}
 
@@ -171,7 +181,7 @@ export function PeoplesPage() {
         <div class="people-data-notice" role="alert"><Database size={20} aria-hidden="true" /><div><strong>Live people-group data is temporarily unavailable</strong><p>{explorer.error}</p><button type="button" class="people-reset-filters" onClick={explorer.retry}><RefreshCw size={15} aria-hidden="true" /> Retry</button></div></div>
       ) : null}
 
-      {explorer.ready ? (
+      {explorer.interactive ? (
         <>
           <section class="people-discovery-workspace" aria-label="Find and filter people groups">
             <div class="people-search-wrap">
@@ -221,7 +231,7 @@ export function PeoplesPage() {
             ) : null}
 
             <div class="people-results-header">
-              <div class="people-result-count" aria-live="polite"><strong>{results.length}</strong> matches <span>from {explorer.peoples.length} source records</span>{reviewedOnly ? <span> · reviewed context only</span> : null}</div>
+              <div class="people-result-count" aria-live="polite"><strong>{results.length}</strong> matches <span>from {explorer.peoples.length} {explorer.partial ? "loaded " : ""}source records</span>{reviewedOnly ? <span> · reviewed context only</span> : null}</div>
               {visibleResults.length < results.length ? <span class="people-visible-count">Showing first {visibleResults.length}</span> : null}
             </div>
           </section>
@@ -266,8 +276,8 @@ export function PeoplesPage() {
             </>
           ) : (
             <div class="people-index-empty people-index-empty--recover">
-              <strong>No people groups match this search.</strong>
-              <p>{reviewedOnly ? "No currently published reviewed editorial profile matches these source filters. Coverage is limited and is not a mission-priority ranking." : "Remove one or more filters, or clear the search, to return to the full live index."}</p>
+              <strong>{explorer.partial ? "No loaded records match this search yet." : "No people groups match this search."}</strong>
+              <p>{explorer.partial ? "More validated source pages are still arriving. Adjust the filters now or keep this search while the catalog finishes loading." : reviewedOnly ? "No currently published reviewed editorial profile matches these source filters. Coverage is limited and is not a mission-priority ranking." : "Remove one or more filters, or clear the search, to return to the full live index."}</p>
               <button type="button" class="people-reset-filters" onClick={resetFilters}>Clear search & filters</button>
             </div>
           )}
