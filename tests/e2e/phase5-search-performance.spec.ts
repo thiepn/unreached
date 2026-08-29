@@ -70,6 +70,12 @@ test.describe("Phase 5 prepared search responsiveness", () => {
     const peopleSearch = page.locator("#people-search");
     await expect(peopleSearch).toBeVisible({ timeout: 20_000 });
 
+    // P2.1 intentionally makes People Explorer interactive before every provider page
+    // has arrived. This benchmark measures the prepared full-corpus search path, not
+    // network arrival time for a record that is not in the current partial catalog.
+    await expect(page.getByRole("heading", { name: "Synthetic People 3999" })).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator('[data-progressive-catalog="true"]')).toHaveCount(0, { timeout: 5_000 });
+
     const cdp = await page.context().newCDPSession(page);
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
     try {
