@@ -93,7 +93,7 @@ test("release transparency page contains definitions and permission state", asyn
   await expect(sources.getByText("Runtime active", { exact: true })).toBeVisible();
   await expect(sources.getByText("Joshua Project API", { exact: true })).toBeVisible();
   await expect(sources.getByText("Not active", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Release 2\.1\.2 preserves the certified data boundary while reducing loading latency/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Release 2\.1\.3 preserves the certified data boundary and fixes narrow Explore methodology layout/ })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 

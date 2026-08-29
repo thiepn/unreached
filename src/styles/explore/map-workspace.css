@@ -31,8 +31,14 @@
 }
 
 .mission-view-info {
+  min-width: 0;
   color: var(--ink-2);
   font-size: 0.72rem;
+}
+
+.mission-view-control > .mission-view-info[open] {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .mission-view-info > summary {
@@ -47,8 +53,10 @@
 
 .mission-view-info > div {
   display: grid;
+  min-width: 0;
   gap: var(--space-2);
   padding: var(--space-2) 0 var(--space-1);
+  overflow-wrap: anywhere;
 }
 
 .mission-view-info p {
