@@ -175,7 +175,7 @@ jobs:
             if (!Array.isArray(status.sourceIds) || !status.sourceIds.includes("peoplegroups-org-api")) throw new Error(`Production ${domain} status does not identify PeopleGroups.org`);
           }
           const prayer = await (await get("data/prayer/status.json")).json();
-          if (prayer.templateVersion !== "u12c-v1" || prayer.templateReviewedAt !== "2026-08-22") throw new Error("Production prayer template certification metadata is invalid");
+          if (prayer.templateVersion !== "u12c-v1" || prayer.templateReviewedAt !== "2026-08-29") throw new Error("Production prayer template certification metadata is invalid");
           NODE
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit
