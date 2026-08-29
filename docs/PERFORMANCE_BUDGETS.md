@@ -23,9 +23,26 @@ PeopleGroups.org remains a runtime API source rather than a public static data b
 - maximum **10 seconds per HTTP request**
 - **24-hour** fresh origin-local IndexedDB cache window
 - **7-day** maximum stale fallback window
+- bounded full-corpus fetch concurrency of **6** requests
 - no PeopleGroups.org raw corpus in `dist/`
 - no third-party people-group photos in the runtime corpus/cache
 
-At the provider's documented 250-record maximum, a 12,000+ record corpus is roughly 50 page requests on a cold full load. U12C should avoid initiating that work from the landing page and should measure real first-load timing, memory, indexing cost and search latency on the final visible explorer before production content activation.
+At the provider's documented 250-record maximum, a 12,000+ record corpus is roughly 50 page requests on a cold full load. The complete corpus is still required before world/country/language/prayer aggregates are considered ready.
+
+## 2.1.x loading-latency policy
+
+The maintenance performance pass reduces perceived loading time without changing the completeness or provider-data contracts:
+
+- the prepared IndexedDB PeopleGroups snapshot starts hydrating immediately when the entry module executes; it no longer waits for an idle callback or a startup timer;
+- this startup hydration remains **local-only** and never initiates a PeopleGroups.org network request by itself;
+- the browser receives DNS/preconnect hints for `peoplegroups.org` so connection setup may begin before a data route requests the API;
+- lazy route modules are opportunistically preloaded when navigation intent is visible through pointer hover/down or keyboard focus;
+- on a true cold load, the **People Explorer only** may become interactive after the first validated provider page arrives;
+- while that cold preview is active, the UI explicitly states that it is a partial catalog and that search/filter/match counts cover only records received so far;
+- guided starts are withheld until the complete corpus is ready;
+- Explore/world map, country aggregation, language aggregation and prayer eligibility continue to use only the complete validated corpus;
+- a partial cold load is never persisted as the prepared complete snapshot and is discarded if the full corpus fails validation.
+
+The fetch concurrency remains **6** until a separate provider-safe benchmark demonstrates that higher concurrency improves end-to-end latency without increasing throttling or tail failures.
 
 Real-device performance, WebGL/GPU behavior, third-party API behavior and slow-network experience remain part of deployed certification rather than being inferred from bundle-size budgets alone.
