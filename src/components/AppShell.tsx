@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-preact";
 
+import { preloadRoute } from "../app/route-preload";
 import { hrefFor, type RouteId } from "../app/router";
 import { DataStatus } from "./DataStatus";
 import { SearchDialog } from "./SearchDialog";
@@ -53,6 +54,10 @@ const referenceNav: NavItem[] = [
 
 const browseNav = [...discoverNav, ...referenceNav];
 
+function warmRoute(item: NavItem): void {
+  preloadRoute(item.id);
+}
+
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;
   return (
@@ -60,6 +65,9 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
       class={`nav-link${active ? " is-active" : ""}`}
       href={hrefFor(item.path)}
       aria-current={active ? "page" : undefined}
+      onPointerEnter={() => warmRoute(item)}
+      onPointerDown={() => warmRoute(item)}
+      onFocus={() => warmRoute(item)}
     >
       <Icon size={17} aria-hidden="true" />
       <span>{item.label}</span>
@@ -75,6 +83,9 @@ function BrowseLink({ item, active, initial = false }: { item: NavItem; active: 
       href={hrefFor(item.path)}
       aria-current={active ? "page" : undefined}
       data-mobile-nav-initial={initial ? "true" : undefined}
+      onPointerEnter={() => warmRoute(item)}
+      onPointerDown={() => warmRoute(item)}
+      onFocus={() => warmRoute(item)}
     >
       <Icon size={18} aria-hidden="true" />
       <span><strong>{item.label}</strong><small>{item.description}</small></span>
@@ -238,7 +249,14 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
       <a class="skip-link" href="#main-content" onClick={skipToContent}>Skip to content</a>
 
       <header class="site-header">
-        <a class="brand" href={hrefFor("/")} aria-label="Unreached home">
+        <a
+          class="brand"
+          href={hrefFor("/")}
+          aria-label="Unreached home"
+          onPointerEnter={() => preloadRoute("explore")}
+          onPointerDown={() => preloadRoute("explore")}
+          onFocus={() => preloadRoute("explore")}
+        >
           <span class="brand-mark" aria-hidden="true">
             <span class="brand-mark__meridian" />
             <span class="brand-mark__parallel" />
@@ -295,6 +313,9 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
             href={hrefFor("/saved")}
             aria-label="My saved people and prayer list"
             aria-current={activeRoute === "saved" ? "page" : undefined}
+            onPointerEnter={() => preloadRoute("saved")}
+            onPointerDown={() => preloadRoute("saved")}
+            onFocus={() => preloadRoute("saved")}
           >
             <Bookmark size={18} aria-hidden="true" />
             <span class="utility-action__label">My lists</span>
@@ -304,6 +325,9 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
             href={hrefFor("/account")}
             aria-label="Account and private sync"
             aria-current={activeRoute === "account" ? "page" : undefined}
+            onPointerEnter={() => preloadRoute("account")}
+            onPointerDown={() => preloadRoute("account")}
+            onFocus={() => preloadRoute("account")}
           >
             <UserRound size={18} aria-hidden="true" />
             <span class="utility-action__label">Account</span>
