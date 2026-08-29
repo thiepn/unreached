@@ -145,7 +145,7 @@ for (const marker of [
 }
 requireText(explorePage, 'class="country-profile-link"', "current Explore country-profile link markup");
 requireText(packageJson, '"css:check": "tsx scripts/styles/phase15-check.ts"', "css:check package script");
-requireText(packageJson, "npm run accessibility:check && npm run css:check && npm run operations:check && npm run release:check", "blocking build integration");
+requireText(packageJson, "npm run accessibility:check && npm run css:check && npm run operations:check && npm run pwa:icons && npm run release:check", "blocking build integration");
 requireText(docs, "Final semantic import graph", "final semantic import graph documentation");
 requireText(docs, "Dormant u5 resolution", "dormant u5 resolution documentation");
 requireText(finalizationPlan, "Phase 2 — CSS Architecture Closure", "Phase 2 finalization plan entry");
