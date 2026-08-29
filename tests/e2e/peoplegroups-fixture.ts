@@ -5,7 +5,7 @@ export const VISIBLE_TEST_PEOPLE = "Browser Test People";
 export const RELATED_TEST_PEID = 910002;
 export const UNCOVERED_TEST_PEID = 910003;
 
-const records = [
+export const PEOPLE_GROUPS_TEST_RECORDS = [
   {
     PEID: VISIBLE_TEST_PEID,
     PGID: "PG910001",
@@ -94,12 +94,12 @@ const records = [
     PplNm: "Second Browser People",
     UpdatedDate: "2026-08-20T00:00:00.000Z"
   }
-];
+] as const;
 
 export async function installPeopleGroupsFixture(page: Page): Promise<void> {
   await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups\/PG[0-9]+$/, async (route) => {
     const pgid = route.request().url().split("/").pop()?.toUpperCase() ?? "";
-    const record = records.find((item) => item.PGID === pgid) ?? null;
+    const record = PEOPLE_GROUPS_TEST_RECORDS.find((item) => item.PGID === pgid) ?? null;
     if (!record) {
       await route.fulfill({ status: 404, contentType: "application/json", body: JSON.stringify({ message: "Not found" }) });
       return;
@@ -115,14 +115,14 @@ export async function installPeopleGroupsFixture(page: Page): Promise<void> {
   await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
     const url = new URL(route.request().url());
     const pageNumber = Number(url.searchParams.get("page") ?? "1");
-    const body = pageNumber === 1 ? records : [];
+    const body = pageNumber === 1 ? PEOPLE_GROUPS_TEST_RECORDS : [];
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "X-WP-Total, X-WP-TotalPages",
-        "X-WP-Total": String(records.length),
+        "X-WP-Total": String(PEOPLE_GROUPS_TEST_RECORDS.length),
         "X-WP-TotalPages": "1"
       },
       body: JSON.stringify(body)
