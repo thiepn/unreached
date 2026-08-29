@@ -80,7 +80,13 @@ if (!runtime.includes("onPartial: params.onPartial")) throw new Error("P2.1 corp
 for (const marker of ["partial", "interactive", "previewEntities", "previewPeopleSearchIndex"]) {
   if (!peopleLive.includes(marker)) throw new Error(`P2.1 People Explorer preview wrapper missing ${marker}.`);
 }
-for (const marker of ["data-progressive-catalog", "Loading the complete catalog", "explorer.interactive", "loaded source records"]) {
+for (const marker of [
+  "data-progressive-catalog",
+  "Loading the complete catalog",
+  "explorer.interactive",
+  'explorer.partial ? "loaded " : ""',
+  "source records",
+]) {
   if (!peoplesPage.includes(marker)) throw new Error(`P2.1 truthful progressive People Explorer UI missing ${marker}.`);
 }
 
