@@ -18,8 +18,15 @@ if (!pkg.scripts?.build?.includes("instant-data:check")) {
 
 const cache = await readText("src/providers/peoplegroups/cache.ts");
 const store = await readText("src/providers/peoplegroups/store.ts");
+const runtime = await readText("src/providers/peoplegroups/runtime.ts");
 const main = await readText("src/main.tsx");
 const api = await readText("src/providers/peoplegroups/api.ts");
+const peopleLive = await readText("src/peoples/live.ts");
+const peoplesPage = await readText("src/pages/PeoplesPage.tsx");
+const routePreload = await readText("src/app/route-preload.ts");
+const appShell = await readText("src/components/AppShell.tsx");
+const index = await readText("index.html");
+const browserSpec = await readText("tests/e2e/v21-instant-data.spec.ts");
 const legal = await readText("docs/PEOPLEGROUPS_DATA_SOURCE.md");
 
 for (const marker of [
@@ -42,6 +49,9 @@ for (const marker of [
   "void refreshFromSource(true)",
   "persistPrepared",
   "warmPeopleGroupsRuntime",
+  "previewReady: boolean",
+  "previewPeopleSearchIndex",
+  "materializePreview",
 ]) {
   if (!store.includes(marker)) throw new Error(`P2.1 stale-while-revalidate runtime missing ${marker}.`);
 }
@@ -51,12 +61,47 @@ if (!store.includes(localOnlyWarmup)) {
   throw new Error("P2.1 startup warming must hydrate only the prepared local snapshot and must not trigger a provider request.");
 }
 
-for (const marker of [
-  "installPeopleGroupsReconnectRefresh",
-  "requestIdleCallback",
-  "warmPeopleGroupsRuntime",
-]) {
+for (const marker of ["installPeopleGroupsReconnectRefresh", "warmPeopleGroupsRuntime();", "render(<App />"]) {
   if (!main.includes(marker)) throw new Error(`P2.1 startup warming missing ${marker}.`);
+}
+const warmIndex = main.indexOf("warmPeopleGroupsRuntime();");
+const renderIndex = main.indexOf("render(<App />");
+if (warmIndex < 0 || renderIndex < 0 || warmIndex > renderIndex) {
+  throw new Error("P2.1 prepared snapshot hydration must start before the application render.");
+}
+if (main.includes("requestIdleCallback") || main.includes("setTimeout(warmPeopleGroupsRuntime")) {
+  throw new Error("P2.1 prepared snapshot hydration must not wait for an idle callback or timer.");
+}
+
+for (const marker of ["onPartial", "publishPartial", "loadedPages", "totalPages"]) {
+  if (!api.includes(marker)) throw new Error(`P2.1 progressive API loading missing ${marker}.`);
+}
+if (!runtime.includes("onPartial: params.onPartial")) throw new Error("P2.1 corpus loader must forward validated partial batches.");
+for (const marker of ["partial", "interactive", "previewEntities", "previewPeopleSearchIndex"]) {
+  if (!peopleLive.includes(marker)) throw new Error(`P2.1 People Explorer preview wrapper missing ${marker}.`);
+}
+for (const marker of ["data-progressive-catalog", "Loading the complete catalog", "explorer.interactive", "loaded source records"]) {
+  if (!peoplesPage.includes(marker)) throw new Error(`P2.1 truthful progressive People Explorer UI missing ${marker}.`);
+}
+
+for (const marker of ["preloadRoute", 'import("../pages/PeoplesPage")', 'import("../pages/PrayPage")']) {
+  if (!routePreload.includes(marker)) throw new Error(`P2.1 route-intent preloading missing ${marker}.`);
+}
+for (const marker of ["onPointerEnter", "onPointerDown", "onFocus", "preloadRoute"]) {
+  if (!appShell.includes(marker)) throw new Error(`P2.1 navigation intent preloading missing ${marker}.`);
+}
+for (const marker of [
+  '<link rel="dns-prefetch" href="//peoplegroups.org" />',
+  '<link rel="preconnect" href="https://peoplegroups.org" crossorigin />',
+]) {
+  if (!index.includes(marker)) throw new Error(`P2.1 provider connection warming missing ${marker}.`);
+}
+
+for (const marker of [
+  "prepared cache hydrates on non-data routes without idle callbacks",
+  "cold People Explorer is usable before the full corpus finishes",
+]) {
+  if (!browserSpec.includes(marker)) throw new Error(`P2.1 browser loading certification missing ${marker}.`);
 }
 
 if (!api.includes('cache: "no-store"')) throw new Error("P2.1 must preserve direct-provider no-store semantics; local prepared data is the cache boundary.");
@@ -75,4 +120,4 @@ for (const forbidden of [
   }
 }
 
-console.log("P2.1 instant-data checks passed: prepared one-read hydration, local-only idle startup, non-blocking stale-while-revalidate on demand, version-3 cache stores, reconnect refresh, and no static provider mirror.");
+console.log("P2.1 instant-data checks passed: prepared-cache hydration starts immediately, cold People Explorer can use validated partial pages without claiming complete coverage, navigation/API connections prewarm opportunistically, stale-while-revalidate and no-static-mirror boundaries remain intact.");
