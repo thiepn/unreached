@@ -29,7 +29,7 @@ if (!dailyA || dailyA.sourcePeopleId !== dailyB?.sourcePeopleId) throw new Error
 if (selectDailyPrayerProfile(prayer.profiles, "2026-08-22", "XZZ")?.sourcePeopleId !== 999001) throw new Error("Country-scoped daily prayer selection failed.");
 
 if (LIVE_PRAYER_TEMPLATE_REVIEW.status !== "release-certified-template") throw new Error("U12C live prayer template must remain release-certified.");
-if (LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt !== "2026-08-22") throw new Error("U12C prayer template review date changed unexpectedly.");
+if (LIVE_PRAYER_TEMPLATE_REVIEW.reviewedAt !== "2026-08-29") throw new Error("U12C prayer template must retain the Phase 5 final review date.");
 
 const statusRaw = JSON.parse(await readFile(resolve(process.cwd(), "public/data/prayer/status.json"), "utf8")) as unknown;
 const status = prayerAvailabilitySchema.parse(statusRaw);

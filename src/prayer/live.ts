@@ -11,7 +11,7 @@ export const LIVE_PRAYER_TEMPLATE_VERSION = "u12c-v1";
 
 export const LIVE_PRAYER_TEMPLATE_REVIEW = {
   version: LIVE_PRAYER_TEMPLATE_VERSION,
-  reviewedAt: "2026-08-22",
+  reviewedAt: "2026-08-29",
   status: "release-certified-template",
   scope: "Fixed biblical prayer wording with only source-backed people, country, GSEC, and resource fields interpolated at runtime.",
 } as const;

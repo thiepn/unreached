@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - ".github/workflows/worker-production-cert.yml"
   workflow_run:
     workflows:
       - Unreached Private Sync Deployment

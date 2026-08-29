@@ -1,0 +1,13 @@
+# Repository ownership for release and maintenance review.
+* @thiepn
+
+# High-risk release, privacy, data and deployment surfaces.
+/.github/workflows/ @thiepn
+/worker/ @thiepn
+/scripts/release/ @thiepn
+/scripts/operations/ @thiepn
+/data/ @thiepn
+/public/data/ @thiepn
+/PRIVACY.md @thiepn
+/LICENSE.md @thiepn
+/THIRD_PARTY_NOTICES.md @thiepn
