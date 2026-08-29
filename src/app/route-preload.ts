@@ -7,24 +7,11 @@ const routePreloaders: Partial<Record<RouteId, RoutePreloader>> = {
     import("maplibre-gl/dist/maplibre-gl.css"),
     import("../pages/ExplorePage"),
   ]),
-  peoples: () => Promise.all([
-    import("../pages/PeoplesPage"),
-    import("../pages/PeopleContextualPage"),
-  ]),
-  countries: () => Promise.all([
-    import("../pages/CountriesPage"),
-    import("../pages/CountryPage"),
-  ]),
-  languages: () => Promise.all([
-    import("../pages/LanguagesPage"),
-    import("../pages/LanguagePage"),
-  ]),
+  peoples: () => import("../pages/PeoplesPage"),
+  countries: () => import("../pages/CountriesPage"),
+  languages: () => import("../pages/LanguagesPage"),
   coverage: () => import("../pages/EditorialCoveragePage"),
-  pray: () => Promise.all([
-    import("../pages/PrayPage"),
-    import("../pages/PrayerFocusPage"),
-    import("../pages/PrayerSessionPage"),
-  ]),
+  pray: () => import("../pages/PrayPage"),
   saved: () => import("../pages/SavedPage"),
   account: () => import("../pages/AccountPage"),
   about: () => import("../pages/AboutPage"),
