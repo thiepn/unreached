@@ -102,9 +102,10 @@ test.describe("P2.1 instant data and background revalidation", () => {
       });
     });
     await page.goto("./#/about");
+    await page.reload();
 
     await expect(page.locator('[data-data-state="cached"]')).toBeVisible({ timeout: 1_000 });
-    await expect(page.getByRole("heading", { name: /about/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Know what the map means/i })).toBeVisible();
   });
 
   test("cold People Explorer is usable before the full corpus finishes", async ({ page }) => {
