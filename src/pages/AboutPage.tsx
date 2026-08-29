@@ -51,9 +51,10 @@ export function AboutPage() {
       </section>
 
       <section class="about-section about-release-state" aria-labelledby="release-heading">
-        <div class="about-section__heading"><ShieldCheck size={20} aria-hidden="true" /><div><span class="eyebrow">Production truth</span><h2 id="release-heading">Release 2.1.1 separates runtime access, privacy and redistribution</h2></div></div>
+        <div class="about-section__heading"><ShieldCheck size={20} aria-hidden="true" /><div><span class="eyebrow">Production truth</span><h2 id="release-heading">Release 2.1.2 preserves the certified data boundary while reducing loading latency</h2></div></div>
         <p>PeopleGroups.org is approved in project policy for direct public runtime reads. That approval is separate from static redistribution: Unreached does not expose a downloadable corpus mirror or relicense provider data.</p>
-        <p>The validated PeopleGroups snapshot used for resilience is device-local IndexedDB data. The service worker does not intercept or runtime-cache PeopleGroups.org requests.</p>
+        <p>Prepared PeopleGroups data hydrates immediately from the validated device-local IndexedDB snapshot. On a true cold load, only People Explorer may become interactive from validated partial provider pages, and it labels that catalog as incomplete until the full corpus is ready. Map, country, language and prayer aggregates continue to require the complete validated corpus.</p>
+        <p>The service worker does not intercept or runtime-cache PeopleGroups.org requests. Partial provider data is never persisted as a complete prepared snapshot.</p>
         <p>Anonymous/local-only use is the default. Optional private continuity requires a separate merge-and-enable action after authentication and syncs only Saved/prayer membership, source-backed snapshots and the latest prayer timestamp. Recent browsing and prayer-performance/history data are excluded.</p>
         <p><a href="/unreached/privacy.html">Read the public privacy notice</a>. Source and licensing records were reviewed on <strong>28 August 2026</strong>.</p>
       </section>

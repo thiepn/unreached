@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { installPeopleGroupsFixture, VISIBLE_TEST_PEOPLE } from "./peoplegroups-fixture";
+import { installPeopleGroupsFixture, PEOPLE_GROUPS_TEST_RECORDS, VISIBLE_TEST_PEOPLE } from "./peoplegroups-fixture";
 
 const DB_NAME = "unreached-peoplegroups-v1";
 const PREPARED_STORE = "prepared";
@@ -87,5 +87,68 @@ test.describe("P2.1 instant data and background revalidation", () => {
 
     releaseRefresh();
     await expect(page.getByText(VISIBLE_TEST_PEOPLE).first()).toBeVisible();
+  });
+
+  test("prepared cache hydrates on non-data routes without idle callbacks", async ({ page }) => {
+    await installPeopleGroupsFixture(page);
+    await page.goto("./#/peoples");
+    await expect(page.getByText(VISIBLE_TEST_PEOPLE).first()).toBeVisible();
+    await waitForPreparedSnapshot(page);
+
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "requestIdleCallback", {
+        configurable: true,
+        value: () => 1,
+      });
+    });
+    await page.goto("./#/about");
+    await page.reload();
+
+    // Compact mobile layouts intentionally hide the global data-state badge.
+    // Presence of the cached state in the DOM is the cross-viewport contract.
+    await expect(page.locator('[data-data-state="cached"]')).toHaveCount(1, { timeout: 1_000 });
+    await expect(page.getByRole("heading", { name: /Know what the map means/i })).toBeVisible();
+  });
+
+  test("cold People Explorer is usable before the full corpus finishes", async ({ page }) => {
+    const firstRecord = PEOPLE_GROUPS_TEST_RECORDS[0];
+    const secondRecord = PEOPLE_GROUPS_TEST_RECORDS[2];
+    let releaseSecondPage!: () => void;
+    const secondPageGate = new Promise<void>((resolve) => { releaseSecondPage = resolve; });
+
+    await page.route(/https:\/\/peoplegroups\.org\/wp-json\/pg\/v1\/people-groups(?:\?.*)?$/, async (route) => {
+      const url = new URL(route.request().url());
+      const pageNumber = Number(url.searchParams.get("page") ?? "1");
+      if (pageNumber === 2) await secondPageGate;
+      const body = pageNumber === 1 ? [firstRecord] : pageNumber === 2 ? [secondRecord] : [];
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Expose-Headers": "X-WP-Total, X-WP-TotalPages",
+          "X-WP-Total": "2",
+          "X-WP-TotalPages": "2",
+        },
+        body: JSON.stringify(body),
+      });
+    });
+
+    await page.goto("./#/peoples");
+
+    const progressive = page.locator('[data-progressive-catalog="true"]');
+    await expect(progressive).toBeVisible({ timeout: 2_000 });
+    await expect(progressive).toContainText("Showing 1 validated source records received so far");
+    await expect(page.getByText(VISIBLE_TEST_PEOPLE).first()).toBeVisible();
+    await expect(page.getByRole("searchbox", { name: "Search people groups" })).toBeEnabled();
+    // The compact shell may hide the global badge, but the runtime must still
+    // publish the refreshing state while the second provider page is blocked.
+    await expect(page.locator('[data-data-state="refreshing"]')).toHaveCount(1);
+    await expect(page.getByText("Second Browser People")).toHaveCount(0);
+
+    releaseSecondPage();
+
+    await expect(page.getByText("Second Browser People").first()).toBeVisible({ timeout: 3_000 });
+    await expect(progressive).toHaveCount(0);
   });
 });

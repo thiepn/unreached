@@ -57,16 +57,12 @@ import "./styles/prayer/guides-and-lists.css";
 import "./styles/account/ux.css";
 import "./styles/foundation/accessibility.css";
 
+// Start the single prepared IndexedDB read as soon as the entry module runs.
+// This remains local-only and non-blocking, but it lets repeat visits have the
+// shared PeopleGroups snapshot ready before the user opens a data-heavy route.
+warmPeopleGroupsRuntime();
 initializeOfflineRuntime();
 initializePrivateSyncRuntime();
 render(<App />, document.getElementById("app")!);
 
 installPeopleGroupsReconnectRefresh();
-const idleWindow = window as Window & {
-  requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-};
-if (typeof idleWindow.requestIdleCallback === "function") {
-  idleWindow.requestIdleCallback(warmPeopleGroupsRuntime, { timeout: 1_200 });
-} else {
-  window.setTimeout(warmPeopleGroupsRuntime, 300);
-}

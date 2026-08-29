@@ -31,6 +31,12 @@ export interface PeopleGroupsApiClientOptions {
   timeoutMs?: number;
 }
 
+export interface PeopleGroupsFetchAllOptions {
+  signal?: AbortSignal;
+  onPage?: (page: PeopleGroupsPage) => void;
+  onPartial?: (records: readonly PeopleGroupsApiRecord[], loadedPages: number, totalPages: number) => void;
+}
+
 function positiveHeader(value: string | null): number | null {
   if (!value) return null;
   const parsed = Number(value);
@@ -132,17 +138,25 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
     if (records.length > PEOPLE_GROUPS_MAX_RECORDS) throw new PeopleGroupsApiError("PeopleGroups.org corpus exceeded the runtime record budget.", "bounds");
   }
 
-  async function fetchAll(options: { signal?: AbortSignal; onPage?: (page: PeopleGroupsPage) => void } = {}): Promise<PeopleGroupsApiRecord[]> {
+  function publishPartial(options: PeopleGroupsFetchAllOptions, records: PeopleGroupsApiRecord[], loadedPages: number, totalPages: number): void {
+    if (!options.onPartial) return;
+    // Publish a shallow snapshot so callers never observe later batch mutations.
+    options.onPartial([...records], loadedPages, totalPages);
+  }
+
+  async function fetchAll(options: PeopleGroupsFetchAllOptions = {}): Promise<PeopleGroupsApiRecord[]> {
     const first = await fetchPage(1, options.signal);
     options.onPage?.(first);
     const records = [...first.records];
     const pgids = new Set(first.records.map((record) => record.PGID));
     if (pgids.size !== first.records.length) throw new PeopleGroupsApiError("PeopleGroups.org returned duplicate PGIDs within the first page.", "schema");
+    let loadedPages = 1;
+    publishPartial(options, records, loadedPages, first.totalPages);
 
     // The corpus is dozens of pages in production. Fetch independent pages in
     // small bounded batches instead of serially waiting for every network RTT.
     // Validation and progress publication are still applied in page order so
-    // the fail-closed snapshot contract remains deterministic.
+    // the fail-closed complete-snapshot contract remains deterministic.
     for (let start = 2; start <= first.totalPages; start += PEOPLE_GROUPS_FETCH_CONCURRENCY) {
       const pageNumbers = Array.from(
         { length: Math.min(PEOPLE_GROUPS_FETCH_CONCURRENCY, first.totalPages - start + 1) },
@@ -153,7 +167,9 @@ export function createPeopleGroupsApiClient(options: PeopleGroupsApiClientOption
       for (const next of batch) {
         acceptPage(first, next, records, pgids);
         options.onPage?.(next);
+        loadedPages += 1;
       }
+      publishPartial(options, records, loadedPages, first.totalPages);
     }
 
     if (first.totalRecords !== null && records.length !== first.totalRecords) {

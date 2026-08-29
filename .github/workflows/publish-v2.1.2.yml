@@ -1,4 +1,4 @@
-name: Publish Unreached v2.1.1
+name: Publish Unreached v2.1.2
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ permissions:
   statuses: read
 
 concurrency:
-  group: unreached-v2.1.1-publication
+  group: unreached-v2.1.2-publication
   cancel-in-progress: false
 
 jobs:
@@ -23,8 +23,8 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-24.04
     env:
-      RELEASE_VERSION: 2.1.1
-      RELEASE_TAG: v2.1.1
+      RELEASE_VERSION: 2.1.2
+      RELEASE_TAG: v2.1.2
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
     steps:
       - name: Checkout exact candidate SHA
@@ -167,11 +167,11 @@ jobs:
             exit 1
           fi
 
-          release_body=$(printf 'Certified release commit: `%s`.\n\n%s' "$RELEASE_SHA" "$(cat docs/releases/v2.1.1.md)")
+          release_body=$(printf 'Certified release commit: `%s`.\n\n%s' "$RELEASE_SHA" "$(cat docs/releases/v2.1.2.md)")
           payload=$(jq -nc \
             --arg tag "$RELEASE_TAG" \
             --arg target "$RELEASE_SHA" \
-            --arg name "Unreached v2.1.1" \
+            --arg name "Unreached v2.1.2" \
             --arg body "$release_body" \
             '{tag_name:$tag,target_commitish:$target,name:$name,body:$body,draft:false,prerelease:false,generate_release_notes:false}')
           curl --fail-with-body --silent --show-error -X POST "${auth[@]}" -H "Content-Type: application/json" --data "$payload" "$api/releases" | tee /tmp/release-created.json
