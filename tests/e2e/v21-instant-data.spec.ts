@@ -104,7 +104,9 @@ test.describe("P2.1 instant data and background revalidation", () => {
     await page.goto("./#/about");
     await page.reload();
 
-    await expect(page.locator('[data-data-state="cached"]')).toBeVisible({ timeout: 1_000 });
+    // Compact mobile layouts intentionally hide the global data-state badge.
+    // Presence of the cached state in the DOM is the cross-viewport contract.
+    await expect(page.locator('[data-data-state="cached"]')).toHaveCount(1, { timeout: 1_000 });
     await expect(page.getByRole("heading", { name: /Know what the map means/i })).toBeVisible();
   });
 
@@ -139,7 +141,9 @@ test.describe("P2.1 instant data and background revalidation", () => {
     await expect(progressive).toContainText("Showing 1 validated source records received so far");
     await expect(page.getByText(VISIBLE_TEST_PEOPLE).first()).toBeVisible();
     await expect(page.getByRole("searchbox", { name: "Search people groups" })).toBeEnabled();
-    await expect(page.locator('[data-data-state="refreshing"]')).toBeVisible();
+    // The compact shell may hide the global badge, but the runtime must still
+    // publish the refreshing state while the second provider page is blocked.
+    await expect(page.locator('[data-data-state="refreshing"]')).toHaveCount(1);
     await expect(page.getByText("Second Browser People")).toHaveCount(0);
 
     releaseSecondPage();
