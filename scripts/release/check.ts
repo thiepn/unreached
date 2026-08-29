@@ -6,18 +6,19 @@ const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readText(path)) as T;
 
 const packageJson = await readJson<{ version: string }>("package.json");
-if (packageJson.version !== "2.1.1") throw new Error("Phase 3 release version must be 2.1.1.");
+if (packageJson.version !== "2.1.2") throw new Error("Maintenance release version must be 2.1.2.");
 
 const readme = await readText("README.md");
 for (const marker of [
-  "**Current version:** **2.1.1**",
+  "**Current version:** **2.1.2**",
+  "maintenance performance patch",
   "Public privacy notice",
   "LICENSE.md",
   "THIRD_PARTY_NOTICES.md",
   "PeopleGroups.org / IMB Global Research",
   "28 August 2026",
-]) if (!readme.includes(marker)) throw new Error(`Phase 3 README release truth missing: ${marker}`);
-if (readme.includes("**Version:** **2.0.0**")) throw new Error("Phase 3 README still advertises obsolete version 2.0.0.");
+]) if (!readme.includes(marker)) throw new Error(`Release README truth missing: ${marker}`);
+if (readme.includes("**Current version:** **2.1.1**") || readme.includes("**Version:** **2.0.0**")) throw new Error("README still advertises an obsolete release version.");
 
 const privacy = await readText("PRIVACY.md");
 for (const marker of [
@@ -26,18 +27,18 @@ for (const marker of [
   "latest `lastPrayedAt`",
   "does not currently implement its own analytics",
   "28 August 2026",
-]) if (!privacy.includes(marker)) throw new Error(`Phase 3 privacy notice missing: ${marker}`);
+]) if (!privacy.includes(marker)) throw new Error(`Release privacy notice missing: ${marker}`);
 
 const publicPrivacy = await readText("public/privacy.html");
 for (const marker of ["Privacy notice", "28 August 2026", "Optional private continuity", "Analytics and advertising", "Your controls"]) {
-  if (!publicPrivacy.includes(marker)) throw new Error(`Phase 3 public privacy page missing: ${marker}`);
+  if (!publicPrivacy.includes(marker)) throw new Error(`Release public privacy page missing: ${marker}`);
 }
 
 const license = await readText("LICENSE.md");
-if (!license.includes("All rights reserved") || !license.includes("no general license")) throw new Error("Phase 3 project-authored licensing boundary is missing.");
+if (!license.includes("All rights reserved") || !license.includes("no general license")) throw new Error("Project-authored licensing boundary is missing.");
 const notices = await readText("THIRD_PARTY_NOTICES.md");
 for (const marker of ["PeopleGroups.org / IMB Global Research", "Natural Earth", "ProgressBible", "Ethnologue", "Open-source packages"]) {
-  if (!notices.includes(marker)) throw new Error(`Phase 3 third-party notices missing: ${marker}`);
+  if (!notices.includes(marker)) throw new Error(`Third-party notices missing: ${marker}`);
 }
 
 const index = await readText("index.html");
@@ -77,7 +78,7 @@ interface RegistrySource {
   termsReviewedAt: string;
 }
 const registry = await readJson<{ schemaVersion: number; reviewedAt: string; sources: RegistrySource[] }>("data/source-registry.json");
-if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-08-28") throw new Error("Phase 3 source registry metadata is stale.");
+if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-08-28") throw new Error("Source registry metadata is stale.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 
 const peopleGroups = byId.get("peoplegroups-org-api");
@@ -99,7 +100,7 @@ for (const id of ["joshua-project-api", "progress-bible-registered-data", "ethno
 
 const policy = await readText("docs/DATA_AND_LEGAL_POLICY.md");
 for (const marker of ["production policy", "PeopleGroups.org / IMB Global Research", "APPROVED FOR PUBLIC RUNTIME ACCESS", "Project-authored code and content", "28 August 2026"]) {
-  if (!policy.includes(marker)) throw new Error(`Phase 3 data/legal policy missing: ${marker}`);
+  if (!policy.includes(marker)) throw new Error(`Data/legal policy missing: ${marker}`);
 }
 if (policy.includes("primary V1 source for people-group")) throw new Error("Obsolete Joshua Project primary-source policy remains in the current legal policy.");
 
@@ -107,4 +108,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Phase 3 release-truth checks passed: version 2.1.1, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");
+console.log("Release-truth checks passed: version 2.1.2, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");
