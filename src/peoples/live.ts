@@ -56,7 +56,14 @@ export function filterLivePeople(
 
 export function useLivePeopleExplorer(enabled = true) {
   const runtime = usePeopleGroupsRuntimeStore(enabled);
-  return { ...runtime, peoples: runtime.entities };
+  const partial = !runtime.ready && runtime.previewReady;
+  return {
+    ...runtime,
+    partial,
+    interactive: runtime.ready || partial,
+    peoples: partial ? runtime.previewEntities : runtime.entities,
+    peopleSearchIndex: partial ? runtime.previewPeopleSearchIndex : runtime.peopleSearchIndex,
+  };
 }
 
 export function livePeopleStatusLabel(entity: RuntimePeopleEntity): string {
