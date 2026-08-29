@@ -261,7 +261,7 @@ function refreshFromSource(forceRefresh: boolean): Promise<void> {
     onProgress: (loadedPages, totalPages) => patch({ progress: { loadedPages, totalPages } }),
     onPartial: blocking
       ? (records, loadedPages, totalPages) => {
-          if (snapshot.ready) return;
+          if (snapshot.ready || snapshot.previewReady) return;
           patch({
             ...materializePreview(records),
             progress: { loadedPages, totalPages },
