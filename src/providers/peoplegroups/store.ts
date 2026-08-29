@@ -34,7 +34,14 @@ interface SharedPeopleGroupsDerivedData {
   eligiblePrayerIds: Set<number>;
 }
 
-export interface PeopleGroupsRuntimeSnapshot extends SharedPeopleGroupsDerivedData {
+interface PeopleGroupsPreviewData {
+  previewReady: boolean;
+  previewRecordCount: number;
+  previewEntities: RuntimePeopleEntity[];
+  previewPeopleSearchIndex: RuntimePeopleSearchIndex;
+}
+
+export interface PeopleGroupsRuntimeSnapshot extends SharedPeopleGroupsDerivedData, PeopleGroupsPreviewData {
   generation: number;
   loading: boolean;
   refreshing: boolean;
@@ -66,6 +73,15 @@ function emptyDerivedData(): SharedPeopleGroupsDerivedData {
     countriesByIso3: new Map(),
     eligiblePrayerPeople: [],
     eligiblePrayerIds: new Set(),
+  };
+}
+
+function emptyPreviewData(): PeopleGroupsPreviewData {
+  return {
+    previewReady: false,
+    previewRecordCount: 0,
+    previewEntities: [],
+    previewPeopleSearchIndex: createEmptyRuntimePeopleSearchIndex(),
   };
 }
 
@@ -106,6 +122,7 @@ let snapshot: PeopleGroupsRuntimeSnapshot = {
   entities: [],
   countrySummaries: [],
   ...emptyDerivedData(),
+  ...emptyPreviewData(),
 };
 
 let pendingLoad: Promise<void> | null = null;
@@ -136,6 +153,17 @@ function materialize(records: PeopleGroupsApiRecord[]) {
     entities,
     countrySummaries,
     ...buildSharedPeopleGroupsDerivedData(contexts, entities, countrySummaries),
+  };
+}
+
+function materializePreview(records: readonly PeopleGroupsApiRecord[]): PeopleGroupsPreviewData {
+  const previewRecords = [...records];
+  const previewEntities = buildRuntimePeopleEntities(previewRecords);
+  return {
+    previewReady: previewEntities.length > 0,
+    previewRecordCount: previewRecords.length,
+    previewEntities,
+    previewPeopleSearchIndex: getRuntimePeopleSearchIndex(previewEntities),
   };
 }
 
@@ -203,6 +231,7 @@ async function hydratePreparedSnapshot(): Promise<boolean> {
         entities: prepared.entities,
         countrySummaries: prepared.countrySummaries,
         ...derived,
+        ...emptyPreviewData(),
       });
       return true;
     } catch {
@@ -224,11 +253,21 @@ function refreshFromSource(forceRefresh: boolean): Promise<void> {
     refreshing: !blocking,
     error: blocking ? null : snapshot.error,
     progress: null,
+    ...(blocking ? emptyPreviewData() : {}),
   });
 
   pendingLoad = loader.load({
     forceRefresh,
     onProgress: (loadedPages, totalPages) => patch({ progress: { loadedPages, totalPages } }),
+    onPartial: blocking
+      ? (records, loadedPages, totalPages) => {
+          if (snapshot.ready) return;
+          patch({
+            ...materializePreview(records),
+            progress: { loadedPages, totalPages },
+          });
+        }
+      : undefined,
   })
     .then((result) => {
       const materialized = materialize(result.records);
@@ -246,6 +285,7 @@ function refreshFromSource(forceRefresh: boolean): Promise<void> {
         progress: null,
         totalRecords: result.totalRecords,
         ...materialized,
+        ...emptyPreviewData(),
       });
       void persistPrepared(result, materialized);
     })
@@ -269,6 +309,7 @@ function refreshFromSource(forceRefresh: boolean): Promise<void> {
         error: message,
         warning: null,
         progress: null,
+        ...emptyPreviewData(),
       });
     })
     .finally(() => {
