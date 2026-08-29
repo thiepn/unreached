@@ -46,6 +46,64 @@ test("selected country keeps detailed breakdown opt in", async ({ page }) => {
   await expect(details).toContainText("GSEC 0–3");
 });
 
+test("narrow desktop keeps the open view explainer full width and in normal flow", async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 760 });
+  await page.goto("./#/", { waitUntil: "domcontentloaded" });
+
+  const control = page.locator(".explore-panel--phase10 .mission-view-control");
+  const details = control.locator(".mission-view-info");
+  const countryIndex = page.locator(".explore-panel--phase10 .country-index--primary");
+
+  await expect(control).toBeVisible();
+  await details.locator("summary").click();
+  await expect(details).toHaveAttribute("open", "");
+  await expect(details.getByText("Method:", { exact: true })).toBeVisible();
+
+  const diagnostics = await page.evaluate(() => {
+    const control = document.querySelector<HTMLElement>(".explore-panel--phase10 .mission-view-control");
+    const details = control?.querySelector<HTMLElement>(".mission-view-info");
+    const content = details?.querySelector<HTMLElement>(":scope > div");
+    const paragraphs = content ? [...content.querySelectorAll<HTMLElement>("p")] : [];
+    const countryIndex = document.querySelector<HTMLElement>(".explore-panel--phase10 .country-index--primary");
+    const root = document.documentElement;
+    const rect = (element: HTMLElement | null | undefined) => {
+      if (!element) return null;
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height };
+    };
+    return {
+      viewport: root.clientWidth,
+      scrollWidth: root.scrollWidth,
+      control: rect(control),
+      details: rect(details),
+      content: rect(content),
+      paragraphs: paragraphs.map((paragraph) => rect(paragraph)),
+      countryIndex: rect(countryIndex),
+      gridColumnStart: details ? getComputedStyle(details).gridColumnStart : null,
+      gridColumnEnd: details ? getComputedStyle(details).gridColumnEnd : null,
+    };
+  });
+
+  expect(diagnostics.scrollWidth).toBeLessThanOrEqual(diagnostics.viewport);
+  expect(diagnostics.control).not.toBeNull();
+  expect(diagnostics.details).not.toBeNull();
+  expect(diagnostics.content).not.toBeNull();
+  expect(diagnostics.countryIndex).not.toBeNull();
+  if (!diagnostics.control || !diagnostics.details || !diagnostics.content || !diagnostics.countryIndex) return;
+
+  expect(diagnostics.gridColumnStart).toBe("1");
+  expect(diagnostics.gridColumnEnd).toBe("-1");
+  expect(diagnostics.details.width).toBeGreaterThanOrEqual(diagnostics.control.width - 1);
+  expect(diagnostics.content.left).toBeGreaterThanOrEqual(diagnostics.control.left - 1);
+  expect(diagnostics.content.right).toBeLessThanOrEqual(diagnostics.control.right + 1);
+  expect(diagnostics.content.bottom).toBeLessThanOrEqual(diagnostics.countryIndex.top + 1);
+  expect(diagnostics.paragraphs).toHaveLength(2);
+  const [description, method] = diagnostics.paragraphs;
+  expect(description).not.toBeNull();
+  expect(method).not.toBeNull();
+  if (description && method) expect(description.bottom).toBeLessThanOrEqual(method.top + 1);
+});
+
 test("mobile sheet owns the only visible map key", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
