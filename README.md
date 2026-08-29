@@ -5,14 +5,18 @@
 Unreached is a browser-based Christian mission atlas for discovering people groups, understanding source-backed context, and moving from information into prayer.
 
 - **Live site:** https://www.thiepn.dev/unreached/
-- **Current version:** **2.1.1**
+- **Current version:** **2.1.2**
 - **Platform:** Preact/Vite on GitHub Pages
 - **Optional continuity:** Cloudflare Worker + D1 + Cloudflare Access
 - **Core loop:** **Explore → Understand → Pray**
 
 ## Current production behavior
 
-Version 2.1.1 is a finalization patch on the 2.1 line. Production currently includes live PeopleGroups.org mission data, Natural Earth geography, twelve separately reviewed contextual profiles, browser-local Saved/prayer tools, an installable offline shell, and optional explicit private cross-device continuity.
+Version 2.1.2 is a maintenance performance patch on the certified 2.1 line. It preserves the v2.1.1 product, privacy and data contracts while reducing perceived loading latency: prepared PeopleGroups data hydrates immediately from IndexedDB, provider connection setup and signaled route chunks can prewarm opportunistically, and a true cold People Explorer can become searchable after the first validated provider page while the remaining corpus continues loading.
+
+Any cold partial catalog is explicitly labeled as incomplete. Complete-world map, country, language and prayer aggregates remain gated on the full validated PeopleGroups corpus, and partial network data is never persisted as a complete prepared snapshot.
+
+Production includes live PeopleGroups.org mission data, Natural Earth geography, twelve separately reviewed contextual profiles, browser-local Saved/prayer tools, an installable offline shell, and optional explicit private cross-device continuity.
 
 The application does **not** ship a public static mirror of the PeopleGroups.org corpus. It also does not include ProgressBible registered data, Ethnologue proprietary datasets, or third-party people photos without separate rights review.
 
@@ -56,14 +60,14 @@ Optional private sync is additive. Authentication alone does not enable it. Serv
 
 Release candidates pass deterministic build/policy gates, desktop/mobile Chromium/Firefox/WebKit tests, offline-resilience tests, private-sync certification, live PeopleGroups corpus/CORS checks, GitHub Pages deployment checks, and canonical production browser certification.
 
-See [`docs/FINALIZATION_PLAN.md`](docs/FINALIZATION_PLAN.md) for the current finalization sequence.
+Maintenance release publication remains exact-SHA gated. See [`docs/releases/v2.1.2.md`](docs/releases/v2.1.2.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
 
 ## Local development
 
 Requires Node.js 22.12+.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
