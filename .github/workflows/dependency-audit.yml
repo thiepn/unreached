@@ -14,13 +14,6 @@ on:
       - ".github/workflows/dependency-audit.yml"
   push:
     branches: [main]
-    paths:
-      - "package.json"
-      - "package-lock.json"
-      - "worker/package.json"
-      - "worker/package-lock.json"
-      - "scripts/operations/dependency-license-audit.mjs"
-      - ".github/workflows/dependency-audit.yml"
 
 permissions:
   contents: read
