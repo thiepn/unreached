@@ -26,6 +26,13 @@ export interface PeopleGroupsCorpusLoaderOptions {
   isOnline?: () => boolean;
 }
 
+export interface PeopleGroupsCorpusLoadParams {
+  signal?: AbortSignal;
+  forceRefresh?: boolean;
+  onProgress?: (loadedPages: number, totalPages: number) => void;
+  onPartial?: (records: readonly PeopleGroupsApiRecord[], loadedPages: number, totalPages: number) => void;
+}
+
 interface ValidatedCache {
   pages: CachedPeopleGroupsPage[];
   records: PeopleGroupsApiRecord[];
@@ -96,7 +103,7 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
   const now = options.now ?? Date.now;
   const isOnline = options.isOnline ?? (() => typeof navigator === "undefined" || navigator.onLine !== false);
 
-  async function load(params: { signal?: AbortSignal; forceRefresh?: boolean; onProgress?: (loadedPages: number, totalPages: number) => void } = {}): Promise<PeopleGroupsCorpusLoadResult> {
+  async function load(params: PeopleGroupsCorpusLoadParams = {}): Promise<PeopleGroupsCorpusLoadResult> {
     const cached = await readValidatedCache(cache, now());
     if (!params.forceRefresh && cached && cached.age <= PEOPLE_GROUPS_CACHE_FRESH_MS) {
       return cacheResult(cached, false, null);
@@ -134,6 +141,7 @@ export function createPeopleGroupsCorpusLoader(options: PeopleGroupsCorpusLoader
             records: page.records,
           });
         },
+        onPartial: params.onPartial,
       });
 
       await Promise.allSettled(pendingCachePages.map((page) => cache.write(page)));
