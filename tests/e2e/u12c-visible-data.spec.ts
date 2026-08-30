@@ -23,13 +23,13 @@ test("live people and country surfaces preserve one-record PEID, PGID and GSEC s
 
   const statusDetails = profile.locator(".unreached-source-classification");
   await expect(statusDetails).not.toHaveAttribute("open", "");
-  await statusDetails.locator("summary").click();
+  await statusDetails.locator(":scope > summary").click();
   await expect(statusDetails.getByText("2", { exact: true })).toBeVisible();
   await expect(statusDetails.getByText("Initial Church Planting", { exact: true })).toBeVisible();
 
   const sourceDetails = profile.locator(".people-disclosure--sources").filter({ hasText: "Detailed data, sources & methodology" });
   await expect(sourceDetails).not.toHaveAttribute("open", "");
-  await sourceDetails.locator("summary").click();
+  await sourceDetails.locator(":scope > summary").click();
   await expect(sourceDetails.getByText(`PEID ${VISIBLE_TEST_PEID} · PGID PG910001 · BEN`, { exact: true })).toBeVisible();
   await expect(sourceDetails.getByText("2 · Initial Church Planting", { exact: true })).toBeVisible();
   await expect(sourceDetails.getByText(/does not treat PEID as a cross-country grouping key/)).toBeVisible();
