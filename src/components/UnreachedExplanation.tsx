@@ -7,7 +7,7 @@ import { TermHelp } from "./TermHelp";
 export function UnreachedExplanation({ record }: { record: RuntimePeopleEntity }) {
   const context = record.contexts[0]!;
   const unreached = context.reach.classification === "unreached";
-  const statusLabel = unreached ? "Unreached" : context.reach.classification === "other" ? "Other GSEC status" : "Status unknown";
+  const statusLabel = unreached ? "Unreached" : context.reach.classification === "other" ? "Other mission status" : "Status unknown";
 
   return (
     <section class="unreached-explanation" aria-labelledby="unreached-explanation-heading">
