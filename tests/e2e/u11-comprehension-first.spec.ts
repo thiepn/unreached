@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 test("newcomer sees meaning before technical identifiers", async ({ page }) => {
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
 
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
   await expect(page.getByText("A people-group record in Benin that the current mission-data source classifies as unreached.", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Why is this people group marked unreached?" })).toBeVisible();
   await expect(page.locator(".people-profile-hero").getByText(/PEID|PGID|GSEC/)).toHaveCount(0);
@@ -48,13 +48,13 @@ test("prayer is a first-class action without hiding research depth", async ({ pa
   await expect(research).toBeVisible();
   await research.click();
   await expect(page.getByText(`PEID ${VISIBLE_TEST_PEID} · PGID PG910001 · BEN`, { exact: true })).toBeVisible();
-  await expect(page.getByText("2 · Initial Church Planting", { exact: true })).toBeVisible();
+  await expect(page.locator(".people-disclosure--sources").getByText("2 · Initial Church Planting", { exact: true })).toBeVisible();
 });
 
 test("comprehension-first profile remains usable at narrow mobile width", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
 
   const overflow = await page.evaluate(() => ({
     width: document.documentElement.scrollWidth,
