@@ -337,6 +337,191 @@
   margin-left: auto;
 }
 
+.country-page--comprehension .country-hero-summary {
+  max-width: 62ch;
+  margin: var(--space-3) 0 0;
+  color: var(--ink-1);
+  line-height: 1.55;
+}
+
+.country-page--comprehension .country-metric-grid--comprehension {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.country-largest-unreached {
+  margin-top: clamp(2rem, 4vw, 3.25rem);
+}
+
+.country-largest-people-list {
+  display: grid;
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.country-largest-person {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  min-width: 0;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-0);
+  text-decoration: none;
+}
+
+.country-largest-person:hover strong,
+.country-largest-person:focus-visible strong {
+  color: var(--forest-700);
+}
+
+.country-largest-person__rank {
+  color: var(--ink-2);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.country-largest-person__identity {
+  display: grid;
+  min-width: 0;
+  gap: .15rem;
+}
+
+.country-largest-person__identity strong {
+  overflow-wrap: anywhere;
+}
+
+.country-largest-person__identity small {
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+
+.country-largest-person__population {
+  color: var(--ink-1);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.country-content-grid--comprehension {
+  margin-top: clamp(2rem, 4vw, 3.25rem);
+}
+
+.country-research-disclosure {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 3px solid var(--ink-2);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-1);
+}
+
+.country-research-disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+}
+
+.country-research-disclosure > summary > span {
+  display: grid;
+  gap: .15rem;
+}
+
+.country-research-disclosure > summary small {
+  color: var(--ink-2);
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.country-research-disclosure__body {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+  padding: 0 var(--space-4) var(--space-5);
+}
+
+.country-research-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.country-research-metrics > div {
+  display: grid;
+  gap: .2rem;
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+}
+
+.country-research-metrics dt {
+  color: var(--ink-2);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.country-research-metrics dd {
+  margin: 0;
+  color: var(--ink-0);
+  font-size: 1.2rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.country-research-metrics small {
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+
+.country-section--research-records {
+  margin-top: 0;
+}
+
+.country-research-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.people-primary-context-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.people-primary-context-filters label {
+  display: grid;
+  gap: .3rem;
+  color: var(--ink-2);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.people-primary-context-filters select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: .5rem .65rem;
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+  color: var(--ink-0);
+  font: inherit;
+  font-weight: 400;
+}
+
+.people-card--comprehension .people-card__countries {
+  color: var(--forest-700);
+  font-weight: 700;
+}
+
+.people-card--comprehension .people-card__keyfacts > div:last-child strong {
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 760px) {
   .people-profile-hero-actions {
     width: 100%;
@@ -366,6 +551,31 @@
   .mobile-map-sheet--phase10 .mission-view-picker > summary {
     min-height: 36px;
   }
+
+  .country-page--comprehension .country-metric-grid--comprehension,
+  .country-research-metrics,
+  .country-research-grid,
+  .people-primary-context-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .country-largest-person {
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    gap: var(--space-2);
+  }
+
+  .country-largest-person > svg {
+    display: none;
+  }
+
+  .country-research-disclosure {
+    margin-inline: calc(var(--space-4) * -1);
+  }
+
+  .country-research-disclosure > summary,
+  .country-research-disclosure__body {
+    padding-inline: var(--space-4);
+  }
 }
 
 @media (max-width: 480px) {
@@ -383,5 +593,14 @@
   .explore-screen--comprehension .selected-area__actions > span {
     width: 100%;
     margin-left: 0;
+  }
+
+  .country-largest-person {
+    grid-template-columns: 1.4rem minmax(0, 1fr);
+  }
+
+  .country-largest-person__population {
+    grid-column: 2;
+    justify-self: start;
   }
 }
