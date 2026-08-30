@@ -225,6 +225,118 @@
   opacity: .96;
 }
 
+.explore-screen--comprehension .mission-view-control {
+  align-items: start;
+}
+
+.mission-view-current {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: .2rem;
+  min-width: 0;
+  padding: var(--space-3);
+  border-left: 3px solid var(--forest-700);
+  background: var(--paper-1);
+}
+
+.mission-view-current > span {
+  color: var(--ink-2);
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.mission-view-current > strong {
+  color: var(--ink-0);
+  font-size: .95rem;
+}
+
+.mission-view-current > p,
+.mission-view-current > small {
+  margin: 0;
+  color: var(--ink-1);
+  font-size: .75rem;
+  line-height: 1.45;
+}
+
+.mission-view-current > small {
+  color: var(--ink-2);
+}
+
+.mission-view-current[data-map-view-kind="research"] {
+  border-left-color: var(--ink-2);
+}
+
+.mission-view-picker {
+  grid-column: 1 / -1;
+  min-width: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.mission-view-picker > summary {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  cursor: pointer;
+  color: var(--forest-700);
+  font-size: .76rem;
+  font-weight: 750;
+}
+
+.mission-view-picker > div {
+  padding: 0 0 var(--space-3);
+}
+
+.mission-view-picker > div > p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.explore-screen--comprehension .mission-view-picker .mission-layer-select {
+  margin-top: var(--space-2);
+}
+
+.explore-screen--comprehension .mission-view-info {
+  grid-column: 1 / -1;
+}
+
+.selected-mission-summary--comprehension {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.selected-mission-meaning {
+  margin: 0;
+  color: var(--ink-1);
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.selected-mission-summary--comprehension .selected-mission-primary small {
+  display: block;
+  margin-top: .25rem;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+.explore-screen--comprehension .selected-area__actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.country-prayer-link {
+  color: var(--forest-700);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.explore-screen--comprehension .selected-area__actions > span {
+  margin-left: auto;
+}
+
 @media (max-width: 760px) {
   .people-profile-hero-actions {
     width: 100%;
@@ -243,6 +355,17 @@
     grid-template-columns: 1fr;
     gap: .15rem;
   }
+
+  .mobile-map-sheet--phase10 .mission-view-current {
+    padding: var(--space-2) 0;
+    border-left: 0;
+    border-top: 2px solid var(--forest-700);
+    background: transparent;
+  }
+
+  .mobile-map-sheet--phase10 .mission-view-picker > summary {
+    min-height: 36px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -255,5 +378,10 @@
     margin-inline: calc(var(--space-4) * -1);
     border-right: 0;
     border-left: 0;
+  }
+
+  .explore-screen--comprehension .selected-area__actions > span {
+    width: 100%;
+    margin-left: 0;
   }
 }
