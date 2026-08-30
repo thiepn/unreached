@@ -23,14 +23,24 @@ function contextCoverage(record: VisibleCountryRecord): string {
 function CountryMetrics({ record }: { record: VisibleCountryRecord }) {
   const summary = record.summary;
   return (
-    <div class="country-metric-grid" aria-label="Country mission overview">
-      <div class="country-metric"><span>Known represented population</span><strong>{formatCount(summary.knownPopulation)}</strong><small>Sum of known people-group-in-country estimates</small></div>
-      <div class="country-metric"><span>People contexts</span><strong>{summary.peopleContextCount}</strong><small>PeopleGroups.org PGID records in this country</small></div>
-      <div class="country-metric"><span>Unreached contexts</span><strong>{summary.unreachedContextCount}</strong><small>GSEC 0–3</small></div>
-      <div class="country-metric"><span>Other GSEC contexts</span><strong>{summary.otherContextCount}</strong><small>GSEC 4–6; intentionally not relabeled “reached”</small></div>
-      <div class="country-metric"><span>Unknown GSEC</span><strong>{summary.unknownContextCount}</strong><small>Source value not supplied</small></div>
-      <div class="country-metric"><span>Population coverage</span><strong>{summary.populationKnownContextCount}/{summary.peopleContextCount}</strong><small>{contextCoverage(record)}</small></div>
+    <div class="country-metric-grid country-metric-grid--comprehension" aria-label="Country mission overview">
+      <div class="country-metric"><span>Unreached people groups</span><strong>{summary.unreachedContextCount}</strong><small>Source records classified as unreached.</small></div>
+      <div class="country-metric"><span>People groups represented</span><strong>{summary.peopleContextCount}</strong><small>People-group-in-country records in the current source.</small></div>
+      <div class="country-metric"><span>Known represented population</span><strong>{formatCount(summary.knownPopulation)}</strong><small>Sum of available source estimates; not national census population.</small></div>
     </div>
+  );
+}
+
+function CountryResearchMetrics({ record }: { record: VisibleCountryRecord }) {
+  const summary = record.summary;
+  const classified = summary.peopleContextCount - summary.unknownContextCount;
+  return (
+    <dl class="country-research-metrics" aria-label="Detailed country source metrics">
+      <div><dt>Other GSEC contexts</dt><dd>{summary.otherContextCount}</dd><small>GSEC 4–6; not relabeled “reached.”</small></div>
+      <div><dt>Unknown GSEC</dt><dd>{summary.unknownContextCount}</dd><small>No source mission-status value.</small></div>
+      <div><dt>Population estimate fields</dt><dd>{summary.populationKnownContextCount}/{summary.peopleContextCount}</dd><small>{contextCoverage(record)}</small></div>
+      <div><dt>Mission-status fields</dt><dd>{classified}/{summary.peopleContextCount}</dd><small>Source records with a reported GSEC value.</small></div>
+    </dl>
   );
 }
 
@@ -91,13 +101,16 @@ export function CountryPage({ iso3 }: { iso3: string }) {
 
   const name = record?.name ?? feature.properties.name;
   const unreachedPeople = record?.contexts.filter((context) => context.reach.classification === "unreached") ?? [];
+  const largestUnreachedPeople = [...unreachedPeople]
+    .sort((a, b) => (b.population.value ?? -1) - (a.population.value ?? -1) || a.displayName.localeCompare(b.displayName, "en"))
+    .slice(0, 5);
   const visibleUnreachedPeople = unreachedPeople.slice(0, visiblePeopleCount);
   const remainingUnreachedPeople = Math.max(0, unreachedPeople.length - visibleUnreachedPeople.length);
   const mapHref = `#/?country=${encodeURIComponent(feature.properties.mapKey)}`;
   const prayerHref = `#/pray?country=${encodeURIComponent(code)}`;
 
   return (
-    <article class="country-page">
+    <article class="country-page country-page--comprehension">
       <nav class="country-breadcrumb" aria-label="Breadcrumb">
         <a href={hrefFor("/countries")}><ArrowLeft size={15} aria-hidden="true" /> Countries</a>
         <span>/</span>
@@ -108,6 +121,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
         <div>
           <div class="eyebrow">{record?.subregionName ?? record?.regionName ?? feature.properties.continent ?? "Country Explorer"}</div>
           <h1 class="display-title">{name}</h1>
+          <p class="country-hero-summary">Explore the people-group records represented in {name}, understand which are classified as unreached, and move from data into prayer.</p>
           <div class="country-identity-line"><span>{code}</span><span>{feature.properties.continent ?? "World"}</span></div>
         </div>
         <div class="country-hero-actions">
@@ -126,11 +140,69 @@ export function CountryPage({ iso3 }: { iso3: string }) {
           <CountryMetrics record={record} />
           <CountryGuidedStart countryName={name} contexts={record.contexts} />
 
-          <div class="country-content-grid">
+          <section class="country-section country-largest-unreached" aria-labelledby="largest-unreached-heading">
+            <div class="country-section__heading">
+              <div><span class="eyebrow">Start with the people</span><h2 id="largest-unreached-heading">Largest unreached peoples represented</h2></div>
+              <UsersRound size={21} aria-hidden="true" />
+            </div>
+            <p class="country-section__intro">Sorted by the known population estimate reported for each source record in {name}. These are represented source estimates, not a national census ranking.</p>
+            {largestUnreachedPeople.length ? (
+              <div class="country-largest-people-list">
+                {largestUnreachedPeople.map((people, index) => (
+                  <a href={hrefFor(`/peoples/${people.peid}`)} class="country-largest-person" key={people.pgid}>
+                    <span class="country-largest-person__rank">{index + 1}</span>
+                    <span class="country-largest-person__identity"><strong>{people.displayName}</strong><small>{people.language.name ?? people.language.iso6393 ?? "Language unknown"} · {people.religion.name ?? people.religion.displayName ?? "Religion unknown"}</small></span>
+                    <span class="country-largest-person__population">{formatCount(people.population.value)}</span>
+                    <ArrowUpRight size={15} aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            ) : <p class="country-empty">No current country-context record is classified as unreached.</p>}
+          </section>
+
+          <div class="country-content-grid country-content-grid--comprehension">
             <div class="country-content-main">
-              <section class="country-section" aria-labelledby="unreached-people-heading">
+              <section class="country-section" aria-labelledby="religion-heading">
+                <div class="country-section__heading"><div><span class="eyebrow">Religious context</span><h2 id="religion-heading">Religions represented</h2></div><Globe2 size={21} aria-hidden="true" /></div>
+                <p class="country-section__intro">Shares use the summed known population of PeopleGroups.org country-context records. They are not national census shares.</p>
+                <div class="country-breakdown-list">
+                  {record.religions.map((religion) => (
+                    <div class="country-breakdown-row" key={religion.key}>
+                      <div><strong>{religion.name}</strong><span>{religion.contextCount} {religion.contextCount === 1 ? "people-group record" : "people-group records"} · {formatCount(religion.knownPopulation)} known represented population</span></div>
+                      <div><span>{formatPercent(religion.representedShare)}</span><meter min="0" max="100" value={religion.representedShare ?? 0}>{formatPercent(religion.representedShare)}</meter></div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <aside class="country-content-rail">
+              <section class="country-section" aria-labelledby="languages-heading">
+                <div class="country-section__heading"><div><span class="eyebrow">Language</span><h2 id="languages-heading">Major languages represented</h2></div><Languages size={20} aria-hidden="true" /></div>
+                <div class="country-compact-list">
+                  {record.languages.slice(0, 12).map((language) => <div key={language.key}><strong>{language.name}</strong><span>{formatCount(language.knownPopulation)} represented · {language.contextCount} records{language.code ? ` · ${language.code}` : ""}</span></div>)}
+                </div>
+                {record.languages.length > 12 ? <p class="country-section__intro country-section__intro--compact">Showing 12 of {record.languages.length} source-language aggregations. <a href={hrefFor("/languages")}>Browse all languages</a>.</p> : null}
+              </section>
+
+              <section class="country-section" aria-labelledby="scripture-heading">
+                <div class="country-section__heading"><div><span class="eyebrow">Bible resources</span><h2 id="scripture-heading">Bible resource status</h2></div><BookOpen size={20} aria-hidden="true" /></div>
+                <div class="country-compact-list">
+                  {record.bibleAvailability.map((item) => <div key={item.status}><strong>{item.status}</strong><span>{item.contextCount} records · {formatCount(item.knownPopulation)} known represented population</span></div>)}
+                </div>
+                <p class="country-section__intro">These are source availability labels, not normalized translation-completeness categories.</p>
+              </section>
+            </aside>
+          </div>
+
+          <details class="country-research-disclosure">
+            <summary><Database size={19} aria-hidden="true" /><span><strong>Detailed country data & people records</strong><small>GSEC, source IDs, coverage, media labels and the complete unreached-record table</small></span></summary>
+            <div class="country-research-disclosure__body">
+              <CountryResearchMetrics record={record} />
+
+              <section class="country-section country-section--research-records" aria-labelledby="unreached-people-heading">
                 <div class="country-section__heading">
-                  <div><span class="eyebrow">GSEC 0–3</span><h2 id="unreached-people-heading">Unreached people contexts</h2></div>
+                  <div><span class="eyebrow">GSEC 0–3 source records</span><h2 id="unreached-people-heading">Unreached people contexts</h2></div>
                   <UsersRound size={21} aria-hidden="true" />
                 </div>
                 <p class="country-section__intro">Rows are current PeopleGroups.org PEID/PGID records for this country. The certified runtime validates PEID and PGID as a one-to-one record identity; it does not infer a separate cross-country people identity from a repeated name.</p>
@@ -160,47 +232,18 @@ export function CountryPage({ iso3 }: { iso3: string }) {
                 ) : <p class="country-empty">No current country-context record is classified GSEC 0–3.</p>}
               </section>
 
-              <section class="country-section" aria-labelledby="religion-heading">
-                <div class="country-section__heading"><div><span class="eyebrow">Represented source records</span><h2 id="religion-heading">Religious context</h2></div><Globe2 size={21} aria-hidden="true" /></div>
-                <p class="country-section__intro">Shares use the summed known population of PeopleGroups.org country-context records. They are not national census shares.</p>
-                <div class="country-breakdown-list">
-                  {record.religions.map((religion) => (
-                    <div class="country-breakdown-row" key={religion.key}>
-                      <div><strong>{religion.name}</strong><span>{religion.contextCount} {religion.contextCount === 1 ? "context" : "contexts"} · {formatCount(religion.knownPopulation)} known represented population</span></div>
-                      <div><span>{formatPercent(religion.representedShare)}</span><meter min="0" max="100" value={religion.representedShare ?? 0}>{formatPercent(religion.representedShare)}</meter></div>
-                    </div>
-                  ))}
-                </div>
-              </section>
+              <div class="country-research-grid">
+                <section class="country-section" aria-labelledby="jesus-film-heading">
+                  <div class="country-section__heading"><div><span class="eyebrow">Media source labels</span><h2 id="jesus-film-heading">Jesus Film availability</h2></div><BookOpen size={20} aria-hidden="true" /></div>
+                  <div class="country-compact-list">
+                    {record.jesusFilmAvailability.map((item) => <div key={item.status}><strong>{item.status}</strong><span>{item.contextCount} records</span></div>)}
+                  </div>
+                </section>
+
+                <CoveragePanel record={record} />
+              </div>
             </div>
-
-            <aside class="country-content-rail">
-              <section class="country-section" aria-labelledby="languages-heading">
-                <div class="country-section__heading"><div><span class="eyebrow">Language</span><h2 id="languages-heading">Major source languages</h2></div><Languages size={20} aria-hidden="true" /></div>
-                <div class="country-compact-list">
-                  {record.languages.slice(0, 12).map((language) => <div key={language.key}><strong>{language.name}</strong><span>{formatCount(language.knownPopulation)} represented · {language.contextCount} contexts{language.code ? ` · ${language.code}` : ""}</span></div>)}
-                </div>
-                {record.languages.length > 12 ? <p class="country-section__intro country-section__intro--compact">Showing 12 of {record.languages.length} source-language aggregations. <a href={hrefFor("/languages")}>Browse all languages</a>.</p> : null}
-              </section>
-
-              <section class="country-section" aria-labelledby="scripture-heading">
-                <div class="country-section__heading"><div><span class="eyebrow">Resources</span><h2 id="scripture-heading">Bible availability</h2></div><BookOpen size={20} aria-hidden="true" /></div>
-                <div class="country-compact-list">
-                  {record.bibleAvailability.map((item) => <div key={item.status}><strong>{item.status}</strong><span>{item.contextCount} contexts · {formatCount(item.knownPopulation)} known represented population</span></div>)}
-                </div>
-                <p class="country-section__intro">These are source availability labels, not normalized translation-completeness categories.</p>
-              </section>
-
-              <section class="country-section" aria-labelledby="jesus-film-heading">
-                <div class="country-section__heading"><div><span class="eyebrow">Media</span><h2 id="jesus-film-heading">Jesus Film availability</h2></div><BookOpen size={20} aria-hidden="true" /></div>
-                <div class="country-compact-list">
-                  {record.jesusFilmAvailability.map((item) => <div key={item.status}><strong>{item.status}</strong><span>{item.contextCount} contexts</span></div>)}
-                </div>
-              </section>
-
-              <CoveragePanel record={record} />
-            </aside>
-          </div>
+          </details>
 
           <footer class="country-sources">
             <strong>Data sources & denominator</strong>
