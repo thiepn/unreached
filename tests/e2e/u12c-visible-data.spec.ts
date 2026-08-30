@@ -51,7 +51,7 @@ test("live people and country surfaces preserve one-record PEID, PGID and GSEC s
   const unreachedSection = page.getByLabel("Unreached people contexts");
   await expect(unreachedSection.getByRole("heading", { name: "Unreached people contexts" })).toBeVisible();
   await expect(unreachedSection.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
-  await expect(unreachedSection.getByText("GSEC 0–3", { exact: true }).first()).toBeVisible();
+  await expect(unreachedSection.getByText("GSEC 0–3 source records", { exact: true })).toBeVisible();
   await expect(page.getByText(/people-group-in-country records returned by PeopleGroups.org/)).toBeVisible();
 });
 
