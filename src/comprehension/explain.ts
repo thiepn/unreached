@@ -13,12 +13,12 @@ export function peopleMeaning(record: RuntimePeopleEntity): string {
 
 export function reachExplanation(context: RuntimePeopleContext): string {
   if (context.reach.classification === "unreached") {
-    return "The current source reports a GSEC value within 0–3 for this record. Unreached presents that source classification as “Unreached.”";
+    return "The current source places this record within its unreached mission-status range. Unreached preserves that classification instead of estimating a new status.";
   }
   if (context.reach.classification === "other") {
-    return "The current source reports a GSEC value outside the 0–3 range used for Unreached status. The app preserves that distinction instead of renaming the record “reached.”";
+    return "The current source places this record outside its unreached mission-status range. The app preserves that distinction instead of renaming the record “reached.”";
   }
-  return "The current source does not report a GSEC value for this record, so Unreached does not infer a mission status.";
+  return "The current source does not report the classification field needed for this status, so Unreached does not infer a mission status.";
 }
 
 export function evangelicalLevelExplanation(value: string | null): string {
