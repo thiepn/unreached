@@ -96,6 +96,66 @@ if (!urlState.includes('state.layer !== "unreached-population"')) {
   throw new Error("U11-C changed the default map URL-state contract.");
 }
 
+const countryPage = await readText("src/pages/CountryPage.tsx");
+for (const marker of [
+  "country-page--comprehension",
+  "country-metric-grid--comprehension",
+  "Largest unreached peoples represented",
+  "country-largest-people-list",
+  "country-research-disclosure",
+  "Detailed country data & people records",
+  "not national census population",
+  "PEID and PGID as a one-to-one record identity",
+]) {
+  if (!countryPage.includes(marker)) throw new Error(`U11-D country comprehension missing ${marker}.`);
+}
+
+const countryMetricsStart = countryPage.indexOf("function CountryMetrics");
+const countryMetricsEnd = countryPage.indexOf("function CountryResearchMetrics", countryMetricsStart);
+if (countryMetricsStart < 0 || countryMetricsEnd < 0) throw new Error("U11-D primary country metrics could not be located.");
+const primaryCountryMetrics = countryPage.slice(countryMetricsStart, countryMetricsEnd);
+const primaryMetricCount = (primaryCountryMetrics.match(/class=\"country-metric\"/g) ?? []).length;
+if (primaryMetricCount !== 3) throw new Error(`U11-D country first view must contain exactly three metrics; received ${primaryMetricCount}.`);
+
+const countryLargestIndex = countryPage.indexOf("country-largest-unreached");
+const countryResearchIndex = countryPage.indexOf('class="country-research-disclosure"');
+const countryTableIndex = countryPage.indexOf('id="unreached-people-heading"');
+if (!(countryLargestIndex >= 0 && countryResearchIndex > countryLargestIndex && countryTableIndex > countryResearchIndex)) {
+  throw new Error("U11-D must show largest unreached peoples before the detailed country record table, with the table inside research disclosure.");
+}
+
+const peoplesPage = await readText("src/pages/PeoplesPage.tsx");
+for (const marker of [
+  "peoples-page--comprehension",
+  "people-primary-context-filters",
+  "Search people, country or language",
+  "Other mission status",
+  "Bible resources",
+  "Learn about this people",
+  "Bible label, population and reviewed context",
+]) {
+  if (!peoplesPage.includes(marker)) throw new Error(`U11-D people explorer comprehension missing ${marker}.`);
+}
+
+const primaryFiltersIndex = peoplesPage.indexOf('class="people-primary-context-filters"');
+const advancedFiltersIndex = peoplesPage.indexOf('class="people-filter-panel people-filter-panel--advanced"');
+if (!(primaryFiltersIndex >= 0 && advancedFiltersIndex > primaryFiltersIndex)) {
+  throw new Error("U11-D country/language/religion filters must appear before advanced source filters.");
+}
+const advancedFiltersEnd = peoplesPage.indexOf("</details>", advancedFiltersIndex);
+const advancedFilters = peoplesPage.slice(advancedFiltersIndex, advancedFiltersEnd);
+for (const primaryLabel of [">Country<select", ">Language<select", ">Religion<select"]) {
+  if (advancedFilters.includes(primaryLabel)) throw new Error(`U11-D primary context filter remains buried in advanced filters: ${primaryLabel}`);
+}
+
+const cardStart = peoplesPage.indexOf('class="people-card people-card--concise people-card--explorer people-card--comprehension"');
+const cardEnd = peoplesPage.indexOf("</a>", cardStart);
+if (cardStart < 0 || cardEnd < 0) throw new Error("U11-D people comprehension card could not be located.");
+const cardMarkup = peoplesPage.slice(cardStart, cardEnd);
+for (const technicalMarker of ["PEID", "PGID", "GSEC"]) {
+  if (cardMarkup.includes(technicalMarker)) throw new Error(`U11-D people card exposes technical identifier ${technicalMarker}.`);
+}
+
 const main = await readText("src/main.tsx");
 if (!main.includes('import "./styles/comprehension.css"')) throw new Error("U11 comprehension stylesheet is not loaded.");
 if (main.indexOf('import "./styles/comprehension.css"') > main.indexOf('import "./styles/foundation/accessibility.css"')) {
@@ -108,8 +168,13 @@ for (const marker of [
   ".mission-view-picker",
   ".selected-mission-meaning",
   ".country-prayer-link",
+  ".country-largest-people-list",
+  ".country-research-disclosure",
+  ".country-research-metrics",
+  ".people-primary-context-filters",
+  ".people-card--comprehension",
 ]) {
-  if (!styles.includes(marker)) throw new Error(`U11-C comprehension styling missing ${marker}.`);
+  if (!styles.includes(marker)) throw new Error(`U11 comprehension styling missing ${marker}.`);
 }
 
 const browserSpec = await readText("tests/e2e/u11-comprehension-first.spec.ts");
@@ -122,8 +187,10 @@ for (const marker of [
   "map starts with a plain-language mission view and keeps research views opt in",
   "selected country explains the map result before source breakdown",
   "research map layer IDs remain URL compatible",
+  "country starts with three metrics and people before research tables",
+  "people explorer cards hide source identifiers and expose normal context filters",
 ]) {
   if (!browserSpec.includes(marker)) throw new Error(`U11 browser certification missing: ${marker}.`);
 }
 
-console.log("U11 comprehension-first checks passed: people meaning precedes technical data, map research views are opt in, certified source semantics and URL layer IDs are preserved, prayer remains first-class, and research depth stays available on demand.");
+console.log("U11 comprehension-first checks passed: people and country meaning precede technical data, map research views and country record tables are opt in, cards hide source identifiers, certified source semantics and URL IDs remain available on demand, and prayer stays first-class.");
