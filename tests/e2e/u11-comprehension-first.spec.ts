@@ -122,3 +122,43 @@ test("research map layer IDs remain URL compatible", async ({ page }) => {
   await expect(page).toHaveURL(/layer=population-coverage/);
   await expect(current).toContainText("Population-data coverage");
 });
+
+test("country starts with three metrics and people before research tables", async ({ page }) => {
+  await page.goto("./#/countries/BEN");
+  await expect(page.getByRole("heading", { name: "Benin", exact: true, level: 1 })).toBeVisible({ timeout: 15_000 });
+
+  const metrics = page.locator(".country-metric-grid--comprehension .country-metric");
+  await expect(metrics).toHaveCount(3);
+  await expect(metrics.nth(0)).toContainText("Unreached people groups");
+  await expect(metrics.nth(1)).toContainText("People groups represented");
+  await expect(metrics.nth(2)).toContainText("not national census population");
+
+  await expect(page.getByRole("heading", { name: "Largest unreached peoples represented" })).toBeVisible();
+  const largest = page.locator(".country-largest-people-list");
+  await expect(largest.getByRole("link", { name: new RegExp(VISIBLE_TEST_PEOPLE) })).toBeVisible();
+
+  const research = page.locator(".country-research-disclosure");
+  await expect(research).not.toHaveAttribute("open", "");
+  await expect(research.locator(".country-people-table")).not.toBeVisible();
+  await research.locator(":scope > summary").click();
+  await expect(research.locator(".country-people-table")).toBeVisible();
+  await expect(research.getByText(`PGID PG910001 · PEID ${VISIBLE_TEST_PEID}`, { exact: true })).toBeVisible();
+});
+
+test("people explorer cards hide source identifiers and expose normal context filters", async ({ page }) => {
+  await page.goto("./#/peoples");
+  await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
+
+  const primary = page.locator(".people-primary-context-filters");
+  await expect(primary.getByRole("combobox", { name: "Country" })).toBeVisible();
+  await expect(primary.getByRole("combobox", { name: "Language" })).toBeVisible();
+  await expect(primary.getByRole("combobox", { name: "Religion" })).toBeVisible();
+  await expect(page.locator("#people-search")).toHaveAttribute("placeholder", "Search people, country or language");
+
+  const card = page.locator(".people-card--comprehension", { hasText: VISIBLE_TEST_PEOPLE }).first();
+  await expect(card).toBeVisible({ timeout: 15_000 });
+  await expect(card).toContainText("Population");
+  await expect(card).toContainText("Bible resources");
+  await expect(card).toContainText("Learn about this people");
+  await expect(card.getByText(/PEID|PGID|GSEC/)).toHaveCount(0);
+});
