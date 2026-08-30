@@ -62,3 +62,63 @@ test("comprehension-first profile remains usable at narrow mobile width", async 
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client);
 });
+
+test("map starts with a plain-language mission view and keeps research views opt in", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 760 });
+  await page.goto("./#/", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Explore unreached peoples." })).toBeVisible();
+  const current = page.locator(".explore-panel--phase10 .mission-view-current");
+  await expect(current).toContainText("Unreached population share");
+  await expect(current).toContainText("Not national census data.");
+
+  const picker = page.locator(".explore-panel--phase10 .mission-view-picker");
+  await expect(picker).not.toHaveAttribute("open", "");
+  await expect(picker.locator("select")).not.toBeVisible();
+  await picker.locator("summary").click();
+  await expect(picker.locator("select")).toBeVisible();
+  await expect(picker.locator("select")).toContainText("Unreached people-group share");
+  await expect(picker.locator("select")).toContainText("Mission-status data coverage");
+  await expect(picker.locator("select")).toContainText("Source people-group records");
+});
+
+test("selected country explains the map result before source breakdown", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 760 });
+  await page.goto("./#/", { waitUntil: "domcontentloaded" });
+
+  const search = page.locator("#desktop-country-search");
+  await search.fill("Benin");
+  const benin = page.locator(".explore-panel--phase10 .country-row", { hasText: "Benin" }).first();
+  await expect(benin).toBeVisible();
+  await benin.click();
+
+  const selected = page.locator(".selected-area--phase10");
+  await expect(selected).toContainText("Benin");
+  const summary = selected.locator(".selected-mission-summary--comprehension");
+  await expect(summary).toBeVisible({ timeout: 15_000 });
+  await expect(summary.locator(".selected-mission-meaning")).toContainText("classified as unreached");
+  await expect(summary.locator(".selected-mission-primary")).toContainText("Unreached population share");
+
+  const details = summary.locator(".selected-mission-details");
+  await expect(details).not.toHaveAttribute("open", "");
+  await expect(details.locator(".selected-mission-grid")).not.toBeVisible();
+  await expect(selected.getByRole("link", { name: "Open country profile →" })).toHaveAttribute("href", "#/countries/BEN");
+  await expect(selected.getByRole("link", { name: "Pray for this country’s peoples →" })).toHaveAttribute("href", "#/pray?country=BEN");
+});
+
+test("research map layer IDs remain URL compatible", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 760 });
+  await page.goto("./#/?layer=gsec-coverage", { waitUntil: "domcontentloaded" });
+
+  const current = page.locator(".explore-panel--phase10 .mission-view-current");
+  await expect(current).toContainText("Mission-status data coverage");
+  await expect(current).toHaveAttribute("data-map-view-kind", "research");
+
+  const picker = page.locator(".explore-panel--phase10 .mission-view-picker");
+  await picker.locator("summary").click();
+  const select = picker.locator("select");
+  await expect(select).toHaveValue("gsec-coverage");
+  await select.selectOption("population-coverage");
+  await expect(page).toHaveURL(/layer=population-coverage/);
+  await expect(current).toContainText("Population-data coverage");
+});
