@@ -1,0 +1,259 @@
+.meaning-summary {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 68ch;
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border-left: 3px solid var(--forest-700);
+  background: var(--paper-1);
+}
+
+.meaning-summary > p {
+  margin: 0;
+  color: var(--ink-1);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.term-help {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: var(--space-2);
+}
+
+.term-help > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 32px;
+  cursor: pointer;
+  color: var(--forest-700);
+  font-size: .82rem;
+  font-weight: 700;
+  list-style: none;
+}
+
+.term-help > summary::-webkit-details-marker {
+  display: none;
+}
+
+.term-help__body {
+  max-width: 60ch;
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  background: var(--paper-0);
+  color: var(--ink-1);
+}
+
+.term-help__body strong {
+  color: var(--ink-0);
+}
+
+.term-help__body p {
+  margin: .35rem 0 0;
+  line-height: 1.5;
+}
+
+.people-profile--comprehension .people-profile-hero {
+  align-items: flex-start;
+}
+
+.people-profile-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.people-hero-pray,
+.people-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 46px;
+  padding: .6rem .9rem;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.people-hero-pray {
+  border: 1px solid var(--forest-700);
+  background: var(--forest-700);
+  color: var(--paper-0);
+}
+
+.people-hero-secondary {
+  border: 1px solid var(--line-strong, var(--line));
+  background: var(--paper-0);
+  color: var(--ink-0);
+}
+
+.unreached-explanation {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding: clamp(1.1rem, 2.5vw, 1.6rem);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--forest-700);
+  background: var(--paper-1);
+}
+
+.unreached-explanation__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.unreached-explanation__heading h2 {
+  max-width: 28ch;
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.5rem, 2.7vw, 2.25rem);
+  font-weight: 560;
+  line-height: 1.08;
+}
+
+.unreached-explanation__status,
+.unreached-evidence {
+  max-width: 72ch;
+}
+
+.unreached-explanation__status > strong,
+.unreached-evidence > strong {
+  display: block;
+  color: var(--ink-0);
+  font-size: 1.05rem;
+}
+
+.unreached-explanation__status p,
+.unreached-evidence p {
+  margin: .35rem 0 0;
+  color: var(--ink-1);
+  line-height: 1.6;
+}
+
+.unreached-evidence {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.unreached-evidence > span {
+  display: block;
+  margin-bottom: .2rem;
+  color: var(--ink-2);
+  font-size: .76rem;
+  font-weight: 750;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.unreached-source-classification {
+  max-width: 72ch;
+  border-top: 1px solid var(--line);
+}
+
+.unreached-source-classification > summary {
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--ink-1);
+  font-weight: 700;
+}
+
+.unreached-source-classification dl {
+  margin: 0 0 var(--space-2);
+}
+
+.unreached-source-classification dl > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, .35fr) 1fr;
+  gap: var(--space-3);
+  padding: .55rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.unreached-source-classification dt {
+  color: var(--ink-2);
+}
+
+.unreached-source-classification dd {
+  margin: 0;
+}
+
+.people-profile--comprehension .people-profile-overview__heading h2 {
+  max-width: 24ch;
+}
+
+.people-profile--comprehension .people-metric {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.people-profile--comprehension .people-metric .term-help {
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.people-source-record-grid--comprehension {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.people-source-record-grid--comprehension > div p {
+  margin: .35rem 0 0;
+  color: var(--ink-1);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.people-profile--comprehension .people-section--source .people-section__intro,
+.people-profile--comprehension .people-section--provider .people-section__intro {
+  max-width: 68ch;
+}
+
+.people-profile--comprehension .people-profile-action-stage {
+  border-top-width: 4px;
+}
+
+.people-profile--comprehension .people-profile-reference-stage::before {
+  content: "Research · Detailed data";
+}
+
+.people-profile--comprehension .people-profile-reference-stage {
+  opacity: .96;
+}
+
+@media (max-width: 760px) {
+  .people-profile-hero-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .people-profile-hero-actions > * {
+    flex: 1 1 12rem;
+  }
+
+  .people-source-record-grid--comprehension {
+    grid-template-columns: 1fr;
+  }
+
+  .unreached-source-classification dl > div {
+    grid-template-columns: 1fr;
+    gap: .15rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .people-hero-pray,
+  .people-hero-secondary {
+    width: 100%;
+  }
+
+  .unreached-explanation {
+    margin-inline: calc(var(--space-4) * -1);
+    border-right: 0;
+    border-left: 0;
+  }
+}
