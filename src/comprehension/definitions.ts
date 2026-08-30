@@ -20,8 +20,8 @@ const DEFINITIONS: Record<ComprehensionTerm, ComprehensionDefinition> = {
   },
   unreached: {
     label: "Unreached",
-    short: "A mission-status label Unreached shows when the source places a people-group record in GSEC 0–3.",
-    detail: "This classification describes reported Christian presence and mission status. It is not a statement about the worth, character, or spiritual sincerity of the people themselves.",
+    short: "A mission-status label indicating that established evangelical Christian presence is limited according to the source classification.",
+    detail: "Unreached applies this label when the source places a people-group record in GSEC 0–3. The classification is not a statement about the worth, character, or spiritual sincerity of the people themselves.",
   },
   gsec: {
     label: "GSEC",
