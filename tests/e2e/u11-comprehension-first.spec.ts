@@ -34,7 +34,8 @@ test("mission terminology can be explained in place", async ({ page }) => {
   const help = page.getByText("What does unreached mean?", { exact: true });
   await expect(help).toBeVisible();
   await help.click();
-  await expect(page.getByText("A mission-status label Unreached shows when the source places a people-group record in GSEC 0–3.", { exact: true })).toBeVisible();
+  await expect(page.getByText("A mission-status label indicating that established evangelical Christian presence is limited according to the source classification.", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Unreached applies this label when the source places a people-group record in GSEC 0–3/)).toBeVisible();
 });
 
 test("prayer is a first-class action without hiding research depth", async ({ page }) => {
