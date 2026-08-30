@@ -1,6 +1,7 @@
 import { Database, Globe2, Info, RotateCcw, Search } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 
+import { TermHelp } from "../components/TermHelp";
 import { useAfterFirstPaint } from "../hooks/useResponsiveWork";
 import { useWorldGeography } from "../map/geography";
 import type { MapCountryFeature, MapViewState } from "../map/types";
@@ -303,6 +304,10 @@ export function ExplorePage() {
           <div class="eyebrow">Explore</div>
           <h1 id="explore-title" class="display-title">Explore unreached peoples.</h1>
           <p class="lead">See where represented people-group records are classified as unreached, then open a country to understand the people behind the map.</p>
+          <div class="explore-newcomer-actions">
+            <TermHelp term="unreached" prompt="What does “unreached” mean?" />
+            <a class="explore-pray-today" href="#/pray">Pray today →</a>
+          </div>
         </div>
 
         <div class="control-group control-group--compact mission-view-control">
@@ -381,6 +386,10 @@ export function ExplorePage() {
           <summary><span><small>{selected ? "Selected country" : mapLayerShortLabel(activeLayer)}</small><strong>{selected?.properties.name ?? "Explore mission geography"}</strong></span><span aria-hidden="true">↑</span></summary>
           <div class="mobile-map-sheet__body">
             <div class="mobile-map-sheet__controls">
+              <div class="explore-newcomer-actions explore-newcomer-actions--mobile">
+                <TermHelp term="unreached" prompt="What does “unreached” mean?" />
+                <a class="explore-pray-today" href="#/pray">Pray today →</a>
+              </div>
               <MissionViewCurrent activeLayer={activeLayer} />
               <MissionViewPicker activeLayer={activeLayer} onChange={changeLayer} compact />
               <MissionMapKey activeLayer={activeLayer} compact />
