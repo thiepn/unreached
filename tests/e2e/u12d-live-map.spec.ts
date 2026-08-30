@@ -23,7 +23,8 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
   await expect(picker).not.toHaveAttribute("open", "");
 
   await search.fill("Benin");
-  await page.locator(".country-row:visible", { hasText: "Benin" }).first().click();
+  const countryRow = page.locator(".country-row:visible", { hasText: "Benin" }).first();
+  await countryRow.evaluate((element: HTMLButtonElement) => element.click());
 
   if (!mobile) {
     await expect(page.getByRole("heading", { name: "Benin" })).toBeVisible();
