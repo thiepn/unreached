@@ -14,16 +14,24 @@ test("live people and country surfaces preserve one-record PEID, PGID and GSEC s
   const profile = page.locator("article.people-profile--v11");
   await expect(profile).toBeVisible({ timeout: 15_000 });
   await expect(profile.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
-  await expect(profile.locator(".people-profile-identity")).toHaveText(`PEID ${VISIBLE_TEST_PEID} · PGID PG910001`);
+  await expect(profile.locator(".people-profile-hero").getByText(/PEID|PGID|GSEC/)).toHaveCount(0);
   await expect(profile.getByText("Unreached", { exact: true }).first()).toBeVisible();
-  await expect(profile.getByText("2", { exact: true }).first()).toBeVisible();
-  await expect(profile.getByText(/PeopleGroups.org estimate for Benin/)).toBeVisible();
-  await expect(profile.getByText("Bible: Available", { exact: true })).toBeVisible();
-  await expect(profile.getByText(/one PGID country-context record for this PEID/)).toBeVisible();
+  await expect(profile.getByText(/Estimate for this record in Benin/)).toBeVisible();
+  await expect(profile.locator(".people-metric-grid--essential").getByText("Available", { exact: true })).toBeVisible();
+  await expect(profile.getByRole("heading", { name: "Understand the source context" })).toBeVisible();
   await expect(profile.getByRole("link", { name: /Pray with this context/ })).toBeVisible();
 
-  const sourceDetails = profile.locator(".people-disclosure").filter({ hasText: "Sources, taxonomy & methodology" });
+  const statusDetails = profile.locator(".unreached-source-classification");
+  await expect(statusDetails).not.toHaveAttribute("open", "");
+  await statusDetails.locator("summary").click();
+  await expect(statusDetails.getByText("2", { exact: true })).toBeVisible();
+  await expect(statusDetails.getByText("Initial Church Planting", { exact: true })).toBeVisible();
+
+  const sourceDetails = profile.locator(".people-disclosure--sources").filter({ hasText: "Detailed data, sources & methodology" });
+  await expect(sourceDetails).not.toHaveAttribute("open", "");
   await sourceDetails.locator("summary").click();
+  await expect(sourceDetails.getByText(`PEID ${VISIBLE_TEST_PEID} · PGID PG910001 · BEN`, { exact: true })).toBeVisible();
+  await expect(sourceDetails.getByText("2 · Initial Church Planting", { exact: true })).toBeVisible();
   await expect(sourceDetails.getByText(/does not treat PEID as a cross-country grouping key/)).toBeVisible();
 
   await expect(profile.getByText("PGID PG910002", { exact: true })).toHaveCount(0);
