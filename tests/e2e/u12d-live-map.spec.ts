@@ -21,10 +21,6 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
 
   const picker = mobile ? mobileSheet.locator(".mission-view-picker") : page.locator(".explore-panel--phase10 .mission-view-picker");
   await expect(picker).not.toHaveAttribute("open", "");
-  await picker.locator(":scope > summary").click();
-  const layerSelect = picker.getByLabel("Mission map layer");
-  await expect(layerSelect).toBeVisible();
-  await expect(layerSelect).toHaveValue("unreached-population");
 
   await search.fill("Benin");
   await page.locator(".country-row:visible", { hasText: "Benin" }).first().click();
@@ -38,7 +34,7 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
 
     const sourceBreakdown = selectedSummary.locator(".selected-mission-details");
     await expect(sourceBreakdown).not.toHaveAttribute("open", "");
-    await sourceBreakdown.locator("summary").click();
+    await sourceBreakdown.locator(":scope > summary").click();
     await expect(sourceBreakdown.getByText("People contexts", { exact: true })).toBeVisible();
     await expect(sourceBreakdown.getByText("GSEC 0–3", { exact: true })).toBeVisible();
     await expect(sourceBreakdown.getByText("Known population", { exact: true })).toBeVisible();
@@ -48,6 +44,10 @@ test("mission atlas renders source-native PeopleGroups layers and country contex
     await expect(mobileSheet.getByText("Benin", { exact: true }).first()).toBeVisible();
   }
 
+  await picker.locator(":scope > summary").click();
+  const layerSelect = picker.getByLabel("Mission map layer");
+  await expect(layerSelect).toBeVisible();
+  await expect(layerSelect).toHaveValue("unreached-population");
   await layerSelect.selectOption("gsec-coverage");
   const currentView = mobile ? mobileSheet.locator(".mission-view-current") : page.locator(".explore-panel--phase10 .mission-view-current");
   await expect(currentView).toContainText("Mission-status data coverage");
