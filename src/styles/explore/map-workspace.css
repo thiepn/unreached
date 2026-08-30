@@ -254,14 +254,15 @@
   .explore-panel--phase10 .country-index--primary {
     display: flex;
     min-height: 0;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .explore-panel--phase10 .country-browser {
     min-height: 0;
     height: auto;
-    max-height: none;
+    max-height: 100%;
     flex: 1 1 auto;
     overflow: hidden;
   }
