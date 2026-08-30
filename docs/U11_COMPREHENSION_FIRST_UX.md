@@ -2,18 +2,18 @@
 
 ## Status
 
-U11-A and U11-B implemented on the comprehension-first branch.
+U11-A, U11-B and U11-C implemented on the comprehension-first branch. U11-D and U11-E remain.
 
 This document is intentionally separate from the historical `U11_RELEASE_GATES.md`. The earlier file remains part of the repository's prior release history.
 
 ## Governing problem
 
-Unreached exposes rigorous mission-data semantics, but the people profile previously required users to understand the data model before they could understand the people. Technical values such as GSEC, PEID, PGID, provider field labels, denominators and source mechanics competed with the actual user questions:
+Unreached exposes rigorous mission-data semantics, but the interface previously required users to understand the data model before they could understand the people. Technical values such as GSEC, PEID, PGID, provider field labels, denominators, source coverage and map methodology competed with the actual user questions:
 
 1. Who are these people?
 2. Why are they marked unreached?
 3. What few facts should I understand first?
-4. What context is available?
+4. What does the map actually mean?
 5. How can I pray?
 
 U11 changes the hierarchy without weakening source truth.
@@ -34,7 +34,8 @@ U11 must not create precision or classifications the source does not provide.
 - GSEC 4–6 is not renamed `reached`.
 - PEID and PGID remain source-record identifiers and are not treated as cross-country people rollups.
 - A people-group population estimate remains scoped to the source record and country context.
-- Represented population must not be described as national census population.
+- Represented population and map percentages must not be described as national census data.
+- Existing certified map layer IDs and URL state remain stable even when user-facing terminology changes.
 
 ## U11-A — Comprehension contract
 
@@ -72,7 +73,7 @@ These move human-readable meaning ahead of technical classification details.
 
 ## U11-B — People profile
 
-The current people profile now follows this hierarchy.
+The people profile now follows this hierarchy.
 
 ### 1. Identity and meaning
 
@@ -131,21 +132,92 @@ Collapsed research disclosures retain:
 
 No research capability is deleted merely to simplify the first view.
 
+### Browser-contract migration
+
+Older browser tests that required PEID, PGID and GSEC in the primary profile were updated to verify the same exact semantics inside the research disclosure instead. This preserves the underlying U12C one-record source contract without reversing the comprehension-first hierarchy.
+
+## U11-C — Explore map
+
+The map keeps its existing analytics and URL contract but no longer presents every analytical layer as equally primary.
+
+### Default view
+
+The certified default remains:
+
+`unreached-population`
+
+User-facing name:
+
+**Unreached population share**
+
+Meaning shown directly in the interface:
+
+> Shows the share of represented source population belonging to people-group records classified as unreached.
+
+Persistent caveat:
+
+> Based on source records with known population and mission status. Not national census data.
+
+### Map-view hierarchy
+
+Two mission views are presented as the normal interpretation layer:
+
+- Unreached population share
+- Unreached people-group share
+
+Three analytical layers are explicitly labeled data/research views:
+
+- Mission-status data coverage
+- Population-data coverage
+- Source people-group records
+
+All alternatives are placed behind **Change map view** rather than competing with the default map on first sight.
+
+### Selected-country comprehension
+
+Selecting a country now presents:
+
+1. the country name;
+2. a plain-language explanation of the active map metric;
+3. the metric value;
+4. a short caveat when needed;
+5. country-profile and prayer actions;
+6. collapsed `Source breakdown` for people-context counts, GSEC counts, supporting coverage and denominator details.
+
+### Map compatibility
+
+U11-C deliberately does not change these certified IDs:
+
+- `unreached-population`
+- `unreached-contexts`
+- `gsec-coverage`
+- `population-coverage`
+- `people-contexts`
+
+The legacy `layer=unreached` alias still resolves to `unreached-population`, and the default layer continues to be omitted from URL state.
+
 ## Compatibility
 
-The implementation preserves the prior Phase 9 structural journey:
+The implementation preserves the prior Phase 9 people-profile structural journey:
 
 `source context → provider context → prayer/save actions → provenance`
 
-This keeps earlier behavioral safeguards valid while changing visible hierarchy and copy.
+It also preserves the Phase 10 map architecture:
 
-The existing route contract, runtime provider, cache behavior, offline behavior, saved-person model and prayer routes are unchanged.
+- one desktop map key;
+- one mutually exclusive mobile map key;
+- searchable country fallback;
+- selected-country source breakdown as opt-in detail;
+- existing live-data loading and error paths;
+- existing layer IDs and URL state.
+
+The existing runtime provider, cache behavior, offline behavior, saved-person model and prayer routes are unchanged.
 
 ## Styling
 
 `src/styles/comprehension.css` is a semantic stylesheet loaded near the end of the application cascade but before the final accessibility layer.
 
-The certified historical v11/v12 CSS fragments are not modified.
+The certified historical v11/v12 CSS fragments and hashed Phase 15 semantic fragments are not modified.
 
 ## Automated gates
 
@@ -156,10 +228,12 @@ The certified historical v11/v12 CSS fragments are not modified.
 The build fails if:
 
 - comprehension components disappear;
-- technical identifiers return to the hero;
+- technical identifiers return to the people-profile hero;
 - meaning/evidence/context/prayer/research ordering regresses;
 - canonical terms or source-truth guardrails disappear;
 - inline term help loses native disclosure semantics;
+- map mission/research hierarchy disappears;
+- certified map layer IDs or URL compatibility are removed;
 - the stylesheet is missing or overtakes the final accessibility layer;
 - U11 browser certification is removed.
 
@@ -170,23 +244,19 @@ The build fails if:
 Certifies:
 
 - meaning appears before identifiers;
-- the primary overview contains exactly four facts;
+- the people overview contains exactly four facts;
 - mission terminology can be explained in place;
 - prayer is immediately discoverable;
-- detailed research remains available;
-- the profile has no horizontal overflow at 360 px.
+- detailed people research remains available;
+- the profile has no horizontal overflow at 360 px;
+- the map opens with a plain-language mission view;
+- research map views remain opt-in;
+- selected countries explain metrics before source breakdown;
+- map layer IDs remain URL-compatible.
 
-The prior `phase9-people-profile.spec.ts` remains and has been updated to assert the new visible wording while keeping its original behavioral tests.
+The prior Phase 9, Phase 10, v11 and U12C browser contracts remain active and are adjusted only where their old visible-text assumptions conflicted with the new hierarchy.
 
 ## Next implementation phases
-
-### U11-C — Explore map
-
-- keep `unreached-population` as the default analytical data;
-- rename the user-facing view in plain language;
-- move coverage and record-count layers behind an advanced `Change map view` control;
-- explain the selected-country result before source breakdowns;
-- preserve existing layer IDs and URL state.
 
 ### U11-D — Countries and peoples explorer
 
