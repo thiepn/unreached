@@ -42,6 +42,12 @@ test("live people and country surfaces preserve one-record PEID, PGID and GSEC s
 
   await page.goto("./#/countries/BEN");
   await expect(page.getByRole("heading", { name: "Benin", exact: true })).toBeVisible();
+  await expect(page.locator(".country-metric-grid--comprehension .country-metric")).toHaveCount(3);
+  await expect(page.getByRole("heading", { name: "Largest unreached peoples represented" })).toBeVisible();
+
+  const research = page.locator(".country-research-disclosure");
+  await expect(research).not.toHaveAttribute("open", "");
+  await research.locator(":scope > summary").click();
   const unreachedSection = page.getByLabel("Unreached people contexts");
   await expect(unreachedSection.getByRole("heading", { name: "Unreached people contexts" })).toBeVisible();
   await expect(unreachedSection.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
