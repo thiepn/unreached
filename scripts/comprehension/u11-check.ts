@@ -59,10 +59,57 @@ if (!termHelp.includes('<details class="term-help">') || !termHelp.includes("<su
   throw new Error("U11 term help must use native keyboard-accessible disclosure semantics.");
 }
 
+const explore = await readText("src/pages/ExplorePage.tsx");
+for (const marker of [
+  "explore-screen--comprehension",
+  "Explore unreached peoples.",
+  "Unreached population share",
+  "Unreached people-group share",
+  "Mission-status data coverage",
+  "Population-data coverage",
+  "Source people-group records",
+  "Change map view",
+  'optgroup label="Mission views"',
+  'optgroup label="Data & research views"',
+  "selected-mission-meaning",
+  "Not national census data.",
+  "Pray for this country’s peoples →",
+]) {
+  if (!explore.includes(marker)) throw new Error(`U11-C Explore comprehension missing ${marker}.`);
+}
+
+const pickerIndex = explore.indexOf('<details class="mission-view-picker">');
+const selectorIndex = explore.indexOf("<LayerSelector activeLayer={activeLayer} onChange={onChange}");
+if (pickerIndex < 0 || selectorIndex < pickerIndex) {
+  throw new Error("U11-C research/alternate map views must remain behind the Change map view disclosure.");
+}
+
+const liveTypes = await readText("src/visualization/liveTypes.ts");
+const urlState = await readText("src/map/urlState.ts");
+for (const layerId of ["unreached-population", "unreached-contexts", "gsec-coverage", "population-coverage", "people-contexts"]) {
+  if (!liveTypes.includes(`\"${layerId}\"`)) throw new Error(`U11-C removed certified map layer ID ${layerId}.`);
+}
+if (!urlState.includes('if (raw === "unreached") return "unreached-population";')) {
+  throw new Error("U11-C removed the legacy unreached map URL alias.");
+}
+if (!urlState.includes('state.layer !== "unreached-population"')) {
+  throw new Error("U11-C changed the default map URL-state contract.");
+}
+
 const main = await readText("src/main.tsx");
 if (!main.includes('import "./styles/comprehension.css"')) throw new Error("U11 comprehension stylesheet is not loaded.");
 if (main.indexOf('import "./styles/comprehension.css"') > main.indexOf('import "./styles/foundation/accessibility.css"')) {
   throw new Error("U11 styles must remain below the final accessibility cascade layer.");
+}
+
+const styles = await readText("src/styles/comprehension.css");
+for (const marker of [
+  ".mission-view-current",
+  ".mission-view-picker",
+  ".selected-mission-meaning",
+  ".country-prayer-link",
+]) {
+  if (!styles.includes(marker)) throw new Error(`U11-C comprehension styling missing ${marker}.`);
 }
 
 const browserSpec = await readText("tests/e2e/u11-comprehension-first.spec.ts");
@@ -72,8 +119,11 @@ for (const marker of [
   "mission terminology can be explained in place",
   "prayer is a first-class action without hiding research depth",
   "comprehension-first profile remains usable at narrow mobile width",
+  "map starts with a plain-language mission view and keeps research views opt in",
+  "selected country explains the map result before source breakdown",
+  "research map layer IDs remain URL compatible",
 ]) {
   if (!browserSpec.includes(marker)) throw new Error(`U11 browser certification missing: ${marker}.`);
 }
 
-console.log("U11 comprehension-first checks passed: meaning precedes technical data, four essential facts are primary, source truth is preserved, prayer remains first-class, and research depth is retained on demand.");
+console.log("U11 comprehension-first checks passed: people meaning precedes technical data, map research views are opt in, certified source semantics and URL layer IDs are preserved, prayer remains first-class, and research depth stays available on demand.");
