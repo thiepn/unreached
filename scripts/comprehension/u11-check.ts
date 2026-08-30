@@ -41,6 +41,9 @@ const definitions = await readText("src/comprehension/definitions.ts");
 for (const term of ["people-group", "unreached", "gsec", "population-estimate", "evangelical-level", "bible-resource-status"]) {
   if (!definitions.includes(`\"${term}\"`)) throw new Error(`U11 terminology registry missing ${term}.`);
 }
+if (!definitions.includes("established evangelical Christian presence is limited")) {
+  throw new Error("U11 unreached definition must explain meaning before exposing GSEC implementation detail.");
+}
 if (!definitions.includes("does not reinterpret raw provider labels")) {
   throw new Error("U11 Bible resource source-truth guardrail is missing.");
 }
@@ -63,6 +66,9 @@ const explore = await readText("src/pages/ExplorePage.tsx");
 for (const marker of [
   "explore-screen--comprehension",
   "Explore unreached peoples.",
+  "explore-newcomer-actions",
+  "What does “unreached” mean?",
+  "Pray today →",
   "Unreached population share",
   "Unreached people-group share",
   "Mission-status data coverage",
@@ -158,8 +164,12 @@ for (const technicalMarker of ["PEID", "PGID", "GSEC"]) {
 
 const main = await readText("src/main.tsx");
 if (!main.includes('import "./styles/comprehension.css"')) throw new Error("U11 comprehension stylesheet is not loaded.");
+if (!main.includes('import "./styles/explore/newcomer-entry.css"')) throw new Error("U11 first-minute Explore stylesheet is not loaded.");
 if (main.indexOf('import "./styles/comprehension.css"') > main.indexOf('import "./styles/foundation/accessibility.css"')) {
   throw new Error("U11 styles must remain below the final accessibility cascade layer.");
+}
+if (main.indexOf('import "./styles/explore/newcomer-entry.css"') > main.indexOf('import "./styles/foundation/accessibility.css"')) {
+  throw new Error("U11 first-minute styles must remain below the final accessibility cascade layer.");
 }
 
 const styles = await readText("src/styles/comprehension.css");
@@ -175,6 +185,11 @@ for (const marker of [
   ".people-card--comprehension",
 ]) {
   if (!styles.includes(marker)) throw new Error(`U11 comprehension styling missing ${marker}.`);
+}
+
+const newcomerStyles = await readText("src/styles/explore/newcomer-entry.css");
+for (const marker of [".explore-newcomer-actions", ".explore-pray-today", ".explore-newcomer-actions--mobile"]) {
+  if (!newcomerStyles.includes(marker)) throw new Error(`U11 first-minute styling missing ${marker}.`);
 }
 
 const browserSpec = await readText("tests/e2e/u11-comprehension-first.spec.ts");
@@ -193,4 +208,14 @@ for (const marker of [
   if (!browserSpec.includes(marker)) throw new Error(`U11 browser certification missing: ${marker}.`);
 }
 
-console.log("U11 comprehension-first checks passed: people and country meaning precede technical data, map research views and country record tables are opt in, cards hide source identifiers, certified source semantics and URL IDs remain available on demand, and prayer stays first-class.");
+const firstMinuteSpec = await readText("tests/e2e/u11-first-minute-acceptance.spec.ts");
+for (const marker of [
+  "newcomer can understand unreached and start today's prayer from Explore",
+  "established evangelical Christian presence is limited",
+  "Pray today →",
+  "People to Pray for Today",
+]) {
+  if (!firstMinuteSpec.includes(marker)) throw new Error(`U11 first-minute browser certification missing: ${marker}.`);
+}
+
+console.log("U11 comprehension-first checks passed: first-minute meaning and prayer entry are explicit, people and country meaning precede technical data, map research views and country record tables are opt in, cards hide source identifiers, certified source semantics and URL IDs remain available on demand, and prayer stays first-class.");
