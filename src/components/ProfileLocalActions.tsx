@@ -17,11 +17,11 @@ export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity })
       <div class="profile-action-heading">
         <div>
           <span class="eyebrow">2 · Act from context</span>
-          <h2 id="profile-next-step-heading">{prayerEligible ? "Carry what you learned into prayer." : "Keep this source record for reference."}</h2>
+          <h2 id="profile-next-step-heading">{prayerEligible ? `Pray for ${record.displayName}.` : "Save this people-group record."}</h2>
         </div>
         <p>{prayerEligible
-          ? "Prayer comes after the source context on this profile. The focused guide keeps the same people-group identity and does not add unreviewed community claims."
-          : "This record is outside the GSEC 0–3 focused-prayer flow. You can still save it locally and continue exploring the source context."}</p>
+          ? "Use the focused prayer guide after learning the basic context. The guide keeps the same source identity and does not add unreviewed claims about the community."
+          : "The current source record is outside the app's unreached prayer flow. You can still save it and continue exploring the available context."}</p>
       </div>
 
       <div class="profile-journey" aria-label="Explore understand pray journey">
@@ -42,19 +42,19 @@ export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity })
             <ArrowRight size={15} aria-hidden="true" />
           </a>
         ) : (
-          <div class="profile-journey__step is-disabled" aria-disabled="true">
+          <div class="profile-journey__step is-disabled" aria-disabled="true" data-source-rule="Not in GSEC 0–3 flow">
             <HeartHandshake size={17} aria-hidden="true" />
-            <span><small>3 · Pray</small><strong>Not in GSEC 0–3 flow</strong></span>
+            <span><small>3 · Pray</small><strong>Prayer guide not available</strong></span>
           </div>
         )}
       </div>
 
       <div class="profile-next-step profile-next-step--phase9">
         <div>
-          <strong>{prayerEligible ? "Ready for the next step?" : "Want to return to this profile?"}</strong>
+          <strong>{prayerEligible ? "Ready to pray?" : "Want to return to this profile later?"}</strong>
           <p>{prayerEligible
-            ? "Open the prayer guide when you are ready; saving is optional and stays local unless you have explicitly enabled Private Sync."
-            : "Saving keeps this people-group reference available in your personal list."}</p>
+            ? "Open the prayer guide now, or save the people group for later. Saving remains local unless Private Sync has been explicitly enabled."
+            : "Saving keeps this source record available in your personal list."}</p>
         </div>
         <div class="profile-local-actions__buttons">
           {prayerEligible ? <a class="profile-pray-button" href={hrefFor(`/pray/${sourcePeopleId}`)}>Pray with this context <ArrowRight size={17} aria-hidden="true" /></a> : null}
