@@ -8,10 +8,10 @@ test.beforeEach(async ({ page }) => {
 
 test("source context appears before prayer actions", async ({ page }) => {
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Understand the source context" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Read the available description" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: `Pray for ${VISIBLE_TEST_PEOPLE}.` })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `Pray for ${VISIBLE_TEST_PEOPLE}.`, exact: true })).toBeVisible();
 
   const order = await page.evaluate(() => {
     const context = document.querySelector('[data-profile-stage="understand"]');
@@ -55,7 +55,7 @@ test("non prayer eligible profile keeps save path without prayer CTA", async ({ 
 test("mobile profile journey has no horizontal overflow", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
   await page.locator(".people-profile-action-stage").scrollIntoViewIfNeeded();
   await expect(page.getByRole("link", { name: /Pray with this context/ })).toBeVisible();
 
