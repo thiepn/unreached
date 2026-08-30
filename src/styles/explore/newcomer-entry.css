@@ -1,0 +1,68 @@
+.explore-newcomer-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.explore-newcomer-actions .term-help {
+  min-width: 0;
+  margin-top: 0;
+}
+
+.explore-pray-today {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  color: var(--forest-700);
+  font-size: .8rem;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.explore-newcomer-actions--mobile {
+  justify-content: space-between;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+
+/*
+ * Keep the first-minute actions without stealing the minimum vertical space
+ * needed for the searchable country list on laptop-height desktop viewports.
+ * The H1, inline definition and Pray today action still communicate purpose;
+ * the longer lead returns as soon as normal vertical space is available.
+ */
+@media (min-width: 761px) and (max-height: 800px) {
+  .explore-panel--phase10 .explore-panel__intro .lead {
+    display: none;
+  }
+
+  .explore-newcomer-actions {
+    margin-top: var(--space-1);
+  }
+}
+
+@media (min-width: 761px) and (max-height: 700px) {
+  .explore-newcomer-actions {
+    gap: 0 var(--space-2);
+    margin-top: 0;
+  }
+
+  .explore-newcomer-actions .term-help > summary,
+  .explore-pray-today {
+    min-height: 28px;
+    font-size: .72rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .explore-newcomer-actions--mobile {
+    flex: 0 0 auto;
+  }
+
+  .explore-newcomer-actions--mobile .term-help__body {
+    max-width: none;
+  }
+}

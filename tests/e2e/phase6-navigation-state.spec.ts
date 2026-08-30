@@ -14,9 +14,8 @@ test.describe("Phase 6 URL-backed discovery state", () => {
     await search.fill("Browser Test");
     const unreached = page.getByRole("button", { name: "Unreached", exact: true });
     await unreached.click();
-    const advanced = page.locator(".people-filter-panel--advanced");
-    await advanced.locator("summary").click();
-    await advanced.getByRole("combobox", { name: "Country" }).selectOption("BEN");
+    const country = page.locator(".people-primary-context-filters").getByRole("combobox", { name: "Country" });
+    await country.selectOption("BEN");
 
     await expect(page).toHaveURL(/#\/peoples\?.*q=Browser\+Test/);
     await expect(page).toHaveURL(/status=unreached-only/);
@@ -28,8 +27,8 @@ test.describe("Phase 6 URL-backed discovery state", () => {
 
     await expect(page.locator("#people-search")).toHaveValue("Browser Test");
     await expect(page.getByRole("button", { name: "Unreached", exact: true })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".people-filter-panel--advanced")).toHaveAttribute("open", "");
-    await expect(page.locator(".people-filter-panel--advanced").getByRole("combobox", { name: "Country" })).toHaveValue("BEN");
+    await expect(page.locator(".people-primary-context-filters").getByRole("combobox", { name: "Country" })).toHaveValue("BEN");
+    await expect(page.locator(".people-filter-panel--advanced")).not.toHaveAttribute("open", "");
   });
 
   test("Countries and Languages restore query, filters, sort and page from URLs", async ({ page }) => {

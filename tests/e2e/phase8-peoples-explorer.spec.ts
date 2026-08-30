@@ -35,6 +35,7 @@ test("quick reach status filters results and persists in URL state", async ({ pa
   await expect(page).toHaveURL(/status=other-only/);
   await expect(page.locator(".people-card--explorer")).toHaveCount(1);
   await expect(page.locator(".people-card--explorer")).toContainText("Browser Test People");
+  await expect(page.locator(".people-card--explorer")).toContainText("Other mission status");
 
   await page.goto("./#/about");
   await page.goBack();
@@ -44,18 +45,29 @@ test("quick reach status filters results and persists in URL state", async ({ pa
 
 test("advanced filters stay progressive and expose removable active filters", async ({ page }) => {
   await page.goto("./#/peoples");
+
+  const primary = page.locator(".people-primary-context-filters");
+  await primary.getByRole("combobox", { name: "Country" }).selectOption("BEN");
+  await expect(page).toHaveURL(/country=BEN/);
+  await expect(page.locator(".people-card--explorer")).toHaveCount(2);
+
   const panel = page.locator(".people-filter-panel--advanced");
   await expect(panel).not.toHaveAttribute("open", "");
   await panel.locator("summary").click();
-  await panel.getByRole("combobox", { name: "Country" }).selectOption("BEN");
+  await panel.getByRole("combobox", { name: "Bible label" }).selectOption("Available");
 
-  await expect(page).toHaveURL(/country=BEN/);
+  await expect(page).toHaveURL(/bible=Available/);
   await expect(page.locator(".people-filter-count")).toHaveText("1");
+  await expect(page.locator(".people-card--explorer")).toHaveCount(1);
+
   const activeFilters = page.locator(".people-active-filters");
   await expect(activeFilters).toBeVisible();
   await expect(activeFilters.getByRole("button", { name: /Benin/ })).toBeVisible();
-  await expect(page.locator(".people-card--explorer")).toHaveCount(2);
+  await expect(activeFilters.getByRole("button", { name: /Available/ })).toBeVisible();
 
+  await activeFilters.getByRole("button", { name: /Available/ }).click();
+  await expect(page).not.toHaveURL(/bible=Available/);
+  await expect(page.locator(".people-card--explorer")).toHaveCount(2);
   await activeFilters.getByRole("button", { name: /Benin/ }).click();
   await expect(page).not.toHaveURL(/country=BEN/);
   await expect(page.locator(".people-active-filters")).toHaveCount(0);
@@ -69,6 +81,7 @@ test("mobile discovery controls remain usable without horizontal overflow", asyn
   await expect(page.locator(".people-status-choices")).toBeVisible();
   await expect(page.getByRole("button", { name: "Unreached", exact: true })).toBeVisible();
   await expect(page.locator(".people-sort-control--compact select")).toBeVisible();
+  await expect(page.locator(".people-primary-context-filters")).toBeVisible();
 
   const overflow = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client);

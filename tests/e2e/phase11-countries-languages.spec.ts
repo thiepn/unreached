@@ -65,6 +65,11 @@ test.beforeEach(async ({ page }) => {
 test("country detail progressively reveals every unreached record without silent truncation", async ({ page }) => {
   await page.goto("./#/countries/BEN");
 
+  const research = page.locator(".country-research-disclosure");
+  await expect(research).not.toHaveAttribute("open", "");
+  await research.locator(":scope > summary").click();
+  await expect(research).toHaveAttribute("open", "");
+
   const section = page.locator(".country-section").filter({ has: page.locator("#unreached-people-heading") });
   const rows = section.locator(".country-people-table tbody tr");
   await expect(section.locator(".detail-record-progress")).toContainText(`Showing ${FIRST_BATCH} of ${RECORD_COUNT}`);
@@ -103,6 +108,8 @@ test("language detail uses the same progressive record contract", async ({ page 
 test("country and language detail tables stay within a mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("./#/countries/BEN");
+  const research = page.locator(".country-research-disclosure");
+  await research.locator(":scope > summary").click();
   await expect(page.locator(".country-people-table tbody tr")).toHaveCount(FIRST_BATCH);
   let overflow = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client);

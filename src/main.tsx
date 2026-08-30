@@ -55,6 +55,8 @@ import "./styles/explore/map-workspace.css";
 import "./styles/foundation/detail-records.css";
 import "./styles/prayer/guides-and-lists.css";
 import "./styles/account/ux.css";
+import "./styles/comprehension.css";
+import "./styles/explore/newcomer-entry.css";
 import "./styles/foundation/accessibility.css";
 
 // Start the single prepared IndexedDB read as soon as the entry module runs.

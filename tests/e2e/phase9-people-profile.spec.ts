@@ -8,10 +8,10 @@ test.beforeEach(async ({ page }) => {
 
 test("source context appears before prayer actions", async ({ page }) => {
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Read the source context first" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Source description" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Carry what you learned into prayer." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Understand the source context" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Read the available description" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `Pray for ${VISIBLE_TEST_PEOPLE}.`, exact: true })).toBeVisible();
 
   const order = await page.evaluate(() => {
     const context = document.querySelector('[data-profile-stage="understand"]');
@@ -45,8 +45,8 @@ test("prayer eligible profile offers contextual next step", async ({ page }) => 
 
 test("non prayer eligible profile keeps save path without prayer CTA", async ({ page }) => {
   await page.goto(`./#/peoples/${RELATED_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: "Keep this source record for reference." })).toBeVisible();
-  await expect(page.getByText("Not in GSEC 0–3 flow", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Save this people-group record." })).toBeVisible();
+  await expect(page.getByText("Prayer guide not available", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: /Pray with this context/ })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Save profile" })).toBeVisible();
   await expect(page.getByText("No provider description is available for this record.", { exact: true })).toBeVisible();
@@ -55,7 +55,7 @@ test("non prayer eligible profile keeps save path without prayer CTA", async ({ 
 test("mobile profile journey has no horizontal overflow", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible();
   await page.locator(".people-profile-action-stage").scrollIntoViewIfNeeded();
   await expect(page.getByRole("link", { name: /Pray with this context/ })).toBeVisible();
 
