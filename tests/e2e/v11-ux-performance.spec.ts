@@ -30,11 +30,11 @@ test("opening global Search is instant and does not load the remote corpus until
 test("people profile keeps source context before prayer while deep source detail stays opt-in", async ({ page }) => {
   await installPeopleGroupsFixture(page);
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE })).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByRole("heading", { name: "Read the source context first" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: VISIBLE_TEST_PEOPLE, exact: true, level: 1 })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("heading", { name: "Understand the source context" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Pray with this context/ })).toBeVisible();
   await expect(page.locator(".people-metric-grid--essential .people-metric")).toHaveCount(4);
-  const details = page.locator(".people-disclosure").filter({ hasText: "Sources, taxonomy & methodology" });
+  const details = page.locator(".people-disclosure--sources").filter({ hasText: "Detailed data, sources & methodology" });
   await expect(details).not.toHaveAttribute("open", "");
 });
 
