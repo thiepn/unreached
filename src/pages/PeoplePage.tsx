@@ -9,7 +9,6 @@ import { bibleResourceExplanation, evangelicalLevelExplanation } from "../compre
 import {
   formatPeopleCount,
   livePeopleStatusClass,
-  livePeopleStatusLabel,
 } from "../peoples";
 import {
   PEOPLE_GROUPS_ATTRIBUTION,
@@ -27,6 +26,12 @@ function localStatus(context: RuntimePeopleContext): string {
   if (context.reach.classification === "unreached") return "Unreached";
   if (context.reach.classification === "other") return "Other GSEC status";
   return "Unknown";
+}
+
+function heroStatusLabel(context: RuntimePeopleContext): string {
+  if (context.reach.classification === "unreached") return "Unreached";
+  if (context.reach.classification === "other") return "Other mission status";
+  return "Status unknown";
 }
 
 function gsecLabel(context: RuntimePeopleContext): string {
@@ -189,7 +194,6 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
     );
   }
 
-  const taxonomy = entityTaxonomy(record);
   const related = corpus.ready ? relatedRuntimePeople(record, corpus.entities).slice(0, 8) : [];
   const context = record.contexts[0]!;
   const prayerEligible = record.reach.unreachedContexts > 0;
@@ -203,7 +207,7 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
       <header class="people-profile-hero people-profile-hero--focused people-profile-hero--phase9">
         <div>
           <div class="eyebrow">People group</div>
-          <div class="people-profile-title-line"><h1 class="display-title">{record.displayName}</h1><span class={`people-status people-status--${livePeopleStatusClass(record)}`}>{livePeopleStatusLabel(record)}</span></div>
+          <div class="people-profile-title-line"><h1 class="display-title">{record.displayName}</h1><span class={`people-status people-status--${livePeopleStatusClass(record)}`}>{heroStatusLabel(context)}</span></div>
           <p class="people-profile-subtitle">{context.country.name} · {record.primaryLanguage?.name ?? "Language unknown"}</p>
           <MeaningSummary record={record} />
         </div>
