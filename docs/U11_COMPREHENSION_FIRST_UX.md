@@ -2,7 +2,7 @@
 
 ## Status
 
-U11-A, U11-B and U11-C implemented on the comprehension-first branch. U11-D and U11-E remain.
+U11-A, U11-B, U11-C and U11-D are implemented on the comprehension-first branch. U11-E final certification remains.
 
 This document is intentionally separate from the historical `U11_RELEASE_GATES.md`. The earlier file remains part of the repository's prior release history.
 
@@ -73,9 +73,9 @@ These move human-readable meaning ahead of technical classification details.
 
 ## U11-B — People profile
 
-The people profile now follows this hierarchy.
+The people profile follows this hierarchy.
 
-### 1. Identity and meaning
+### Identity and meaning
 
 The hero shows:
 
@@ -89,13 +89,13 @@ The hero shows:
 
 PEID, PGID and GSEC are not shown in the hero.
 
-### 2. Why this status?
+### Why this status?
 
 A dedicated explanation tells the user why the record is marked unreached before displaying the exact GSEC code.
 
 The source GSEC value remains available in a collapsed `See source classification` disclosure.
 
-### 3. Four essential facts
+### Four essential facts
 
 Exactly four primary facts are shown:
 
@@ -104,33 +104,9 @@ Exactly four primary facts are shown:
 3. primary language;
 4. Bible resource status.
 
-No extra technical metric competes at this level.
+### Understand, pray, research
 
-### 4. Understand the source context
-
-Secondary context includes the country context and exact evangelical-presence label. Provider-authored descriptions follow with explicit attribution.
-
-### 5. Prayer
-
-Prayer remains after basic context but is also promoted to the hero as a first-class action. The existing focused-prayer route, save behavior, local/private-sync behavior and eligibility rules remain intact.
-
-### 6. Research on demand
-
-Collapsed research disclosures retain:
-
-- GSEC status and code;
-- evangelical level;
-- engagement status;
-- congregation / church-planting fields;
-- Bible and Jesus Film labels;
-- PEID / PGID;
-- taxonomy;
-- source timestamps;
-- provider attribution;
-- methodology notes;
-- related source records.
-
-No research capability is deleted merely to simplify the first view.
+Secondary context includes country context and the exact evangelical-presence label. Provider-authored descriptions retain explicit attribution. Prayer remains a first-class action. Research disclosures retain GSEC, engagement fields, source resource labels, PEID/PGID, taxonomy, timestamps, attribution and methodology.
 
 ### Browser-contract migration
 
@@ -142,13 +118,9 @@ The map keeps its existing analytics and URL contract but no longer presents eve
 
 ### Default view
 
-The certified default remains:
+The certified default remains `unreached-population`.
 
-`unreached-population`
-
-User-facing name:
-
-**Unreached population share**
+User-facing name: **Unreached population share**.
 
 Meaning shown directly in the interface:
 
@@ -175,14 +147,7 @@ All alternatives are placed behind **Change map view** rather than competing wit
 
 ### Selected-country comprehension
 
-Selecting a country now presents:
-
-1. the country name;
-2. a plain-language explanation of the active map metric;
-3. the metric value;
-4. a short caveat when needed;
-5. country-profile and prayer actions;
-6. collapsed `Source breakdown` for people-context counts, GSEC counts, supporting coverage and denominator details.
+Selecting a country presents the country, a plain-language explanation of the active metric, its value and caveat, country/prayer actions, then a collapsed `Source breakdown` containing people-context counts, GSEC counts, supporting coverage and denominator details.
 
 ### Map compatibility
 
@@ -196,13 +161,80 @@ U11-C deliberately does not change these certified IDs:
 
 The legacy `layer=unreached` alias still resolves to `unreached-population`, and the default layer continues to be omitted from URL state.
 
+## U11-D — Countries and peoples explorer
+
+### Country first view
+
+Country profiles now begin with exactly three understandable metrics:
+
+1. unreached people groups;
+2. people groups represented;
+3. known represented population.
+
+The population tile explicitly states that the sum is not national census population.
+
+### People before tables
+
+A new **Largest unreached peoples represented** section appears before technical tables. It shows up to five unreached source records ranked by their reported country-context population estimate, with language and religion context.
+
+### Visible country context
+
+The normal reading path keeps:
+
+- religions represented;
+- major languages represented;
+- Bible resource status.
+
+Technical country details are moved into **Detailed country data & people records**.
+
+That research disclosure retains:
+
+- other and unknown GSEC counts;
+- population and mission-status field coverage;
+- the complete progressive unreached-record table;
+- GSEC codes;
+- evangelical-presence labels;
+- PEID and PGID;
+- Bible labels;
+- Jesus Film labels;
+- source-completeness metrics.
+
+The prior 40-record progressive table contract remains intact.
+
+### People explorer hierarchy
+
+The people explorer now treats Country, Language and Religion as normal context filters rather than advanced research controls.
+
+The advanced disclosure is limited to:
+
+- Bible source label;
+- known population threshold;
+- reviewed editorial context.
+
+The existing `gsec-asc` sort state remains URL-compatible but is labeled **Source mission status** rather than requiring users to understand GSEC terminology.
+
+### People cards
+
+People cards show:
+
+- people name;
+- high-level mission status;
+- country;
+- language;
+- religion;
+- population;
+- Bible resource label;
+- `Learn about this people`.
+
+They no longer display GSEC, PEID or PGID. Those values remain available on the detailed profile when needed.
+
 ## Compatibility
 
 The implementation preserves the prior Phase 9 people-profile structural journey:
 
 `source context → provider context → prayer/save actions → provenance`
 
-It also preserves the Phase 10 map architecture:
+It preserves the Phase 10 map architecture:
 
 - one desktop map key;
 - one mutually exclusive mobile map key;
@@ -210,6 +242,15 @@ It also preserves the Phase 10 map architecture:
 - selected-country source breakdown as opt-in detail;
 - existing live-data loading and error paths;
 - existing layer IDs and URL state.
+
+It also preserves the Phase 8 and Phase 11 contracts:
+
+- search remains the first people-discovery action;
+- reach status and sort remain visible;
+- filter URL state remains stable;
+- country/language record tables retain progressive disclosure;
+- country and language detail retain the certified one-record PEID/PGID identity semantics;
+- no silent record truncation is introduced.
 
 The existing runtime provider, cache behavior, offline behavior, saved-person model and prayer routes are unchanged.
 
@@ -227,15 +268,16 @@ The certified historical v11/v12 CSS fragments and hashed Phase 15 semantic frag
 
 The build fails if:
 
-- comprehension components disappear;
 - technical identifiers return to the people-profile hero;
-- meaning/evidence/context/prayer/research ordering regresses;
-- canonical terms or source-truth guardrails disappear;
-- inline term help loses native disclosure semantics;
+- the people profile loses its four-fact hierarchy;
 - map mission/research hierarchy disappears;
 - certified map layer IDs or URL compatibility are removed;
-- the stylesheet is missing or overtakes the final accessibility layer;
-- U11 browser certification is removed.
+- the country first view contains other than three primary metrics;
+- the full country record table moves ahead of the people-first section or outside research disclosure;
+- Country, Language or Religion return to the advanced people-filter panel;
+- people cards expose PEID, PGID or GSEC;
+- source-truth guardrails or accessibility disclosure semantics disappear;
+- the comprehension stylesheet overtakes the final accessibility layer.
 
 ### Browser
 
@@ -243,29 +285,23 @@ The build fails if:
 
 Certifies:
 
-- meaning appears before identifiers;
+- meaning appears before people-profile identifiers;
 - the people overview contains exactly four facts;
 - mission terminology can be explained in place;
 - prayer is immediately discoverable;
 - detailed people research remains available;
-- the profile has no horizontal overflow at 360 px;
+- narrow mobile profile width does not overflow;
 - the map opens with a plain-language mission view;
 - research map views remain opt-in;
 - selected countries explain metrics before source breakdown;
-- map layer IDs remain URL-compatible.
+- map layer IDs remain URL-compatible;
+- country profiles start with exactly three metrics and people before research tables;
+- people cards hide source identifiers while normal context filters remain visible.
 
-The prior Phase 9, Phase 10, v11 and U12C browser contracts remain active and are adjusted only where their old visible-text assumptions conflicted with the new hierarchy.
+The prior Phase 8, Phase 9, Phase 10, Phase 11, v11 and U12C browser contracts remain active. Their assertions are changed only where old first-view assumptions conflict with progressive disclosure; underlying source semantics remain certified.
 
-## Next implementation phases
-
-### U11-D — Countries and peoples explorer
-
-- limit country primary metrics to three;
-- surface largest unreached peoples before research tables;
-- move coverage and denominator mechanics into detailed data;
-- simplify people cards and primary filters;
-- retain all research data under progressive disclosure.
+## Next phase
 
 ### U11-E — Final certification
 
-Run the full build, full browser suite and a manual newcomer comprehension test before merge/release.
+Run the final full build, dependency/security audit and complete five-project browser matrix. Review any Playwright report rather than weakening source or comprehension contracts. A real newcomer usability test remains a separate human acceptance gate and must not be claimed from automated testing alone.
