@@ -1,0 +1,157 @@
+name: Prepare v2.1.5 release automation patch
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    if: github.head_ref == 'chatgpt/v2.1.5-release-automation'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: true
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Synchronize lockfile and harden release operations
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          python - <<'PY'
+          from pathlib import Path
+
+          phase5 = Path('scripts/release/phase5-check.ts')
+          text = phase5.read_text()
+          text = text.replace('if (packageJson.version !== "2.1.4") throw new Error("Phase 5: maintenance release must be 2.1.4.");', 'if (packageJson.version !== "2.1.5") throw new Error("Phase 5: maintenance release must be 2.1.5.");')
+          old = '''const releaseNotes = await read("docs/releases/v2.1.4.md");
+          for (const marker of ["Unreached v2.1.4", "comprehension UX maintenance release", "What does “unreached” mean?", "Release publication remains exact-SHA gated", "physical-hardware testing", "branch protection"]) {
+            requireText(releaseNotes, marker, `v2.1.4 release-note topic ${marker}`);
+          }
+          const releaseWorkflow = await read(".github/workflows/publish-v2.1.4.yml");
+          for (const marker of ["workflow_run:", "Deploy Unreached to GitHub Pages", "v2.1.4", "unreached/pages-production", "unreached/peoplegroups-live", "unreached/worker-production", "POST", "/releases"]) {
+            requireText(releaseWorkflow, marker, `exact-SHA v2.1.4 release workflow marker ${marker}`);
+          }
+          if (existsSync(resolve(root, ".github/workflows/publish-v2.1.3.yml"))) {
+            throw new Error("Phase 5: retired v2.1.3 auto-publication workflow must not remain active.");
+          }
+          '''
+          new = '''const releaseNotes = await read("docs/releases/v2.1.5.md");
+          for (const marker of ["Unreached v2.1.5", "release and operations automation hardening maintenance release", "Generic exact-SHA publication", "Scheduled release-truth monitoring", "Human acceptance boundary", "Governance boundary"]) {
+            requireText(releaseNotes, marker, `v2.1.5 release-note topic ${marker}`);
+          }
+          const releaseWorkflow = await read(".github/workflows/publish-release.yml");
+          for (const marker of ["workflow_run:", "Deploy Unreached to GitHub Pages", "Resolve release identity from package metadata", "docs/releases/v${version}.md", "unreached/pages-production", "unreached/peoplegroups-live", "unreached/worker-production", "Existing $RELEASE_TAG points to", "/releases"]) {
+            requireText(releaseWorkflow, marker, `generic exact-SHA release workflow marker ${marker}`);
+          }
+          const workflowDirForRelease = resolve(root, ".github/workflows");
+          const legacyVersionedPublisher = (await readdir(workflowDirForRelease)).find((name) => /^publish-v\\d+\\.\\d+\\.\\d+\\.ya?ml$/.test(name));
+          if (legacyVersionedPublisher) throw new Error(`Phase 5: version-pinned publication workflow must be retired: ${legacyVersionedPublisher}`);
+          '''
+          if old not in text:
+              raise SystemExit('phase5 release workflow block not found')
+          text = text.replace(old, new)
+          text = text.replace('console.log("Phase 5 final-release checks passed for v2.1.4: 12 reviewed profiles retain cited/nuanced current-safe content, comprehension-first UX release truth is current, prayer template review is current, PWA packaging is complete, device-class acceptance is wired, and exact-SHA release/maintenance governance is present.");', 'console.log("Phase 5 final-release checks passed for v2.1.5: 12 reviewed profiles retain cited/nuanced current-safe content, comprehension-first UX remains unchanged, prayer template review is current, PWA packaging is complete, device-class acceptance is wired, generic exact-SHA publication is enforced, and scheduled release-drift monitoring is present.");')
+          phase5.write_text(text)
+
+          phase4 = Path('scripts/operations/phase4-check.ts')
+          text = phase4.read_text()
+          old = '''const operationsWorkflow = await read(".github/workflows/operations-health.yml");
+          requireText(operationsWorkflow, "schedule:", "scheduled operations health workflow");
+          requireText(operationsWorkflow, "unreached/operations-health", "operations health commit status");
+          '''
+          new = '''const operationsWorkflow = await read(".github/workflows/operations-health.yml");
+          requireText(operationsWorkflow, "schedule:", "scheduled operations health workflow");
+          requireText(operationsWorkflow, "unreached/operations-health", "operations health commit status");
+          for (const marker of [
+            "Verify current release identity and production evidence",
+            "/releases/latest",
+            "/git/ref/tags/",
+            "package.json?ref=${GITHUB_SHA}",
+            "unreached/pages-production",
+            "unreached/peoplegroups-live",
+            "unreached/worker-production",
+          ]) requireText(operationsWorkflow, marker, `scheduled release-truth monitoring marker ${marker}`);
+          '''
+          if old not in text:
+              raise SystemExit('phase4 operations block not found')
+          phase4.write_text(text.replace(old, new))
+
+          operations = Path('.github/workflows/operations-health.yml')
+          text = operations.read_text()
+          marker = '      - name: Verify PeopleGroups runtime and production-origin CORS\n'
+          step = '''      - name: Verify current release identity and production evidence
+            shell: bash
+            env:
+              GH_TOKEN: ${{ github.token }}
+            run: |
+              set -euo pipefail
+              api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+              auth=(-H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28")
+
+              package=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/contents/package.json?ref=${GITHUB_SHA}")
+              version=$(jq -r '.content' <<<"$package" | tr -d '\\n' | base64 --decode | jq -r '.version')
+              [[ "$version" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$ ]] || { echo "Invalid package version at ${GITHUB_SHA}: $version" >&2; exit 1; }
+              tag="v${version}"
+
+              latest=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/releases/latest")
+              jq -e --arg tag "$tag" --arg sha "$GITHUB_SHA" '.tag_name == $tag and .target_commitish == $sha and .draft == false and .prerelease == false' <<<"$latest" >/dev/null || {
+                echo "Latest GitHub Release does not match package version/tag/current main SHA." >&2
+                jq '{tag_name,target_commitish,draft,prerelease}' <<<"$latest" >&2
+                exit 1
+              }
+
+              ref=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/git/ref/tags/$tag")
+              jq -e --arg sha "$GITHUB_SHA" '.object.type == "commit" and .object.sha == $sha' <<<"$ref" >/dev/null || {
+                echo "Release tag $tag does not point to current main SHA ${GITHUB_SHA}." >&2
+                jq '.object' <<<"$ref" >&2
+                exit 1
+              }
+
+              status=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/commits/${GITHUB_SHA}/status")
+              for context in unreached/pages-production unreached/peoplegroups-live unreached/worker-production; do
+                state=$(jq -r --arg context "$context" '[.statuses[] | select(.context == $context)][0].state // "missing"' <<<"$status")
+                test "$state" = "success" || { echo "Required production status $context is $state for ${GITHUB_SHA}." >&2; exit 1; }
+              done
+
+          '''
+          if marker not in text:
+              raise SystemExit('operations insertion marker not found')
+          text = text.replace(marker, step + marker, 1)
+          text = text.replace('description="Scheduled Pages, PeopleGroups or private-sync health check failed"', 'description="Scheduled release-truth, Pages, PeopleGroups or private-sync health check failed"')
+          text = text.replace('description="Scheduled Pages, PeopleGroups and private-sync health checks passed"', 'description="Scheduled release-truth, Pages, PeopleGroups and private-sync health checks passed"')
+          operations.write_text(text)
+
+          old_publisher = Path('.github/workflows/publish-v2.1.4.yml')
+          if old_publisher.exists():
+              old_publisher.unlink()
+
+          helper = Path('.github/workflows/prepare-v2.1.5.yml')
+          if helper.exists():
+              helper.unlink()
+          PY
+
+      - name: Commit prepared patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json scripts/release/phase5-check.ts scripts/operations/phase4-check.ts .github/workflows/operations-health.yml .github/workflows/publish-v2.1.4.yml .github/workflows/prepare-v2.1.5.yml
+          if git diff --cached --quiet; then
+            echo "No preparation changes required."
+            exit 0
+          fi
+          git commit -m "Complete v2.1.5 release automation hardening"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
