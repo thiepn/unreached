@@ -53,6 +53,15 @@ requireText(peopleGroupsWorkflow, 'cron: "17 4 * * 3"', "weekly PeopleGroups cer
 const operationsWorkflow = await read(".github/workflows/operations-health.yml");
 requireText(operationsWorkflow, "schedule:", "scheduled operations health workflow");
 requireText(operationsWorkflow, "unreached/operations-health", "operations health commit status");
+for (const marker of [
+  "Verify current release identity and production evidence",
+  "/releases/latest",
+  "/git/ref/tags/",
+  "package.json?ref=${GITHUB_SHA}",
+  "unreached/pages-production",
+  "unreached/peoplegroups-live",
+  "unreached/worker-production",
+]) requireText(operationsWorkflow, marker, `scheduled release-truth monitoring marker ${marker}`);
 const dependencyWorkflow = await read(".github/workflows/dependency-audit.yml");
 requireText(dependencyWorkflow, "npm audit --audit-level=high", "high-severity dependency audit");
 requireText(dependencyWorkflow, "npm run audit:licenses", "dependency license audit workflow step");

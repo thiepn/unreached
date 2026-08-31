@@ -60,7 +60,7 @@ interface EditorialShard {
 }
 
 const packageJson = await readJson<{ version: string; scripts?: Record<string, string> }>("package.json");
-if (packageJson.version !== "2.1.4") throw new Error("Phase 5: maintenance release must be 2.1.4.");
+if (packageJson.version !== "2.1.5") throw new Error("Phase 5: maintenance release must be 2.1.5.");
 if (!packageJson.scripts?.["phase5:check"]?.includes("scripts/release/phase5-check.ts")) throw new Error("Phase 5: phase5:check script is not wired.");
 if (!packageJson.scripts?.build?.includes("npm run release:check && npm run phase5:check && vite build")) {
   throw new Error("Phase 5: final-release gate must block the production build after release truth checks.");
@@ -199,17 +199,17 @@ for (const marker of ["Maintenance Mode", "security or privacy fixes", "scope is
 }
 const codeowners = await read(".github/CODEOWNERS");
 requireText(codeowners, "* @thiepn", "repository CODEOWNERS owner");
-const releaseNotes = await read("docs/releases/v2.1.4.md");
-for (const marker of ["Unreached v2.1.4", "comprehension UX maintenance release", "What does “unreached” mean?", "Release publication remains exact-SHA gated", "physical-hardware testing", "branch protection"]) {
-  requireText(releaseNotes, marker, `v2.1.4 release-note topic ${marker}`);
+const releaseNotes = await read("docs/releases/v2.1.5.md");
+for (const marker of ["Unreached v2.1.5", "release and operations automation hardening maintenance release", "Generic exact-SHA publication", "Scheduled release-truth monitoring", "Human acceptance boundary", "Governance boundary"]) {
+  requireText(releaseNotes, marker, `v2.1.5 release-note topic ${marker}`);
 }
-const releaseWorkflow = await read(".github/workflows/publish-v2.1.4.yml");
-for (const marker of ["workflow_run:", "Deploy Unreached to GitHub Pages", "v2.1.4", "unreached/pages-production", "unreached/peoplegroups-live", "unreached/worker-production", "POST", "/releases"]) {
-  requireText(releaseWorkflow, marker, `exact-SHA v2.1.4 release workflow marker ${marker}`);
+const releaseWorkflow = await read(".github/workflows/publish-release.yml");
+for (const marker of ["workflow_run:", "Deploy Unreached to GitHub Pages", "Resolve release identity from package metadata", "docs/releases/v${version}.md", "unreached/pages-production", "unreached/peoplegroups-live", "unreached/worker-production", "Existing $RELEASE_TAG points to", "/releases"]) {
+  requireText(releaseWorkflow, marker, `generic exact-SHA release workflow marker ${marker}`);
 }
-if (existsSync(resolve(root, ".github/workflows/publish-v2.1.3.yml"))) {
-  throw new Error("Phase 5: retired v2.1.3 auto-publication workflow must not remain active.");
-}
+const workflowDirForRelease = resolve(root, ".github/workflows");
+const legacyVersionedPublisher = (await readdir(workflowDirForRelease)).find((name) => /^publish-v\d+\.\d+\.\d+\.ya?ml$/.test(name));
+if (legacyVersionedPublisher) throw new Error(`Phase 5: version-pinned publication workflow must be retired: ${legacyVersionedPublisher}`);
 const phase5Spec = await read("tests/e2e/phase5-release-acceptance.spec.ts");
 for (const marker of ["PWA manifest and install assets", "portrait and landscape", "200%-zoom-equivalent", "offline controlled shell relaunch"]) {
   requireText(phase5Spec, marker, `Phase 5 browser acceptance ${marker}`);
@@ -219,4 +219,4 @@ const profileDir = resolve(root, "public/data/context/profiles");
 const profileFiles = (await readdir(profileDir)).filter((name) => name.endsWith(".json"));
 if (profileFiles.length !== 12) throw new Error(`Phase 5: expected exactly 12 published profile shards, found ${profileFiles.length}.`);
 
-console.log("Phase 5 final-release checks passed for v2.1.4: 12 reviewed profiles retain cited/nuanced current-safe content, comprehension-first UX release truth is current, prayer template review is current, PWA packaging is complete, device-class acceptance is wired, and exact-SHA release/maintenance governance is present.");
+console.log("Phase 5 final-release checks passed for v2.1.5: 12 reviewed profiles retain cited/nuanced current-safe content, comprehension-first UX remains unchanged, prayer template review is current, PWA packaging is complete, device-class acceptance is wired, generic exact-SHA publication is enforced, and scheduled release-drift monitoring is present.");
