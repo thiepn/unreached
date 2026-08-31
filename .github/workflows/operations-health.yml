@@ -25,6 +25,40 @@ jobs:
           manifest=$(curl --fail-with-body --silent --show-error --location --retry 3 --retry-delay 2 "${base}site.webmanifest")
           jq -e '.name == "Unreached — Explore. Understand. Pray." and .id == "/unreached/" and .scope == "/unreached/"' <<<"$manifest" >/dev/null
 
+      - name: Verify current release identity and production evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          auth=(-H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28")
+
+          package=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/contents/package.json?ref=${GITHUB_SHA}")
+          version=$(jq -r '.content' <<<"$package" | tr -d '\n' | base64 --decode | jq -r '.version')
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid package version at ${GITHUB_SHA}: $version" >&2; exit 1; }
+          tag="v${version}"
+
+          latest=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/releases/latest")
+          jq -e --arg tag "$tag" --arg sha "$GITHUB_SHA" '.tag_name == $tag and .target_commitish == $sha and .draft == false and .prerelease == false' <<<"$latest" >/dev/null || {
+            echo "Latest GitHub Release does not match package version/tag/current main SHA." >&2
+            jq '{tag_name,target_commitish,draft,prerelease}' <<<"$latest" >&2
+            exit 1
+          }
+
+          ref=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/git/ref/tags/$tag")
+          jq -e --arg sha "$GITHUB_SHA" '.object.type == "commit" and .object.sha == $sha' <<<"$ref" >/dev/null || {
+            echo "Release tag $tag does not point to current main SHA ${GITHUB_SHA}." >&2
+            jq '.object' <<<"$ref" >&2
+            exit 1
+          }
+
+          status=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/commits/${GITHUB_SHA}/status")
+          for context in unreached/pages-production unreached/peoplegroups-live unreached/worker-production; do
+            state=$(jq -r --arg context "$context" '[.statuses[] | select(.context == $context)][0].state // "missing"' <<<"$status")
+            test "$state" = "success" || { echo "Required production status $context is $state for ${GITHUB_SHA}." >&2; exit 1; }
+          done
+
       - name: Verify PeopleGroups runtime and production-origin CORS
         shell: bash
         run: |
@@ -89,10 +123,10 @@ jobs:
         run: |
           set -euo pipefail
           state="failure"
-          description="Scheduled Pages, PeopleGroups or private-sync health check failed"
+          description="Scheduled release-truth, Pages, PeopleGroups or private-sync health check failed"
           if [[ "$HEALTH_RESULT" == "success" ]]; then
             state="success"
-            description="Scheduled Pages, PeopleGroups and private-sync health checks passed"
+            description="Scheduled release-truth, Pages, PeopleGroups and private-sync health checks passed"
           fi
           target="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           payload=$(jq -nc --arg state "$state" --arg target "$target" --arg description "$description" '{state:$state,target_url:$target,description:$description,context:"unreached/operations-health"}')
