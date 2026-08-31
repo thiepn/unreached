@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
@@ -6,12 +7,14 @@ const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readText(path)) as T;
 
 const packageJson = await readJson<{ version: string }>("package.json");
-if (packageJson.version !== "2.1.4") throw new Error("Maintenance release version must be 2.1.4.");
+if (packageJson.version !== "2.1.5") throw new Error("Maintenance release version must be 2.1.5.");
 
 const readme = await readText("README.md");
 for (const marker of [
-  "**Current version:** **2.1.4**",
-  "comprehension UX maintenance release",
+  "**Current version:** **2.1.5**",
+  "release and operations automation hardening maintenance release",
+  "version-agnostic workflow",
+  "six-hour operations health workflow",
   "meaning → evidence → context → prayer → research",
   "What does “unreached” mean?",
   "Public privacy notice",
@@ -20,7 +23,7 @@ for (const marker of [
   "PeopleGroups.org / IMB Global Research",
   "28 August 2026",
 ]) if (!readme.includes(marker)) throw new Error(`Release README truth missing: ${marker}`);
-if (readme.includes("**Current version:** **2.1.3**") || readme.includes("**Current version:** **2.1.2**") || readme.includes("**Current version:** **2.1.1**") || readme.includes("**Version:** **2.0.0**")) throw new Error("README still advertises an obsolete release version.");
+if (readme.includes("**Current version:** **2.1.4**") || readme.includes("**Current version:** **2.1.3**") || readme.includes("**Current version:** **2.1.2**") || readme.includes("**Current version:** **2.1.1**") || readme.includes("**Version:** **2.0.0**")) throw new Error("README still advertises an obsolete release version.");
 
 const privacy = await readText("PRIVACY.md");
 for (const marker of [
@@ -106,8 +109,15 @@ for (const marker of ["production policy", "PeopleGroups.org / IMB Global Resear
 }
 if (policy.includes("primary V1 source for people-group")) throw new Error("Obsolete Joshua Project primary-source policy remains in the current legal policy.");
 
+const genericPublisher = ".github/workflows/publish-release.yml";
+if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
+const publisher = await readText(genericPublisher);
+for (const marker of ["Resolve release identity from package metadata", "RELEASE_VERSION", "docs/releases/v${version}.md", "Deploy Unreached to GitHub Pages", "unreached/pages-production", "unreached/peoplegroups-live", "unreached/worker-production", "Existing $RELEASE_TAG points to", "/releases"]) {
+  if (!publisher.includes(marker)) throw new Error(`Generic release publisher missing: ${marker}`);
+}
+
 const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.4, comprehension-first production UX, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");
