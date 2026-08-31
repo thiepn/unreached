@@ -5,18 +5,18 @@
 Unreached is a browser-based Christian mission atlas for discovering people groups, understanding source-backed context, and moving from information into prayer.
 
 - **Live site:** https://www.thiepn.dev/unreached/
-- **Current version:** **2.1.4**
+- **Current version:** **2.1.5**
 - **Platform:** Preact/Vite on GitHub Pages
 - **Optional continuity:** Cloudflare Worker + D1 + Cloudflare Access
 - **Core loop:** **Explore → Understand → Pray**
 
 ## Current production behavior
 
-Version 2.1.4 is a **comprehension UX maintenance release** on the certified 2.1 line. It preserves the existing mission-data, prayer, privacy, sync, loading and redistribution contracts while reorganizing existing information around **meaning → evidence → context → prayer → research**.
+Version 2.1.5 is a **release and operations automation hardening maintenance release** on the certified 2.1 line. It does not change the user-facing comprehension-first product introduced in v2.1.4. Instead, it removes the version-pinned release-publisher lifecycle and strengthens scheduled operations health so release/tag/production-state drift is detected automatically.
 
-People profiles now explain why a record is marked unreached before exposing exact GSEC classification, keep the first overview to four essential facts, promote prayer as a first-class action, and move PEID/PGID, taxonomy and methodology into detailed research disclosures. Country profiles begin with three understandable metrics and surface the largest represented unreached peoples before technical tables. Explore keeps the certified map layer IDs and denominator semantics while treating coverage/count layers as opt-in research views.
+The v2.1.4 comprehension-first UX remains unchanged and follows **meaning → evidence → context → prayer → research**. People profiles explain why a record is marked unreached before exposing exact GSEC classification, keep the first overview to four essential facts, promote prayer as a first-class action, and move PEID/PGID, taxonomy and methodology into detailed research disclosures. Country profiles begin with three understandable metrics and surface the largest represented unreached peoples before technical tables. Explore keeps the certified map layer IDs and denominator semantics while treating coverage/count layers as opt-in research views.
 
-The first-minute entry path also exposes **What does “unreached” mean?** and a direct **Pray today** action on desktop and mobile. Short desktop viewports compact non-essential explanatory chrome so the country browser remains usable without overlapping the map workspace.
+The first-minute entry path exposes **What does “unreached” mean?** and a direct **Pray today** action on desktop and mobile. Short desktop viewports compact non-essential explanatory chrome so the country browser remains usable without overlapping the map workspace.
 
 The v2.1.2 loading improvements and v2.1.3 map-layout fix remain intact: prepared PeopleGroups data hydrates immediately from IndexedDB, provider connection setup and signaled route chunks can prewarm opportunistically, a true cold People Explorer can become searchable after the first validated provider page, and map methodology remains in normal flow on narrow desktop layouts.
 
@@ -66,7 +66,9 @@ Optional private sync is additive. Authentication alone does not enable it. Serv
 
 Release candidates pass deterministic build/policy gates, desktop/mobile Chromium/Firefox/WebKit tests, offline-resilience tests, private-sync certification, live PeopleGroups corpus/CORS checks, GitHub Pages deployment checks, and canonical production browser certification.
 
-Maintenance release publication remains exact-SHA gated. See [`docs/releases/v2.1.4.md`](docs/releases/v2.1.4.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
+Maintenance release publication remains exact-SHA gated. Publication now uses one version-agnostic workflow that reads the candidate version from `package.json`, requires matching release notes, waits for the complete exact-SHA evidence set, and then creates the matching tag/release. The six-hour operations health workflow also verifies that `main`, the package version, latest release, tag target, and required production commit statuses remain aligned.
+
+See [`docs/releases/v2.1.5.md`](docs/releases/v2.1.5.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
 
 ## Local development
 
