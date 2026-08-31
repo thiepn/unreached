@@ -6,19 +6,21 @@ const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readText(path)) as T;
 
 const packageJson = await readJson<{ version: string }>("package.json");
-if (packageJson.version !== "2.1.3") throw new Error("Maintenance release version must be 2.1.3.");
+if (packageJson.version !== "2.1.4") throw new Error("Maintenance release version must be 2.1.4.");
 
 const readme = await readText("README.md");
 for (const marker of [
-  "**Current version:** **2.1.3**",
-  "maintenance UI hotfix",
+  "**Current version:** **2.1.4**",
+  "comprehension UX maintenance release",
+  "meaning → evidence → context → prayer → research",
+  "What does “unreached” mean?",
   "Public privacy notice",
   "LICENSE.md",
   "THIRD_PARTY_NOTICES.md",
   "PeopleGroups.org / IMB Global Research",
   "28 August 2026",
 ]) if (!readme.includes(marker)) throw new Error(`Release README truth missing: ${marker}`);
-if (readme.includes("**Current version:** **2.1.2**") || readme.includes("**Current version:** **2.1.1**") || readme.includes("**Version:** **2.0.0**")) throw new Error("README still advertises an obsolete release version.");
+if (readme.includes("**Current version:** **2.1.3**") || readme.includes("**Current version:** **2.1.2**") || readme.includes("**Current version:** **2.1.1**") || readme.includes("**Version:** **2.0.0**")) throw new Error("README still advertises an obsolete release version.");
 
 const privacy = await readText("PRIVACY.md");
 for (const marker of [
@@ -108,4 +110,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.3, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");
+console.log("Release-truth checks passed: version 2.1.4, comprehension-first production UX, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");

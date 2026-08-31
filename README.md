@@ -5,16 +5,20 @@
 Unreached is a browser-based Christian mission atlas for discovering people groups, understanding source-backed context, and moving from information into prayer.
 
 - **Live site:** https://www.thiepn.dev/unreached/
-- **Current version:** **2.1.3**
+- **Current version:** **2.1.4**
 - **Platform:** Preact/Vite on GitHub Pages
 - **Optional continuity:** Cloudflare Worker + D1 + Cloudflare Access
 - **Core loop:** **Explore → Understand → Pray**
 
 ## Current production behavior
 
-Version 2.1.3 is a maintenance UI hotfix on the certified 2.1 line. It preserves the v2.1.2 loading, product, privacy and data contracts while fixing the narrow Explore-sidebar methodology layout so an opened “About this view” explainer occupies a full-width row instead of being compressed into the selector’s narrow auxiliary column.
+Version 2.1.4 is a **comprehension UX maintenance release** on the certified 2.1 line. It preserves the existing mission-data, prayer, privacy, sync, loading and redistribution contracts while reorganizing existing information around **meaning → evidence → context → prayer → research**.
 
-The v2.1.2 loading improvements remain intact: prepared PeopleGroups data hydrates immediately from IndexedDB, provider connection setup and signaled route chunks can prewarm opportunistically, and a true cold People Explorer can become searchable after the first validated provider page while the remaining corpus continues loading.
+People profiles now explain why a record is marked unreached before exposing exact GSEC classification, keep the first overview to four essential facts, promote prayer as a first-class action, and move PEID/PGID, taxonomy and methodology into detailed research disclosures. Country profiles begin with three understandable metrics and surface the largest represented unreached peoples before technical tables. Explore keeps the certified map layer IDs and denominator semantics while treating coverage/count layers as opt-in research views.
+
+The first-minute entry path also exposes **What does “unreached” mean?** and a direct **Pray today** action on desktop and mobile. Short desktop viewports compact non-essential explanatory chrome so the country browser remains usable without overlapping the map workspace.
+
+The v2.1.2 loading improvements and v2.1.3 map-layout fix remain intact: prepared PeopleGroups data hydrates immediately from IndexedDB, provider connection setup and signaled route chunks can prewarm opportunistically, a true cold People Explorer can become searchable after the first validated provider page, and map methodology remains in normal flow on narrow desktop layouts.
 
 Any cold partial catalog is explicitly labeled as incomplete. Complete-world map, country, language and prayer aggregates remain gated on the full validated PeopleGroups corpus, and partial network data is never persisted as a complete prepared snapshot.
 
@@ -62,7 +66,7 @@ Optional private sync is additive. Authentication alone does not enable it. Serv
 
 Release candidates pass deterministic build/policy gates, desktop/mobile Chromium/Firefox/WebKit tests, offline-resilience tests, private-sync certification, live PeopleGroups corpus/CORS checks, GitHub Pages deployment checks, and canonical production browser certification.
 
-Maintenance release publication remains exact-SHA gated. See [`docs/releases/v2.1.3.md`](docs/releases/v2.1.3.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
+Maintenance release publication remains exact-SHA gated. See [`docs/releases/v2.1.4.md`](docs/releases/v2.1.4.md), [`docs/MAINTENANCE_MODE.md`](docs/MAINTENANCE_MODE.md), and [`docs/PERFORMANCE_BUDGETS.md`](docs/PERFORMANCE_BUDGETS.md).
 
 ## Local development
 
