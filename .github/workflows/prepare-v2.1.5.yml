@@ -24,7 +24,7 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: Synchronize lockfile and harden release operations
+      - name: Synchronize lockfile and static release gates
         shell: bash
         run: |
           set -euo pipefail
@@ -87,71 +87,18 @@ jobs:
           if old not in text:
               raise SystemExit('phase4 operations block not found')
           phase4.write_text(text.replace(old, new))
-
-          operations = Path('.github/workflows/operations-health.yml')
-          text = operations.read_text()
-          marker = '      - name: Verify PeopleGroups runtime and production-origin CORS\n'
-          step = '''      - name: Verify current release identity and production evidence
-            shell: bash
-            env:
-              GH_TOKEN: ${{ github.token }}
-            run: |
-              set -euo pipefail
-              api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
-              auth=(-H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28")
-
-              package=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/contents/package.json?ref=${GITHUB_SHA}")
-              version=$(jq -r '.content' <<<"$package" | tr -d '\\n' | base64 --decode | jq -r '.version')
-              [[ "$version" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$ ]] || { echo "Invalid package version at ${GITHUB_SHA}: $version" >&2; exit 1; }
-              tag="v${version}"
-
-              latest=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/releases/latest")
-              jq -e --arg tag "$tag" --arg sha "$GITHUB_SHA" '.tag_name == $tag and .target_commitish == $sha and .draft == false and .prerelease == false' <<<"$latest" >/dev/null || {
-                echo "Latest GitHub Release does not match package version/tag/current main SHA." >&2
-                jq '{tag_name,target_commitish,draft,prerelease}' <<<"$latest" >&2
-                exit 1
-              }
-
-              ref=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/git/ref/tags/$tag")
-              jq -e --arg sha "$GITHUB_SHA" '.object.type == "commit" and .object.sha == $sha' <<<"$ref" >/dev/null || {
-                echo "Release tag $tag does not point to current main SHA ${GITHUB_SHA}." >&2
-                jq '.object' <<<"$ref" >&2
-                exit 1
-              }
-
-              status=$(curl --fail-with-body --silent --show-error "${auth[@]}" "$api/commits/${GITHUB_SHA}/status")
-              for context in unreached/pages-production unreached/peoplegroups-live unreached/worker-production; do
-                state=$(jq -r --arg context "$context" '[.statuses[] | select(.context == $context)][0].state // "missing"' <<<"$status")
-                test "$state" = "success" || { echo "Required production status $context is $state for ${GITHUB_SHA}." >&2; exit 1; }
-              done
-
-          '''
-          if marker not in text:
-              raise SystemExit('operations insertion marker not found')
-          text = text.replace(marker, step + marker, 1)
-          text = text.replace('description="Scheduled Pages, PeopleGroups or private-sync health check failed"', 'description="Scheduled release-truth, Pages, PeopleGroups or private-sync health check failed"')
-          text = text.replace('description="Scheduled Pages, PeopleGroups and private-sync health checks passed"', 'description="Scheduled release-truth, Pages, PeopleGroups and private-sync health checks passed"')
-          operations.write_text(text)
-
-          old_publisher = Path('.github/workflows/publish-v2.1.4.yml')
-          if old_publisher.exists():
-              old_publisher.unlink()
-
-          helper = Path('.github/workflows/prepare-v2.1.5.yml')
-          if helper.exists():
-              helper.unlink()
           PY
 
-      - name: Commit prepared patch
+      - name: Commit synchronized normal files
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json scripts/release/phase5-check.ts scripts/operations/phase4-check.ts .github/workflows/operations-health.yml .github/workflows/publish-v2.1.4.yml .github/workflows/prepare-v2.1.5.yml
+          git add package-lock.json scripts/release/phase5-check.ts scripts/operations/phase4-check.ts
           if git diff --cached --quiet; then
-            echo "No preparation changes required."
+            echo "Normal files already synchronized."
             exit 0
           fi
-          git commit -m "Complete v2.1.5 release automation hardening"
+          git commit -m "Synchronize v2.1.5 lockfile and static gates"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
