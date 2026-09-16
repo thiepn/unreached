@@ -1,0 +1,112 @@
+.v3-type-display-xl,
+.v3-type-display-lg,
+.v3-type-heading-xl,
+.v3-type-heading-lg,
+.v3-type-heading-md {
+  margin: 0;
+  color: var(--v3-ink-strong);
+  font-family: var(--v3-font-editorial);
+  font-weight: 520;
+  text-wrap: balance;
+}
+
+.v3-type-display-xl {
+  font-size: clamp(3.1rem, 6vw, 5.9rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.v3-type-display-lg {
+  font-size: clamp(2.45rem, 4.2vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.v3-type-heading-xl {
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+}
+
+.v3-type-heading-lg {
+  font-size: clamp(1.55rem, 2vw, 2.15rem);
+  line-height: 1.12;
+  letter-spacing: -0.018em;
+}
+
+.v3-type-heading-md {
+  font-size: clamp(1.25rem, 1.5vw, 1.55rem);
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+}
+
+.v3-type-body-lg,
+.v3-type-body,
+.v3-type-body-sm,
+.v3-type-meta,
+.v3-type-label {
+  margin: 0;
+  font-family: var(--v3-font-ui);
+}
+
+.v3-type-body-lg {
+  color: var(--v3-ink);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+.v3-type-body {
+  color: var(--v3-ink);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.v3-type-body-sm {
+  color: var(--v3-ink-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.v3-type-meta {
+  color: var(--v3-ink-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+}
+
+.v3-type-label {
+  color: var(--v3-ink-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.v3-type-prose {
+  color: var(--v3-ink);
+  font-family: var(--v3-font-ui);
+  font-size: 1.035rem;
+  line-height: 1.72;
+  text-wrap: pretty;
+}
+
+.v3-type-prose p {
+  margin: 0 0 1.1em;
+}
+
+.v3-type-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.v3-type-link {
+  color: var(--v3-ocean-700);
+  font-weight: 600;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.v3-type-link:hover {
+  text-decoration-thickness: 2px;
+}

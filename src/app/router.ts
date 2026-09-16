@@ -10,6 +10,7 @@ export type RouteId =
   | "saved"
   | "account"
   | "about"
+  | "design-system"
   | "not-found";
 
 export interface RouteState {
@@ -33,6 +34,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/saved": "saved",
   "/account": "account",
   "/about": "about",
+  "/dev/design-system": "design-system",
 };
 
 function routePart(hash: string): string {
@@ -89,6 +91,7 @@ function titleForRoute(route: RouteState): string {
   if (route.id === "saved") return "My Lists | Unreached";
   if (route.id === "account") return "Account & Sync | Unreached";
   if (route.id === "about") return "About & Sources | Unreached";
+  if (route.id === "design-system") return "V3 Visual Foundation | Unreached";
   return "Page Not Found | Unreached";
 }
 
