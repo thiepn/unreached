@@ -1,0 +1,70 @@
+name: V3 Phase 7 Regions and Countries
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase6-explore
+    paths:
+      - "docs/V3_PHASE7_REGIONS_COUNTRIES.md"
+      - "src/geography/regions.ts"
+      - "src/countries/live.ts"
+      - "src/app/router.ts"
+      - "src/app/App.tsx"
+      - "src/app/route-preload.ts"
+      - "src/pages/RegionsPage.tsx"
+      - "src/pages/RegionPage.tsx"
+      - "src/pages/CountriesPage.tsx"
+      - "src/pages/CountryPage.tsx"
+      - "src/styles/atlas-foundation/geography.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase4-check.ts"
+      - "scripts/v3/phase7-check.ts"
+      - "tests/e2e/v3-phase7-regions-countries.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase7-regions-countries.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  geography:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 7 geographic hierarchy contract
+        run: npm run v3:phase7-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 7 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify region and country journeys
+        run: npm run v3:phase7-geography-visual
+
+      - name: Upload geographic visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase7-regions-countries
+          path: artifacts/v3-phase7
+          if-no-files-found: error
+          retention-days: 30
