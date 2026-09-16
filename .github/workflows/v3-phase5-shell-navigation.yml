@@ -1,0 +1,64 @@
+name: V3 Phase 5 Shell Navigation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase4-visual-foundation
+    paths:
+      - "docs/V3_PHASE5_SHELL_NAVIGATION_IA.md"
+      - "src/components/AppShell.tsx"
+      - "src/styles/atlas-foundation/shell.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase5-check.ts"
+      - "scripts/navigation/phase7-check.ts"
+      - "tests/e2e/phase7-navigation-redesign.spec.ts"
+      - "tests/e2e/phase14-accessibility.spec.ts"
+      - "tests/e2e/v3-phase5-shell-navigation.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase5-shell-navigation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 5 shell contract
+        run: npm run v3:phase5-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 5 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify desktop tablet and mobile shell
+        run: npm run v3:phase5-shell-visual
+
+      - name: Upload shell visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase5-shell-navigation
+          path: artifacts/v3-phase5
+          if-no-files-found: error
+          retention-days: 30
