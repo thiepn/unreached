@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "reviewedAt": "2026-08-28",
+  "reviewedAt": "2026-09-16",
   "sources": [
     {
       "id": "peoplegroups-org-api",
@@ -26,10 +26,11 @@
         "do not expose a static or downloadable mirror of the full provider corpus",
         "do not claim ownership of or relicense PeopleGroups.org data",
         "keep any resilience cache private to the user's browser and separate from the public service-worker asset cache",
-        "do not reuse provider-linked or third-party photos without separate item-level rights review"
+        "do not reuse provider-linked or third-party photos without separate item-level rights review",
+        "re-review the beta API documentation before releases that materially change provider access or caching"
       ],
-      "permissionGate": "The published API explicitly invites maps, prayer tools and research applications, so direct public runtime reads are approved. Static redistribution, relicensing, public snapshots and third-party image reuse remain separately unapproved.",
-      "termsReviewedAt": "2026-08-28"
+      "permissionGate": "Phase 1 reviewed the current public API on 2026-09-16. The provider explicitly offers free public read-only access without an API key and invites maps, prayer tools and research applications. Direct public runtime reads remain the approved V3 launch architecture; static redistribution, relicensing, public snapshots and third-party image reuse remain separately unapproved.",
+      "termsReviewedAt": "2026-09-16"
     },
     {
       "id": "natural-earth",
@@ -68,9 +69,16 @@
       "attributionRequired": true,
       "attributionText": "Data provided by Joshua Project",
       "developmentIngestionAllowed": true,
-      "requirements": ["non-commercial use", "visible linked attribution where data is shown", "no direct replication", "delete downloaded/cached data on API termination", "do not expose API credentials"],
-      "permissionGate": "Not an active production data source. Perform a fresh architecture/terms review before reintroduction.",
-      "termsReviewedAt": "2026-08-28"
+      "requirements": [
+        "non-commercial use",
+        "visible linked attribution on pages displaying Joshua Project content",
+        "no direct replication or highly overlapping public service",
+        "provide meaningful value-add rather than repackaging Joshua Project content",
+        "delete downloaded or cached data if API access is terminated",
+        "do not expose API credentials"
+      ],
+      "permissionGate": "Phase 1 re-reviewed the current terms on 2026-09-16. Joshua Project remains inactive for the Unreached 3.0 launch because its API is revocable, credentialed, non-commercial, requires page-level attribution, prohibits direct/high-overlap replication, and requires cached/downloaded data deletion on termination. A separate reviewed integration may be considered in Phase 13 or later; no production activation is implied.",
+      "termsReviewedAt": "2026-09-16"
     },
     {
       "id": "joshua-project-photos",
