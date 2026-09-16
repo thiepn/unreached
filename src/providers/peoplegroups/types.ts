@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { missionClassificationAssertionSchema } from "../../mission/classification";
 
 const nullableString = z.preprocess(
   (value) => value === null || value === undefined || value === "" ? null : String(value).trim(),
@@ -75,6 +76,7 @@ export const runtimeReachAssessmentSchema = z.object({
   methodology: z.literal("imb-gsec-v1"),
   sourceValue: z.number().int().min(0).max(6).nullable(),
   rule: z.literal("GSEC 0-3 => unreached; GSEC 4-6 => other; missing => unknown"),
+  assertion: missionClassificationAssertionSchema,
   evangelicalLevel: z.string().nullable(),
   gsec: z.object({ code: z.number().int().min(0).max(6).nullable(), label: z.string().nullable(), description: z.string().nullable() }),
   spi: z.object({ code: z.number().int().nonnegative().nullable(), description: z.string().nullable() }),
