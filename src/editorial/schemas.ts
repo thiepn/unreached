@@ -147,6 +147,7 @@ export const editorialExemplarManifestSchema = z.object({
 });
 
 export type EditorialTier = z.infer<typeof editorialTierSchema>;
+export type EditorialSectionKey = z.infer<typeof editorialSectionKeySchema>;
 export type EditorialSource = z.infer<typeof editorialSourceSchema>;
 export type EditorialClaim = z.infer<typeof editorialClaimSchema>;
 export type EditorialSection = z.infer<typeof editorialSectionSchema>;
