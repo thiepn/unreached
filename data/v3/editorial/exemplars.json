@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "minimumReviewedProfiles": 10,
+  "profiles": [
+    { "slug": "fon-benin", "sourceProfilePath": "public/data/context/profiles/fon-benin.json" },
+    { "slug": "hui-china", "sourceProfilePath": "public/data/context/profiles/hui-china.json" },
+    { "slug": "uyghur-china", "sourceProfilePath": "public/data/context/profiles/uyghur-china.json" },
+    { "slug": "somali-somalia", "sourceProfilePath": "public/data/context/profiles/somali-somalia.json" },
+    { "slug": "southern-pashtun-afghanistan", "sourceProfilePath": "public/data/context/profiles/southern-pashtun-afghanistan.json" },
+    { "slug": "bengali-sunni-bangladesh", "sourceProfilePath": "public/data/context/profiles/bengali-sunni-bangladesh.json" },
+    { "slug": "kazakh-kazakhstan", "sourceProfilePath": "public/data/context/profiles/kazakh-kazakhstan.json" },
+    { "slug": "tajik-tajikistan", "sourceProfilePath": "public/data/context/profiles/tajik-tajikistan.json" },
+    { "slug": "rohingya-myanmar", "sourceProfilePath": "public/data/context/profiles/rohingya-myanmar.json" },
+    { "slug": "wolof-senegal", "sourceProfilePath": "public/data/context/profiles/wolof-senegal.json" }
+  ]
+}
