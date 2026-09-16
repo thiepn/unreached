@@ -1,10 +1,17 @@
 import { ArrowRight, Bookmark, BookmarkCheck, Check, Compass, Eye, HeartHandshake } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
+import type { EditorialTier } from "../editorial";
 import { isPersonSaved, usePersonalization } from "../personalization";
-import type { RuntimePeopleEntity } from "../providers/peoplegroups";
+import type { PeopleProfileRecord } from "../peoples";
 
-export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity }) {
+function contextStepLabel(tier: EditorialTier): string {
+  if (tier === "reviewed") return "Reviewed context read";
+  if (tier === "enhanced") return "Curated context read";
+  return "Source context read";
+}
+
+export function ProfileLocalActions({ record, contextTier = "source" }: { record: PeopleProfileRecord; contextTier?: EditorialTier }) {
   const personalization = usePersonalization();
   const sourcePeopleId = record.routeKey;
   const saved = isPersonSaved(personalization.state, sourcePeopleId);
@@ -13,14 +20,14 @@ export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity })
   const country = record.contexts[0]?.country ?? null;
 
   return (
-    <section class="profile-local-actions profile-local-actions--journey profile-local-actions--phase9" aria-labelledby="profile-next-step-heading">
+    <section class="profile-local-actions profile-local-actions--journey profile-local-actions--phase9 profile-local-actions--v3" aria-labelledby="profile-next-step-heading">
       <div class="profile-action-heading">
         <div>
           <span class="eyebrow">2 · Act from context</span>
           <h2 id="profile-next-step-heading">{prayerEligible ? `Pray for ${record.displayName}.` : "Save this people-group record."}</h2>
         </div>
         <p>{prayerEligible
-          ? "Use the focused prayer guide after learning the basic context. The guide keeps the same source identity and does not add unreviewed claims about the community."
+          ? "Continue into a focused prayer guide after reading the available context. The prayer flow keeps the same source identity and does not add unsupported claims about the community."
           : "The current source record is outside the app's unreached prayer flow. You can still save it and continue exploring the available context."}</p>
       </div>
 
@@ -32,7 +39,7 @@ export function ProfileLocalActions({ record }: { record: RuntimePeopleEntity })
         </a>
         <div class="profile-journey__step is-current" aria-current="step">
           <Eye size={17} aria-hidden="true" />
-          <span><small>2 · Understand</small><strong>Source context reviewed</strong></span>
+          <span><small>2 · Understand</small><strong>{contextStepLabel(contextTier)}</strong></span>
           <Check class="profile-journey__check" size={15} aria-hidden="true" />
         </div>
         {prayerEligible ? (

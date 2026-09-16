@@ -27,7 +27,7 @@ test("source context appears before prayer actions", async ({ page }) => {
 
 test("prayer eligible profile offers contextual next step", async ({ page }) => {
   await page.goto(`./#/peoples/${VISIBLE_TEST_PEID}`);
-  await expect(page.getByText("Source context reviewed", { exact: true })).toBeVisible();
+  await expect(page.getByText("Source context read", { exact: true })).toBeVisible();
 
   const prayer = page.getByRole("link", { name: /Pray with this context/ });
   await expect(prayer).toBeVisible();
@@ -59,10 +59,7 @@ test("mobile profile journey has no horizontal overflow", async ({ page }) => {
   await page.locator(".people-profile-action-stage").scrollIntoViewIfNeeded();
   await expect(page.getByRole("link", { name: /Pray with this context/ })).toBeVisible();
 
-  const overflow = await page.evaluate(() => ({
-    width: document.documentElement.scrollWidth,
-    client: document.documentElement.clientWidth,
-  }));
+  const overflow = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client);
 
   const action = await page.locator(".people-profile-action-stage").boundingBox();

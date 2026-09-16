@@ -1,0 +1,71 @@
+name: V3 Phase 8 Definitive People Profile
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase7-regions-countries
+    paths:
+      - "docs/V3_PHASE8_DEFINITIVE_PEOPLE_PROFILE.md"
+      - "src/pages/PeoplePage.tsx"
+      - "src/pages/PeopleContextualPage.tsx"
+      - "src/components/DefinitiveEditorialProfile.tsx"
+      - "src/components/ProfileLocalActions.tsx"
+      - "src/editorial/**"
+      - "src/peoples/profile.ts"
+      - "src/peoples/index.ts"
+      - "src/styles/atlas-foundation/people-profile.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase8-check.ts"
+      - "scripts/v3/phase4-check.ts"
+      - "scripts/peoples/phase9-check.ts"
+      - "scripts/comprehension/u11-check.ts"
+      - "tests/e2e/v3-phase8-people-profile.spec.ts"
+      - "tests/e2e/phase9-people-profile.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase8-people-profile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  people-profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 8 profile contract
+        run: npm run v3:phase8-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 8 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify source and reviewed people profiles
+        run: npm run v3:phase8-people-visual
+
+      - name: Upload people-profile visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase8-people-profile
+          path: artifacts/v3-phase8
+          if-no-files-found: error
+          retention-days: 30
