@@ -66,11 +66,9 @@ import "./styles/atlas-foundation/responsive.css";
 import "./styles/atlas-foundation/shell.css";
 import "./styles/atlas-foundation/explore.css";
 import "./styles/atlas-foundation/geography.css";
+import "./styles/atlas-foundation/people-profile.css";
 import "./styles/foundation/accessibility.css";
 
-// Start the single prepared IndexedDB read as soon as the entry module runs.
-// This remains local-only and non-blocking, but it lets repeat visits have the
-// shared PeopleGroups snapshot ready before the user opens a data-heavy route.
 warmPeopleGroupsRuntime();
 initializeOfflineRuntime();
 initializePrivateSyncRuntime();
