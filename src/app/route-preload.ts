@@ -8,6 +8,7 @@ const routePreloaders: Partial<Record<RouteId, RoutePreloader>> = {
     import("../pages/ExplorePage"),
   ]),
   peoples: () => import("../pages/PeoplesPage"),
+  regions: () => import("../pages/RegionsPage"),
   countries: () => import("../pages/CountriesPage"),
   languages: () => import("../pages/LanguagesPage"),
   coverage: () => import("../pages/EditorialCoveragePage"),
