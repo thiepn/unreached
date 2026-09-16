@@ -7,7 +7,8 @@ import { ProfileLocalActions } from "../components/ProfileLocalActions";
 import { TermHelp } from "../components/TermHelp";
 import { UnreachedExplanation } from "../components/UnreachedExplanation";
 import { bibleResourceExplanation, evangelicalLevelExplanation } from "../comprehension/explain";
-import { createSourceEditorialProfile, useEditorialProfiles, type EditorialProfile } from "../editorial";
+import { createSourceEditorialProfile, type EditorialProfile } from "../editorial";
+import { useEditorialProfiles } from "../editorial/runtime";
 import { atlasRegionForCountry } from "../geography/regions";
 import { useWorldGeography } from "../map/geography";
 import {
