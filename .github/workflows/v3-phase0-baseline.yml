@@ -1,0 +1,60 @@
+name: V3 Phase 0 Baseline
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "docs/V3_PRODUCT_CONTRACT.md"
+      - "docs/V3_PHASE0_BASELINE.md"
+      - "docs/V3_ROADMAP.md"
+      - "tests/e2e/v3-phase0-visual-baseline.spec.ts"
+      - ".github/workflows/v3-phase0-baseline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build unchanged V2 baseline
+        run: npm run build
+
+      - name: Capture source and bundle baseline
+        run: |
+          npm run audit:baseline
+          mkdir -p artifacts/v3-phase0/source
+          cp artifacts/audit/phase0-baseline.json artifacts/v3-phase0/source/phase0-baseline.json
+          node -e 'const fs=require("node:fs"); const pkg=require("./package.json"); fs.writeFileSync("artifacts/v3-phase0/source/manifest.json", JSON.stringify({commit:process.env.GITHUB_SHA, packageVersion:pkg.version, capturedAt:new Date().toISOString()}, null, 2)+"\n")'
+
+      - name: Install Chromium for deterministic visual baseline
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture desktop and mobile route baselines
+        env:
+          V3_PHASE0_CAPTURE: "1"
+        run: npx playwright test tests/e2e/v3-phase0-visual-baseline.spec.ts --project=chromium --project=mobile-chromium --workers=1
+
+      - name: Upload V3 Phase 0 baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase0-baseline
+          path: artifacts/v3-phase0
+          if-no-files-found: error
+          retention-days: 90
