@@ -14,7 +14,7 @@ import { editorialContextManifestSchema, editorialContextProfilePackageSchema } 
 const root = process.cwd();
 const readText = (path: string) => readFile(resolve(root, path), "utf8");
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readText(path)) as T;
-const now = new Date("2026-09-16T20:30:00.000Z");
+const now = new Date();
 
 function expectFailure(action: () => void, label: string): void {
   let failed = false;
