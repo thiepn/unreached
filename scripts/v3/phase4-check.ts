@@ -9,13 +9,14 @@ function requireText(source: string, marker: string, label: string): void {
   if (!source.includes(marker)) throw new Error(`V3 Phase 4: missing ${label}: ${marker}`);
 }
 
+const foundationRoot = "src/styles/atlas-foundation";
 const requiredFiles = [
-  "src/styles/v3/tokens.css",
-  "src/styles/v3/typography.css",
-  "src/styles/v3/layout.css",
-  "src/styles/v3/components.css",
-  "src/styles/v3/atlas.css",
-  "src/styles/v3/responsive.css",
+  `${foundationRoot}/tokens.css`,
+  `${foundationRoot}/typography.css`,
+  `${foundationRoot}/layout.css`,
+  `${foundationRoot}/components.css`,
+  `${foundationRoot}/atlas.css`,
+  `${foundationRoot}/responsive.css`,
   "src/pages/DesignSystemPage.tsx",
   "tests/e2e/v3-phase4-design-system.spec.ts",
   "docs/V3_PHASE4_VISUAL_FOUNDATION.md",
@@ -24,7 +25,7 @@ for (const path of requiredFiles) {
   if (!existsSync(resolve(root, path))) throw new Error(`V3 Phase 4 required file is missing: ${path}`);
 }
 
-const tokens = await read("src/styles/v3/tokens.css");
+const tokens = await read(`${foundationRoot}/tokens.css`);
 for (const marker of [
   '--v3-font-ui: "Source Sans 3 Variable"',
   '--v3-font-editorial: "Newsreader Variable"',
@@ -35,7 +36,7 @@ for (const marker of [
   "--v3-status-unknown:",
 ]) requireText(tokens, marker, "canonical V3 token");
 
-const typography = await read("src/styles/v3/typography.css");
+const typography = await read(`${foundationRoot}/typography.css`);
 for (const marker of [
   ".v3-type-display-xl",
   ".v3-type-heading-xl",
@@ -44,7 +45,7 @@ for (const marker of [
   ".v3-type-prose",
 ]) requireText(typography, marker, "typography scale marker");
 
-const components = await read("src/styles/v3/components.css");
+const components = await read(`${foundationRoot}/components.css`);
 for (const marker of [
   ".v3-surface--page",
   ".v3-surface--editorial",
@@ -56,7 +57,7 @@ for (const marker of [
   "min-height: var(--v3-control-height)",
 ]) requireText(components, marker, "surface/control marker");
 
-const atlas = await read("src/styles/v3/atlas.css");
+const atlas = await read(`${foundationRoot}/atlas.css`);
 for (const marker of [
   ".v3-masthead",
   ".v3-fact-strip",
@@ -65,21 +66,21 @@ for (const marker of [
   ".v3-map-legend",
 ]) requireText(atlas, marker, "atlas primitive marker");
 
-const responsive = await read("src/styles/v3/responsive.css");
+const responsive = await read(`${foundationRoot}/responsive.css`);
 for (const marker of ["@media (max-width: 1000px)", "@media (max-width: 720px)", "prefers-reduced-motion"]) {
   requireText(responsive, marker, "responsive/accessibility marker");
 }
 
 const main = await read("src/main.tsx");
-const v3Imports = [
-  'import "./styles/v3/tokens.css";',
-  'import "./styles/v3/typography.css";',
-  'import "./styles/v3/layout.css";',
-  'import "./styles/v3/components.css";',
-  'import "./styles/v3/atlas.css";',
-  'import "./styles/v3/responsive.css";',
+const foundationImports = [
+  'import "./styles/atlas-foundation/tokens.css";',
+  'import "./styles/atlas-foundation/typography.css";',
+  'import "./styles/atlas-foundation/layout.css";',
+  'import "./styles/atlas-foundation/components.css";',
+  'import "./styles/atlas-foundation/atlas.css";',
+  'import "./styles/atlas-foundation/responsive.css";',
 ];
-for (const marker of v3Imports) requireText(main, marker, "V3 foundation stylesheet import");
+for (const marker of foundationImports) requireText(main, marker, "V3 foundation stylesheet import");
 if (!main.trim().includes('import "./styles/foundation/accessibility.css";')) {
   throw new Error("V3 Phase 4 must preserve the certified accessibility stylesheet in the application cascade.");
 }
@@ -118,6 +119,7 @@ for (const marker of [
   "44×44",
   "Phase 5",
   "does not redesign production routes",
+  "src/styles/atlas-foundation/",
 ]) requireText(docs, marker, "Phase 4 documentation marker");
 
 const packageJson = await read("package.json");
