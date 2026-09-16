@@ -1,0 +1,73 @@
+:root {
+  --v3-font-ui: "Source Sans 3 Variable", "Segoe UI", system-ui, sans-serif;
+  --v3-font-editorial: "Newsreader Variable", Georgia, serif;
+
+  --v3-paper-canvas: #f4f6f2;
+  --v3-paper-page: #fafbf8;
+  --v3-paper-raised: #ffffff;
+  --v3-paper-muted: #e9eee9;
+  --v3-paper-inverse: #15231b;
+
+  --v3-ink-strong: #132019;
+  --v3-ink: #314039;
+  --v3-ink-muted: #66736b;
+  --v3-ink-faint: #879189;
+  --v3-ink-inverse: #f5f8f4;
+
+  --v3-line: #d3dbd4;
+  --v3-line-strong: #a4b0a7;
+  --v3-line-inverse: #31453a;
+
+  --v3-forest-800: #173f30;
+  --v3-forest-700: #1f5a43;
+  --v3-forest-600: #2d7056;
+  --v3-forest-100: #dcebe3;
+
+  --v3-ocean-700: #315f78;
+  --v3-ocean-600: #42738d;
+  --v3-ocean-100: #e0ebf1;
+
+  --v3-terrain-700: #8e6337;
+  --v3-terrain-600: #a8743c;
+  --v3-terrain-100: #f1e5d4;
+
+  --v3-status-frontier: #8f2d2d;
+  --v3-status-unreached: #bd5532;
+  --v3-status-progress: #a97f2f;
+  --v3-status-established: #3e7655;
+  --v3-status-unknown: #768079;
+
+  --v3-focus: #116c91;
+  --v3-danger: #9c332e;
+
+  --v3-space-1: 0.25rem;
+  --v3-space-2: 0.5rem;
+  --v3-space-3: 0.75rem;
+  --v3-space-4: 1rem;
+  --v3-space-5: 1.25rem;
+  --v3-space-6: 1.5rem;
+  --v3-space-8: 2rem;
+  --v3-space-10: 2.5rem;
+  --v3-space-12: 3rem;
+  --v3-space-16: 4rem;
+  --v3-space-20: 5rem;
+  --v3-space-24: 6rem;
+
+  --v3-radius-control: 6px;
+  --v3-radius-surface: 10px;
+  --v3-radius-overlay: 12px;
+  --v3-radius-status: 999px;
+
+  --v3-shadow-overlay: 0 18px 50px rgb(16 31 23 / 14%);
+  --v3-shadow-control: 0 1px 2px rgb(16 31 23 / 8%);
+
+  --v3-content-max: 1480px;
+  --v3-reading-max: 760px;
+  --v3-rail-width: 320px;
+  --v3-control-height: 44px;
+  --v3-header-height: 64px;
+
+  --v3-duration-fast: 120ms;
+  --v3-duration-medium: 220ms;
+  --v3-ease: cubic-bezier(0.2, 0, 0, 1);
+}
