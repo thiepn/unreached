@@ -7,14 +7,10 @@ import {
   type RuntimePeopleContext,
   type RuntimePeopleEntity,
 } from "./types";
+import { classifyPeopleGroupsGsec } from "./classification";
 
 function nullable<T>(value: T | null | undefined): T | null {
   return value ?? null;
-}
-
-function reachClassification(gsec: number | null): RuntimePeopleContext["reach"]["classification"] {
-  if (gsec === null) return "unknown";
-  return gsec <= 3 ? "unreached" : "other";
 }
 
 function coordinatesFor(record: PeopleGroupsApiRecord) {
@@ -27,6 +23,18 @@ function coordinatesFor(record: PeopleGroupsApiRecord) {
 
 export function toRuntimePeopleContext(record: PeopleGroupsApiRecord): RuntimePeopleContext {
   const gsec = nullable(record.GSEC);
+  const sourceUpdatedAt = nullable(record.UpdatedDate);
+  const assertion = classifyPeopleGroupsGsec({
+    gsec,
+    label: nullable(record.GSECbrf),
+    sourceUpdatedAt,
+  });
+  const classification: RuntimePeopleContext["reach"]["classification"] = assertion.classification === "unreached"
+    ? "unreached"
+    : assertion.classification === "not-unreached"
+      ? "other"
+      : "unknown";
+
   return runtimePeopleContextSchema.parse({
     provider: "peoplegroups-org",
     pgid: record.PGID,
@@ -52,10 +60,11 @@ export function toRuntimePeopleContext(record: PeopleGroupsApiRecord): RuntimePe
       displayName: nullable(record.RlgnDiv),
     },
     reach: {
-      classification: reachClassification(gsec),
+      classification,
       methodology: "imb-gsec-v1",
       sourceValue: gsec,
       rule: "GSEC 0-3 => unreached; GSEC 4-6 => other; missing => unknown",
+      assertion,
       evangelicalLevel: nullable(record.EvngLvl),
       gsec: { code: gsec, label: nullable(record.GSECbrf), description: nullable(record.GSEClng) },
       spi: { code: nullable(record.SPI), description: nullable(record.SPIdesc) },
@@ -80,7 +89,7 @@ export function toRuntimePeopleContext(record: PeopleGroupsApiRecord): RuntimePe
       locationDescription: nullable(record.LocationDesc),
       treatment: "source-attributed-only",
     },
-    sourceUpdatedAt: nullable(record.UpdatedDate),
+    sourceUpdatedAt,
   });
 }
 
