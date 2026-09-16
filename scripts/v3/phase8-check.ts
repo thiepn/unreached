@@ -109,7 +109,7 @@ for (const marker of [
 ]) requireText(browser, marker, "Phase 8 browser certification");
 
 const docs = await read("docs/V3_PHASE8_DEFINITIVE_PEOPLE_PROFILE.md");
-for (const marker of ["World → Region → Country → People → Context → Prayer", "Source profile", "Canonical editorial runtime", "People source boundary", "Pray from what is actually known.", "Gate B", "Phase 9 — Search, Discovery & Collections"]) requireText(docs, marker, "Phase 8 documentation");
+for (const marker of ["World → Region → Country → People → Context → Prayer", "### Source", "Canonical editorial runtime", "People source boundary", "Pray from what is actually known.", "Gate B", "Phase 9 — Search, Discovery & Collections"]) requireText(docs, marker, "Phase 8 documentation");
 
 const packageJson = await read("package.json");
 requireText(packageJson, '"v3:phase8-check": "tsx scripts/v3/phase8-check.ts"', "Phase 8 package script");
