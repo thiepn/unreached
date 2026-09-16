@@ -32,6 +32,7 @@ test("newcomer can understand unreached and start today's prayer from Explore", 
   await helpSummary.click();
   const explanation = help.locator(".term-help__body p");
   await expect(explanation.first()).toContainText("established evangelical Christian presence is limited");
+  await expect(explanation.first()).toContainText("less than 2% evangelical Christian");
   await expect(explanation.nth(1)).toContainText("GSEC 0–3");
 
   const prayToday = actions.getByRole("link", { name: "Pray today →" });
