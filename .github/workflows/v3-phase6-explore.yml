@@ -1,0 +1,63 @@
+name: V3 Phase 6 Explore
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase5-shell-navigation
+    paths:
+      - "docs/V3_PHASE6_EXPLORE.md"
+      - "src/pages/ExplorePage.tsx"
+      - "src/visualization/live.ts"
+      - "src/styles/atlas-foundation/explore.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase6-check.ts"
+      - "tests/e2e/v3-phase6-explore.spec.ts"
+      - "tests/e2e/u11-comprehension-first.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase6-explore.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  explore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 6 Explore contract
+        run: npm run v3:phase6-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 6 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify desktop and mobile Explore
+        run: npm run v3:phase6-explore-visual
+
+      - name: Upload Explore visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase6-explore
+          path: artifacts/v3-phase6
+          if-no-files-found: error
+          retention-days: 30
