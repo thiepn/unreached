@@ -1,0 +1,691 @@
+.v3-people-profile.people-profile {
+  width: min(100%, 1240px);
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1.25rem, 4.5vw, 4rem) clamp(4rem, 8vw, 7rem);
+  color: var(--v3-ink-strong);
+}
+
+.v3-people-breadcrumb.people-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--v3-space-2);
+  margin: 0 0 var(--v3-space-8);
+  color: var(--v3-ink-muted);
+  font: 600 0.78rem/1.3 var(--v3-font-ui);
+}
+
+.v3-people-breadcrumb a {
+  color: var(--v3-forest-700);
+  text-decoration: none;
+}
+
+.v3-people-breadcrumb a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.v3-people-hero.people-profile-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 5.5rem);
+  padding: 0 0 clamp(2rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--v3-line);
+  background: transparent;
+}
+
+.v3-people-hero__copy {
+  min-width: 0;
+}
+
+.v3-people-hero .eyebrow {
+  color: var(--v3-forest-700);
+  font: 750 0.7rem/1 var(--v3-font-ui);
+  letter-spacing: 0.12em;
+}
+
+.v3-people-hero .people-profile-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--v3-space-4);
+  margin-top: var(--v3-space-2);
+}
+
+.v3-people-hero .display-title {
+  max-width: 13ch;
+  margin: 0;
+  color: var(--v3-ink-strong);
+  font: 470 clamp(3.5rem, 8vw, 7.2rem)/0.87 var(--v3-font-editorial);
+  letter-spacing: -0.055em;
+}
+
+.v3-people-hero .people-status {
+  min-height: 30px;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--v3-radius-status);
+  font: 700 0.72rem/1 var(--v3-font-ui);
+}
+
+.v3-people-hero .people-profile-subtitle {
+  margin: var(--v3-space-4) 0 0;
+  color: var(--v3-ink-muted);
+  font: 600 0.95rem/1.35 var(--v3-font-ui);
+}
+
+.v3-people-hero .meaning-summary {
+  max-width: 68ch;
+  margin-top: var(--v3-space-5);
+  color: var(--v3-ink);
+}
+
+.v3-people-depth-line {
+  display: flex;
+  align-items: center;
+  gap: var(--v3-space-2);
+  width: fit-content;
+  margin-top: var(--v3-space-5);
+  color: var(--v3-ocean-700);
+  font: 650 0.78rem/1.3 var(--v3-font-ui);
+}
+
+.v3-people-hero__actions.people-profile-hero-actions {
+  display: grid;
+  gap: var(--v3-space-2);
+  width: 100%;
+}
+
+.v3-people-hero__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v3-space-3);
+  min-height: var(--v3-control-height);
+  padding: 0 var(--v3-space-4);
+  border: 1px solid var(--v3-line-strong);
+  border-radius: var(--v3-radius-control);
+  font: 650 0.86rem/1 var(--v3-font-ui);
+  text-decoration: none;
+}
+
+.v3-people-hero__actions .people-hero-pray {
+  border-color: var(--v3-forest-700);
+  background: var(--v3-forest-700);
+  color: var(--v3-ink-inverse);
+}
+
+.v3-people-hero__actions .people-hero-secondary {
+  background: var(--v3-paper-raised);
+  color: var(--v3-ink-strong);
+}
+
+.v3-people-facts.people-profile-overview {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+}
+
+.v3-people-section-heading.people-profile-overview__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
+  align-items: end;
+  gap: clamp(1.5rem, 5vw, 4rem);
+}
+
+.v3-people-section-heading h2 {
+  margin: var(--v3-space-2) 0 0;
+  color: var(--v3-ink-strong);
+  font: 520 clamp(2rem, 4vw, 3.15rem)/1 var(--v3-font-editorial);
+  letter-spacing: -0.025em;
+}
+
+.v3-people-section-heading > p {
+  margin: 0;
+  color: var(--v3-ink-muted);
+  font: 500 0.9rem/1.55 var(--v3-font-ui);
+}
+
+.v3-people-fact-grid.people-metric-grid--essential {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: var(--v3-space-6);
+  border-top: 1px solid var(--v3-line-strong);
+  border-bottom: 1px solid var(--v3-line);
+}
+
+.v3-people-fact-grid .people-metric {
+  min-width: 0;
+  padding: var(--v3-space-5) var(--v3-space-4);
+  border: 0;
+  border-right: 1px solid var(--v3-line);
+  background: transparent;
+}
+
+.v3-people-fact-grid .people-metric:last-child {
+  border-right: 0;
+}
+
+.v3-people-fact-grid .people-metric > span {
+  color: var(--v3-ink-faint);
+  font: 700 0.68rem/1 var(--v3-font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.v3-people-fact-grid .people-metric > strong {
+  display: block;
+  margin-top: var(--v3-space-2);
+  overflow-wrap: anywhere;
+  color: var(--v3-ink-strong);
+  font: 520 clamp(1.45rem, 2.5vw, 2.15rem)/1.05 var(--v3-font-editorial);
+}
+
+.v3-people-fact-grid .people-metric > small {
+  display: block;
+  margin-top: var(--v3-space-2);
+  color: var(--v3-ink-muted);
+  font: 500 0.74rem/1.4 var(--v3-font-ui);
+}
+
+.v3-people-flow.people-profile-flow {
+  display: grid;
+  gap: 0;
+  margin-top: clamp(3rem, 7vw, 6rem);
+}
+
+.v3-people-mission-context.people-profile-context {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.v3-people-mission-context .unreached-explanation,
+.v3-people-source-context,
+.v3-people-provider-context {
+  max-width: var(--v3-reading-max);
+}
+
+.v3-people-source-context.people-section,
+.v3-people-provider-context.people-section {
+  padding-top: var(--v3-space-6);
+  border-top: 1px solid var(--v3-line-strong);
+}
+
+.v3-people-source-context .people-section__heading,
+.v3-people-provider-context .people-section__heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--v3-space-5);
+}
+
+.v3-people-source-context h2,
+.v3-people-provider-context h2 {
+  margin: var(--v3-space-2) 0 0;
+  color: var(--v3-ink-strong);
+  font: 540 clamp(1.75rem, 3vw, 2.45rem)/1.05 var(--v3-font-editorial);
+}
+
+.v3-people-source-context .people-section__intro,
+.v3-people-provider-context .people-section__intro,
+.v3-people-provider-context .people-provider-description {
+  max-width: 70ch;
+  color: var(--v3-ink);
+  font: 500 0.96rem/1.65 var(--v3-font-ui);
+}
+
+.v3-people-source-context .people-source-record-grid--comprehension {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin-top: var(--v3-space-5);
+  border-top: 1px solid var(--v3-line);
+  border-bottom: 1px solid var(--v3-line);
+}
+
+.v3-people-source-context .people-source-record-grid--comprehension > div {
+  padding: var(--v3-space-4);
+  border-right: 1px solid var(--v3-line);
+}
+
+.v3-people-source-context .people-source-record-grid--comprehension > div:last-child {
+  border-right: 0;
+}
+
+.people-context-absence {
+  max-width: var(--v3-reading-max);
+  padding: var(--v3-space-5);
+  border: 1px solid var(--v3-line);
+  border-left: 3px solid var(--v3-ocean-700);
+  border-radius: var(--v3-radius-control);
+  background: var(--v3-paper-muted);
+}
+
+.people-context-absence p {
+  margin-bottom: 0;
+  color: var(--v3-ink-muted);
+}
+
+.v3-people-editorial-state {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--v3-space-3);
+  max-width: var(--v3-reading-max);
+  margin-top: clamp(3rem, 7vw, 6rem);
+  padding: var(--v3-space-4);
+  border-top: 1px solid var(--v3-line);
+  color: var(--v3-ink-muted);
+}
+
+.v3-people-editorial-state strong {
+  color: var(--v3-ink-strong);
+}
+
+.v3-people-editorial-state p {
+  margin: 0.15rem 0 0;
+}
+
+.v3-people-editorial {
+  margin-top: clamp(3.5rem, 8vw, 7rem);
+  padding-top: var(--v3-space-6);
+  border-top: 2px solid var(--v3-ink-strong);
+}
+
+.v3-people-editorial__heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--v3-space-6);
+}
+
+.v3-people-editorial__heading h2 {
+  max-width: 19ch;
+  margin: var(--v3-space-2) 0 0;
+  color: var(--v3-ink-strong);
+  font: 500 clamp(2.25rem, 5vw, 4rem)/0.98 var(--v3-font-editorial);
+  letter-spacing: -0.03em;
+}
+
+.v3-people-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v3-space-2);
+  min-height: 32px;
+  padding: 0 var(--v3-space-3);
+  border: 1px solid var(--v3-line-strong);
+  border-radius: var(--v3-radius-status);
+  color: var(--v3-ink-muted);
+  font: 700 0.72rem/1 var(--v3-font-ui);
+  white-space: nowrap;
+}
+
+.v3-people-tier--reviewed {
+  border-color: color-mix(in srgb, var(--v3-forest-700) 45%, var(--v3-line));
+  color: var(--v3-forest-700);
+}
+
+.v3-people-editorial__deck {
+  max-width: 68ch;
+  margin: var(--v3-space-6) 0 0;
+  color: var(--v3-ink);
+  font: 400 clamp(1.12rem, 2vw, 1.35rem)/1.65 var(--v3-font-editorial);
+}
+
+.v3-people-editorial__absence {
+  max-width: var(--v3-reading-max);
+  margin-top: var(--v3-space-6);
+  padding: var(--v3-space-5) 0 var(--v3-space-2);
+  border-top: 1px solid var(--v3-line);
+}
+
+.v3-people-editorial__absence strong {
+  font: 650 1rem/1.3 var(--v3-font-ui);
+}
+
+.v3-people-editorial__absence p {
+  max-width: 68ch;
+  margin: var(--v3-space-2) 0 0;
+  color: var(--v3-ink-muted);
+  font: 500 0.9rem/1.55 var(--v3-font-ui);
+}
+
+.v3-people-article {
+  display: grid;
+  max-width: var(--v3-reading-max);
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+}
+
+.v3-people-article__section {
+  padding: clamp(1.75rem, 4vw, 3rem) 0;
+  border-top: 1px solid var(--v3-line);
+}
+
+.v3-people-article__kicker {
+  color: var(--v3-forest-700);
+  font: 750 0.65rem/1 var(--v3-font-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.v3-people-article__section h3 {
+  margin: var(--v3-space-2) 0 0;
+  color: var(--v3-ink-strong);
+  font: 530 clamp(1.55rem, 3vw, 2.35rem)/1.05 var(--v3-font-editorial);
+}
+
+.v3-people-article__section > p {
+  margin: var(--v3-space-4) 0 0;
+  color: var(--v3-ink);
+  font: 400 1.05rem/1.72 var(--v3-font-editorial);
+}
+
+.v3-people-evidence {
+  margin-top: var(--v3-space-5);
+  border-top: 1px solid color-mix(in srgb, var(--v3-line) 78%, transparent);
+}
+
+.v3-people-evidence > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v3-space-2);
+  min-height: var(--v3-control-height);
+  color: var(--v3-ocean-700);
+  font: 650 0.76rem/1 var(--v3-font-ui);
+  list-style: none;
+}
+
+.v3-people-evidence__body {
+  padding: var(--v3-space-2) 0 var(--v3-space-4);
+}
+
+.v3-people-evidence__claims {
+  display: grid;
+  gap: var(--v3-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v3-people-evidence__claims li {
+  padding-left: var(--v3-space-4);
+  border-left: 2px solid var(--v3-line-strong);
+}
+
+.v3-people-evidence__claims li > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v3-space-2);
+  color: var(--v3-ink-faint);
+  font: 650 0.66rem/1 var(--v3-font-ui);
+  text-transform: capitalize;
+}
+
+.v3-people-evidence__claims p {
+  margin: var(--v3-space-2) 0 0;
+  color: var(--v3-ink);
+  font: 500 0.82rem/1.55 var(--v3-font-ui);
+}
+
+.v3-people-evidence__claims small {
+  display: block;
+  margin-top: var(--v3-space-2);
+  color: var(--v3-ink-muted);
+  font: 500 0.74rem/1.45 var(--v3-font-ui);
+}
+
+.v3-people-evidence__sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v3-space-2) var(--v3-space-4);
+  margin-top: var(--v3-space-4);
+}
+
+.v3-people-evidence__sources a {
+  color: var(--v3-forest-700);
+  font: 600 0.74rem/1.35 var(--v3-font-ui);
+}
+
+.v3-people-prayer-context {
+  max-width: var(--v3-reading-max);
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  padding-top: var(--v3-space-6);
+  border-top: 1px solid var(--v3-line-strong);
+}
+
+.v3-people-prayer-context__heading {
+  display: flex;
+  align-items: start;
+  gap: var(--v3-space-3);
+}
+
+.v3-people-prayer-context__heading svg {
+  margin-top: 0.2rem;
+  color: var(--v3-forest-700);
+}
+
+.v3-people-prayer-context h3 {
+  margin: var(--v3-space-2) 0 0;
+  font: 530 clamp(1.55rem, 3vw, 2.2rem)/1.05 var(--v3-font-editorial);
+}
+
+.v3-people-prayer-prompts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--v3-space-4);
+  margin-top: var(--v3-space-5);
+}
+
+.v3-people-prayer-prompts article {
+  padding: var(--v3-space-4);
+  border: 1px solid var(--v3-line);
+  border-radius: var(--v3-radius-surface);
+  background: var(--v3-paper-page);
+}
+
+.v3-people-prayer-prompts article > span {
+  color: var(--v3-forest-700);
+  font: 750 0.65rem/1 var(--v3-font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.v3-people-prayer-prompts p {
+  margin: var(--v3-space-3) 0 0;
+  color: var(--v3-ink);
+  font: 500 0.9rem/1.55 var(--v3-font-ui);
+}
+
+.v3-people-prayer-prompts small {
+  display: block;
+  margin-top: var(--v3-space-3);
+  color: var(--v3-ink-muted);
+  font: 600 0.72rem/1.3 var(--v3-font-ui);
+}
+
+.v3-people-editorial__footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
+  gap: var(--v3-space-5) var(--v3-space-8);
+  max-width: 1000px;
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  padding-top: var(--v3-space-5);
+  border-top: 1px solid var(--v3-line);
+  color: var(--v3-ink-muted);
+  font: 500 0.76rem/1.45 var(--v3-font-ui);
+}
+
+.v3-people-editorial__footer > div {
+  display: grid;
+  gap: var(--v3-space-1);
+}
+
+.v3-people-editorial__footer strong {
+  color: var(--v3-ink-strong);
+}
+
+.v3-people-editorial__footer details {
+  border-top: 1px solid var(--v3-line);
+}
+
+.v3-people-editorial__footer summary {
+  display: flex;
+  align-items: center;
+  gap: var(--v3-space-2);
+  min-height: var(--v3-control-height);
+  font-weight: 650;
+}
+
+.v3-people-editorial__footer ul {
+  display: grid;
+  gap: var(--v3-space-3);
+  margin: 0 0 var(--v3-space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.v3-people-editorial__footer li,
+.v3-people-editorial__footer li a {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.v3-people-editorial__footer a {
+  color: var(--v3-forest-700);
+  text-decoration: none;
+}
+
+.v3-people-action-stage.people-profile-action-stage {
+  margin-top: clamp(3.5rem, 8vw, 7rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--v3-line);
+  border-top: 3px solid var(--v3-forest-700);
+  border-radius: var(--v3-radius-surface);
+  background: var(--v3-paper-page);
+}
+
+.v3-people-action-stage .profile-action-heading h2 {
+  color: var(--v3-ink-strong);
+  font-family: var(--v3-font-editorial);
+}
+
+.v3-people-action-stage .profile-journey__step {
+  border-radius: 0;
+}
+
+.v3-people-reference.people-profile-reference-stage {
+  margin-top: clamp(3.5rem, 8vw, 7rem);
+  padding-top: var(--v3-space-6);
+  border-top: 2px solid var(--v3-ink-strong);
+}
+
+.v3-people-reference.people-profile-reference-stage::before {
+  content: "Research & source detail";
+  color: var(--v3-ink-faint);
+  font: 750 0.68rem/1 var(--v3-font-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.v3-people-reference .people-disclosure {
+  border-color: var(--v3-line);
+}
+
+.v3-people-research-disclosure .people-detail-list {
+  columns: 2 280px;
+  column-gap: var(--v3-space-8);
+}
+
+@media (max-width: 900px) {
+  .v3-people-hero.people-profile-hero,
+  .v3-people-section-heading.people-profile-overview__heading,
+  .v3-people-editorial__footer {
+    grid-template-columns: 1fr;
+  }
+
+  .v3-people-hero__actions.people-profile-hero-actions {
+    max-width: 420px;
+  }
+
+  .v3-people-fact-grid.people-metric-grid--essential {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v3-people-fact-grid .people-metric:nth-child(2) {
+    border-right: 0;
+  }
+
+  .v3-people-fact-grid .people-metric:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--v3-line);
+  }
+}
+
+@media (max-width: 760px) {
+  .v3-people-profile.people-profile {
+    padding: var(--v3-space-8) var(--v3-space-4) var(--v3-space-16);
+  }
+
+  .v3-people-breadcrumb.people-breadcrumb {
+    margin-bottom: var(--v3-space-6);
+  }
+
+  .v3-people-hero .display-title {
+    font-size: clamp(3.25rem, 17vw, 5rem);
+  }
+
+  .v3-people-hero.people-profile-hero {
+    align-items: start;
+    gap: var(--v3-space-6);
+  }
+
+  .v3-people-fact-grid.people-metric-grid--essential,
+  .v3-people-source-context .people-source-record-grid--comprehension,
+  .v3-people-prayer-prompts {
+    grid-template-columns: 1fr;
+  }
+
+  .v3-people-fact-grid .people-metric,
+  .v3-people-source-context .people-source-record-grid--comprehension > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--v3-line);
+  }
+
+  .v3-people-fact-grid .people-metric:last-child,
+  .v3-people-source-context .people-source-record-grid--comprehension > div:last-child {
+    border-bottom: 0;
+  }
+
+  .v3-people-editorial__heading {
+    display: grid;
+  }
+
+  .v3-people-tier {
+    width: fit-content;
+  }
+
+  .v3-people-editorial__deck,
+  .v3-people-article__section > p {
+    font-size: 1rem;
+  }
+
+  .v3-people-action-stage.people-profile-action-stage {
+    margin-inline: calc(var(--v3-space-4) * -1);
+    padding-inline: var(--v3-space-4);
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .v3-people-research-disclosure .people-detail-list {
+    columns: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .v3-people-fact-grid .people-metric {
+    padding-inline: var(--v3-space-2);
+  }
+
+  .v3-people-editorial__heading h2 {
+    font-size: 2.35rem;
+  }
+}
