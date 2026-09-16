@@ -8,6 +8,7 @@ const AboutPage = lazy(() => import("../pages/AboutPage").then((module) => ({ de
 const AccountPage = lazy(() => import("../pages/AccountPage").then((module) => ({ default: module.AccountPage })));
 const CountriesPage = lazy(() => import("../pages/CountriesPage").then((module) => ({ default: module.CountriesPage })));
 const CountryPage = lazy(() => import("../pages/CountryPage").then((module) => ({ default: module.CountryPage })));
+const DesignSystemPage = lazy(() => import("../pages/DesignSystemPage").then((module) => ({ default: module.DesignSystemPage })));
 const EditorialCoveragePage = lazy(() => import("../pages/EditorialCoveragePage").then((module) => ({ default: module.EditorialCoveragePage })));
 const ExplorePage = lazy(async () => {
   const [, module] = await Promise.all([
@@ -49,6 +50,7 @@ export function App() {
     case "saved": page = <SavedPage />; break;
     case "account": page = <AccountPage />; break;
     case "about": page = <AboutPage />; break;
+    case "design-system": page = <DesignSystemPage />; break;
     default: page = <NotFoundPage />;
   }
 
