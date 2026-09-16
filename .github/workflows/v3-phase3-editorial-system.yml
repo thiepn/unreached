@@ -1,0 +1,58 @@
+name: V3 Phase 3 Editorial System
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase2-mission-model
+    paths:
+      - "docs/V3_PHASE3_EDITORIAL_CONTENT_SYSTEM.md"
+      - "src/editorial/**"
+      - "data/v3/editorial/**"
+      - "scripts/v3/phase3-check.ts"
+      - "scripts/v3/editorial-preview.ts"
+      - "public/data/context/**"
+      - "package.json"
+      - ".github/workflows/v3-phase3-editorial-system.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  editorial-system:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 3 editorial system
+        run: npm run v3:phase3-check
+
+      - name: Generate editorial preview evidence
+        run: npm run v3:editorial-preview
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 3 gates
+        run: npm run build
+
+      - name: Upload Phase 3 editorial preview
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase3-editorial-preview
+          path: artifacts/v3-phase3
+          if-no-files-found: error
+          retention-days: 30
