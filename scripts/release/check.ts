@@ -83,21 +83,27 @@ interface RegistrySource {
   termsReviewedAt: string;
 }
 const registry = await readJson<{ schemaVersion: number; reviewedAt: string; sources: RegistrySource[] }>("data/source-registry.json");
-if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-08-28") throw new Error("Source registry metadata is stale.");
+if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-16") throw new Error("Source registry metadata is stale for the V3 Phase 1 source review.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 
 const peopleGroups = byId.get("peoplegroups-org-api");
 if (!peopleGroups?.runtimeReadAllowed || !peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) {
   throw new Error("PeopleGroups.org must be approved for public runtime use while static/browser corpus redistribution remains blocked.");
 }
-if (peopleGroups.termsReviewedAt !== "2026-08-28") throw new Error("PeopleGroups.org terms review date is stale.");
+if (peopleGroups.termsReviewedAt !== "2026-09-16") throw new Error("PeopleGroups.org Phase 1 terms review date is stale.");
 
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed || naturalEarth.termsReviewedAt !== "2026-08-28") {
   throw new Error("Natural Earth must remain public-domain approved with a current review date.");
 }
 
-for (const id of ["joshua-project-api", "progress-bible-registered-data", "ethnologue"]) {
+const joshuaProject = byId.get("joshua-project-api");
+if (!joshuaProject || joshuaProject.runtimeReadAllowed || joshuaProject.publicReleaseAllowed || joshuaProject.browserRedistributionAllowed) {
+  throw new Error("joshua-project-api must remain unavailable to the public runtime/static release.");
+}
+if (joshuaProject.termsReviewedAt !== "2026-09-16") throw new Error("Joshua Project Phase 1 terms review date is stale.");
+
+for (const id of ["progress-bible-registered-data", "ethnologue"]) {
   const source = byId.get(id);
   if (!source || source.runtimeReadAllowed || source.publicReleaseAllowed || source.browserRedistributionAllowed) throw new Error(`${id} must remain unavailable to the public runtime/static release.`);
   if (source.termsReviewedAt !== "2026-08-28") throw new Error(`${id} terms review date is stale.`);
@@ -120,4 +126,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups runtime permissions, attribution, project licensing and third-party notices agree with production behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups runtime permissions, Phase 1 source reviews, attribution, project licensing and third-party notices agree with production behavior.");
