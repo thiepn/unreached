@@ -37,18 +37,18 @@ const COVERAGE_LEGEND: LiveMissionLegendItem[] = [
 export const LIVE_MISSION_LAYERS: LiveMissionLayerDefinition[] = [
   {
     id: "unreached-population",
-    label: "GSEC 0–3 population share",
-    shortLabel: "Unreached pop.",
-    description: "Share of known population in GSEC-classified people-group contexts whose GSEC value is 0–3.",
-    methodology: "Population-weighted across PeopleGroups.org people-group-in-country records. Only contexts with both a population estimate and known GSEC enter the denominator. This is not a national census share.",
+    label: "IMB unreached population share (<2% evangelical)",
+    shortLabel: "IMB <2% evang. pop.",
+    description: "Share of represented population in PeopleGroups.org people-group contexts classified by IMB as unreached. In the current GSEC model, GSEC 0–3 means less than 2% evangelical Christian.",
+    methodology: "Population-weighted across PeopleGroups.org people-group-in-country records. Only contexts with both a population estimate and known GSEC enter the denominator. This is a source-specific IMB metric, not Joshua Project's country unreached-population percentage and not a national census share.",
     legend: WARM_PERCENT_LEGEND,
   },
   {
     id: "unreached-contexts",
-    label: "GSEC 0–3 context share",
-    shortLabel: "Unreached groups",
-    description: "Share of people-group-in-country records with known GSEC that fall in GSEC 0–3.",
-    methodology: "Count of GSEC 0–3 country-context records divided by all country-context records with known GSEC. Every PGID counts once, regardless of population.",
+    label: "IMB unreached people-group share (<2% evangelical)",
+    shortLabel: "IMB <2% evang. groups",
+    description: "Share of PeopleGroups.org people-group-in-country records classified by IMB as unreached. In the current GSEC model, GSEC 0–3 means less than 2% evangelical Christian.",
+    methodology: "Count of GSEC 0–3 country-context records divided by all country-context records with known GSEC. Every PGID counts once, regardless of population. This is a source-specific IMB metric and should not be read as a Joshua Project unreached-people-group percentage.",
     legend: WARM_PERCENT_LEGEND,
   },
   {
