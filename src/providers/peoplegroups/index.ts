@@ -1,5 +1,7 @@
 export * from "./api";
 export * from "./cache";
+export * from "./classification";
+export * from "./mission-model";
 export * from "./model";
 export * from "./record-runtime";
 export * from "./record-store";
