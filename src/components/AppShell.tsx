@@ -6,7 +6,6 @@ import {
   ChevronDown,
   Compass,
   Globe2,
-  Info,
   Languages,
   Map,
   Menu,
@@ -42,17 +41,29 @@ const primaryNav: NavItem[] = [
   { id: "pray", label: "Pray", path: "/pray", icon: Compass },
 ];
 
-const discoverNav: NavItem[] = [
-  { id: "coverage", label: "Reviewed coverage", path: "/coverage", icon: BookOpenText, description: "People records with deeper, cited contextual articles" },
+const savedNav: NavItem = {
+  id: "saved",
+  label: "Saved",
+  path: "/saved",
+  icon: Bookmark,
+  description: "Saved peoples, prayer list and private continuity",
+};
+
+const exploreMoreNav: NavItem[] = [
   { id: "countries", label: "Countries", path: "/countries", icon: Globe2, description: "Browse mission context by country" },
-  { id: "languages", label: "Languages", path: "/languages", icon: Languages, description: "Explore languages and reported resource labels" },
+  { id: "languages", label: "Languages", path: "/languages", icon: Languages, description: "Explore languages and reported resource context" },
 ];
 
 const referenceNav: NavItem[] = [
-  { id: "about", label: "About & sources", path: "/about", icon: Info, description: "Definitions, methodology, sources and data policy" },
+  { id: "about", label: "Sources & methodology", path: "/about", icon: BookOpenText, description: "Definitions, source boundaries, methodology and data policy" },
 ];
 
-const browseNav = [...discoverNav, ...referenceNav];
+const personalNav: NavItem[] = [
+  { id: "account", label: "Account & sync", path: "/account", icon: UserRound, description: "Optional private sync and account controls" },
+];
+
+const menuNav = [...exploreMoreNav, ...referenceNav, ...personalNav];
+const mobileNav = [...primaryNav, savedNav];
 
 function warmRoute(item: NavItem): void {
   preloadRoute(item.id);
@@ -62,24 +73,24 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;
   return (
     <a
-      class={`nav-link${active ? " is-active" : ""}`}
+      class={`nav-link v3-shell-nav-link${active ? " is-active" : ""}`}
       href={hrefFor(item.path)}
       aria-current={active ? "page" : undefined}
       onPointerEnter={() => warmRoute(item)}
       onPointerDown={() => warmRoute(item)}
       onFocus={() => warmRoute(item)}
     >
-      <Icon size={17} aria-hidden="true" />
+      <Icon size={18} aria-hidden="true" />
       <span>{item.label}</span>
     </a>
   );
 }
 
-function BrowseLink({ item, active, initial = false }: { item: NavItem; active: boolean; initial?: boolean }) {
+function MenuLink({ item, active, initial = false }: { item: NavItem; active: boolean; initial?: boolean }) {
   const Icon = item.icon;
   return (
     <a
-      class={`browse-link${active ? " is-active" : ""}`}
+      class={`browse-link v3-shell-menu-link${active ? " is-active" : ""}`}
       href={hrefFor(item.path)}
       aria-current={active ? "page" : undefined}
       data-mobile-nav-initial={initial ? "true" : undefined}
@@ -87,18 +98,18 @@ function BrowseLink({ item, active, initial = false }: { item: NavItem; active: 
       onPointerDown={() => warmRoute(item)}
       onFocus={() => warmRoute(item)}
     >
-      <Icon size={18} aria-hidden="true" />
+      <Icon size={19} aria-hidden="true" />
       <span><strong>{item.label}</strong><small>{item.description}</small></span>
     </a>
   );
 }
 
-function BrowseGroup({ label, items, activeRoute, mobile = false }: { label: string; items: NavItem[]; activeRoute: RouteId; mobile?: boolean }) {
+function MenuGroup({ label, items, activeRoute, mobile = false }: { label: string; items: NavItem[]; activeRoute: RouteId; mobile?: boolean }) {
   return (
-    <div class="browse-menu__group">
-      <span class="browse-menu__label">{label}</span>
+    <div class="browse-menu__group v3-shell-menu-group">
+      <span class="browse-menu__label v3-shell-menu-label">{label}</span>
       {items.map((item, index) => (
-        <BrowseLink key={item.id} item={item} active={activeRoute === item.id} initial={mobile && label === "Discover" && index === 0} />
+        <MenuLink key={item.id} item={item} active={activeRoute === item.id} initial={mobile && label === "Explore more" && index === 0} />
       ))}
     </div>
   );
@@ -124,7 +135,7 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
   const desktopPanelRef = useRef<HTMLDivElement>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
   const mobileDialogRef = useRef<HTMLDivElement>(null);
-  const browseActive = browseNav.some((item) => item.id === activeRoute);
+  const menuActive = menuNav.some((item) => item.id === activeRoute);
 
   const closeBrowse = (returnFocus = false) => {
     const surface = browseSurface;
@@ -245,131 +256,128 @@ export function AppShell({ activeRoute, children }: AppShellProps) {
   };
 
   return (
-    <div class="site-shell">
+    <div class="site-shell v3-shell" data-v3-shell="true">
       <a class="skip-link" href="#main-content" onClick={skipToContent}>Skip to content</a>
 
-      <header class="site-header">
-        <a
-          class="brand"
-          href={hrefFor("/")}
-          aria-label="Unreached home"
-          onPointerEnter={() => preloadRoute("explore")}
-          onPointerDown={() => preloadRoute("explore")}
-          onFocus={() => preloadRoute("explore")}
-        >
-          <span class="brand-mark" aria-hidden="true">
-            <span class="brand-mark__meridian" />
-            <span class="brand-mark__parallel" />
-          </span>
-          <span class="brand-word">Unreached</span>
-        </a>
+      <header class="site-header v3-shell-header">
+        <div class="v3-shell-header__inner">
+          <a
+            class="brand v3-shell-brand"
+            href={hrefFor("/")}
+            aria-label="Unreached home"
+            onPointerEnter={() => preloadRoute("explore")}
+            onPointerDown={() => preloadRoute("explore")}
+            onFocus={() => preloadRoute("explore")}
+          >
+            <span class="brand-mark v3-shell-brand__mark" aria-hidden="true">
+              <span class="brand-mark__meridian" />
+              <span class="brand-mark__parallel" />
+            </span>
+            <span class="v3-shell-brand__text">
+              <span class="brand-word">Unreached</span>
+              <small>Mission atlas</small>
+            </span>
+          </a>
 
-        <nav class="desktop-nav" aria-label="Primary navigation">
-          {primaryNav.map((item) => <NavLink key={item.id} item={item} active={activeRoute === item.id} />)}
-          <div class="browse-menu" ref={desktopBrowseRef}>
+          <nav class="desktop-nav v3-primary-nav" aria-label="Primary navigation">
+            {primaryNav.map((item) => <NavLink key={item.id} item={item} active={activeRoute === item.id} />)}
+          </nav>
+
+          <div class="header-actions v3-shell-actions" aria-label="Utilities">
+            <DataStatus />
             <button
-              ref={desktopTriggerRef}
-              class={`browse-trigger${browseActive ? " is-active" : ""}`}
+              class="icon-action utility-action search-action v3-shell-action"
               type="button"
-              aria-expanded={browseSurface === "desktop"}
-              aria-controls="desktop-browse-menu"
-              onClick={() => setBrowseSurface((surface) => surface === "desktop" ? null : "desktop")}
-              onKeyDown={onDesktopTriggerKeyDown}
+              aria-label="Search people, countries and languages"
+              title="Search people, countries and languages (/)"
+              onClick={openSearch}
             >
-              <Menu size={17} aria-hidden="true" />
-              <span>Browse</span>
-              <ChevronDown class="browse-trigger__chevron" size={14} aria-hidden="true" />
+              <Search size={18} aria-hidden="true" />
+              <span class="utility-action__label">Search</span>
+              <kbd aria-hidden="true">/</kbd>
             </button>
-            {browseSurface === "desktop" ? (
-              <div
-                ref={desktopPanelRef}
-                id="desktop-browse-menu"
-                class="browse-menu__panel"
-                aria-label="Browse sections"
-                onKeyDown={onDesktopPanelKeyDown}
+            <a
+              class={`icon-action utility-action lists-action v3-shell-action${activeRoute === "saved" ? " is-active" : ""}`}
+              href={hrefFor("/saved")}
+              aria-label="My saved people and prayer list"
+              aria-current={activeRoute === "saved" ? "page" : undefined}
+              onPointerEnter={() => preloadRoute("saved")}
+              onPointerDown={() => preloadRoute("saved")}
+              onFocus={() => preloadRoute("saved")}
+            >
+              <Bookmark size={18} aria-hidden="true" />
+              <span class="utility-action__label">Saved</span>
+            </a>
+            <div class="browse-menu v3-shell-more" ref={desktopBrowseRef}>
+              <button
+                ref={desktopTriggerRef}
+                class={`browse-trigger v3-shell-action v3-shell-more__trigger${menuActive ? " is-active" : ""}`}
+                type="button"
+                aria-label="More navigation"
+                aria-expanded={browseSurface === "desktop"}
+                aria-controls="desktop-more-menu"
+                onClick={() => setBrowseSurface((surface) => surface === "desktop" ? null : "desktop")}
+                onKeyDown={onDesktopTriggerKeyDown}
               >
-                <BrowseGroup label="Discover" items={discoverNav} activeRoute={activeRoute} />
-                <BrowseGroup label="Reference" items={referenceNav} activeRoute={activeRoute} />
-              </div>
-            ) : null}
+                <Menu size={18} aria-hidden="true" />
+                <span>More</span>
+                <ChevronDown class="browse-trigger__chevron" size={14} aria-hidden="true" />
+              </button>
+              {browseSurface === "desktop" ? (
+                <div
+                  ref={desktopPanelRef}
+                  id="desktop-more-menu"
+                  class="browse-menu__panel v3-shell-more__panel"
+                  aria-label="More sections"
+                  onKeyDown={onDesktopPanelKeyDown}
+                >
+                  <MenuGroup label="Explore more" items={exploreMoreNav} activeRoute={activeRoute} />
+                  <MenuGroup label="Reference" items={referenceNav} activeRoute={activeRoute} />
+                  <MenuGroup label="Personal" items={personalNav} activeRoute={activeRoute} />
+                </div>
+              ) : null}
+            </div>
           </div>
-        </nav>
-
-        <div class="header-actions" aria-label="Utilities">
-          <DataStatus />
-          <button
-            class="icon-action utility-action search-action"
-            type="button"
-            aria-label="Search people, countries and languages"
-            title="Search people, countries and languages (/)"
-            onClick={openSearch}
-          >
-            <Search size={18} aria-hidden="true" />
-            <span class="utility-action__label">Search</span>
-            <kbd aria-hidden="true">/</kbd>
-          </button>
-          <a
-            class={`icon-action utility-action lists-action${activeRoute === "saved" ? " is-active" : ""}`}
-            href={hrefFor("/saved")}
-            aria-label="My saved people and prayer list"
-            aria-current={activeRoute === "saved" ? "page" : undefined}
-            onPointerEnter={() => preloadRoute("saved")}
-            onPointerDown={() => preloadRoute("saved")}
-            onFocus={() => preloadRoute("saved")}
-          >
-            <Bookmark size={18} aria-hidden="true" />
-            <span class="utility-action__label">My lists</span>
-          </a>
-          <a
-            class={`icon-action utility-action account-action${activeRoute === "account" ? " is-active" : ""}`}
-            href={hrefFor("/account")}
-            aria-label="Account and private sync"
-            aria-current={activeRoute === "account" ? "page" : undefined}
-            onPointerEnter={() => preloadRoute("account")}
-            onPointerDown={() => preloadRoute("account")}
-            onFocus={() => preloadRoute("account")}
-          >
-            <UserRound size={18} aria-hidden="true" />
-            <span class="utility-action__label">Account</span>
-          </a>
         </div>
       </header>
 
       <main id="main-content" class="main-content" tabIndex={-1}>{children}</main>
 
-      <nav class="mobile-nav" aria-label="Primary navigation">
-        {primaryNav.map((item) => <NavLink key={item.id} item={item} active={activeRoute === item.id} />)}
+      <nav class="mobile-nav v3-mobile-nav" aria-label="Primary navigation">
+        {mobileNav.map((item) => <NavLink key={item.id} item={item} active={activeRoute === item.id} />)}
         <button
           ref={mobileTriggerRef}
-          class={`nav-link mobile-browse-trigger${browseActive ? " is-active" : ""}`}
+          class={`nav-link mobile-browse-trigger v3-shell-nav-link${menuActive ? " is-active" : ""}`}
           type="button"
+          aria-label="More navigation"
           aria-expanded={browseSurface === "mobile"}
-          aria-controls="mobile-browse-menu"
+          aria-controls="mobile-more-menu"
           onClick={() => setBrowseSurface((surface) => surface === "mobile" ? null : "mobile")}
         >
-          <Menu size={17} aria-hidden="true" />
+          <Menu size={18} aria-hidden="true" />
           <span>More</span>
         </button>
       </nav>
 
       {browseSurface === "mobile" ? (
         <>
-          <div class="mobile-nav-backdrop" aria-hidden="true" onClick={() => closeBrowse(false)} />
+          <div class="mobile-nav-backdrop v3-mobile-nav-backdrop" aria-hidden="true" onClick={() => closeBrowse(false)} />
           <div
             ref={mobileDialogRef}
-            id="mobile-browse-menu"
-            class="mobile-browse-sheet"
+            id="mobile-more-menu"
+            class="mobile-browse-sheet v3-mobile-more-sheet"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="mobile-browse-heading"
+            aria-labelledby="mobile-more-heading"
             onKeyDown={onMobileDialogKeyDown}
           >
-            <div class="mobile-browse-sheet__heading">
-              <div><span class="eyebrow">Navigation</span><strong id="mobile-browse-heading">Browse more sections</strong></div>
+            <div class="mobile-browse-sheet__heading v3-mobile-more-sheet__heading">
+              <div><span class="eyebrow">Navigation</span><strong id="mobile-more-heading">More navigation</strong></div>
               <button type="button" aria-label="Close navigation" onClick={() => closeBrowse(true)}><X size={18} aria-hidden="true" /></button>
             </div>
-            <BrowseGroup label="Discover" items={discoverNav} activeRoute={activeRoute} mobile />
-            <BrowseGroup label="Reference" items={referenceNav} activeRoute={activeRoute} mobile />
+            <MenuGroup label="Explore more" items={exploreMoreNav} activeRoute={activeRoute} mobile />
+            <MenuGroup label="Reference" items={referenceNav} activeRoute={activeRoute} mobile />
+            <MenuGroup label="Personal" items={personalNav} activeRoute={activeRoute} mobile />
           </div>
         </>
       ) : null}

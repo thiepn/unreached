@@ -74,9 +74,6 @@ test("skip navigation exposes visible focus on exactly one main landmark", async
   await expect(page.locator("main")).toHaveCount(1);
   await expect(main).toBeVisible();
 
-  // Route changes intentionally focus main for SPA navigation. Certify that
-  // behavior first, then use real reverse keyboard traversal to reach the
-  // document-start skip link without resetting the browser's tab origin.
   await expect(main).toBeFocused();
   let focusStyle = await main.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -139,20 +136,18 @@ test("primary keyboard paths remain operable", async ({ page }) => {
   await page.goto("./#/countries");
 
   const main = page.locator("#main-content");
-  // Direct route loads intentionally schedule main focus in requestAnimationFrame.
-  // Wait for that lifecycle to finish before moving focus into keyboard controls.
   await expect(main).toBeFocused();
 
-  const browse = page.getByRole("button", { name: "Browse" });
-  await browse.focus();
-  await expect(browse).toBeFocused();
+  const more = page.getByRole("button", { name: "More navigation" });
+  await more.focus();
+  await expect(more).toBeFocused();
   await page.keyboard.press("ArrowDown");
-  const panel = page.locator("#desktop-browse-menu");
+  const panel = page.locator("#desktop-more-menu");
   await expect(panel).toBeVisible();
   await expect(panel.locator(".browse-link").first()).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(panel).toBeHidden();
-  await expect(browse).toBeFocused();
+  await expect(more).toBeFocused();
 
   await page.keyboard.press("/");
   const search = page.getByRole("dialog", { name: "Search Unreached" });
