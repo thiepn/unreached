@@ -57,12 +57,12 @@ import "./styles/prayer/guides-and-lists.css";
 import "./styles/account/ux.css";
 import "./styles/comprehension.css";
 import "./styles/explore/newcomer-entry.css";
-import "./styles/v3/tokens.css";
-import "./styles/v3/typography.css";
-import "./styles/v3/layout.css";
-import "./styles/v3/components.css";
-import "./styles/v3/atlas.css";
-import "./styles/v3/responsive.css";
+import "./styles/atlas-foundation/tokens.css";
+import "./styles/atlas-foundation/typography.css";
+import "./styles/atlas-foundation/layout.css";
+import "./styles/atlas-foundation/components.css";
+import "./styles/atlas-foundation/atlas.css";
+import "./styles/atlas-foundation/responsive.css";
 import "./styles/foundation/accessibility.css";
 
 // Start the single prepared IndexedDB read as soon as the entry module runs.
