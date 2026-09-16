@@ -6,10 +6,12 @@
   "scripts": {
     "predev": "npm run geography:build",
     "dev": "vite",
-    "build": "npm run typecheck && npm run v3:phase1-check && npm run v3:phase2-check && npm run data:check && npm run peoplegroups:check && npm run peoplegroups:runtime-check && npm run peoplegroups:visible-check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run visualization:live-check && npm run country:check && npm run people:check && npm run comprehension:check && npm run context:check && npm run editorial-expansion:check && npm run prayer:check && npm run prayer-practice:check && npm run prayer-rotation:check && npm run prayer-session:check && npm run offline:check && npm run sync:check && npm run instant-data:check && npm run language:check && npm run discovery:check && npm run editorial-discovery:check && npm run navigation:check && npm run accessibility:check && npm run css:check && npm run operations:check && npm run release:check && npm run phase5:check && vite build && npm run offline:dist && npm run release:dist",
+    "build": "npm run typecheck && npm run v3:phase1-check && npm run v3:phase2-check && npm run v3:phase3-check && npm run data:check && npm run peoplegroups:check && npm run peoplegroups:runtime-check && npm run peoplegroups:visible-check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run visualization:live-check && npm run country:check && npm run people:check && npm run comprehension:check && npm run context:check && npm run editorial-expansion:check && npm run prayer:check && npm run prayer-practice:check && npm run prayer-rotation:check && npm run prayer-session:check && npm run offline:check && npm run sync:check && npm run instant-data:check && npm run language:check && npm run discovery:check && npm run editorial-discovery:check && npm run navigation:check && npm run accessibility:check && npm run css:check && npm run operations:check && npm run release:check && npm run phase5:check && vite build && npm run offline:dist && npm run release:dist",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "v3:phase1-check": "tsx scripts/v3/phase1-check.ts",
     "v3:phase2-check": "tsx scripts/v3/phase2-check.ts",
+    "v3:phase3-check": "tsx scripts/v3/phase3-check.ts",
+    "v3:editorial-preview": "tsx scripts/v3/editorial-preview.ts",
     "data:check": "tsx scripts/data/check.ts",
     "peoplegroups:check": "tsx scripts/data/peoplegroups/check.ts",
     "peoplegroups:runtime-check": "tsx scripts/data/peoplegroups/runtime-check.ts && tsx scripts/data/peoplegroups/cache-check.ts && tsx scripts/data/peoplegroups/record-check.ts",
