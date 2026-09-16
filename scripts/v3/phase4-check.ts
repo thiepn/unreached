@@ -102,12 +102,15 @@ for (const marker of [
   'data-v3-map-shell="true"',
 ]) requireText(designPage, marker, "reference-page marker");
 
-// Phase 4 is foundation work, not an early rewrite of production routes.
+// Phase 4 prevented premature page migration. Once a later owning phase ships,
+// its page is explicitly allowlisted here while all other production pages stay
+// protected from accidental visual-system leakage. Phase 6 owns Explore.
+const migratedProductPages = new Set(["ExplorePage.tsx"]);
 const pageFiles = (await readdir(resolve(root, "src/pages"))).filter((name) => name.endsWith(".tsx") && name !== "DesignSystemPage.tsx");
 for (const file of pageFiles) {
   const source = await read(`src/pages/${file}`);
-  if (/\bv3-[a-z0-9-]+/.test(source)) {
-    throw new Error(`V3 Phase 4 leaked new visual-system classes into production page ${file}; page migration belongs to later phases.`);
+  if (/\bv3-[a-z0-9-]+/.test(source) && !migratedProductPages.has(file)) {
+    throw new Error(`V3 Phase 4 visual-system classes reached unowned production page ${file}; migrate pages only in their owning V3 phase.`);
   }
 }
 
@@ -126,4 +129,4 @@ const packageJson = await read("package.json");
 requireText(packageJson, '"v3:phase4-check": "tsx scripts/v3/phase4-check.ts"', "Phase 4 package script");
 requireText(packageJson, "npm run v3:phase3-check && npm run v3:phase4-check", "blocking Phase 4 build integration");
 
-console.log("V3 Phase 4 visual foundation checks passed: canonical tokens, typography, layout, surfaces, controls, editorial/map primitives, responsive behavior, reference route, and later-phase migration boundary are enforced.");
+console.log("V3 Phase 4 visual foundation checks passed: canonical tokens, typography, layout, surfaces, controls, editorial/map primitives, responsive behavior, reference route, and phase-owned migration boundary are enforced.");
