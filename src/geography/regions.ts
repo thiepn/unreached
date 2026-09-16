@@ -1,5 +1,5 @@
 import type { MapCountryFeature } from "../map/types";
-import type { LiveMissionCountrySummary } from "../visualization";
+import type { LiveMissionCountrySummary } from "../visualization/liveTypes";
 
 export interface AtlasRegionIdentity {
   id: string;
