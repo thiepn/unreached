@@ -15,8 +15,14 @@ if (!router.includes('| "coverage"') || !router.includes('"/coverage": "coverage
 const app = await readText("src/app/App.tsx");
 if (!app.includes("EditorialCoveragePage") || !app.includes('case "coverage"')) throw new Error("v1.4 coverage page is not routed by the application shell.");
 
+// V3 Phase 5 keeps the editorial-coverage capability and its contextual deep
+// links while deliberately removing editorial/data-quality tooling from normal
+// global navigation. The capability remains discoverable from owning content
+// surfaces rather than competing with the atlas's core product destinations.
 const shell = await readText("src/components/AppShell.tsx");
-if (!shell.includes('label: "Reviewed coverage"') || !shell.includes('path: "/coverage"')) throw new Error("v1.4 reviewed coverage is missing from Browse navigation.");
+if (shell.includes('label: "Reviewed coverage"') || shell.includes('path: "/coverage"')) {
+  throw new Error("V3 navigation must not promote Reviewed Coverage in the normal application shell.");
+}
 
 const coverage = await readText("src/pages/EditorialCoveragePage.tsx");
 for (const required of [
@@ -51,4 +57,4 @@ if (manifest.fixture !== false || !manifest.profileCount || manifest.profileCoun
   throw new Error("v1.4 requires the certified six-plus reviewed editorial manifest inherited from v1.3.");
 }
 
-console.log(`v1.4 capability checks passed on package ${pkg.version}: ${manifest.profileCount} reviewed profiles remain discoverable through local-first coverage navigation without changing mission-priority semantics.`);
+console.log(`v1.4 capability checks passed on package ${pkg.version}: ${manifest.profileCount} reviewed profiles remain available through local-first contextual coverage navigation without changing mission-priority semantics or occupying V3 global navigation.`);
