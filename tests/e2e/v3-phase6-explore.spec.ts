@@ -132,7 +132,7 @@ test("mobile selection opens the explanatory sheet", async ({ page }) => {
 test("country finder remains usable when map rendering is only an enhancement", async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 720 });
   await page.goto("./#/", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", { name: "Find a country" })).toBeVisible();
+  await expect(page.locator("#country-index-heading")).toHaveText("Find a country");
   await expect(page.locator("#desktop-country-search")).toBeVisible();
   await expect(page.getByRole("link", { name: "Browse all →" })).toHaveAttribute("href", "#/countries");
 });
