@@ -115,7 +115,7 @@ const docs = await read("docs/V3_PHASE4_VISUAL_FOUNDATION.md");
 for (const marker of [
   "Modern Mission Atlas",
   "four surface roles",
-  "mission-status color is semantic",
+  "Mission-status color is semantic",
   "44×44",
   "Phase 5",
   "does not redesign production routes",
