@@ -23,8 +23,8 @@ const RESEARCH_VIEW_IDS: LiveMissionLayerId[] = ["gsec-coverage", "population-co
 
 function mapLayerLabel(layer: LiveMissionLayerId): string {
   switch (layer) {
-    case "unreached-population": return "Unreached population share";
-    case "unreached-contexts": return "Unreached people-group share";
+    case "unreached-population": return "IMB Unreached population share (<2% evangelical)";
+    case "unreached-contexts": return "IMB Unreached people-group share (<2% evangelical)";
     case "gsec-coverage": return "Mission-status data coverage";
     case "population-coverage": return "Population-data coverage";
     case "people-contexts": return "Source people-group records";
@@ -33,8 +33,8 @@ function mapLayerLabel(layer: LiveMissionLayerId): string {
 
 function mapLayerShortLabel(layer: LiveMissionLayerId): string {
   switch (layer) {
-    case "unreached-population": return "Unreached population";
-    case "unreached-contexts": return "Unreached groups";
+    case "unreached-population": return "IMB <2% evangelical population";
+    case "unreached-contexts": return "IMB <2% evangelical groups";
     case "gsec-coverage": return "Mission-status coverage";
     case "population-coverage": return "Population coverage";
     case "people-contexts": return "Source records";
@@ -44,9 +44,9 @@ function mapLayerShortLabel(layer: LiveMissionLayerId): string {
 function mapLayerMeaning(layer: LiveMissionLayerId): string {
   switch (layer) {
     case "unreached-population":
-      return "Shows the share of represented source population belonging to people-group records classified as unreached.";
+      return "Uses the PeopleGroups.org / IMB definition of unreached: people-group records with less than 2% evangelical Christian population (GSEC 0–3), weighted by represented population.";
     case "unreached-contexts":
-      return "Shows the share of source people-group records with known mission status that are classified as unreached.";
+      return "Uses the PeopleGroups.org / IMB definition of unreached: people-group records with less than 2% evangelical Christian population (GSEC 0–3), with every source record counted once.";
     case "gsec-coverage":
       return "Research view showing how much of the source record set has a reported mission-status value.";
     case "population-coverage":
@@ -58,10 +58,10 @@ function mapLayerMeaning(layer: LiveMissionLayerId): string {
 
 function primaryMapCaveat(layer: LiveMissionLayerId): string | null {
   if (layer === "unreached-population") {
-    return "Based on source records with known population and mission status. Not national census data.";
+    return "This is the PeopleGroups.org / IMB definition, not the Joshua Project definition; the two can produce very different country results, especially in Europe. Based on source records with known population and mission status. Not national census data.";
   }
   if (layer === "unreached-contexts") {
-    return "Every source people-group-in-country record counts once, regardless of population.";
+    return "This is the PeopleGroups.org / IMB definition, not the Joshua Project definition. Every source people-group-in-country record counts once, regardless of population.";
   }
   return null;
 }

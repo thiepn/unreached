@@ -20,13 +20,13 @@ const DEFINITIONS: Record<ComprehensionTerm, ComprehensionDefinition> = {
   },
   unreached: {
     label: "Unreached",
-    short: "A mission-status label indicating that established evangelical Christian presence is limited according to the source classification.",
-    detail: "Unreached applies this label when the source places a people-group record in GSEC 0–3. The classification is not a statement about the worth, character, or spiritual sincerity of the people themselves.",
+    short: "A mission-status label indicating that established evangelical Christian presence is limited; PeopleGroups.org / IMB defines an unreached people group as less than 2% evangelical Christian.",
+    detail: "Unreached applies this source-specific label when PeopleGroups.org places a people-group record in GSEC 0–3. Other mission datasets can use different criteria, so their country-level unreached percentages may differ substantially, especially in historically Christian regions. The classification is not a statement about the worth, character, or spiritual sincerity of the people themselves.",
   },
   gsec: {
     label: "GSEC",
-    short: "A source classification used to describe the status of evangelical Christianity among a people-group record.",
-    detail: "Unreached maps GSEC 0–3 to the user-facing label Unreached, GSEC 4–6 to Other GSEC status, and leaves missing values unknown. The exact source code remains available in detailed data.",
+    short: "A PeopleGroups.org / IMB classification used to describe the status of evangelical Christianity among a people-group record.",
+    detail: "Unreached maps GSEC 0–3 to the user-facing label Unreached because those statuses are below 2% evangelical Christian, maps GSEC 4–6 to Other GSEC status, and leaves missing values unknown. The exact source code remains available in detailed data.",
   },
   "population-estimate": {
     label: "Population estimate",
