@@ -8,6 +8,8 @@ const AboutPage = lazy(() => import("../pages/AboutPage").then((module) => ({ de
 const AccountPage = lazy(() => import("../pages/AccountPage").then((module) => ({ default: module.AccountPage })));
 const CountriesPage = lazy(() => import("../pages/CountriesPage").then((module) => ({ default: module.CountriesPage })));
 const CountryPage = lazy(() => import("../pages/CountryPage").then((module) => ({ default: module.CountryPage })));
+const RegionPage = lazy(() => import("../pages/RegionPage").then((module) => ({ default: module.RegionPage })));
+const RegionsPage = lazy(() => import("../pages/RegionsPage").then((module) => ({ default: module.RegionsPage })));
 const DesignSystemPage = lazy(() => import("../pages/DesignSystemPage").then((module) => ({ default: module.DesignSystemPage })));
 const EditorialCoveragePage = lazy(() => import("../pages/EditorialCoveragePage").then((module) => ({ default: module.EditorialCoveragePage })));
 const ExplorePage = lazy(async () => {
@@ -43,6 +45,7 @@ export function App() {
   switch (route.id) {
     case "explore": page = <ExplorePage />; break;
     case "peoples": page = route.peopleSourceId ? <PeopleContextualPage sourcePeopleId={route.peopleSourceId} /> : <PeoplesPage />; break;
+    case "regions": page = route.regionSlug ? <RegionPage regionId={route.regionSlug} /> : <RegionsPage />; break;
     case "countries": page = route.countryIso3 ? <CountryPage iso3={route.countryIso3} /> : <CountriesPage />; break;
     case "languages": page = route.languageIso6393 ? <LanguagePage iso6393={route.languageIso6393} /> : <LanguagesPage />; break;
     case "coverage": page = <EditorialCoveragePage />; break;

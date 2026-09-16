@@ -51,6 +51,7 @@ const savedNav: NavItem = {
 
 const exploreMoreNav: NavItem[] = [
   { id: "countries", label: "Countries", path: "/countries", icon: Globe2, description: "Browse mission context by country" },
+  { id: "regions", label: "Regions", path: "/regions", icon: Globe2, description: "Move from world regions into countries and peoples" },
   { id: "languages", label: "Languages", path: "/languages", icon: Languages, description: "Explore languages and reported resource context" },
 ];
 

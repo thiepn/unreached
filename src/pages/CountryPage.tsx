@@ -3,9 +3,15 @@ import { useEffect, useState } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
 import { CountryGuidedStart } from "../components/CountryGuidedStart";
-import { formatCount, formatPercent, useLiveCountryExplorer } from "../countries";
+import {
+  ATLAS_COUNTRY_SOURCE,
+  formatCount,
+  formatPercent,
+  useAtlasCountryExplorer,
+  type AtlasCountryRuntimeRecord,
+} from "../countries";
+import { atlasRegionForCountry } from "../geography/regions";
 import { useWorldGeography } from "../map/geography";
-import { PEOPLE_GROUPS_ATTRIBUTION, type VisibleCountryRecord } from "../providers/peoplegroups";
 
 const DETAIL_RECORD_BATCH_SIZE = 40;
 
@@ -14,13 +20,13 @@ function sourceDate(value: string | null): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
 }
 
-function contextCoverage(record: VisibleCountryRecord): string {
+function contextCoverage(record: AtlasCountryRuntimeRecord): string {
   const known = record.summary.populationKnownContextCount;
   const total = record.summary.peopleContextCount;
   return known === total ? "Complete across source contexts" : `${known}/${total} contexts have population estimates`;
 }
 
-function CountryMetrics({ record }: { record: VisibleCountryRecord }) {
+function CountryMetrics({ record }: { record: AtlasCountryRuntimeRecord }) {
   const summary = record.summary;
   return (
     <div class="country-metric-grid country-metric-grid--comprehension" aria-label="Country mission overview">
@@ -31,7 +37,7 @@ function CountryMetrics({ record }: { record: VisibleCountryRecord }) {
   );
 }
 
-function CountryResearchMetrics({ record }: { record: VisibleCountryRecord }) {
+function CountryResearchMetrics({ record }: { record: AtlasCountryRuntimeRecord }) {
   const summary = record.summary;
   const classified = summary.peopleContextCount - summary.unknownContextCount;
   return (
@@ -44,7 +50,7 @@ function CountryResearchMetrics({ record }: { record: VisibleCountryRecord }) {
   );
 }
 
-function CoveragePanel({ record }: { record: VisibleCountryRecord }) {
+function CoveragePanel({ record }: { record: AtlasCountryRuntimeRecord }) {
   const total = record.summary.peopleContextCount;
   const knownPopulation = record.summary.populationKnownContextCount;
   const classified = total - record.summary.unknownContextCount;
@@ -75,7 +81,7 @@ function CoveragePanel({ record }: { record: VisibleCountryRecord }) {
 
 export function CountryPage({ iso3 }: { iso3: string }) {
   const geography = useWorldGeography();
-  const intelligence = useLiveCountryExplorer();
+  const intelligence = useAtlasCountryExplorer();
   const code = iso3.toUpperCase();
   const [visiblePeopleCount, setVisiblePeopleCount] = useState(DETAIL_RECORD_BATCH_SIZE);
 
@@ -86,11 +92,11 @@ export function CountryPage({ iso3 }: { iso3: string }) {
   const feature = geography.countries.find((country) => country.properties.iso3 === code || country.properties.adminA3 === code) ?? null;
   const record = intelligence.countriesByIso3.get(code) ?? null;
 
-  if (geography.loading) return <section class="country-page country-page--state" role="status">Loading country geography…</section>;
-  if (geography.error) return <section class="country-page country-page--state" role="alert">{geography.error}</section>;
+  if (geography.loading) return <section class="country-page country-page--state v3-geography-page" role="status">Loading country geography…</section>;
+  if (geography.error) return <section class="country-page country-page--state v3-geography-page" role="alert">{geography.error}</section>;
   if (!feature) {
     return (
-      <section class="country-page country-page--state">
+      <section class="country-page country-page--state v3-geography-page">
         <div class="eyebrow">Country Explorer</div>
         <h1 class="display-title">Country not found.</h1>
         <p>No Natural Earth Admin-0 area could be matched to <strong>{code}</strong>.</p>
@@ -99,6 +105,7 @@ export function CountryPage({ iso3 }: { iso3: string }) {
     );
   }
 
+  const region = atlasRegionForCountry(feature);
   const name = record?.name ?? feature.properties.name;
   const unreachedPeople = record?.contexts.filter((context) => context.reach.classification === "unreached") ?? [];
   const largestUnreachedPeople = [...unreachedPeople]
@@ -110,19 +117,20 @@ export function CountryPage({ iso3 }: { iso3: string }) {
   const prayerHref = `#/pray?country=${encodeURIComponent(code)}`;
 
   return (
-    <article class="country-page country-page--comprehension">
-      <nav class="country-breadcrumb" aria-label="Breadcrumb">
-        <a href={hrefFor("/countries")}><ArrowLeft size={15} aria-hidden="true" /> Countries</a>
+    <article class="country-page country-page--comprehension v3-geography-page v3-country-page">
+      <nav class="country-breadcrumb v3-geography-breadcrumb" aria-label="Breadcrumb">
+        <a href={hrefFor("/regions")}>World</a>
         <span>/</span>
+        {region ? <><a href={hrefFor(`/regions/${region.id}`)}>{region.name}</a><span>/</span></> : null}
         <span aria-current="page">{name}</span>
       </nav>
 
-      <header class="country-hero">
+      <header class="country-hero v3-country-hero">
         <div>
-          <div class="eyebrow">{record?.subregionName ?? record?.regionName ?? feature.properties.continent ?? "Country Explorer"}</div>
+          <div class="eyebrow">{region?.name ?? "World"}</div>
           <h1 class="display-title">{name}</h1>
-          <p class="country-hero-summary">Explore the people-group records represented in {name}, understand which are classified as unreached, and move from data into prayer.</p>
-          <div class="country-identity-line"><span>{code}</span><span>{feature.properties.continent ?? "World"}</span></div>
+          <p class="country-hero-summary">Meet the people represented in {name}, understand the source-defined mission context, and continue into a people profile or prayer.</p>
+          <div class="country-identity-line"><span>{code}</span><span>{record?.subregionName ?? record?.regionName ?? "Source subregion not supplied"}</span></div>
         </div>
         <div class="country-hero-actions">
           <a class="country-map-link" href={mapHref}>Explore on map <ArrowUpRight size={17} aria-hidden="true" /></a>
@@ -142,10 +150,10 @@ export function CountryPage({ iso3 }: { iso3: string }) {
 
           <section class="country-section country-largest-unreached" aria-labelledby="largest-unreached-heading">
             <div class="country-section__heading">
-              <div><span class="eyebrow">Start with the people</span><h2 id="largest-unreached-heading">Largest unreached peoples represented</h2></div>
+              <div><span class="eyebrow">Country → People</span><h2 id="largest-unreached-heading">Largest unreached peoples represented</h2></div>
               <UsersRound size={21} aria-hidden="true" />
             </div>
-            <p class="country-section__intro">Sorted by the known population estimate reported for each source record in {name}. These are represented source estimates, not a national census ranking.</p>
+            <p class="country-section__intro">Sorted by the known population estimate reported for each source record in {name}. These are represented source estimates, not a national census ranking or a ranking of mission importance.</p>
             {largestUnreachedPeople.length ? (
               <div class="country-largest-people-list">
                 {largestUnreachedPeople.map((people, index) => (
@@ -248,8 +256,8 @@ export function CountryPage({ iso3 }: { iso3: string }) {
           <footer class="country-sources">
             <strong>Data sources & denominator</strong>
             <p>{record.summary.denominator}. Newest provider context update: {sourceDate(record.sourceUpdatedAt)}.</p>
-            <a href={PEOPLE_GROUPS_ATTRIBUTION.url} target="_blank" rel="noreferrer">{PEOPLE_GROUPS_ATTRIBUTION.label}</a>
-            <p>Geographic boundaries: Natural Earth de facto Admin-0 presentation. Country selection is geographic, not a sovereignty statement.</p>
+            <a href={ATLAS_COUNTRY_SOURCE.url} target="_blank" rel="noreferrer">{ATLAS_COUNTRY_SOURCE.label}</a>
+            <p>Geographic boundaries and region membership: Natural Earth de facto Admin-0 presentation. Country selection is geographic, not a sovereignty statement.</p>
           </footer>
         </>
       ) : null}

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 export type RouteId =
   | "explore"
   | "peoples"
+  | "regions"
   | "countries"
   | "languages"
   | "coverage"
@@ -16,6 +17,7 @@ export type RouteId =
 export interface RouteState {
   id: RouteId;
   path: string;
+  regionSlug: string | null;
   countryIso3: string | null;
   peopleSourceId: number | null;
   languageIso6393: string | null;
@@ -26,6 +28,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/": "explore",
   "/explore": "explore",
   "/peoples": "peoples",
+  "/regions": "regions",
   "/countries": "countries",
   "/languages": "languages",
   "/coverage": "coverage",
@@ -55,11 +58,15 @@ function positiveSourceId(value: string | undefined): number | null {
 }
 
 function emptyState(id: RouteId, path: string): RouteState {
-  return { id, path, countryIso3: null, peopleSourceId: null, languageIso6393: null, prayerSourceId: null };
+  return { id, path, regionSlug: null, countryIso3: null, peopleSourceId: null, languageIso6393: null, prayerSourceId: null };
 }
 
 function readRoute(): RouteState {
   const path = normalizeRoutePath(window.location.hash);
+
+  const regionMatch = path.match(/^\/regions\/([a-z0-9-]+)$/i);
+  if (regionMatch?.[1]) return { ...emptyState("regions", path), regionSlug: regionMatch[1].toLocaleLowerCase("en") };
+
   const countryMatch = path.match(/^\/countries\/([A-Za-z]{3})$/);
   if (countryMatch?.[1]) return { ...emptyState("countries", path), countryIso3: countryMatch[1].toUpperCase() };
 
@@ -84,6 +91,7 @@ function readRoute(): RouteState {
 function titleForRoute(route: RouteState): string {
   if (route.id === "explore") return "Explore | Unreached";
   if (route.id === "peoples") return route.peopleSourceId ? `PEID ${route.peopleSourceId} | Unreached` : "People Groups | Unreached";
+  if (route.id === "regions") return route.regionSlug ? `${route.regionSlug.replace(/-/g, " ")} Region | Unreached` : "Regions | Unreached";
   if (route.id === "countries") return route.countryIso3 ? `${route.countryIso3} Country | Unreached` : "Countries | Unreached";
   if (route.id === "languages") return route.languageIso6393 ? `${route.languageIso6393.toUpperCase()} Language | Unreached` : "Languages | Unreached";
   if (route.id === "coverage") return "Reviewed Coverage | Unreached";
@@ -104,9 +112,6 @@ export function hrefFor(path: string): string {
 export function useHashRoute(): RouteState {
   const [route, setRoute] = useState<RouteState>(() => readRoute());
   const historyTraversalRef = useRef(false);
-  // A fresh direct route load should establish the app's main landmark as the
-  // keyboard focus target. Later browser-history traversals deliberately set
-  // this false so native scroll/focus restoration is not overwritten.
   const resetViewportRef = useRef(true);
 
   useEffect(() => {
