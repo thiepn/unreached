@@ -1,0 +1,63 @@
+name: V3 Phase 4 Visual Foundation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase3-editorial-system
+    paths:
+      - "docs/V3_PHASE4_VISUAL_FOUNDATION.md"
+      - "src/styles/v3/**"
+      - "src/pages/DesignSystemPage.tsx"
+      - "src/app/router.ts"
+      - "src/app/App.tsx"
+      - "src/main.tsx"
+      - "scripts/v3/phase4-check.ts"
+      - "tests/e2e/v3-phase4-design-system.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase4-visual-foundation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 4 visual foundation contract
+        run: npm run v3:phase4-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 4 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify desktop and mobile visual foundation
+        run: npm run v3:phase4-visual
+
+      - name: Upload visual foundation evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase4-visual-foundation
+          path: artifacts/v3-phase4
+          if-no-files-found: error
+          retention-days: 30
