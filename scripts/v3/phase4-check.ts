@@ -102,10 +102,16 @@ for (const marker of [
   'data-v3-map-shell="true"',
 ]) requireText(designPage, marker, "reference-page marker");
 
-// Phase 4 prevented premature page migration. Once a later owning phase ships,
-// its page is explicitly allowlisted here while all other production pages stay
-// protected from accidental visual-system leakage. Phase 6 owns Explore.
-const migratedProductPages = new Set(["ExplorePage.tsx"]);
+// Phase 4 prevented premature page migration. Later owning phases explicitly
+// allow their production pages while every remaining page stays protected.
+// Phase 6 owns Explore; Phase 7 owns Regions and Countries.
+const migratedProductPages = new Set([
+  "ExplorePage.tsx",
+  "RegionsPage.tsx",
+  "RegionPage.tsx",
+  "CountriesPage.tsx",
+  "CountryPage.tsx",
+]);
 const pageFiles = (await readdir(resolve(root, "src/pages"))).filter((name) => name.endsWith(".tsx") && name !== "DesignSystemPage.tsx");
 for (const file of pageFiles) {
   const source = await read(`src/pages/${file}`);
