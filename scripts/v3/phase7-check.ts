@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 import { atlasRegionForCountry, buildAtlasRegions } from "../../src/geography/regions";
 import type { MapCountryFeature } from "../../src/map/types";
-import type { LiveMissionCountrySummary } from "../../src/visualization";
+import type { LiveMissionCountrySummary } from "../../src/visualization/liveTypes";
 
 const root = process.cwd();
 const read = (path: string) => readFile(resolve(root, path), "utf8");
@@ -47,7 +47,7 @@ const asiaFeature = {
   properties: { mapKey: "KAZ", iso3: "KAZ", adminA3: "KAZ", name: "Kazakhstan", type: "Sovereign country", boundaryNote: null, sovereignty: "Kazakhstan", continent: "Asia" },
   geometry: { type: "Polygon", coordinates: [] },
 } as unknown as MapCountryFeature;
-const mission = new Map<string, LiveMissionCountrySummary>([["BEN", {
+const beninMission: LiveMissionCountrySummary = {
   iso3: "BEN",
   name: "Benin",
   peopleContextCount: 2,
@@ -67,7 +67,8 @@ const mission = new Map<string, LiveMissionCountrySummary>([["BEN", {
   sourceUpdatedAt: null,
   denominator: "people-group-in-country records returned by PeopleGroups.org",
   methodologyVersion: "u12d-imb-gsec-map-v1",
-}] as LiveMissionCountrySummary]);
+};
+const mission = new Map<string, LiveMissionCountrySummary>([["BEN", beninMission]]);
 
 const syntheticRegions = buildAtlasRegions([africaFeature, asiaFeature], mission);
 if (syntheticRegions.length !== 2) throw new Error("V3 Phase 7 synthetic region grouping failed.");
