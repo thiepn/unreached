@@ -27,8 +27,12 @@ for (const marker of [
   if (!recordStore.includes(marker)) throw new Error(`Phase 4 route-record store missing ${marker}.`);
 }
 
+const peopleBoundary = await readText("src/peoples/profile.ts");
+if (!peopleBoundary.includes("usePeopleGroupsRouteRecord(sourcePeopleId)")) throw new Error("Phase 4/V3 people boundary must preserve route-specific loading.");
+if (!peopleBoundary.includes("usePeopleGroupsRuntimeStore(enabled)")) throw new Error("Phase 4/V3 people boundary must keep full-corpus promotion explicit and opt-in.");
+
 const peoplePage = await readText("src/pages/PeoplePage.tsx");
-if (!peoplePage.includes("usePeopleGroupsRouteRecord")) throw new Error("Phase 4 people details must use route-specific loading.");
+if (!peoplePage.includes("useLivePeopleProfile(sourcePeopleId)")) throw new Error("Phase 4/V3 people details must use the route-specific people boundary.");
 if (peoplePage.includes("useLivePeopleExplorer")) throw new Error("Phase 4 people details must not activate the full people explorer corpus.");
 if (!peoplePage.includes("<ProfileLocalActions record={record}")) throw new Error("Phase 4 people details must pass the already-loaded route entity into profile actions.");
 
@@ -36,7 +40,7 @@ const profileActions = await readText("src/components/ProfileLocalActions.tsx");
 if (profileActions.includes("useLivePeopleExplorer") || profileActions.includes("usePeopleGroupsRuntimeStore")) {
   throw new Error("Phase 4 profile actions must not activate or subscribe to a full PeopleGroups corpus.");
 }
-if (!profileActions.includes("record: RuntimePeopleEntity")) throw new Error("Phase 4 profile actions must consume the route entity directly.");
+if (!profileActions.includes("record: PeopleProfileRecord")) throw new Error("Phase 4/V3 profile actions must consume the already-loaded route entity through the people boundary type.");
 
 const recentTracker = await readText("src/components/RecentRouteTracker.tsx");
 if (!recentTracker.includes("usePeopleGroupsRouteRecord")) throw new Error("Phase 4 people Recent tracking must reuse the route-record store.");
@@ -62,4 +66,4 @@ for (const marker of [
   if (!browser.includes(marker)) throw new Error(`Phase 4 browser certification missing ${marker}.`);
 }
 
-console.log("Phase 4 route-loading checks passed: detail routes, profile actions, and Recent tracking use one verified PeopleGroups record; route records have dedicated caching; canonical full-corpus promotion remains explicit.");
+console.log("Phase 4 route-loading checks passed under V3: the people boundary preserves one-record loading/caching, profile actions consume the loaded entity, Recent and prayer keep route-specific stores, and full-corpus promotion remains explicit.");
