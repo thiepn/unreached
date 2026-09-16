@@ -34,8 +34,8 @@ test("mission terminology can be explained in place", async ({ page }) => {
   const help = page.getByText("What does unreached mean?", { exact: true });
   await expect(help).toBeVisible();
   await help.click();
-  await expect(page.getByText("A mission-status label indicating that established evangelical Christian presence is limited according to the source classification.", { exact: true })).toBeVisible();
-  await expect(page.getByText(/Unreached applies this label when the source places a people-group record in GSEC 0–3/)).toBeVisible();
+  await expect(page.getByText("A mission-status label indicating that established evangelical Christian presence is limited; PeopleGroups.org / IMB defines an unreached people group as less than 2% evangelical Christian.", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Unreached applies this source-specific label when PeopleGroups.org places a people-group record in GSEC 0–3/)).toBeVisible();
 });
 
 test("prayer is a first-class action without hiding research depth", async ({ page }) => {
@@ -103,8 +103,8 @@ test("selected country explains the map result before source breakdown", async (
   const details = summary.locator(".selected-mission-details");
   await expect(details).not.toHaveAttribute("open", "");
   await expect(details.locator(".selected-mission-grid")).not.toBeVisible();
-  await expect(selected.getByRole("link", { name: "Open country profile →" })).toHaveAttribute("href", "#/countries/BEN");
-  await expect(selected.getByRole("link", { name: "Pray for this country’s peoples →" })).toHaveAttribute("href", "#/pray?country=BEN");
+  await expect(selected.getByRole("link", { name: "Explore country →" })).toHaveAttribute("href", "#/countries/BEN");
+  await expect(selected.getByRole("link", { name: "Pray for its peoples →" })).toHaveAttribute("href", "#/pray?country=BEN");
 });
 
 test("research map layer IDs remain URL compatible", async ({ page }) => {

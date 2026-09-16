@@ -64,6 +64,7 @@ import "./styles/atlas-foundation/components.css";
 import "./styles/atlas-foundation/atlas.css";
 import "./styles/atlas-foundation/responsive.css";
 import "./styles/atlas-foundation/shell.css";
+import "./styles/atlas-foundation/explore.css";
 import "./styles/foundation/accessibility.css";
 
 // Start the single prepared IndexedDB read as soon as the entry module runs.

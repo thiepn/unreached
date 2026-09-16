@@ -79,12 +79,13 @@ for (const marker of [
   'optgroup label="Data & research views"',
   "selected-mission-meaning",
   "Not national census data.",
-  "Pray for this country’s peoples →",
+  "Explore country →",
+  "Pray for its peoples →",
 ]) {
   if (!explore.includes(marker)) throw new Error(`U11-C Explore comprehension missing ${marker}.`);
 }
 
-const pickerIndex = explore.indexOf('<details class="mission-view-picker">');
+const pickerIndex = explore.indexOf('class="mission-view-picker');
 const selectorIndex = explore.indexOf("<LayerSelector activeLayer={activeLayer} onChange={onChange}");
 if (pickerIndex < 0 || selectorIndex < pickerIndex) {
   throw new Error("U11-C research/alternate map views must remain behind the Change map view disclosure.");

@@ -1,4 +1,4 @@
-import { Database, Globe2, Info, RotateCcw, Search } from "lucide-preact";
+import { Database, Globe2, Info, RotateCcw, Search, UsersRound, X } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 
 import { TermHelp } from "../components/TermHelp";
@@ -14,6 +14,7 @@ import {
   liveMissionSummaryForMapProperties,
   supportingCoverageForLiveLayer,
   useLiveMissionVisualization,
+  type LiveMissionCountryBrief,
   type LiveMissionCountrySummary,
   type LiveMissionLayerId,
 } from "../visualization";
@@ -23,8 +24,8 @@ const RESEARCH_VIEW_IDS: LiveMissionLayerId[] = ["gsec-coverage", "population-co
 
 function mapLayerLabel(layer: LiveMissionLayerId): string {
   switch (layer) {
-    case "unreached-population": return "IMB Unreached population share (<2% evangelical)";
-    case "unreached-contexts": return "IMB Unreached people-group share (<2% evangelical)";
+    case "unreached-population": return "Unreached population share";
+    case "unreached-contexts": return "Unreached people-group share";
     case "gsec-coverage": return "Mission-status data coverage";
     case "population-coverage": return "Population-data coverage";
     case "people-contexts": return "Source people-group records";
@@ -33,8 +34,8 @@ function mapLayerLabel(layer: LiveMissionLayerId): string {
 
 function mapLayerShortLabel(layer: LiveMissionLayerId): string {
   switch (layer) {
-    case "unreached-population": return "IMB <2% evangelical population";
-    case "unreached-contexts": return "IMB <2% evangelical groups";
+    case "unreached-population": return "Unreached population share";
+    case "unreached-contexts": return "Unreached people-group share";
     case "gsec-coverage": return "Mission-status coverage";
     case "population-coverage": return "Population coverage";
     case "people-contexts": return "Source records";
@@ -44,9 +45,9 @@ function mapLayerShortLabel(layer: LiveMissionLayerId): string {
 function mapLayerMeaning(layer: LiveMissionLayerId): string {
   switch (layer) {
     case "unreached-population":
-      return "Uses the PeopleGroups.org / IMB definition of unreached: people-group records with less than 2% evangelical Christian population (GSEC 0–3), weighted by represented population.";
+      return "Shows the share of represented population in source people-group records classified as unreached: less than 2% evangelical under the PeopleGroups.org / IMB GSEC definition.";
     case "unreached-contexts":
-      return "Uses the PeopleGroups.org / IMB definition of unreached: people-group records with less than 2% evangelical Christian population (GSEC 0–3), with every source record counted once.";
+      return "Shows the share of represented people-group-in-country records classified as unreached under the PeopleGroups.org / IMB GSEC definition. Every source record counts once.";
     case "gsec-coverage":
       return "Research view showing how much of the source record set has a reported mission-status value.";
     case "population-coverage":
@@ -58,10 +59,10 @@ function mapLayerMeaning(layer: LiveMissionLayerId): string {
 
 function primaryMapCaveat(layer: LiveMissionLayerId): string | null {
   if (layer === "unreached-population") {
-    return "This is the PeopleGroups.org / IMB definition, not the Joshua Project definition; the two can produce very different country results, especially in Europe. Based on source records with known population and mission status. Not national census data.";
+    return "PeopleGroups.org / IMB source definition. Based on records with known population and mission status. Not national census data.";
   }
   if (layer === "unreached-contexts") {
-    return "This is the PeopleGroups.org / IMB definition, not the Joshua Project definition. Every source people-group-in-country record counts once, regardless of population.";
+    return "PeopleGroups.org / IMB source definition. Every represented people-group-in-country record counts once. Not national census data.";
   }
   return null;
 }
@@ -92,8 +93,8 @@ function CountryBrowser({ countries, query, selectedKey, summaries, activeLayer,
     : countries;
 
   return (
-    <div class="country-browser">
-      <label class="country-search" for={`${idPrefix}-country-search`}>
+    <div class="country-browser explore-v3__country-browser">
+      <label class="country-search explore-v3__country-search" for={`${idPrefix}-country-search`}>
         <Search size={17} aria-hidden="true" />
         <span class="sr-only">Search map areas</span>
         <input
@@ -101,11 +102,12 @@ function CountryBrowser({ countries, query, selectedKey, summaries, activeLayer,
           type="search"
           value={query}
           onInput={(event) => onQueryChange(event.currentTarget.value)}
-          placeholder="Search countries or areas"
+          placeholder="Find a country"
           autoComplete="off"
         />
+        {query ? <button type="button" class="explore-v3__search-clear" aria-label="Clear country search" onClick={() => onQueryChange("")}><X size={15} aria-hidden="true" /></button> : null}
       </label>
-      <div class="country-list-meta" aria-live="polite">{filtered.length} {filtered.length === 1 ? "area" : "areas"}</div>
+      <div class="country-list-meta" aria-live="polite">{filtered.length} {filtered.length === 1 ? "country or area" : "countries or areas"}</div>
       <div class="country-list" role="list" aria-label="Mission map areas">
         {filtered.map((country) => (
           <button
@@ -127,7 +129,7 @@ function CountryBrowser({ countries, query, selectedKey, summaries, activeLayer,
 function LayerSelector({ activeLayer, onChange, compact = false }: { activeLayer: LiveMissionLayerId; onChange: (layer: LiveMissionLayerId) => void; compact?: boolean }) {
   return (
     <label class={`mission-layer-select${compact ? " mission-layer-select--compact" : ""}`}>
-      <span>Choose view</span>
+      <span>Map view</span>
       <select
         aria-label="Mission map layer"
         value={activeLayer}
@@ -148,8 +150,8 @@ function MissionViewCurrent({ activeLayer }: { activeLayer: LiveMissionLayerId }
   const research = RESEARCH_VIEW_IDS.includes(activeLayer);
   const caveat = primaryMapCaveat(activeLayer);
   return (
-    <div class="mission-view-current" data-map-view-kind={research ? "research" : "mission"}>
-      <span>{research ? "Research map view" : "Current map view"}</span>
+    <div class="mission-view-current explore-v3__view-current" data-map-view-kind={research ? "research" : "mission"}>
+      <span>{research ? "Research view" : "Map shows"}</span>
       <strong>{mapLayerLabel(activeLayer)}</strong>
       <p>{mapLayerMeaning(activeLayer)}</p>
       {caveat ? <small>{caveat}</small> : null}
@@ -159,10 +161,10 @@ function MissionViewCurrent({ activeLayer }: { activeLayer: LiveMissionLayerId }
 
 function MissionViewPicker({ activeLayer, onChange, compact = false }: { activeLayer: LiveMissionLayerId; onChange: (layer: LiveMissionLayerId) => void; compact?: boolean }) {
   return (
-    <details class="mission-view-picker">
+    <details class="mission-view-picker explore-v3__view-picker">
       <summary>Change map view</summary>
       <div>
-        <p>Start with the mission views. Open a data-and-research view only when you need source coverage or record-count information.</p>
+        <p>The two mission views are for normal exploration. Coverage and record-count views are research tools.</p>
         <LayerSelector activeLayer={activeLayer} onChange={onChange} compact={compact} />
       </div>
     </details>
@@ -172,7 +174,7 @@ function MissionViewPicker({ activeLayer, onChange, compact = false }: { activeL
 function MissionViewInfo({ activeLayer }: { activeLayer: LiveMissionLayerId }) {
   const layer = getLiveMissionLayer(activeLayer);
   return (
-    <details class="mission-view-info">
+    <details class="mission-view-info explore-v3__view-info">
       <summary>About this view</summary>
       <div>
         <p>{layer.description}</p>
@@ -186,7 +188,7 @@ function MissionMapKey({ activeLayer, compact = false }: { activeLayer: LiveMiss
   const layer = getLiveMissionLayer(activeLayer);
   return (
     <div class={`mission-map-key${compact ? " mission-map-key--compact" : ""}`} aria-label={`${mapLayerLabel(activeLayer)} map key`}>
-      <strong>{compact ? "Map key" : mapLayerShortLabel(activeLayer)}</strong>
+      <strong>{compact ? mapLayerShortLabel(activeLayer) : mapLayerShortLabel(activeLayer)}</strong>
       <div class="mission-map-key__items">
         {layer.legend.map((item) => (
           <span key={`${activeLayer}-${item.label}`} class="mission-map-key__item">
@@ -201,6 +203,10 @@ function MissionMapKey({ activeLayer, compact = false }: { activeLayer: LiveMiss
 
 function compactNumber(value: number): string {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}
+
+function populationText(value: number | null): string {
+  return value === null ? "Population not reported" : `${compactNumber(value)} represented`;
 }
 
 function supportingCoverageText(value: number | null): string | null {
@@ -234,6 +240,36 @@ function SelectedMissionSummary({ summary, activeLayer }: { summary: LiveMission
   );
 }
 
+function CountryFacts({ summary, brief }: { summary: LiveMissionCountrySummary; brief: LiveMissionCountryBrief | null }) {
+  return (
+    <div class="explore-v3__country-facts" aria-label="Country mission summary">
+      <div><strong>{summary.unreachedContextCount}</strong><span>unreached people groups represented</span></div>
+      <div><strong>{summary.peopleContextCount}</strong><span>people groups in source</span></div>
+      <div><strong>{compactNumber(brief?.representedPopulation ?? summary.knownPopulation)}</strong><span>represented population with estimates</span></div>
+    </div>
+  );
+}
+
+function TopPeople({ brief }: { brief: LiveMissionCountryBrief | null }) {
+  if (!brief || brief.topUnreachedPeople.length === 0) return null;
+  return (
+    <section class="explore-v3__top-people" aria-labelledby="explore-country-people-heading">
+      <div class="explore-v3__section-heading">
+        <span>People behind the map</span>
+        <h3 id="explore-country-people-heading">Largest unreached peoples represented</h3>
+      </div>
+      <div class="explore-v3__people-list">
+        {brief.topUnreachedPeople.map((people) => (
+          <a key={people.peid} href={`#/peoples/${people.peid}`}>
+            <span><strong>{people.name}</strong><small>{[people.language, people.religion].filter(Boolean).join(" · ") || "Source context"}</small></span>
+            <span>{populationText(people.population)}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function ExplorePage() {
   const initialUrl = useMemo(() => readMapUrlState(), []);
   const { data, countries, loading, error } = useWorldGeography();
@@ -246,11 +282,13 @@ export function ExplorePage() {
   const [resetToken, setResetToken] = useState(0);
   const [mapError, setMapError] = useState<string | null>(null);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(Boolean(initialUrl.country));
 
   const selected = useMemo(() => countries.find((country) => country.properties.mapKey === selectedKey) ?? null, [countries, selectedKey]);
   const hovered = useMemo(() => countries.find((country) => country.properties.mapKey === hoveredKey) ?? null, [countries, hoveredKey]);
   const selectedSummary = selected ? liveMissionSummaryForMapProperties(selected.properties, mission.countriesByIso3) : null;
   const selectedRouteCode = selected ? (selected.properties.iso3 ?? selected.properties.adminA3) : null;
+  const selectedBrief = selectedRouteCode ? mission.countryBriefsByIso3.get(selectedRouteCode) ?? null : null;
   const hoveredSummary = hovered ? liveMissionSummaryForMapProperties(hovered.properties, mission.countriesByIso3) : null;
   const visualizedGeography = useMemo(
     () => data ? buildLiveMissionMapGeography(data, mission.countriesByIso3, activeLayer) : null,
@@ -268,6 +306,7 @@ export function ExplorePage() {
   const selectCountry = useCallback((country: MapCountryFeature) => {
     setSelectedKey(country.properties.mapKey);
     setMapError(null);
+    setMobileSheetOpen(true);
     writeUrl({ country: country.properties.mapKey });
   }, [writeUrl]);
 
@@ -292,25 +331,30 @@ export function ExplorePage() {
     replaceMapUrlState({ country: null, view: null, layer: activeLayer });
   }, [activeLayer]);
 
+  const openMobileFinder = useCallback(() => {
+    setMobileSheetOpen(true);
+    window.requestAnimationFrame(() => document.getElementById("mobile-country-search")?.focus());
+  }, []);
+
   const missionAvailable = mission.ready && mission.countries.length > 0;
   const missionStarting = !missionStart || (mission.loading && !missionAvailable);
   const progressText = mission.progress ? `Loading source page ${mission.progress.loadedPages} of ${mission.progress.totalPages}.` : "Loading live mission records.";
   const countryActionsAvailable = selectedRouteCode && /^[A-Z]{3}$/.test(selectedRouteCode);
 
   return (
-    <section class="explore-screen explore-screen--phase10 explore-screen--comprehension" aria-labelledby="explore-title">
-      <aside class="explore-panel explore-panel--map explore-panel--phase10" aria-label="Map controls and country list">
-        <div class="explore-panel__intro">
-          <div class="eyebrow">Explore</div>
+    <section class="explore-screen explore-screen--phase10 explore-screen--comprehension explore-v3" aria-labelledby="explore-title">
+      <aside class="explore-panel explore-panel--map explore-panel--phase10 explore-v3__rail" aria-label="Map controls and country list">
+        <div class="explore-panel__intro explore-v3__intro">
+          <div class="eyebrow">World atlas</div>
           <h1 id="explore-title" class="display-title">Explore unreached peoples.</h1>
-          <p class="lead">See where represented people-group records are classified as unreached, then open a country to understand the people behind the map.</p>
+          <p class="lead">Select a country to understand what the map means there and meet the people behind the numbers.</p>
           <div class="explore-newcomer-actions">
             <TermHelp term="unreached" prompt="What does “unreached” mean?" />
             <a class="explore-pray-today" href="#/pray">Pray today →</a>
           </div>
         </div>
 
-        <div class="control-group control-group--compact mission-view-control">
+        <div class="control-group control-group--compact mission-view-control explore-v3__view-control">
           <MissionViewCurrent activeLayer={activeLayer} />
           <MissionViewPicker activeLayer={activeLayer} onChange={changeLayer} />
           <MissionViewInfo activeLayer={activeLayer} />
@@ -318,40 +362,47 @@ export function ExplorePage() {
 
         <div class="mission-data-status">
           {missionStart && mission.loading && !missionAvailable ? (
-            <div class="mission-data-notice" role="status"><Database size={17} aria-hidden="true" /><div><strong>Adding live mission data</strong><p>{progressText}</p></div></div>
+            <div class="mission-data-notice" role="status"><Database size={17} aria-hidden="true" /><div><strong>Adding mission data</strong><p>{progressText}</p></div></div>
           ) : null}
-
           {mission.error && !missionAvailable ? (
-            <div class="mission-data-notice" role="alert"><Database size={17} aria-hidden="true" /><div><strong>Live mission data unavailable</strong><p>{mission.error}</p><button type="button" class="text-button" onClick={mission.retry}>Retry source</button></div></div>
+            <div class="mission-data-notice" role="alert"><Database size={17} aria-hidden="true" /><div><strong>Mission data unavailable</strong><p>{mission.error}</p><button type="button" class="text-button" onClick={mission.retry}>Retry source</button></div></div>
           ) : null}
-
           {mission.warning ? (
             <div class="mission-data-notice" role="note"><Database size={17} aria-hidden="true" /><div><strong>{mission.stale ? "Using stale cached mission data" : "Mission source notice"}</strong><p>{mission.warning}</p></div></div>
           ) : null}
         </div>
 
         {selected ? (
-          <div class="selected-area selected-area--phase10" aria-live="polite">
-            <div class="selected-area__heading"><div><span class="eyebrow">Selected country</span><h2>{selected.properties.name}</h2></div><button type="button" class="text-button" onClick={clearSelection}>Clear</button></div>
+          <article class="selected-area selected-area--phase10 explore-v3__selected" aria-live="polite">
+            <div class="selected-area__heading">
+              <div><span class="eyebrow">Selected country</span><h2>{selected.properties.name}</h2>{selectedBrief?.subregionName || selectedBrief?.regionName ? <p>{selectedBrief.subregionName ?? selectedBrief.regionName}</p> : null}</div>
+              <button type="button" class="text-button" onClick={clearSelection}>Clear</button>
+            </div>
             {selectedSummary ? <SelectedMissionSummary summary={selectedSummary} activeLayer={activeLayer} /> : <p class="selected-area__no-data">Mission metrics are still loading or no PeopleGroups.org country-context summary is available for this area.</p>}
-            <div class="selected-area__actions">
-              {countryActionsAvailable ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Open country profile →</a> : null}
-              {countryActionsAvailable ? <a class="country-prayer-link" href={`#/pray?country=${encodeURIComponent(selectedRouteCode)}`}>Pray for this country’s peoples →</a> : null}
-              <span>{selected.properties.iso3 ?? selected.properties.adminA3 ?? selected.properties.type}{selected.properties.continent ? ` · ${selected.properties.continent}` : ""}</span>
+            {selectedSummary ? <CountryFacts summary={selectedSummary} brief={selectedBrief} /> : null}
+            <TopPeople brief={selectedBrief} />
+            <div class="selected-area__actions explore-v3__country-actions">
+              {countryActionsAvailable ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Explore country →</a> : null}
+              {countryActionsAvailable ? <a class="country-prayer-link" href={`#/pray?country=${encodeURIComponent(selectedRouteCode)}`}>Pray for its peoples →</a> : null}
             </div>
             {selected.properties.boundaryNote ? <p class="boundary-specific-note">{selected.properties.boundaryNote}</p> : null}
+          </article>
+        ) : (
+          <div class="explore-v3__empty-selection">
+            <Globe2 size={19} aria-hidden="true" />
+            <div><strong>Start with a country</strong><p>Click the map or use the finder below. The atlas will explain the map result before showing research detail.</p></div>
           </div>
-        ) : null}
+        )}
 
-        <section key="country-index" class="country-index country-index--primary" aria-labelledby="country-index-heading">
+        <section key="country-index" class="country-index country-index--primary explore-v3__country-index" aria-labelledby="country-index-heading">
           <div class="country-index__heading">
             <strong id="country-index-heading">Find a country</strong>
-            <span>Search or select directly on the map</span>
+            <a href="#/countries">Browse all →</a>
           </div>
           <CountryBrowser countries={countries} query={query} selectedKey={selectedKey} summaries={mission.countriesByIso3} activeLayer={activeLayer} showMetrics={missionAvailable} onQueryChange={setQuery} onSelect={selectCountry} idPrefix="desktop" />
         </section>
 
-        <details key="map-provenance" class="map-provenance">
+        <details key="map-provenance" class="map-provenance explore-v3__provenance">
           <summary>Sources & boundaries</summary>
           <div class="map-source-stack">
             {mission.status.attributions.map((attribution) => <a key={attribution.sourceId} href={attribution.url} target="_blank" rel="noreferrer">{attribution.label}</a>)}
@@ -361,8 +412,10 @@ export function ExplorePage() {
         </details>
       </aside>
 
-      <div class="map-stage map-stage--live map-stage--phase10" aria-label="World mission map workspace">
-        <div class="map-stage__toolbar map-stage__toolbar--live">
+      <div class="map-stage map-stage--live map-stage--phase10 explore-v3__map" aria-label="World mission map workspace">
+        <div class="explore-v3__map-kicker" aria-hidden="true"><span>World</span><strong>{mapLayerShortLabel(activeLayer)}</strong></div>
+        <div class="map-stage__toolbar map-stage__toolbar--live explore-v3__map-toolbar">
+          <button type="button" class="map-tool" onClick={openMobileFinder} aria-label="Find a country on the map" title="Find a country"><Search size={18} aria-hidden="true" /></button>
           <button type="button" class="map-tool" onClick={resetView} aria-label="Reset world map view" title="Reset map"><RotateCcw size={18} aria-hidden="true" /></button>
         </div>
 
@@ -380,31 +433,42 @@ export function ExplorePage() {
 
         <div class="mission-map-key-floating"><MissionMapKey activeLayer={activeLayer} /></div>
 
-        {mapError ? <div class="map-render-warning" role="status">Interactive rendering reported an issue. The searchable area list remains available.</div> : null}
+        {mapError ? <div class="map-render-warning" role="status">Interactive rendering reported an issue. The country finder remains available.</div> : null}
 
-        <details class="mobile-map-sheet mobile-map-sheet--phase10">
-          <summary><span><small>{selected ? "Selected country" : mapLayerShortLabel(activeLayer)}</small><strong>{selected?.properties.name ?? "Explore mission geography"}</strong></span><span aria-hidden="true">↑</span></summary>
+        <details class="mobile-map-sheet mobile-map-sheet--phase10 explore-v3__mobile-sheet" open={mobileSheetOpen} onToggle={(event) => setMobileSheetOpen(event.currentTarget.open)}>
+          <summary><span><small>{selected ? "Selected country" : "Explore"}</small><strong>{selected?.properties.name ?? "Find a country"}</strong></span><span aria-hidden="true">↑</span></summary>
           <div class="mobile-map-sheet__body">
-            <div class="mobile-map-sheet__controls">
-              <div class="explore-newcomer-actions explore-newcomer-actions--mobile">
-                <TermHelp term="unreached" prompt="What does “unreached” mean?" />
-                <a class="explore-pray-today" href="#/pray">Pray today →</a>
+            {selected ? (
+              <div class="explore-v3__mobile-selected">
+                <div class="explore-v3__mobile-country-heading"><UsersRound size={18} aria-hidden="true" /><div><strong>{selected.properties.name}</strong><span>{selectedBrief?.subregionName ?? selectedBrief?.regionName ?? selectedRouteCode}</span></div></div>
+                {selectedSummary ? <SelectedMissionSummary summary={selectedSummary} activeLayer={activeLayer} /> : null}
+                {selectedSummary ? <CountryFacts summary={selectedSummary} brief={selectedBrief} /> : null}
+                <TopPeople brief={selectedBrief} />
+                <div class="mobile-selection mobile-selection--country">
+                  <div>{countryActionsAvailable ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Explore country</a> : null}{countryActionsAvailable ? <a class="country-prayer-link" href={`#/pray?country=${encodeURIComponent(selectedRouteCode)}`}>Pray</a> : null}</div>
+                  <button type="button" class="text-button" onClick={clearSelection}>Clear</button>
+                </div>
               </div>
+            ) : null}
+
+            <section class="explore-v3__mobile-finder" aria-labelledby="mobile-country-finder-heading">
+              <strong id="mobile-country-finder-heading">Find a country</strong>
+              <CountryBrowser countries={countries} query={query} selectedKey={selectedKey} summaries={mission.countriesByIso3} activeLayer={activeLayer} showMetrics={missionAvailable} onQueryChange={setQuery} onSelect={selectCountry} idPrefix="mobile" />
+            </section>
+
+            <div class="mobile-map-sheet__controls">
               <MissionViewCurrent activeLayer={activeLayer} />
               <MissionViewPicker activeLayer={activeLayer} onChange={changeLayer} compact />
               <MissionMapKey activeLayer={activeLayer} compact />
               <MissionViewInfo activeLayer={activeLayer} />
-            </div>
-            {missionStarting ? <p class="mobile-data-note">{missionStart ? progressText : "Preparing live mission data…"}</p> : null}
-            {mission.error && !missionAvailable ? <p class="mobile-data-note">Live PeopleGroups.org mission data is unavailable.</p> : null}
-            {selected ? (
-              <div class="mobile-selection mobile-selection--country">
-                <span>{selectedSummary ? `${mapLayerShortLabel(activeLayer)}: ${formatLiveMissionLayerValue(selectedSummary, activeLayer)}` : selected.properties.iso3 ?? selected.properties.adminA3 ?? selected.properties.type}</span>
-                <div>{countryActionsAvailable ? <a class="country-profile-link" href={`#/countries/${selectedRouteCode}`}>Profile</a> : null}<button type="button" class="text-button" onClick={clearSelection}>Clear</button></div>
+              <div class="explore-newcomer-actions explore-newcomer-actions--mobile">
+                <TermHelp term="unreached" prompt="What does “unreached” mean?" />
+                <a class="explore-pray-today" href="#/pray">Pray today →</a>
               </div>
-            ) : null}
-            <CountryBrowser countries={countries} query={query} selectedKey={selectedKey} summaries={mission.countriesByIso3} activeLayer={activeLayer} showMetrics={missionAvailable} onQueryChange={setQuery} onSelect={selectCountry} idPrefix="mobile" />
-            <p class="mobile-boundary-note">Natural Earth geography · PeopleGroups.org mission metrics</p>
+            </div>
+            {missionStarting ? <p class="mobile-data-note">{missionStart ? progressText : "Preparing mission data…"}</p> : null}
+            {mission.error && !missionAvailable ? <p class="mobile-data-note">Live PeopleGroups.org mission data is unavailable.</p> : null}
+            <p class="mobile-boundary-note">Natural Earth geography · PeopleGroups.org / IMB mission metrics</p>
           </div>
         </details>
       </div>
