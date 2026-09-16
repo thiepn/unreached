@@ -7,7 +7,7 @@ on:
       - phase/v3-phase3-editorial-system
     paths:
       - "docs/V3_PHASE4_VISUAL_FOUNDATION.md"
-      - "src/styles/v3/**"
+      - "src/styles/atlas-foundation/**"
       - "src/pages/DesignSystemPage.tsx"
       - "src/app/router.ts"
       - "src/app/App.tsx"
