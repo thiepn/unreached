@@ -86,7 +86,7 @@ test("reviewed profile becomes one cohesive atlas article with evidence and pray
   await expect(profile).toHaveAttribute("data-editorial-tier", "reviewed", { timeout: 15_000 });
   await expect(page.getByText("Reviewed editorial context available", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Context before conclusions." })).toBeVisible();
-  await expect(page.getByText(/The Fon of Benin are an ethnolinguistic community/)).toBeVisible();
+  await expect(page.locator(".v3-people-editorial__deck")).toContainText("The Fon of Benin are an ethnolinguistic community");
   await expect(page.getByRole("heading", { name: "Who they are" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Gospel-access context" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Pray from what is actually known." })).toBeVisible();
@@ -95,7 +95,7 @@ test("reviewed profile becomes one cohesive atlas article with evidence and pray
   await expect(page.locator(".context-editorial")).toHaveCount(0);
 
   const evidence = page.locator(".v3-people-evidence").first();
-  await evidence.locator("summary").click();
+  await evidence.locator(":scope > summary").click();
   await expect(evidence.getByText(/UNESCO describes the Royal Palaces of Abomey/)).toBeVisible();
   await expect(evidence.getByRole("link", { name: "Royal Palaces of Abomey" })).toBeVisible();
 
@@ -120,7 +120,7 @@ test("mission classification remains understandable and technical detail stays o
   const details = page.locator(".v3-people-research-disclosure");
   await expect(details).not.toHaveAttribute("open", "");
   await expect(details.getByText(`PEID ${VISIBLE_TEST_PEID} · PGID PG910001 · BEN`, { exact: true })).toBeHidden();
-  await details.locator("summary").click();
+  await details.locator(":scope > summary").click();
   await expect(details.getByText(`PEID ${VISIBLE_TEST_PEID} · PGID PG910001 · BEN`, { exact: true })).toBeVisible();
   await expect(details.getByText("2 · Initial Church Planting", { exact: true })).toBeVisible();
 });
