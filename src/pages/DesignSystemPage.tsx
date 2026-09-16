@@ -1,3 +1,4 @@
+import type { ComponentChildren } from "preact";
 import { Bookmark, Compass, Search } from "lucide-preact";
 
 function DemoSection({
@@ -11,7 +12,7 @@ function DemoSection({
   label: string;
   title: string;
   description: string;
-  children: preact.ComponentChildren;
+  children: ComponentChildren;
 }) {
   return (
     <section id={id} class="v3-design-system__section">
