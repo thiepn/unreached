@@ -37,39 +37,16 @@ for (const marker of [
 ]) requireText(tokens, marker, "canonical V3 token");
 
 const typography = await read(`${foundationRoot}/typography.css`);
-for (const marker of [
-  ".v3-type-display-xl",
-  ".v3-type-heading-xl",
-  ".v3-type-body-lg",
-  ".v3-type-meta",
-  ".v3-type-prose",
-]) requireText(typography, marker, "typography scale marker");
+for (const marker of [".v3-type-display-xl", ".v3-type-heading-xl", ".v3-type-body-lg", ".v3-type-meta", ".v3-type-prose"]) requireText(typography, marker, "typography scale marker");
 
 const components = await read(`${foundationRoot}/components.css`);
-for (const marker of [
-  ".v3-surface--page",
-  ".v3-surface--editorial",
-  ".v3-surface--utility",
-  ".v3-surface--overlay",
-  ".v3-button--primary",
-  ".v3-button--secondary",
-  ".v3-status--unreached",
-  "min-height: var(--v3-control-height)",
-]) requireText(components, marker, "surface/control marker");
+for (const marker of [".v3-surface--page", ".v3-surface--editorial", ".v3-surface--utility", ".v3-surface--overlay", ".v3-button--primary", ".v3-button--secondary", ".v3-status--unreached", "min-height: var(--v3-control-height)"]) requireText(components, marker, "surface/control marker");
 
 const atlas = await read(`${foundationRoot}/atlas.css`);
-for (const marker of [
-  ".v3-masthead",
-  ".v3-fact-strip",
-  ".v3-source-note",
-  ".v3-map-shell",
-  ".v3-map-legend",
-]) requireText(atlas, marker, "atlas primitive marker");
+for (const marker of [".v3-masthead", ".v3-fact-strip", ".v3-source-note", ".v3-map-shell", ".v3-map-legend"]) requireText(atlas, marker, "atlas primitive marker");
 
 const responsive = await read(`${foundationRoot}/responsive.css`);
-for (const marker of ["@media (max-width: 1000px)", "@media (max-width: 720px)", "prefers-reduced-motion"]) {
-  requireText(responsive, marker, "responsive/accessibility marker");
-}
+for (const marker of ["@media (max-width: 1000px)", "@media (max-width: 720px)", "prefers-reduced-motion"]) requireText(responsive, marker, "responsive/accessibility marker");
 
 const main = await read("src/main.tsx");
 const foundationImports = [
@@ -81,9 +58,7 @@ const foundationImports = [
   'import "./styles/atlas-foundation/responsive.css";',
 ];
 for (const marker of foundationImports) requireText(main, marker, "V3 foundation stylesheet import");
-if (!main.trim().includes('import "./styles/foundation/accessibility.css";')) {
-  throw new Error("V3 Phase 4 must preserve the certified accessibility stylesheet in the application cascade.");
-}
+if (!main.trim().includes('import "./styles/foundation/accessibility.css";')) throw new Error("V3 Phase 4 must preserve the certified accessibility stylesheet in the application cascade.");
 
 const router = await read("src/app/router.ts");
 requireText(router, '"/dev/design-system": "design-system"', "unlinked design-system reference route");
@@ -92,44 +67,26 @@ requireText(app, 'import("../pages/DesignSystemPage")', "lazy design-system page
 requireText(app, 'case "design-system": page = <DesignSystemPage />;', "design-system route rendering");
 
 const designPage = await read("src/pages/DesignSystemPage.tsx");
-for (const marker of [
-  "Visual Foundation",
-  "Editorial voice, interface discipline",
-  "Structure without a sea of floating cards",
-  "A people profile should read like an atlas article",
-  "The map is a workspace, not a background illustration",
-  'data-v3-control="true"',
-  'data-v3-map-shell="true"',
-]) requireText(designPage, marker, "reference-page marker");
+for (const marker of ["Visual Foundation", "Editorial voice, interface discipline", "Structure without a sea of floating cards", "A people profile should read like an atlas article", "The map is a workspace, not a background illustration", 'data-v3-control="true"', 'data-v3-map-shell="true"']) requireText(designPage, marker, "reference-page marker");
 
-// Phase 4 prevented premature page migration. Later owning phases explicitly
-// allow their production pages while every remaining page stays protected.
-// Phase 6 owns Explore; Phase 7 owns Regions and Countries.
+// Later owning phases explicitly allow their migrated production pages while
+// every remaining page stays protected from accidental V3 visual leakage.
 const migratedProductPages = new Set([
   "ExplorePage.tsx",
   "RegionsPage.tsx",
   "RegionPage.tsx",
   "CountriesPage.tsx",
   "CountryPage.tsx",
+  "PeoplePage.tsx",
 ]);
 const pageFiles = (await readdir(resolve(root, "src/pages"))).filter((name) => name.endsWith(".tsx") && name !== "DesignSystemPage.tsx");
 for (const file of pageFiles) {
   const source = await read(`src/pages/${file}`);
-  if (/\bv3-[a-z0-9-]+/.test(source) && !migratedProductPages.has(file)) {
-    throw new Error(`V3 Phase 4 visual-system classes reached unowned production page ${file}; migrate pages only in their owning V3 phase.`);
-  }
+  if (/\bv3-[a-z0-9-]+/.test(source) && !migratedProductPages.has(file)) throw new Error(`V3 Phase 4 visual-system classes reached unowned production page ${file}; migrate pages only in their owning V3 phase.`);
 }
 
 const docs = await read("docs/V3_PHASE4_VISUAL_FOUNDATION.md");
-for (const marker of [
-  "Modern Mission Atlas",
-  "four surface roles",
-  "Mission-status color is semantic",
-  "44×44",
-  "Phase 5",
-  "does not redesign production routes",
-  "src/styles/atlas-foundation/",
-]) requireText(docs, marker, "Phase 4 documentation marker");
+for (const marker of ["Modern Mission Atlas", "four surface roles", "Mission-status color is semantic", "44×44", "Phase 5", "does not redesign production routes", "src/styles/atlas-foundation/"]) requireText(docs, marker, "Phase 4 documentation marker");
 
 const packageJson = await read("package.json");
 requireText(packageJson, '"v3:phase4-check": "tsx scripts/v3/phase4-check.ts"', "Phase 4 package script");
