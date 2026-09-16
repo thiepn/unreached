@@ -1,0 +1,45 @@
+name: V3 Phase 2 Mission Model
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase1-source-architecture
+    paths:
+      - "docs/V3_PHASE2_MISSION_KNOWLEDGE_MODEL.md"
+      - "src/mission-model/**"
+      - "src/providers/peoplegroups/mission-model.ts"
+      - "src/providers/peoplegroups/index.ts"
+      - "scripts/v3/phase2-check.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase2-mission-model.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mission-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 2 normalized mission model
+        run: npm run v3:phase2-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 and Phase 2 gates
+        run: npm run build
