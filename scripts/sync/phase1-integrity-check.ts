@@ -34,7 +34,7 @@ function prayer(id: number, lastPrayedAt: string | null = null): PrayerListEntry
 }
 
 function state(savedPeoples: SavedPersonSnapshot[] = [], prayerList: PrayerListEntry[] = []): PersonalizationState {
-  return { version: 2, savedPeoples, prayerList, recent: [] };
+  return { version: 3, savedPeoples, prayerList, recent: [], personalNotes: [], prayerMemory: [] };
 }
 
 function item(kind: "saved" | "prayer", id: number, present: boolean, revision: number, payload?: SavedPersonSnapshot | PrayerListEntry): SyncItem {
