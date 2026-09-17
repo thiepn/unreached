@@ -1,0 +1,126 @@
+name: V3 Phase 12 Content and Unreached 3.0 Certification
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase11-personal-memory
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "docs/V3_PHASE12_CONTENT_CERTIFICATION.md"
+      - "public/data/context/**"
+      - "src/context/**"
+      - "src/editorial/**"
+      - "src/map/WorldMap.tsx"
+      - "src/pages/ExplorePage.tsx"
+      - "src/styles/atlas-foundation/**"
+      - "scripts/v3/phase12-*.ts"
+      - "tests/e2e/phase10-explore-map.spec.ts"
+      - "tests/e2e/v3-phase12-certification.spec.ts"
+      - ".github/workflows/v3-phase12-content-certification.yml"
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: "Run the strict >=100 reviewed-profile Unreached 3.0 release gate"
+        required: false
+        default: false
+        type: boolean
+      generate_editorial_queue:
+        description: "Generate a private non-ranking editorial research queue artifact from the live PeopleGroups API"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  automated-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 12 automated readiness and editorial integrity
+        run: npm run v3:phase12-readiness
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Typecheck and run the complete production build gate
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify integrated Unreached 3.0 desktop and mobile journeys
+        run: npm run v3:phase12-visual
+
+      - name: Upload Phase 12 readiness and visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-readiness
+          path: artifacts/v3-phase12
+          if-no-files-found: error
+          retention-days: 30
+
+  strict-editorial-certification:
+    if: github.event_name == 'workflow_dispatch' && inputs.strict == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Enforce the 100 substantial reviewed-profile release threshold
+        run: npm run v3:phase12-certify
+
+  editorial-coverage-queue:
+    if: github.event_name == 'workflow_dispatch' && inputs.generate_editorial_queue == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Generate non-ranking editorial research queue
+        run: npm run v3:phase12-editorial-queue -- --count=120
+
+      - name: Upload private editorial queue artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-editorial-coverage-queue
+          path: artifacts/v3-phase12/editorial-coverage-queue.json
+          if-no-files-found: error
+          retention-days: 30
