@@ -24,11 +24,21 @@ for (const forbidden of ["2 min", "5 min", "10 min", "seconds per prompt", "Pray
   if (focusPage.includes(forbidden)) throw new Error(`Phase 12 must not expose pseudo-time semantics: ${forbidden}`);
 }
 
-for (const marker of ["How prayer-list data is stored", "How saved-profile data is stored", "saved-recent-section", "My lists"]) {
-  if (!savedPage.includes(marker)) throw new Error(`Phase 12 My lists simplification missing: ${marker}`);
+for (const marker of [
+  "How prayer-list data is stored",
+  "How saved-profile data is stored",
+  "saved-recent-section",
+  'data-memory-section="saved"',
+  'data-memory-section="prayer-list"',
+  'data-memory-section="prayer-memory"',
+  'data-memory-section="recent"',
+  'id="saved-title">Saved</h1>',
+]) {
+  if (!savedPage.includes(marker)) throw new Error(`Phase 12 Saved continuity contract missing: ${marker}`);
 }
-if (!savedPage.includes('<details class="saved-section saved-recent-section">')) throw new Error("Phase 12 Recents must be collapsed by default.");
-if (sessionPage.includes("Saved & prayer")) throw new Error("Phase 12 session navigation must consistently use My lists naming.");
-if (!main.includes('"./styles/prayer/guides-and-lists.css"')) throw new Error("Phase 12 stylesheet is not loaded.");
+if (!savedPage.includes('<details class="v3-memory-section saved-section saved-recent-section" data-memory-section="recent">')) throw new Error("Phase 12 Recents must remain collapsed by default.");
+if (sessionPage.includes("Saved & prayer")) throw new Error("Phase 12 session navigation must not reintroduce the retired Saved & prayer label.");
+if (!main.includes('"./styles/prayer/guides-and-lists.css"')) throw new Error("Phase 12 compatibility stylesheet is not loaded.");
+if (!main.includes('"./styles/atlas-foundation/memory.css"')) throw new Error("Phase 11 Saved memory stylesheet is not loaded.");
 
-console.log("Phase 12 release gate passed.");
+console.log("Phase 12 prayer/Saved compatibility release gate passed.");
