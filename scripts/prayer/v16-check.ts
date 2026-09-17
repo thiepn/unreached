@@ -9,13 +9,14 @@ const match = pkg.version?.match(/^(\d+)\.(\d+)\.(\d+)$/);
 if (!match || Number(match[1]) < 1 || (Number(match[1]) === 1 && Number(match[2]) < 6)) throw new Error(`v1.6 capability gate requires package >=1.6.0, got ${String(pkg.version)}`);
 
 const migrated = normalizePersonalizationState({ version: 1, savedPeoples: [{ sourcePeopleId: 12319, peopleGroupId: "people-entity:peoplegroups:12319", name: "Fon", largestCountryName: "Benin", primaryLanguageName: "Fon", classification: "unreached-only", frontier: null, savedAt: "2026-08-24T18:00:00.000Z" }], recent: [{ kind: "people", key: "12319", label: "Fon", secondary: "Benin", href: "#/peoples/12319", visitedAt: "2026-08-24T18:05:00.000Z" }] });
-if (migrated.version !== 2 || migrated.savedPeoples.length !== 1 || migrated.recent.length !== 1 || migrated.prayerList.length !== 0) throw new Error("v1.6 migration contract failed.");
+if (migrated.version !== 3 || migrated.savedPeoples.length !== 1 || migrated.recent.length !== 1 || migrated.prayerList.length !== 0 || migrated.personalNotes.length !== 0 || migrated.prayerMemory.length !== 0) throw new Error("v1.6 migration contract failed on the current personalization schema.");
 
 const snapshot = { sourcePeopleId: 12319, peopleGroupId: "people-entity:peoplegroups:12319", name: "Fon", countryName: "Benin", languageName: "Fon" };
 const added = addPrayerPerson(migrated, snapshot, new Date("2026-08-24T20:00:00.000Z"));
 if (added.prayerList[0]?.lastPrayedAt !== null) throw new Error("Adding a prayer entry fabricated a prayer date.");
 const recorded = recordPrayerForPerson(added, snapshot, new Date("2026-08-24T20:30:00.000Z"));
-if (recorded.prayerList[0]?.lastPrayedAt !== "2026-08-24T20:30:00.000Z") throw new Error("Latest-only prayer timestamp contract failed.");
+if (recorded.prayerList[0]?.lastPrayedAt !== "2026-08-24T20:30:00.000Z") throw new Error("Latest prayer timestamp contract failed.");
+if (recorded.prayerMemory.length !== 1) throw new Error("Current personalization must retain the explicit prayer moment without changing the latest-timestamp contract.");
 if (removePrayerPerson(recorded, 12319).prayerList.length !== 0) throw new Error("Prayer-list removal failed.");
 
 const types = await readText("src/personalization/types.ts");
@@ -28,7 +29,7 @@ const main = await readText("src/main.tsx");
 const localSource = `${types}\n${model}\n${runtime}`;
 for (const forbidden of ["prayerCount", "totalPrayers", "prayerScore", "prayerStreak", "leaderboardRank"]) if (localSource.includes(forbidden)) throw new Error(`Forbidden prayer metric field: ${forbidden}`);
 for (const network of ["fetch(", "XMLHttpRequest", "sendBeacon", "WebSocket("]) if (runtime.includes(network)) throw new Error(`Personalization runtime must remain browser-local: ${network}`);
-if (!runtime.includes("unreached.personal.v2") || !runtime.includes("unreached.personal.v1")) throw new Error("v2 storage + v1 fallback contract missing.");
+if (!runtime.includes("unreached.personal.v2") || !runtime.includes("unreached.personal.v1")) throw new Error("Historical v2 storage key + v1 fallback contract missing.");
 for (const [source, marker] of [[prayPage, "private prayer list"], [focusPage, "Record prayer today"], [focusPage, "recordPrayer(prayerSnapshot)"], [savedPage, "data-prayer-list-peid"], [main, '"./styles/prayer/practice.css"']] as const) if (!source.includes(marker)) throw new Error(`v1.6 retained capability missing: ${marker}`);
 
 console.log("v1.6 private prayer practice capability gate passed on current release.");
