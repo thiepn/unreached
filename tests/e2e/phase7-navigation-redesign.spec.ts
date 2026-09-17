@@ -107,8 +107,8 @@ test("Reviewed Coverage is absent from normal V3 navigation", async ({ page }) =
 
 test("Saved names the private continuity workspace consistently", async ({ page }) => {
   await page.goto("./#/saved");
-  await expect(page.getByRole("heading", { level: 1, name: "My lists" })).toBeVisible();
-  await expect(page).toHaveTitle("My Lists | Unreached");
+  await expect(page.getByRole("heading", { level: 1, name: "Saved" })).toBeVisible();
+  await expect(page).toHaveTitle("Saved | Unreached");
 
   if (isPhone(page)) {
     await expect(page.locator(".mobile-nav").getByRole("link", { name: "Saved" })).toHaveAttribute("aria-current", "page");

@@ -77,7 +77,7 @@ test("Prayer library progressively reveals every matching subject on demand", as
   await expect(library.locator(".prayer-library-more")).toHaveCount(0);
 });
 
-test("My lists keeps secondary storage policy and Recent content collapsed by default", async ({ page }) => {
+test("Saved keeps storage policy and Recent content secondary", async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("unreached.personal.v2", JSON.stringify({
       version: 2,
@@ -89,12 +89,12 @@ test("My lists keeps secondary storage policy and Recent content collapsed by de
   await installPeopleGroupsFixture(page);
   await page.goto("./#/saved");
 
-  await expect(page.getByRole("heading", { name: "My lists" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Saved" })).toBeVisible();
   await expect(page.locator("details.saved-policy-note")).toHaveCount(2);
   await expect(page.locator("details.saved-policy-note[open]")).toHaveCount(0);
   const recent = page.locator("details.saved-recent-section");
   await expect(recent).not.toHaveAttribute("open", "");
-  await expect(recent.locator("summary")).toContainText("Recent");
+  await expect(recent.locator("summary")).toContainText("Recently viewed");
   await recent.locator("summary").click();
   await expect(recent).toHaveAttribute("open", "");
   await expect(recent.getByRole("link", { name: /Benin/ })).toBeVisible();

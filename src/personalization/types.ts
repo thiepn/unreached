@@ -33,22 +33,49 @@ export const prayerListEntrySchema = z.object({
   lastPrayedAt: timestampSchema.nullable(),
 });
 
+export const personalNoteSchema = z.object({
+  sourcePeopleId: z.number().int().positive(),
+  text: z.string().trim().min(1).max(2000),
+  updatedAt: timestampSchema,
+});
+
+export const prayerMemoryEntrySchema = z.object({
+  sourcePeopleId: z.number().int().positive(),
+  peopleGroupId: peopleGroupIdSchema,
+  name: z.string().trim().min(1),
+  countryName: z.string().trim().min(1).nullable(),
+  languageName: z.string().trim().min(1).nullable(),
+  prayedAt: timestampSchema,
+});
+
 export const legacyPersonalizationStateV1Schema = z.object({
   version: z.literal(1),
   savedPeoples: z.array(savedPersonSnapshotSchema),
   recent: z.array(recentVisitSchema).max(12),
 });
 
-export const personalizationStateSchema = z.object({
+export const legacyPersonalizationStateV2Schema = z.object({
   version: z.literal(2),
   savedPeoples: z.array(savedPersonSnapshotSchema),
   prayerList: z.array(prayerListEntrySchema).max(100),
   recent: z.array(recentVisitSchema).max(12),
 });
 
+export const personalizationStateSchema = z.object({
+  version: z.literal(3),
+  savedPeoples: z.array(savedPersonSnapshotSchema),
+  prayerList: z.array(prayerListEntrySchema).max(100),
+  recent: z.array(recentVisitSchema).max(12),
+  personalNotes: z.array(personalNoteSchema).max(200),
+  prayerMemory: z.array(prayerMemoryEntrySchema).max(30),
+});
+
 export type SavedPersonSnapshot = z.infer<typeof savedPersonSnapshotSchema>;
 export type PrayerListEntry = z.infer<typeof prayerListEntrySchema>;
+export type PersonalNote = z.infer<typeof personalNoteSchema>;
+export type PrayerMemoryEntry = z.infer<typeof prayerMemoryEntrySchema>;
 export type RecentVisit = z.infer<typeof recentVisitSchema>;
 export type RecentVisitKind = RecentVisit["kind"];
 export type PersonalizationState = z.infer<typeof personalizationStateSchema>;
 export type LegacyPersonalizationStateV1 = z.infer<typeof legacyPersonalizationStateV1Schema>;
+export type LegacyPersonalizationStateV2 = z.infer<typeof legacyPersonalizationStateV2Schema>;

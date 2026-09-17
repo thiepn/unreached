@@ -65,10 +65,10 @@ if (main.indexOf('import "./styles/atlas-foundation/shell.css";') > main.indexOf
 }
 
 const saved = await readText("src/pages/SavedPage.tsx");
-if (!/<h1\b[^>]*class="display-title"[^>]*>My lists<\/h1>/.test(saved)) throw new Error("Private continuity workspace must retain the My lists page title during shell migration.");
+if (!/<h1\b[^>]*id="saved-title"[^>]*>Saved<\/h1>/.test(saved)) throw new Error("Phase 11 private continuity workspace must use the canonical Saved page title.");
 
 const router = await readText("src/app/router.ts");
-if (!router.includes('if (route.id === "saved") return "My Lists | Unreached"')) throw new Error("Saved route title must remain stable during V3 shell migration.");
+if (!router.includes('if (route.id === "saved") return "Saved | Unreached"')) throw new Error("Saved route title must match the Phase 11 memory workspace.");
 if (!router.includes("Number.isSafeInteger(sourceId)")) throw new Error("V3 shell migration must preserve positive numeric deep-link validation.");
 
 const browserSpec = await readText("tests/e2e/phase7-navigation-redesign.spec.ts");
@@ -84,4 +84,4 @@ for (const marker of [
   if (!browserSpec.includes(marker)) throw new Error(`V3 navigation browser certification missing: ${marker}.`);
 }
 
-console.log("Phase 7 compatibility gate passed under V3 IA: Explore/Peoples/Pray are primary, Saved is direct, Countries/Languages/Sources/Account are secondary, Reviewed Coverage is hidden from normal navigation, and desktop/tablet/mobile disclosure behavior remains accessible.");
+console.log("Phase 7 compatibility gate passed under V3 IA and Phase 11: Explore/Peoples/Pray are primary, Saved is the direct private continuity workspace, Countries/Languages/Sources/Account are secondary, Reviewed Coverage is hidden from normal navigation, and desktop/tablet/mobile disclosure behavior remains accessible.");
