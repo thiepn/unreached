@@ -104,7 +104,7 @@ test("3.0 core loop connects world discovery to people, prayer and memory", asyn
 
   const selected = page.locator(".explore-v3__selected");
   await expect(selected).toContainText("People behind the map", { timeout: 15_000 });
-  const peopleLink = selected.getByRole("link", { name: VISIBLE_TEST_PEOPLE, exact: true });
+  const peopleLink = selected.locator(`a[href="#/peoples/${VISIBLE_TEST_PEID}"]`, { hasText: VISIBLE_TEST_PEOPLE });
   await expect(peopleLink).toBeVisible();
   await peopleLink.click();
 
