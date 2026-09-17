@@ -32,7 +32,7 @@ if (prayerSessionSizeFromValue("5") !== 5 || prayerSessionSizeFromValue("all") !
 const types = await readText("src/personalization/types.ts");
 const model = await readText("src/personalization/model.ts");
 const runtime = await readText("src/personalization/runtime.ts");
-if (!types.includes("version: z.literal(2)")) throw new Error("v1.8 must reuse personalization schema v2.");
+if (!types.includes("version: z.literal(3)")) throw new Error("v1.8 session planning must reuse the current personalization schema.");
 const persistentSource = `${types}\n${model}\n${runtime}`;
 for (const forbidden of ["sessionHistory", "sessionCount", "completionRate", "completionPercent", "sessionScore", "sessionStreak", "sessionCompletedAt", "prayerMinutesTotal"]) {
   if (persistentSource.includes(forbidden)) throw new Error(`v1.8 must not persist session/performance field ${forbidden}.`);
@@ -47,12 +47,13 @@ if (!router.includes('"/pray/session": "pray"')) throw new Error("v1.8 router do
 if (!app.includes("PrayerSessionPage") || !app.includes('route.path === "/pray/session"')) throw new Error("v1.8 app shell does not materialize the prayer-session route.");
 
 const savedPage = await readText("src/pages/SavedPage.tsx");
-for (const marker of ["Guided prayer session", "data-prayer-session-size", "Full eligible list", "session history"]) if (!savedPage.includes(marker)) throw new Error(`v1.8 Saved session launcher missing: ${marker}`);
+for (const marker of ["Guided session", "data-prayer-session-size", "Full eligible list", "Session position is navigation, not progress."]) if (!savedPage.includes(marker)) throw new Error(`v1.8 Saved session launcher missing: ${marker}`);
+if (!savedPage.includes("session-performance history")) throw new Error("v1.8 Saved must state that guided prayer creates no session-performance history.");
 
 const sessionPage = await readText("src/pages/PrayerSessionPage.tsx");
 for (const marker of ["data-prayer-session-plan", "was frozen when this session opened", "Three prayer prompts", "Record prayer today", "stores no session history", "page state"]) if (!sessionPage.includes(marker)) throw new Error(`v1.8 prayer-session surface missing: ${marker}`);
 
 const main = await readText("src/main.tsx");
-if (!main.includes('"./styles/prayer/session.css"')) throw new Error("v1.8 stylesheet is not loaded.");
+if (!main.includes('"./styles/prayer/session.css"')) throw new Error("v1.8 compatibility stylesheet is not loaded.");
 
-console.log("v1.8+ guided prayer-session checks passed: frozen rotation plan, 3/5/full sizing, eligibility filtering, schema-v2 reuse, latest-only recording, and zero persisted session/performance state.");
+console.log("v1.8+ guided prayer-session checks passed on personalization v3: frozen rotation plan, 3/5/full sizing, eligibility filtering, explicit local prayer recording, and zero persisted session/performance state.");
