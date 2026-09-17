@@ -14,13 +14,21 @@ assertSourceUseAllowed(registry, "joshua-project-api", "development-ingestion");
 assertSourceUseAllowed(registry, "peoplegroups-org-api", "development-ingestion");
 assertSourceUseAllowed(registry, "peoplegroups-org-api", "runtime-read");
 assertSourceUseAllowed(registry, "peoplegroups-org-api", "public-release");
+assertSourceUseAllowed(registry, "joshua-project-api", "runtime-read");
+assertSourceUseAllowed(registry, "joshua-project-api", "public-release");
 assertSourceUseAllowed(registry, "natural-earth", "public-release");
-expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "runtime-read"), "Joshua Project runtime reads without explicit approval");
-expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "public-release"), "Joshua Project public release before permission");
-expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "browser-redistribution"), "Joshua Project browser redistribution before permission");
+expectBlocked(() => assertSourceUseAllowed(registry, "joshua-project-api", "browser-redistribution"), "Joshua Project browser/bulk redistribution");
 expectBlocked(() => assertSourceUseAllowed(registry, "peoplegroups-org-api", "browser-redistribution"), "PeopleGroups.org static browser redistribution");
 expectBlocked(() => assertSourceUseAllowed(registry, "progress-bible-registered-data", "development-ingestion"), "ProgressBible ingestion without permission");
 expectBlocked(() => assertSourceUseAllowed(registry, "progress-bible-registered-data", "runtime-read"), "ProgressBible runtime reads without permission");
+
+const joshua = registry.sources.find((source) => source.id === "joshua-project-api");
+if (!joshua || joshua.termsReviewedAt !== "2026-09-17" || joshua.commercialUse !== false) {
+  throw new Error("Joshua Project Phase 13 runtime approval must remain tied to the 2026-09-17 non-commercial policy review.");
+}
+if (!joshua.cacheStatus.includes("no-store") || !joshua.permissionGate?.includes("Gate D")) {
+  throw new Error("Joshua Project Phase 13 runtime approval must retain no-store handling and the post-3.0 Gate D prerequisite.");
+}
 
 const { dataset, retrievedAt, sourceRecordCount } = await loadFixtureDataset();
 const issues = validateDatasetInvariants(dataset);
@@ -50,4 +58,4 @@ const manifest = datasetManifestSchema.parse({
 });
 
 if (!manifest.fixture) throw new Error("Synthetic validation dataset must remain marked as fixture");
-console.log(`Phase 3 source-policy checks passed: PeopleGroups public runtime release is distinct from browser redistribution; ${sourceRecordCount} synthetic source records -> ${first.length} deterministic chunks.`);
+console.log(`Source-policy checks passed: PeopleGroups remains the canonical runtime, Phase 13 permits only the reviewed Joshua Project comparison path, browser redistribution remains blocked, and ${sourceRecordCount} synthetic records produce ${first.length} deterministic chunks.`);
