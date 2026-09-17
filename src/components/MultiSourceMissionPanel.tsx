@@ -53,7 +53,7 @@ export function MultiSourceMissionPanel({ record }: { record: PeopleProfileRecor
   return (
     <section class="people-section people-section--source v3-people-source-context" aria-labelledby="multi-source-mission-heading" data-phase13-multi-source="true">
       <div class="people-section__heading">
-        <div><span class="eyebrow">Mission intelligence · Phase 13</span><h2 id="multi-source-mission-heading">Compare source methodologies</h2></div>
+        <div><span class="eyebrow">Mission intelligence</span><h2 id="multi-source-mission-heading">Compare source methodologies</h2></div>
         <Database size={21} aria-hidden="true" />
       </div>
       <p class="people-section__intro">This optional comparison keeps PeopleGroups.org / IMB and Joshua Project as separate research sources. Unreached does not average their values, silently reconcile disagreement, or turn either methodology into a universal verdict.</p>
