@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "preact/hooks";
 
 import {
+  clearPrayerMemory,
   clearRecentVisits,
   emptyPersonalizationState,
   normalizePersonalizationState,
@@ -8,12 +9,15 @@ import {
   recordRecentVisit,
   removePrayerPerson,
   removeSavedPerson,
+  setPersonalNote,
   togglePrayerPerson,
   toggleSavedPersonSnapshot,
   type PrayerPersonSnapshot,
 } from "./model";
 import type { PersonalizationState, RecentVisit, SavedPersonSnapshot } from "./types";
 
+// The v2 storage key is retained intentionally so existing local data, browser
+// tests and private-sync installations migrate in place to the v3 state shape.
 export const PERSONALIZATION_STORAGE_KEY = "unreached.personal.v2";
 export const LEGACY_PERSONALIZATION_STORAGE_KEY = "unreached.personal.v1";
 export const PERSONALIZATION_CHANGE_EVENT = "unreached:personalization-change";
@@ -111,6 +115,14 @@ export function usePersonalization() {
     apply((current) => recordPrayerForPerson(current, snapshot));
   }, [apply]);
 
+  const savePersonalNote = useCallback((sourcePeopleId: number, text: string) => {
+    apply((current) => setPersonalNote(current, sourcePeopleId, text));
+  }, [apply]);
+
+  const clearPrayerHistory = useCallback(() => {
+    apply(clearPrayerMemory);
+  }, [apply]);
+
   const recordRecent = useCallback((visit: Omit<RecentVisit, "visitedAt">) => {
     apply((current) => recordRecentVisit(current, visit));
   }, [apply]);
@@ -126,7 +138,9 @@ export function usePersonalization() {
     togglePrayer,
     removePrayer,
     recordPrayer,
+    savePersonalNote,
+    clearPrayerHistory,
     recordRecent,
     clearRecent,
-  }), [state, toggleSavedPerson, removeSaved, togglePrayer, removePrayer, recordPrayer, recordRecent, clearRecent]);
+  }), [state, toggleSavedPerson, removeSaved, togglePrayer, removePrayer, recordPrayer, savePersonalNote, clearPrayerHistory, recordRecent, clearRecent]);
 }
