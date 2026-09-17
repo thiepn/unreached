@@ -58,8 +58,8 @@ test("refinements stay progressive and persist in URL state", async ({ page }) =
 
   await panel.getByRole("button", { name: "Clear refinements" }).click();
   await expect(page).not.toHaveURL(/country=BEN|language=/);
+  await expect(panel).not.toHaveAttribute("open", "");
   await expect(page.locator(".v3-people-result")).toHaveCount(3);
-  await expect(page.getByText("Reviewed coverage describes research depth, not mission importance.")).toHaveCount(0);
 });
 
 test("mobile discovery controls remain usable without horizontal overflow", async ({ page }) => {
