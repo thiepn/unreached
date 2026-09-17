@@ -131,6 +131,53 @@ test("source disagreement stays visible instead of being reconciled into one ver
   await expect(panel.getByText("Does not meet this source's unreached rule", { exact: true })).toBeVisible();
 });
 
+test("an unconfigured Worker fails visibly without replacing the canonical profile", async ({ page }) => {
+  await page.route(JOSHUA_URL, async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" },
+      body: JSON.stringify({ error: "Joshua Project comparison is not configured on this deployment." }),
+    });
+  });
+
+  await page.goto(`./#/peoples/${HUI_PEID}`);
+  const panel = page.locator('[data-phase13-multi-source="true"]');
+  await panel.getByRole("button", { name: "Compare mission sources" }).click();
+
+  await expect(panel.getByText("Secondary source unavailable.", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Joshua Project comparison is not configured on this deployment.", { exact: true })).toBeVisible();
+  await expect(panel.getByRole("button", { name: /Retry comparison/ })).toBeVisible();
+  await expect(panel.locator("[data-comparison-state]")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1, name: "Hui", exact: true })).toBeVisible();
+});
+
+test("a mismatched secondary identity is rejected instead of being compared", async ({ page }) => {
+  await page.route(JOSHUA_URL, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" },
+      body: JSON.stringify({
+        ...joshuaPayload(true),
+        peopleId3: 15755,
+        peopleId3Rog3: "15755CH",
+        peopleName: "Uyghur",
+        sourceProfileUrl: "https://joshuaproject.net/people_groups/15755/CH",
+      }),
+    });
+  });
+
+  await page.goto(`./#/peoples/${HUI_PEID}`);
+  const panel = page.locator('[data-phase13-multi-source="true"]');
+  await panel.getByRole("button", { name: "Compare mission sources" }).click();
+
+  await expect(panel.getByText("Secondary source unavailable.", { exact: true })).toBeVisible();
+  await expect(panel.getByText("The secondary source record did not match the reviewed cross-source identity link.", { exact: true })).toBeVisible();
+  await expect(panel.locator("[data-comparison-state]")).toHaveCount(0);
+  await expect(panel.getByRole("link", { name: "Data provided by Joshua Project" })).toHaveCount(0);
+});
+
 test("Phase 13 comparison remains readable on mobile", async ({ page }) => {
   await page.route(JOSHUA_URL, async (route) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(joshuaPayload(true)) });
