@@ -170,10 +170,17 @@ for (const marker of [
   "Cross-source identity is reviewed, not guessed.",
   "Disagreement stays visible.",
   "Optional comparison",
-  "Release 2.1.5 preserves the certified data boundary",
+  "Reviewed contextual profiles are separately authored and citation-reviewed.",
+  "The current release preserves the certified data boundary",
   "most recently reviewed on",
 ]) requireText(about, marker, "public methodology disclosure");
-for (const forbidden of ["Phase 13 · post-3.0 gate", "Phase 13 adds an optional", "reviewed for Phase 13", "Release 2.1.3"]) {
+for (const forbidden of [
+  "Phase 13 · post-3.0 gate",
+  "Phase 13 adds an optional",
+  "reviewed for Phase 13",
+  "Release 2.1.",
+  "Twelve contextual profiles",
+]) {
   if (about.includes(forbidden)) throw new Error(`Public About UI contains stale/internal release wording: ${forbidden}`);
 }
 
@@ -203,4 +210,4 @@ const pkg = await read("package.json");
 requireText(pkg, '"v3:phase13-check": "tsx scripts/v3/phase13-check.ts"', "Phase 13 package gate");
 requireText(pkg, "npm run v3:phase12-readiness && npm run v3:phase13-check", "blocking Phase 13 build integration");
 
-console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks and Worker allowlist are structurally identical, unreviewed IDs and missing credentials fail closed, source-native classifications and explicit comparison states remain intact, end-to-end no-store Joshua Project access and server-only credentials are enforced, public UI is roadmap-jargon-free, and attribution/legal/Gate D boundaries remain current.");
+console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks and Worker allowlist are structurally identical, unreviewed IDs and missing credentials fail closed, source-native classifications and explicit comparison states remain intact, end-to-end no-store Joshua Project access and server-only credentials are enforced, public UI is roadmap-jargon-free and avoids volatile release counts/version copy, and attribution/legal/Gate D boundaries remain current.");
