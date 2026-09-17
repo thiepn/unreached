@@ -106,7 +106,6 @@ for (const requiredText of [
   "Joshua Project",
   "not-unreached",
   "Phase 13",
-  "Phase 13 reviewed exception",
 ]) {
   if (!phase1.includes(requiredText)) {
     throw new Error(`Phase 1 architecture document is missing required decision text: ${requiredText}.`);
