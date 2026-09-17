@@ -30,12 +30,22 @@ for (const marker of [
   "Local-only use is the default",
   "Merge this device & enable sync",
   "latest `lastPrayedAt`",
+  "private notes",
+  "prayer-memory trail",
   "does not currently implement its own analytics",
-  "28 August 2026",
+  "17 September 2026",
 ]) if (!privacy.includes(marker)) throw new Error(`Release privacy notice missing: ${marker}`);
 
 const publicPrivacy = await readText("public/privacy.html");
-for (const marker of ["Privacy notice", "28 August 2026", "Optional private continuity", "Analytics and advertising", "Your controls"]) {
+for (const marker of [
+  "Privacy notice",
+  "17 September 2026",
+  "Optional private continuity",
+  "private notes",
+  "prayer-memory trail",
+  "Analytics and advertising",
+  "Your controls",
+]) {
   if (!publicPrivacy.includes(marker)) throw new Error(`Release public privacy page missing: ${marker}`);
 }
 
@@ -126,4 +136,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups runtime permissions, Phase 1 source reviews, attribution, project licensing and third-party notices agree with production behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current Phase 11 privacy disclosure, PeopleGroups runtime permissions, Phase 1 source reviews, attribution, project licensing and third-party notices agree with production behavior.");
