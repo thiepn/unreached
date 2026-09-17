@@ -135,8 +135,9 @@ test("private notes persist locally without changing source content", async ({ p
   ]));
 
   await page.reload();
-  await expect(page.getByRole("textbox", { name: `Private note for ${VISIBLE_TEST_PEOPLE}` })).toHaveValue(nextNote);
-  await expect(page.getByText("Personal, not part of the people profile.", { exact: false })).toBeVisible();
+  const reloadedEditor = page.locator(`[data-private-note-peid="${VISIBLE_TEST_PEID}"]`);
+  await expect(reloadedEditor.getByRole("textbox", { name: `Private note for ${VISIBLE_TEST_PEOPLE}` })).toHaveValue(nextNote);
+  await expect(reloadedEditor.getByText("Personal, not part of the people profile.", { exact: false })).toBeVisible();
 });
 
 test("prayer memory is bounded local history with explicit deletion", async ({ page }) => {
