@@ -9,12 +9,12 @@ const readText = (path: string) => readFile(resolve(root, path), "utf8");
 function versionAtLeast(value: string, minimum: [number, number, number]): boolean {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(value);
   if (!match) return false;
-  const actual = [Number(match[1]), Number(match[2]), Number(match[3])] as const;
-  for (let index = 0; index < 3; index += 1) {
-    if (actual[index] > minimum[index]) return true;
-    if (actual[index] < minimum[index]) return false;
-  }
-  return true;
+  const major = Number(match[1]);
+  const minor = Number(match[2]);
+  const patch = Number(match[3]);
+  if (major !== minimum[0]) return major > minimum[0];
+  if (minor !== minimum[1]) return minor > minimum[1];
+  return patch >= minimum[2];
 }
 
 const catalog = await loadPhase12EditorialCatalog();
