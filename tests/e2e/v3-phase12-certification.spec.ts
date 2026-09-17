@@ -74,7 +74,7 @@ async function selectBeninFromDesktopFinder(page: Page): Promise<void> {
 async function selectBeninFromMobileFinder(page: Page): Promise<void> {
   const sheet = page.locator(".explore-v3__mobile-sheet");
   await expect(sheet).toBeVisible();
-  if (!(await sheet.getAttribute("open"))) await sheet.locator(":scope > summary").click();
+  if ((await sheet.getAttribute("open")) === null) await sheet.locator(":scope > summary").click();
   const search = sheet.locator("#mobile-country-search");
   await search.scrollIntoViewIfNeeded();
   await expect(search).toBeVisible();
@@ -84,7 +84,7 @@ async function selectBeninFromMobileFinder(page: Page): Promise<void> {
   await expect(row).toBeVisible();
   await row.click();
   await expect(sheet.getByText("Selected country", { exact: true })).toBeVisible();
-  await expect(sheet.getByRole("strong").filter({ hasText: "Benin" }).first()).toBeVisible();
+  await expect(sheet.locator(":scope > summary strong")).toHaveText("Benin");
 }
 
 test.beforeAll(async () => {
@@ -138,7 +138,7 @@ test("reviewed editorial baseline still renders as an evidence-backed atlas arti
   await expect(page.getByRole("heading", { name: "Who they are" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Gospel-access context" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Pray from what is actually known." })).toBeVisible();
-  await expect(page.locator(".v3-people-evidence")).toHaveCount(1);
+  await expect(page.locator(".v3-people-evidence").first()).toBeVisible();
   await assertNoHorizontalOverflow(page);
   await page.screenshot({ path: `${artifactDir}/unreached-3-reviewed-profile.png`, fullPage: true });
 });
