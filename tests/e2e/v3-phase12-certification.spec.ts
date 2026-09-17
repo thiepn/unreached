@@ -110,7 +110,8 @@ test("3.0 core loop connects world discovery to people, prayer and memory", asyn
 
   await expect(page.getByRole("heading", { level: 1, name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.locator(".v3-people-profile")).toHaveAttribute("data-editorial-tier", "source");
-  await page.getByRole("button", { name: "Save profile" }).click();
+  await page.getByRole("button", { name: "Save for later" }).click();
+  await expect(page.getByRole("button", { name: "Remove from saved" })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("link", { name: /Pray with this context/ }).click();
 
   await expect(page.getByRole("heading", { level: 1, name: `Pray for ${VISIBLE_TEST_PEOPLE}` })).toBeVisible({ timeout: 15_000 });
