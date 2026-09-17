@@ -63,8 +63,8 @@ export function SearchPage() {
   }, [query, scope]);
 
   const results = useMemo(() => {
-    const matches = searchDocuments(shared.documents, debouncedQuery, 80);
-    return scope === "all" ? matches : matches.filter((result) => result.domain === scope);
+    const searchable = scope === "all" ? shared.documents : shared.documents.filter((document) => document.domain === scope);
+    return searchDocuments(searchable, debouncedQuery, 80);
   }, [shared.documents, debouncedQuery, scope]);
 
   const grouped = useMemo(() => {
