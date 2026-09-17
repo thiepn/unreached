@@ -1,0 +1,68 @@
+name: V3 Phase 10 Prayer 3.0
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase9-search-discovery
+    paths:
+      - "docs/V3_PHASE10_PRAYER_3.md"
+      - "src/pages/PrayPage.tsx"
+      - "src/pages/PrayerFocusPage.tsx"
+      - "src/pages/PrayerSessionPage.tsx"
+      - "src/prayer/**"
+      - "src/styles/atlas-foundation/prayer.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase4-check.ts"
+      - "scripts/v3/phase10-check.ts"
+      - "scripts/prayer/**"
+      - "tests/e2e/v3-phase10-prayer.spec.ts"
+      - "tests/e2e/phase12-prayer-saved.spec.ts"
+      - "tests/e2e/v16-prayer-practice.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase10-prayer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prayer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Prayer 3.0 contract
+        run: npm run v3:phase10-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 10 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify Prayer 3.0 desktop and mobile journeys
+        run: npm run v3:phase10-prayer-visual
+
+      - name: Upload Prayer 3.0 visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase10-prayer
+          path: artifacts/v3-phase10
+          if-no-files-found: error
+          retention-days: 30
