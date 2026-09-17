@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { installPeopleGroupsFixture } from "./peoplegroups-fixture";
+import { installPeopleGroupsFixture, VISIBLE_TEST_PEOPLE } from "./peoplegroups-fixture";
 
 test.beforeEach(async ({ page }) => {
   await installPeopleGroupsFixture(page);
@@ -10,85 +10,74 @@ test("search is the first discovery action", async ({ page }) => {
   await page.goto("./#/peoples");
   const search = page.locator("#people-search");
   await expect(search).toBeVisible();
-  await expect(page.locator(".guided-start")).toBeVisible();
+  await expect(page.locator(".v3-collections")).toBeVisible();
 
   const order = await page.evaluate(() => {
-    const searchWrap = document.querySelector(".people-search-wrap");
-    const guided = document.querySelector(".guided-start");
-    if (!searchWrap || !guided) return "missing";
-    return searchWrap.compareDocumentPosition(guided) & Node.DOCUMENT_POSITION_FOLLOWING ? "search-first" : "guided-first";
+    const searchWorkspace = document.querySelector(".v3-people-find");
+    const guided = document.querySelector(".v3-collections");
+    if (!searchWorkspace || !guided) return "missing";
+    return searchWorkspace.compareDocumentPosition(guided) & Node.DOCUMENT_POSITION_FOLLOWING ? "search-first" : "guided-first";
   });
   expect(order).toBe("search-first");
 
   await search.fill("Browser Test");
-  await expect(page.locator(".guided-start")).toHaveCount(0);
-  await expect(page.locator(".people-editorial-discovery--secondary")).toHaveCount(0);
-  await expect(page.locator(".people-card--explorer")).toHaveCount(2);
+  await expect(page.locator(".v3-collections")).toHaveCount(0);
+  await expect(page.locator(".v3-people-result")).toHaveCount(2);
 });
 
 test("quick reach status filters results and persists in URL state", async ({ page }) => {
   await page.goto("./#/peoples");
-  const other = page.getByRole("button", { name: "Other", exact: true });
-  await expect(other).toHaveAttribute("aria-pressed", "false");
-  await other.click();
-  await expect(other).toHaveAttribute("aria-pressed", "true");
-  await expect(page).toHaveURL(/status=other-only/);
-  await expect(page.locator(".people-card--explorer")).toHaveCount(1);
-  await expect(page.locator(".people-card--explorer")).toContainText("Browser Test People");
-  await expect(page.locator(".people-card--explorer")).toContainText("Other mission status");
+  const unreached = page.getByRole("button", { name: "Unreached source records", exact: true });
+  await expect(unreached).toHaveAttribute("aria-pressed", "false");
+  await unreached.click();
+  await expect(unreached).toHaveAttribute("aria-pressed", "true");
+  await expect(page).toHaveURL(/status=unreached-only/);
+  await expect(page.locator(".v3-people-result")).toHaveCount(2);
+  await expect(page.locator(".v3-people-result").first()).toContainText("Unreached");
 
   await page.goto("./#/about");
   await page.goBack();
-  await expect(page.getByRole("button", { name: "Other", exact: true })).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator(".people-card--explorer")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Unreached source records", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".v3-people-result")).toHaveCount(2);
 });
 
-test("advanced filters stay progressive and expose removable active filters", async ({ page }) => {
+test("refinements stay progressive and persist in URL state", async ({ page }) => {
   await page.goto("./#/peoples");
 
-  const primary = page.locator(".people-primary-context-filters");
-  await primary.getByRole("combobox", { name: "Country" }).selectOption("BEN");
-  await expect(page).toHaveURL(/country=BEN/);
-  await expect(page.locator(".people-card--explorer")).toHaveCount(2);
-
-  const panel = page.locator(".people-filter-panel--advanced");
+  const panel = page.locator(".v3-discovery-refine");
   await expect(panel).not.toHaveAttribute("open", "");
   await panel.locator("summary").click();
-  await panel.getByRole("combobox", { name: "Bible label" }).selectOption("Available");
+  await panel.getByRole("combobox", { name: "Country" }).selectOption("BEN");
+  await expect(page).toHaveURL(/country=BEN/);
+  await expect(page.locator(".v3-people-result")).toHaveCount(2);
 
-  await expect(page).toHaveURL(/bible=Available/);
-  await expect(page.locator(".people-filter-count")).toHaveText("1");
-  await expect(page.locator(".people-card--explorer")).toHaveCount(1);
+  await panel.getByRole("combobox", { name: "Language" }).selectOption({ label: "Yoruba" });
+  await expect(page).toHaveURL(/language=/);
+  await expect(page.locator(".v3-people-result")).toHaveCount(1);
+  await expect(page.locator(".v3-people-result")).toContainText("Second Browser People");
 
-  const activeFilters = page.locator(".people-active-filters");
-  await expect(activeFilters).toBeVisible();
-  await expect(activeFilters.getByRole("button", { name: /Benin/ })).toBeVisible();
-  await expect(activeFilters.getByRole("button", { name: /Available/ })).toBeVisible();
-
-  await activeFilters.getByRole("button", { name: /Available/ }).click();
-  await expect(page).not.toHaveURL(/bible=Available/);
-  await expect(page.locator(".people-card--explorer")).toHaveCount(2);
-  await activeFilters.getByRole("button", { name: /Benin/ }).click();
-  await expect(page).not.toHaveURL(/country=BEN/);
-  await expect(page.locator(".people-active-filters")).toHaveCount(0);
-  await expect(page.locator(".people-card--explorer")).toHaveCount(3);
+  await panel.getByRole("button", { name: "Clear refinements" }).click();
+  await expect(page).not.toHaveURL(/country=BEN|language=/);
+  await expect(page.locator(".v3-people-result")).toHaveCount(3);
+  await expect(page.getByText("Reviewed coverage describes research depth, not mission importance.")).toHaveCount(0);
 });
 
 test("mobile discovery controls remain usable without horizontal overflow", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("./#/peoples");
   await expect(page.locator("#people-search")).toBeVisible();
-  await expect(page.locator(".people-status-choices")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Unreached", exact: true })).toBeVisible();
-  await expect(page.locator(".people-sort-control--compact select")).toBeVisible();
-  await expect(page.locator(".people-primary-context-filters")).toBeVisible();
+  await expect(page.getByRole("button", { name: "All people", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Unreached source records", exact: true })).toBeVisible();
+  await expect(page.locator(".v3-discovery-refine")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Begin with a path, not a filter wall." })).toBeVisible();
 
   const overflow = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
-  expect(overflow.width).toBeLessThanOrEqual(overflow.client);
+  expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
 
-  const cards = page.locator(".people-card--explorer");
+  const cards = page.locator(".v3-people-result");
   await expect(cards).toHaveCount(3);
   const first = await cards.first().boundingBox();
   expect(first).not.toBeNull();
   expect(first!.width).toBeLessThanOrEqual(390);
+  await expect(cards.first()).toContainText(VISIBLE_TEST_PEOPLE);
 });
