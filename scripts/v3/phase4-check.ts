@@ -83,6 +83,7 @@ const migratedProductPages = new Set([
   "PrayPage.tsx",
   "PrayerFocusPage.tsx",
   "PrayerSessionPage.tsx",
+  "SavedPage.tsx",
 ]);
 const pageFiles = (await readdir(resolve(root, "src/pages"))).filter((name) => name.endsWith(".tsx") && name !== "DesignSystemPage.tsx");
 for (const file of pageFiles) {
