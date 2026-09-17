@@ -31,7 +31,7 @@ for (const marker of [
   "Merge this device & enable sync",
   "latest `lastPrayedAt`",
   "private notes",
-  "prayer-memory trail",
+  "prayer-memory entries",
   "does not currently implement its own analytics",
   "17 September 2026",
 ]) if (!privacy.includes(marker)) throw new Error(`Release privacy notice missing: ${marker}`);
