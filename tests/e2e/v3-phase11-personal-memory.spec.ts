@@ -163,8 +163,18 @@ test("Personal Mission Memory remains readable on mobile", async ({ page }) => {
   await expect(page.locator('[data-memory-section="prayer-memory"]')).toBeVisible();
   await assertNoHorizontalOverflow(page);
 
-  const controls = page.locator(".v3-memory-page a, .v3-memory-page button");
+  const controls = page.locator([
+    ".v3-memory-hero__actions a",
+    ".v3-memory-card__actions a",
+    ".v3-memory-card__actions button",
+    ".v3-memory-return > a",
+    ".saved-prayer-session-launcher__actions a",
+    ".v3-memory-note button",
+    ".v3-memory-clear",
+    ".v3-memory-empty a",
+  ].join(", "));
   const heights = await controls.evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).getBoundingClientRect().height));
+  expect(heights.length).toBeGreaterThan(0);
   expect(heights.every((height) => height >= 43.5)).toBe(true);
 
   await page.screenshot({ path: `${artifactDir}/personal-memory-mobile.png`, fullPage: true });
