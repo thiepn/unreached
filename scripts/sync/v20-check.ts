@@ -11,8 +11,9 @@ if (!pkg.scripts?.["sync:check"]?.includes("scripts/sync/v20-check.ts")) throw n
 const personalizationTypes = await readText("src/personalization/types.ts");
 const personalizationModel = await readText("src/personalization/model.ts");
 const personalizationRuntime = await readText("src/personalization/runtime.ts");
-if (!personalizationTypes.includes("version: z.literal(2)")) throw new Error("Personalization schema v2 must be preserved.");
-if (!personalizationRuntime.includes('"unreached.personal.v2"')) throw new Error("The existing local personalization storage key must be preserved.");
+if (!personalizationTypes.includes("version: z.literal(3)")) throw new Error("Private sync must coexist with the current personalization schema v3.");
+if (!personalizationTypes.includes("legacyPersonalizationStateV2Schema")) throw new Error("Personalization v3 must retain explicit v2 migration support.");
+if (!personalizationRuntime.includes('"unreached.personal.v2"')) throw new Error("The historical local personalization storage key must be preserved for in-place migration.");
 for (const marker of ["memoryFallbackState", "PERSONALIZATION_CHANGE_EVENT", "finally", "dispatchEvent"]) {
   if (!personalizationRuntime.includes(marker)) throw new Error(`Phase 1 storage fallback missing ${marker}.`);
 }
@@ -35,7 +36,7 @@ const app = await readText("src/app/App.tsx");
 const main = await readText("src/main.tsx");
 const workerConfig = await readText("worker/wrangler.template.jsonc");
 
-if (!syncRuntime.includes('"unreached.sync.v1"')) throw new Error("Sync metadata storage must remain separate from personalization v2 and migrate in place.");
+if (!syncRuntime.includes('"unreached.sync.v1"')) throw new Error("Sync metadata storage must remain separate from personalization state and migrate in place.");
 for (const marker of ['SyncKind = "saved" | "prayer"', "baseItemRevision", "mutationId", "pending", "mirror", "accountMismatchEmail", "authenticationRequired"]) {
   if (!syncTypes.includes(marker)) throw new Error(`Sync contract missing ${marker}.`);
 }
@@ -72,10 +73,12 @@ for (const marker of [
 ]) {
   if (!reconcile.includes(marker)) throw new Error(`Phase 1 reconciliation layer missing ${marker}.`);
 }
+if (reconcile.includes("personalNotes") || reconcile.includes("prayerMemory")) throw new Error("Phase 11 local-only notes/prayer memory must not enter private-sync reconciliation.");
+if (!reconcile.includes("return { ...current, savedPeoples, prayerList };")) throw new Error("Sync merges must preserve local-only personalization fields while replacing only synced lists.");
 
 const protocolSurface = `${syncTypes}\n${syncClient}\n${worker}`;
 for (const forbidden of [
-  "recentVisit", "recentVisits", "visitedAt", "sessionHistory", "sessionCount", "completionRate", "completionPercent",
+  "personalNotes", "prayerMemory", "recentVisit", "recentVisits", "visitedAt", "sessionHistory", "sessionCount", "completionRate", "completionPercent",
   "sessionScore", "sessionStreak", "prayerCount", "prayerTotal", "prayerMinutesTotal", "leaderboard", "peoplegroups.org", "/wp-json/pg/v1"
 ]) {
   if (protocolSurface.toLowerCase().includes(forbidden.toLowerCase())) throw new Error(`Private sync protocol contains forbidden field/reference: ${forbidden}`);
@@ -203,4 +206,4 @@ if (!main.includes("initializePrivateSyncRuntime();") || !main.includes('"./styl
 const offlineGate = await readText("scripts/offline/v19-check.ts");
 if (offlineGate.includes('pkg.version !== "1.9.0"')) throw new Error("v1.9 capability gate must remain forward-compatible.");
 
-console.log("Phase 1 private-sync architecture checks passed: storage fallback, capacity-safe first merge, causal reconciliation, account binding, byte/count batching, symmetric stale-conflict handling, atomic D1 mutation claims, latest-only prayer timestamps, session-only verified bearer auth, export/delete controls, and no recent-history/corpus/performance sync.");
+console.log("Phase 1 private-sync architecture checks passed with personalization v3: storage fallback, capacity-safe first merge, causal reconciliation, account binding, byte/count batching, symmetric stale-conflict handling, atomic D1 mutation claims, latest-only synced prayer timestamp, session-only verified bearer auth, export/delete controls, and no notes/prayer-memory/recent/corpus/performance sync.");
