@@ -1,4 +1,4 @@
-export type SearchDomain = "people" | "country" | "language";
+export type SearchDomain = "people" | "region" | "country" | "language";
 
 export interface SearchPeopleInput {
   sourcePeopleId: number;
@@ -8,6 +8,12 @@ export interface SearchPeopleInput {
   largestCountryName?: string | null;
   cluster?: string | null;
   affinityBloc?: string | null;
+}
+
+export interface SearchRegionInput {
+  id: string;
+  name: string;
+  countryNames?: string[];
 }
 
 export interface SearchCountryInput {
@@ -69,6 +75,7 @@ function document(domain: SearchDomain, id: string, label: string, secondary: st
 
 export function buildSearchDocuments(input: {
   peoples: SearchPeopleInput[];
+  regions?: SearchRegionInput[];
   countries: SearchCountryInput[];
   languages: SearchLanguageInput[];
 }): SearchDocument[] {
@@ -79,6 +86,15 @@ export function buildSearchDocuments(input: {
     compact([people.largestCountryName, people.primaryLanguageName]).join(" · ") || null,
     `#/peoples/${people.sourcePeopleId}`,
     compact([String(people.sourcePeopleId), people.primaryLanguageName, people.primaryReligionName, people.largestCountryName, people.cluster, people.affinityBloc]),
+  ));
+
+  const regionDocs = (input.regions ?? []).map((region) => document(
+    "region",
+    `region:${region.id}`,
+    region.name,
+    "World region",
+    `#/regions/${region.id}`,
+    region.countryNames ?? [],
   ));
 
   const countryDocs = input.countries
@@ -94,7 +110,7 @@ export function buildSearchDocuments(input: {
     compact([language.iso6393, language.familyName, language.branchName, ...(language.countryNames ?? []), ...(language.peopleNames ?? [])]),
   ));
 
-  return [...peopleDocs, ...countryDocs, ...languageDocs];
+  return [...peopleDocs, ...regionDocs, ...countryDocs, ...languageDocs];
 }
 
 function isSubsequence(query: string, value: string): boolean {
@@ -136,7 +152,7 @@ function insertBest(best: SearchResult[], candidate: SearchResult, limit: number
   if (best.length > limit) best.pop();
 }
 
-export function searchDocuments(documents: SearchDocument[], query: string, limit = 18): SearchResult[] {
+export function searchDocuments(documents: SearchDocument[], query: string, limit = 36): SearchResult[] {
   const normalizedQuery = normalize(query);
   if (!normalizedQuery || limit <= 0) return [];
   const compactQuery = normalizedQuery.replaceAll(" ", "");
