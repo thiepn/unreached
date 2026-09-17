@@ -1,22 +1,22 @@
 import {
   AttributionControl,
   GeoJSONSource,
+  GPUInitializationError,
   LngLatBounds,
   Map as MapLibreMap,
   NavigationControl,
   setWorkerUrl,
   type StyleSpecification,
 } from "maplibre-gl";
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useEffect, useRef } from "preact/hooks";
 
 import type { MissionMapGeography } from "../visualization";
 import type { MapCountryFeature, MapViewState, WorldGeography } from "./types";
 
-// Keep the dedicated CSP-safe worker, but configure it only when the lazy
-// Explore/WorldMap chunk is actually requested. This prevents MapLibre from
-// inflating the application bootstrap bundle on Peoples, Countries, Languages,
-// Prayer, Saved, and About routes.
+// MapLibre 6 is ESM-only. Under Vite the worker must pass through the worker
+// pipeline so its shared module is bundled into a self-contained same-origin
+// asset. Keeping the explicit worker URL also preserves the site's strict CSP.
 setWorkerUrl(maplibreWorkerUrl);
 
 const HOME_VIEW: MapViewState = { longitude: 10, latitude: 18, zoom: 1.15 };
@@ -39,7 +39,14 @@ function reducedMotion(): boolean {
 }
 
 function fatalRenderingError(message: string): boolean {
-  return /webgl|context lost|context creation|failed to initialize|could not start|worker.*(?:failed|error)/i.test(message);
+  return /webgl|gpu|context lost|context creation|failed to initialize|could not start|worker.*(?:failed|error)/i.test(message);
+}
+
+function mapStartError(error: unknown): string {
+  if (error instanceof GPUInitializationError) {
+    return "The interactive map requires WebGL 2. Use the country finder below or a browser/device with WebGL 2 support.";
+  }
+  return error instanceof Error ? error.message : "The interactive map could not start.";
 }
 
 function boundsFor(feature: MapCountryFeature): LngLatBounds {
@@ -179,12 +186,12 @@ export function WorldMap({
         attributionControl: false,
         fadeDuration: reducedMotion() ? 0 : 180,
         canvasContextAttributes: {
-          contextType: "webgl",
+          contextType: "webgl2",
           powerPreference: "default",
         },
       });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "The interactive map could not start.";
+      const message = mapStartError(error);
       container.dataset.mapError = message;
       if (error instanceof Error && error.stack) container.dataset.mapErrorStack = error.stack;
       onErrorRef.current(message);
