@@ -1,0 +1,44 @@
+name: V3 Phase 12 Worker Lockfile Refresh
+
+on:
+  push:
+    branches:
+      - phase/v3-phase12-content-certification
+    paths:
+      - "worker/package.json"
+      - ".github/workflows/v3-phase12-worker-lockfile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+        with:
+          ref: phase/v3-phase12-content-certification
+          persist-credentials: true
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Refresh Worker lockfile
+        working-directory: worker
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Commit Worker lockfile if changed
+        run: |
+          if git diff --quiet -- worker/package-lock.json; then
+            echo "worker/package-lock.json is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worker/package-lock.json
+          git commit -m "Refresh Worker lockfile for Wrangler 4.133.0"
+          git push origin HEAD:phase/v3-phase12-content-certification
