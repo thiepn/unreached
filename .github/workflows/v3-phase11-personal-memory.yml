@@ -1,0 +1,66 @@
+name: V3 Phase 11 Personal Mission Memory
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase10-prayer
+    paths:
+      - "docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md"
+      - "docs/PERSONALIZATION_PRIVACY.md"
+      - "src/pages/SavedPage.tsx"
+      - "src/personalization/**"
+      - "src/sync/reconcile.ts"
+      - "src/styles/atlas-foundation/memory.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase4-check.ts"
+      - "scripts/v3/phase11-check.ts"
+      - "tests/e2e/v3-phase11-personal-memory.spec.ts"
+      - "tests/e2e/phase12-prayer-saved.spec.ts"
+      - "package.json"
+      - ".github/workflows/v3-phase11-personal-memory.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  memory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Personal Mission Memory contract
+        run: npm run v3:phase11-check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build with Phase 1 through Phase 11 gates
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify Personal Mission Memory desktop and mobile journeys
+        run: npm run v3:phase11-memory-visual
+
+      - name: Upload Personal Mission Memory visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase11-personal-memory
+          path: artifacts/v3-phase11
+          if-no-files-found: error
+          retention-days: 30
