@@ -7,10 +7,12 @@ import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
   buildLivePrayerProfile,
   isLivePrayerEligible,
+  livePrayerContextSummary,
   livePrayerFlow,
+  livePrayerPlainReason,
+  useLivePrayerRouteRecord,
   type PrayerCategory,
 } from "../prayer";
-import { usePeopleGroupsRouteRecord } from "../providers/peoplegroups";
 
 type PrayerPace = "short" | "standard" | "extended";
 
@@ -25,13 +27,14 @@ function categoryLabel(category: PrayerCategory): string {
 }
 
 export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) {
-  const route = usePeopleGroupsRouteRecord(sourcePeopleId);
+  const route = useLivePrayerRouteRecord(sourcePeopleId);
   const personalization = usePersonalization();
   const [pace, setPace] = useState<PrayerPace>("standard");
   const [activeIndex, setActiveIndex] = useState(0);
   const paceConfig = PRAYER_PACES.find((option) => option.id === pace) ?? PRAYER_PACES[1];
   const entity = route.entity;
   const profile = entity && isLivePrayerEligible(entity) ? buildLivePrayerProfile(entity) : null;
+  const context = entity ? livePrayerContextSummary(entity) : null;
   const flow = useMemo(() => profile ? livePrayerFlow(profile, paceConfig.flowValue) : [], [profile, paceConfig.flowValue]);
   const activePrompt = flow[activeIndex] ?? null;
   const prayerSnapshot = entity ? prayerSnapshotFromEntity(entity) : null;
@@ -44,10 +47,10 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
 
   useEffect(() => setActiveIndex(0), [pace, sourcePeopleId]);
 
-  if (route.loading) return <section class="prayer-focus prayer-state" role="status">Loading live prayer record…</section>;
+  if (route.loading) return <section class="prayer-focus v3-prayer-focus prayer-state" role="status">Loading live prayer record…</section>;
   if (route.error) {
     return (
-      <section class="prayer-focus prayer-focus--state">
+      <section class="prayer-focus v3-prayer-focus prayer-focus--state">
         <Database size={24} aria-hidden="true" />
         <div class="eyebrow">Focused prayer</div>
         <h1 class="display-title">Live prayer guide unavailable.</h1>
@@ -57,9 +60,9 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
       </section>
     );
   }
-  if (route.notFound || !profile || !activePrompt || !entity || !prayerSnapshot) {
+  if (route.notFound || !profile || !activePrompt || !entity || !prayerSnapshot || !context) {
     return (
-      <section class="prayer-focus prayer-focus--state">
+      <section class="prayer-focus v3-prayer-focus prayer-focus--state">
         <div class="eyebrow">Focused prayer</div>
         <h1 class="display-title">Prayer guide not found.</h1>
         <p>No current GSEC 0–3 PeopleGroups.org context matches PEID <strong>{sourcePeopleId}</strong>.</p>
@@ -69,65 +72,90 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
   }
 
   return (
-    <article class="prayer-focus" data-prayer-data-source={route.source ?? "unknown"} data-prayer-pgid={entity.contexts[0]?.pgid ?? ""}>
-      <nav class="prayer-focus__back" aria-label="Prayer navigation"><a href={hrefFor("/pray")}><ArrowLeft size={15} aria-hidden="true" /> Prayer</a><span>/</span><a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>{profile.peopleName}</a></nav>
+    <article class="prayer-focus v3-prayer-focus" data-v3-prayer="focus" data-prayer-data-source={route.source ?? "unknown"} data-prayer-pgid={entity.contexts[0]?.pgid ?? ""}>
+      <nav class="prayer-focus__back v3-prayer-breadcrumb" aria-label="Prayer navigation"><a href={hrefFor("/pray")}><ArrowLeft size={15} aria-hidden="true" /> Prayer</a><span>/</span><a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>{profile.peopleName}</a></nav>
 
       {route.warning ? <div class="prayer-release-notice" role="status"><Database size={18} aria-hidden="true" /><div><strong>Cached source data</strong><p>{route.warning}</p></div></div> : null}
 
-      <header class="prayer-focus__hero">
+      <header class="prayer-focus__hero v3-prayer-focus__hero">
         <div>
-          <div class="eyebrow">Focused prayer</div>
-          <h1 class="display-title">Pray for {profile.peopleName}</h1>
-          <p>{profile.whyPray}</p>
-          <button
-            type="button"
-            class={`prayer-list-toggle prayer-list-toggle--focus${listed ? " is-active" : ""}`}
-            aria-pressed={listed}
-            onClick={() => personalization.togglePrayer(prayerSnapshot)}
-          >
-            <Bookmark size={16} aria-hidden="true" />
-            {listed ? "Remove from private prayer list" : "Add to private prayer list"}
-          </button>
+          <span class="v3-type-label">Focused prayer · {context.countryName}</span>
+          <h1 class="v3-type-display-xl">Pray for {profile.peopleName}</h1>
+          <p class="v3-type-body-lg v3-reading">{livePrayerPlainReason(entity)}</p>
+          <div class="v3-prayer-focus__hero-actions">
+            <button
+              type="button"
+              class={`prayer-list-toggle prayer-list-toggle--focus${listed ? " is-active" : ""}`}
+              aria-pressed={listed}
+              onClick={() => personalization.togglePrayer(prayerSnapshot)}
+            >
+              <Bookmark size={16} aria-hidden="true" />
+              {listed ? "Remove from private prayer list" : "Add to private prayer list"}
+            </button>
+            <a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>Read full people profile</a>
+          </div>
         </div>
-        <Compass size={32} aria-hidden="true" />
+        <Compass size={34} aria-hidden="true" />
       </header>
 
-      <div class="prayer-duration" aria-label="Prayer guide length">
-        <span>Choose a guide length</span>
-        <div role="group" aria-label="Prayer guide length">
-          {PRAYER_PACES.map((option) => <button type="button" class={pace === option.id ? "is-active" : ""} aria-pressed={pace === option.id} onClick={() => setPace(option.id)} key={option.id}><strong>{option.label}</strong><small>{option.prompts} prompts</small></button>)}
+      <section class="v3-prayer-context" aria-labelledby="prayer-context-heading" data-v3-prayer-context="true">
+        <div class="v3-prayer-context__intro">
+          <span class="v3-type-label">Before you pray</span>
+          <h2 id="prayer-context-heading" class="v3-type-heading-lg">Hold a few source facts in view.</h2>
+          <p>These are source-record facts, not a description of every individual. The prayer prompts below are fixed reviewed wording shaped around this context.</p>
         </div>
-        <small>Choose how many prompts to work through. No timer runs, and there is no completion target.</small>
-      </div>
-
-      <section class="prayer-prompt-stage" aria-live="polite">
-        <div class="prayer-prompt-stage__top">
-          <span class="prayer-category">{categoryLabel(activePrompt.category)}</span>
-          <span>Prayer step {activeIndex + 1} of {flow.length}</span>
-        </div>
-        <p class="prayer-prompt-text">{activePrompt.text}</p>
-        {activePrompt.scriptureReferences.length ? (
-          <div class="prayer-scripture-list">
-            <div class="prayer-scripture-label"><BookOpen size={17} aria-hidden="true" /> Scripture for this prayer</div>
-            {activePrompt.scriptureReferences.map((scripture) => <div key={`${activePrompt.id}-${scripture.reference}`}><strong>{scripture.reference}</strong><span>{scripture.purpose}</span></div>)}
-          </div>
-        ) : null}
-        {activePrompt.sourceGrounding ? <p class="prayer-freshness">Source grounding: {activePrompt.sourceGrounding}</p> : null}
+        <dl class="v3-prayer-context__facts">
+          <div><dt>Country</dt><dd>{context.countryName}</dd></div>
+          <div><dt>Language</dt><dd>{context.languageName ?? "Not reported"}</dd></div>
+          <div><dt>Religion label</dt><dd>{context.religionName ?? "Not reported"}</dd></div>
+          <div><dt>Source status</dt><dd>Unreached · GSEC 0–3</dd></div>
+          <div><dt>Bible label</dt><dd>{context.bibleLabel ?? "Not reported"}</dd></div>
+        </dl>
       </section>
 
-      <div class="prayer-focus__controls">
-        <button type="button" onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} disabled={activeIndex === 0}><ChevronLeft size={18} aria-hidden="true" /> Previous</button>
-        <div class="prayer-step-dots" aria-hidden="true">{flow.map((prompt, index) => <span class={index === activeIndex ? "is-active" : ""} key={prompt.id} />)}</div>
-        {activeIndex < flow.length - 1 ? (
-          <button type="button" onClick={() => setActiveIndex((value) => Math.min(flow.length - 1, value + 1))}>Next <ChevronRight size={18} aria-hidden="true" /></button>
-        ) : (
-          <a class="prayer-return" href={hrefFor("/pray")}>Return to Prayer</a>
-        )}
-      </div>
+      <section class="v3-prayer-guide" aria-labelledby="prayer-guide-heading">
+        <div class="v3-prayer-guide__heading">
+          <span class="v3-type-label">Prayer guide</span>
+          <h2 id="prayer-guide-heading" class="v3-type-heading-xl">Move through a few prompts, slowly.</h2>
+        </div>
 
-      <section class="prayer-practice-panel" aria-labelledby="prayer-practice-heading">
+        <div class="prayer-duration v3-prayer-duration" aria-label="Prayer guide length">
+          <span>Choose a guide length</span>
+          <div role="group" aria-label="Prayer guide length">
+            {PRAYER_PACES.map((option) => <button type="button" class={pace === option.id ? "is-active" : ""} aria-pressed={pace === option.id} onClick={() => setPace(option.id)} key={option.id}><strong>{option.label}</strong><small>{option.prompts} prompts</small></button>)}
+          </div>
+          <small>No timer runs, and there is no completion target. Choose only the amount of material useful for this prayer.</small>
+        </div>
+
+        <section class="prayer-prompt-stage v3-prayer-prompt" aria-live="polite">
+          <div class="prayer-prompt-stage__top">
+            <span class="prayer-category">{categoryLabel(activePrompt.category)}</span>
+            <span>Prayer step {activeIndex + 1} of {flow.length}</span>
+          </div>
+          <p class="prayer-prompt-text">{activePrompt.text}</p>
+          {activePrompt.scriptureReferences.length ? (
+            <div class="prayer-scripture-list v3-prayer-scripture">
+              <div class="prayer-scripture-label"><BookOpen size={17} aria-hidden="true" /> Scripture for this prayer</div>
+              {activePrompt.scriptureReferences.map((scripture) => <div key={`${activePrompt.id}-${scripture.reference}`}><strong>{scripture.reference}</strong><span>{scripture.purpose}</span></div>)}
+            </div>
+          ) : null}
+          {activePrompt.sourceGrounding ? <p class="prayer-freshness">Source grounding: {activePrompt.sourceGrounding}</p> : null}
+        </section>
+
+        <div class="prayer-focus__controls v3-prayer-focus__controls">
+          <button type="button" onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} disabled={activeIndex === 0}><ChevronLeft size={18} aria-hidden="true" /> Previous</button>
+          <div class="prayer-step-dots" aria-hidden="true">{flow.map((prompt, index) => <span class={index === activeIndex ? "is-active" : ""} key={prompt.id} />)}</div>
+          {activeIndex < flow.length - 1 ? (
+            <button type="button" onClick={() => setActiveIndex((value) => Math.min(flow.length - 1, value + 1))}>Next <ChevronRight size={18} aria-hidden="true" /></button>
+          ) : (
+            <a class="prayer-return" href={hrefFor("/pray")}>Return to Prayer</a>
+          )}
+        </div>
+      </section>
+
+      <section class="prayer-practice-panel v3-prayer-practice" aria-labelledby="prayer-practice-heading">
         <div>
-          <span class="eyebrow">Private prayer practice</span>
+          <span class="v3-type-label">Optional private memory</span>
           <h2 id="prayer-practice-heading">Keep one simple return point.</h2>
           <p>If useful, record that you prayed for this people today. Unreached stores only the latest timestamp in this browser—never a total, score, streak, or public activity record.</p>
         </div>
@@ -142,7 +170,7 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
         </button>
         {prayerListEntry?.lastPrayedAt ? <small>Last recorded locally: {new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(prayerListEntry.lastPrayedAt))}</small> : <small>No prayer date is stored yet.</small>}
         {recordedToday && nextPrayerEntry ? (
-          <a class="prayer-rotation-next" data-next-prayer-peid={nextPrayerEntry.sourcePeopleId} href={hrefFor(`/pray/${nextPrayerEntry.sourcePeopleId}`)}>
+          <a class="prayer-rotation-next v3-prayer-next" data-next-prayer-peid={nextPrayerEntry.sourcePeopleId} href={hrefFor(`/pray/${nextPrayerEntry.sourcePeopleId}`)}>
             <RotateCcw size={16} aria-hidden="true" />
             <span><strong>Continue with {nextPrayerEntry.name}</strong><small>Next return point from your private prayer rotation; current eligibility is rechecked when opened</small></span>
             <ChevronRight size={17} aria-hidden="true" />
@@ -150,8 +178,12 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
         ) : null}
       </section>
 
-      <footer class="prayer-focus__footer">
+      <footer class="prayer-focus__footer v3-prayer-focus__footer">
         <p>Template {LIVE_PRAYER_TEMPLATE_REVIEW.version} is fixed and release-certified. Runtime facts come from the current PeopleGroups.org record. Private prayer practice and rotation are optional and non-competitive: no prayer score, streak, public activity record, mission-priority signal, or spiritual completion metric is created.</p>
+        <details class="v3-prayer-source-detail">
+          <summary>Source record details</summary>
+          <p>PeopleGroups.org record {context.pgid} · PEID {sourcePeopleId} · current source range GSEC 0–3{context.gsecCode === null ? "" : ` · GSEC ${context.gsecCode}`}. Source updated: {context.sourceUpdatedAt ?? "not reported"}.</p>
+        </details>
         <a href={hrefFor(`/peoples/${profile.sourcePeopleId}`)}>Return to the people profile</a>
       </footer>
     </article>
