@@ -110,29 +110,46 @@ const countryTableIndex = countryPage.indexOf('id="unreached-people-heading"');
 if (!(countryLargestIndex >= 0 && countryResearchIndex > countryLargestIndex && countryTableIndex > countryResearchIndex)) throw new Error("U11-D must show people before detailed country records.");
 
 const peoplesPage = await readText("src/pages/PeoplesPage.tsx");
-for (const marker of ["peoples-page--comprehension", "people-primary-context-filters", "Search people, country or language", "Other mission status", "Bible resources", "Learn about this people", "Bible label, population and reviewed context"]) {
+for (const marker of [
+  "peoples-page--comprehension",
+  'data-v3-people-discovery="true"',
+  "Find a people group.",
+  "Search people, country, language or source ID",
+  "Unreached source records",
+  "Refine results",
+  "Country<select",
+  "Language<select",
+  "Religion<select",
+  "Reviewed coverage describes research depth, not mission importance.",
+  "Open profile",
+]) {
   if (!peoplesPage.includes(marker)) throw new Error(`U11-D people explorer comprehension missing ${marker}.`);
 }
-const primaryFiltersIndex = peoplesPage.indexOf('class="people-primary-context-filters"');
-const advancedFiltersIndex = peoplesPage.indexOf('class="people-filter-panel people-filter-panel--advanced"');
-if (!(primaryFiltersIndex >= 0 && advancedFiltersIndex > primaryFiltersIndex)) throw new Error("U11-D primary context filters must precede advanced source filters.");
-const advancedFiltersEnd = peoplesPage.indexOf("</details>", advancedFiltersIndex);
-const advancedFilters = peoplesPage.slice(advancedFiltersIndex, advancedFiltersEnd);
-for (const primaryLabel of [">Country<select", ">Language<select", ">Religion<select"]) if (advancedFilters.includes(primaryLabel)) throw new Error(`U11-D primary context filter remains buried: ${primaryLabel}`);
-const cardStart = peoplesPage.indexOf('class="people-card people-card--concise people-card--explorer people-card--comprehension"');
-const cardEnd = peoplesPage.indexOf("</a>", cardStart);
-if (cardStart < 0 || cardEnd < 0) throw new Error("U11-D people comprehension card could not be located.");
-const cardMarkup = peoplesPage.slice(cardStart, cardEnd);
-for (const technicalMarker of ["PEID", "PGID", "GSEC"]) if (cardMarkup.includes(technicalMarker)) throw new Error(`U11-D people card exposes ${technicalMarker}.`);
+const discoveryIndex = peoplesPage.indexOf('class="v3-people-find"');
+const refineIndex = peoplesPage.indexOf('class="v3-discovery-refine"');
+const collectionIndex = peoplesPage.indexOf('class="v3-collections"');
+const resultsIndex = peoplesPage.indexOf('class="v3-people-results"');
+if (!(discoveryIndex >= 0 && refineIndex > discoveryIndex && collectionIndex > refineIndex && resultsIndex > collectionIndex)) {
+  throw new Error("U11-D people discovery must present direct search, then optional refinement, then guided context and catalog results.");
+}
+if (peoplesPage.includes("Bible label<select") || peoplesPage.includes("Known population<select")) {
+  throw new Error("U11-D source-specific Bible/population controls must not dominate the ordinary people-discovery surface.");
+}
+const resultStart = peoplesPage.indexOf('class="v3-people-result"');
+const resultEnd = peoplesPage.indexOf("</a>", resultStart);
+if (resultStart < 0 || resultEnd < 0) throw new Error("U11-D V3 people result could not be located.");
+const resultMarkup = peoplesPage.slice(resultStart, resultEnd);
+for (const technicalMarker of ["PEID", "PGID", "GSEC"]) if (resultMarkup.includes(technicalMarker)) throw new Error(`U11-D people result exposes ${technicalMarker}.`);
 
 const main = await readText("src/main.tsx");
-for (const marker of ['import "./styles/comprehension.css"', 'import "./styles/explore/newcomer-entry.css"', 'import "./styles/atlas-foundation/people-profile.css"']) {
+for (const marker of ['import "./styles/comprehension.css"', 'import "./styles/explore/newcomer-entry.css"', 'import "./styles/atlas-foundation/people-profile.css"', 'import "./styles/atlas-foundation/discovery.css"']) {
   if (!main.includes(marker)) throw new Error(`U11 required stylesheet missing ${marker}.`);
 }
 if (main.indexOf('import "./styles/atlas-foundation/people-profile.css"') > main.indexOf('import "./styles/foundation/accessibility.css"')) throw new Error("V3 people profile styles must remain below the final accessibility layer.");
+if (main.indexOf('import "./styles/atlas-foundation/discovery.css"') > main.indexOf('import "./styles/foundation/accessibility.css"')) throw new Error("V3 discovery styles must remain below the final accessibility layer.");
 
 const browserSpec = await readText("tests/e2e/u11-comprehension-first.spec.ts");
-for (const marker of ["newcomer sees meaning before technical identifiers", "primary overview is limited to four understandable facts", "mission terminology can be explained in place", "prayer is a first-class action without hiding research depth", "comprehension-first profile remains usable at narrow mobile width", "map starts with a plain-language mission view and keeps research views opt in", "selected country explains the map result before source breakdown", "research map layer IDs remain URL compatible", "country starts with three metrics and people before research tables", "people explorer cards hide source identifiers and expose normal context filters"]) {
+for (const marker of ["newcomer sees meaning before technical identifiers", "primary overview is limited to four understandable facts", "mission terminology can be explained in place", "prayer is a first-class action without hiding research depth", "comprehension-first profile remains usable at narrow mobile width", "map starts with a plain-language mission view and keeps research views opt in", "selected country explains the map result before source breakdown", "research map layer IDs remain URL compatible", "country starts with three metrics and people before research tables", "people explorer hides source identifiers and keeps context refinements optional"]) {
   if (!browserSpec.includes(marker)) throw new Error(`U11 browser certification missing: ${marker}.`);
 }
 
