@@ -7,11 +7,13 @@ on:
       - phase/v3-phase10-prayer
     paths:
       - "PRIVACY.md"
+      - "public/privacy.html"
       - "docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md"
       - "docs/PERSONALIZATION_PRIVACY.md"
       - "src/pages/SavedPage.tsx"
       - "src/personalization/**"
       - "src/sync/reconcile.ts"
+      - "src/app/router.ts"
       - "src/styles/atlas-foundation/memory.css"
       - "src/main.tsx"
       - "scripts/v3/phase4-check.ts"
@@ -22,8 +24,11 @@ on:
       - "scripts/prayer/v18-check.ts"
       - "scripts/sync/v20-check.ts"
       - "scripts/sync/phase1-integrity-check.ts"
+      - "scripts/navigation/phase7-check.ts"
+      - "scripts/release/check.ts"
       - "tests/e2e/v3-phase11-personal-memory.spec.ts"
       - "tests/e2e/phase12-prayer-saved.spec.ts"
+      - "tests/e2e/phase7-navigation-redesign.spec.ts"
       - "package.json"
       - ".github/workflows/v3-phase11-personal-memory.yml"
   workflow_dispatch:
