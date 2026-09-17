@@ -17,7 +17,7 @@ export function AboutPage() {
         <div>
           <div class="eyebrow">Methodology & transparency</div>
           <h1 class="display-title">Know what the map means—and what it cannot prove.</h1>
-          <p class="lead">Unreached combines public-domain geography, live mission research, a small reviewed editorial publication and private prayer tools. Source identities remain visible, derived values stay narrow, and missing information remains missing.</p>
+          <p class="lead">Unreached combines public-domain geography, live mission research, a reviewed editorial publication and private prayer tools. Source identities remain visible, derived values stay narrow, and missing information remains missing.</p>
         </div>
         <Info size={34} aria-hidden="true" />
       </header>
@@ -45,7 +45,7 @@ export function AboutPage() {
         <div class="about-section__heading"><Scale size={20} aria-hidden="true" /><div><span class="eyebrow">Sources & permissions</span><h2 id="sources-heading">Current release status</h2></div></div>
         <div class="about-source-grid">
           <div><strong>PeopleGroups.org / IMB Global Research</strong><span class="about-source-status about-source-status--approved">Runtime active</span><p>The public read-only API is the active mission-data source. Unreached uses it at runtime for maps, people, countries, languages/resources and prayer-subject selection. The provider corpus is not published or relicensed as a static Unreached dataset.</p><a href="https://peoplegroups.org/using-the-api/" target="_blank" rel="noreferrer">PeopleGroups.org API documentation</a></div>
-          <div><strong>Reviewed editorial context</strong><span class="about-source-status about-source-status--approved">Active · partial coverage</span><p>Twelve contextual profiles are separately authored and citation-reviewed. Coverage is intentionally partial and is not a mission-priority ranking.</p></div>
+          <div><strong>Reviewed editorial context</strong><span class="about-source-status about-source-status--approved">Active · partial coverage</span><p>Reviewed contextual profiles are separately authored and citation-reviewed. Coverage is intentionally partial and is not a mission-priority ranking.</p></div>
           <div><strong>Natural Earth</strong><span class="about-source-status about-source-status--approved">Public domain</span><p>Bundled geographic base. Current boundaries follow Natural Earth's de facto Admin-0 presentation.</p><a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noreferrer">Natural Earth terms</a></div>
           <div><strong>Joshua Project API</strong><span class="about-source-status about-source-status--gated">Optional comparison</span><p>Available only for manually reviewed identity links. The API key stays server-side; responses use no-store handling; data is not added to the Unreached corpus; and every rendered record includes linked Joshua Project attribution.</p><a href="https://api.joshuaproject.net/terms_of_use" target="_blank" rel="noreferrer">Joshua Project terms</a></div>
           <div><strong>ProgressBible registered data</strong><span class="about-source-status about-source-status--gated">Permission required</span><p>Not bundled or used. Product/service inclusion requires written permission under the published registered-data terms.</p><a href="https://progress.bible/terms-of-use/" target="_blank" rel="noreferrer">ProgressBible terms</a></div>
@@ -54,7 +54,7 @@ export function AboutPage() {
       </section>
 
       <section class="about-section about-release-state" aria-labelledby="release-heading">
-        <div class="about-section__heading"><ShieldCheck size={20} aria-hidden="true" /><div><span class="eyebrow">Production truth</span><h2 id="release-heading">Release 2.1.5 preserves the certified data boundary</h2></div></div>
+        <div class="about-section__heading"><ShieldCheck size={20} aria-hidden="true" /><div><span class="eyebrow">Production truth</span><h2 id="release-heading">The current release preserves the certified data boundary</h2></div></div>
         <p>PeopleGroups.org is approved in project policy for direct public runtime reads. That approval is separate from static redistribution: Unreached does not expose a downloadable corpus mirror or relicense provider data.</p>
         <p>Prepared PeopleGroups data hydrates immediately from the validated device-local IndexedDB snapshot. On a true cold load, only People Explorer may become interactive from validated partial provider pages, and it labels that catalog as incomplete until the full corpus is ready. Map, country, language and prayer aggregates continue to require the complete validated corpus.</p>
         <p>The Explore map’s opened “About this view” methodology explainer occupies a full-width control row at narrow desktop/sidebar widths so its source-method text remains readable and does not collide with the country browser below.</p>
