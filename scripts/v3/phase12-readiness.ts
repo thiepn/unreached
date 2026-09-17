@@ -48,7 +48,7 @@ const workbenchDocs = await readText("docs/V3_PHASE12_EDITORIAL_WORKBENCH.md");
 for (const marker of [
   "data/v3/editorial/candidates/",
   "v3:phase12-candidate-check",
-  "not reviewed",
+  "does not count",
   "Maintainer publication boundary",
 ]) {
   if (!workbenchDocs.includes(marker)) throw new Error(`Phase 12 editorial workbench document missing: ${marker}`);
