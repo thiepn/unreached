@@ -1,7 +1,7 @@
 # Unreached — Data, Licensing & Provenance Policy
 
 **Status:** production policy  
-**Reviewed:** 28 August 2026
+**Reviewed:** 17 September 2026
 
 This policy describes the external data, media and authored content that may enter the public Unreached application and the conditions under which they may be used.
 
@@ -13,7 +13,9 @@ The repository does not relicense third-party data or media.
 
 ## 2. Current production architecture
 
-Production mission data is **not** a bundled dataset. People, country, language, religion, GSEC and resource records are read at runtime from the public PeopleGroups.org API. A validated copy may be stored privately in a user's browser for resilience, but Unreached does not expose that cache as a public download or API.
+Production atlas mission data is **not** a bundled dataset. People, country, language, religion, GSEC and resource records are read at runtime from the public PeopleGroups.org API. A validated copy may be stored privately in a user's browser for resilience, but Unreached does not expose that cache as a public download or API.
+
+PeopleGroups.org remains the canonical atlas runtime. V3 Phase 13 adds a narrowly scoped, optional Joshua Project comparison layer only for manually reviewed people-group-in-country identity links. Joshua Project responses are requested on demand through the Unreached Worker, reduced to a small comparison schema, returned with no-store handling and not persisted in the Unreached corpus or browser data stores.
 
 Natural Earth geography is bundled because Natural Earth places its map data in the public domain.
 
@@ -23,7 +25,7 @@ Reviewed contextual articles are project-authored publication shards with explic
 
 **Status:** CONDITIONAL — APPROVED FOR PUBLIC RUNTIME ACCESS  
 **Provider:** Global Research Department of the International Mission Board  
-**Reviewed:** 28 August 2026
+**Reviewed:** 16 September 2026
 
 PeopleGroups.org currently documents a free, public, read-only API and explicitly suggests maps, prayer tools and research applications. That published runtime-use invitation is the basis for Unreached's public browser integration.
 
@@ -64,14 +66,36 @@ Boundary presentation follows Natural Earth's de facto Admin-0 model unless a la
 
 ## 5. Joshua Project
 
-**Status:** CONDITIONAL / NOT ACTIVE IN PRODUCTION RUNTIME  
-**Reviewed:** 28 August 2026
+**Status:** CONDITIONAL — PHASE 13 OPTIONAL COMPARISON; POST-3.0 GATE  
+**Reviewed:** 17 September 2026
 
-Joshua Project's API terms currently grant revocable, non-commercial API use, require visible linked attribution where its data is displayed, prohibit direct replication/heavy overlap, and require cached/downloaded data to be deleted if API access is terminated.
+Joshua Project's current API terms grant revocable, non-commercial API use, require visible linked attribution where its data is displayed, prohibit direct replication or a highly overlapping service, require API-key protection and require downloaded/cached data to be deleted if API access is terminated.
 
-Because Joshua Project is not the active production runtime, no Joshua Project data should appear in current public runtime records. Before reintroduction, perform a fresh terms and architecture review and implement all required attribution/removal behavior.
+Phase 13 therefore permits only a narrow value-added source-comparison use after V3 Gate D is satisfied.
 
-Joshua Project photos remain per-item rights decisions and are not approved by default.
+Approved Phase 13 use:
+
+- on-demand retrieval of a specific Joshua Project people-group-in-country record only after a user explicitly requests source comparison;
+- only records present in an explicitly reviewed PeopleGroups.org ↔ Joshua Project identity crosswalk;
+- server-side API access through the existing Unreached Worker using the `JOSHUA_PROJECT_API_KEY` secret;
+- a minimal normalized comparison response containing provider identity, source-native mission-status fields and a small set of explanatory estimates;
+- side-by-side methodology display with linked **Data provided by Joshua Project** attribution;
+- descriptive `agreement`, `disagreement` or `incomplete` comparison states.
+
+Not approved:
+
+- fuzzy name matching or assuming equivalent numeric IDs across providers;
+- replacing PeopleGroups.org as the canonical atlas runtime;
+- averaging, ranking or silently reconciling provider classifications;
+- recomputing Joshua Project `LeastReached` from displayed rounded percentage fields instead of retaining the source value;
+- a general Joshua Project proxy, search service, bulk endpoint, downloadable mirror or static corpus copy;
+- storing API responses in D1, the Unreached application corpus, IndexedDB, localStorage, sessionStorage or service-worker caches;
+- exposing the Joshua Project API key in browser code, client environment variables or repository history;
+- Joshua Project photos, maps or narrative profile text without separate rights review.
+
+The Worker and browser requests use `Cache-Control: no-store`. Avoiding persistence also minimizes the amount of provider data that would require deletion if access is terminated.
+
+Production activation is additionally blocked until Unreached 3.0 satisfies V3 Gate D. The source registry may describe Phase 13 as release-eligible on this stacked branch, but that does not authorize bypassing the Phase 12 certification gate.
 
 ## 6. ProgressBible
 
@@ -114,11 +138,15 @@ Anonymous/local-only use is the default. Unreached does not implement first-part
 
 Browser storage may contain Saved/prayer state, recent routes, latest-only prayer timestamps, optional sync metadata and a validated PeopleGroups cache. Optional private continuity is explicitly activated and is limited to the allow-listed Saved/prayer continuity subset described in `PRIVACY.md` and `docs/V20_PRIVATE_CONTINUITY.md`.
 
+Joshua Project comparison records are not persisted in browser storage or private sync.
+
 Do not publish confidential field information, personal prayer details, or information that could endanger individuals or communities.
 
 ## 11. Provenance requirements
 
 Production source records should remain traceable to the provider and provider identifier. Derived values must preserve the source fields/formula and must not imply stronger precision or semantics than the inputs support.
+
+For multi-source comparisons, each assertion must retain its own provider and methodology identity. Cross-source agreement must not be presented as proof that definitions are identical, and disagreement must not be silently resolved into one provider-independent verdict.
 
 For reviewed editorial claims, citations and review/freshness information are stored separately from provider data.
 
@@ -140,11 +168,11 @@ Historical permission or historical terms are not assumed to override later chan
 
 | Source | Current role | Status |
 | --- | --- | --- |
-| PeopleGroups.org public API | live mission runtime | runtime approved; static corpus redistribution not approved |
+| PeopleGroups.org public API | canonical live mission runtime | runtime approved; static corpus redistribution not approved |
 | Natural Earth | bundled geography | public domain / approved |
 | Reviewed Unreached editorial content | contextual publication | project-authored, citation/review controlled |
-| Joshua Project API | inactive compatibility/development source | gated; fresh review required before production use |
-| Joshua Project photos | none | per-item rights review |
+| Joshua Project API | optional Phase 13 source comparison | conditional, non-commercial, manual-crosswalk/no-store/server-secret only; activation after Gate D |
+| Joshua Project photos/maps/profile text | none | separate per-item/use-rights review |
 | ProgressBible registered data | none | written permission required |
 | Ethnologue proprietary content | none | license/permission required |
 | Wikimedia Commons | none by default | per-item review |
@@ -155,21 +183,26 @@ A release must fail if any of the following is false:
 
 - README/package/current release version agree;
 - `PRIVACY.md` and `/unreached/privacy.html` describe current optional sync rather than obsolete local-only behavior;
-- PeopleGroups.org is recorded as public-runtime allowed but static corpus redistribution blocked;
+- PeopleGroups.org is recorded as the canonical public runtime while static corpus redistribution remains blocked;
 - Natural Earth remains public-release/redistribution approved;
-- Joshua Project, ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
-- source review dates are current for this release;
+- Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
+- ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
+- source review dates are current for changed integrations;
 - code/content licensing and third-party notices are present;
 - production status files identify PeopleGroups.org runtime mode without a bundled dataset;
 - no provider credential is emitted into the client bundle.
 
-## 15. References reviewed 28 August 2026
+## 15. References
+
+Reviewed for the governing policy on 17 September 2026; unchanged sources retain their source-specific review dates above.
 
 - PeopleGroups.org API: https://peoplegroups.org/using-the-api/
 - PeopleGroups.org privacy policy: https://peoplegroups.org/privacy-policy/
 - PeopleGroups.org research downloads: https://peoplegroups.org/downloads/
 - Natural Earth terms: https://www.naturalearthdata.com/about/terms-of-use/
 - Joshua Project API terms: https://api.joshuaproject.net/terms_of_use
+- Joshua Project API documentation: https://api.joshuaproject.net/v1/docs/available_api_requests
+- Joshua Project PGIC field documentation: https://api.joshuaproject.net/v1/docs/column_descriptions/people_groups
 - ProgressBible registered-data terms: https://progress.bible/terms-of-use/
 - Ethnologue terms: https://shop.ethnologue.com/policies/terms-of-service
 - Wikimedia Commons reuse guidance: https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
