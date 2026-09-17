@@ -17,8 +17,8 @@ if (!app.includes("EditorialCoveragePage") || !app.includes('case "coverage"')) 
 
 // V3 Phase 5 keeps the editorial-coverage capability and its contextual deep
 // links while deliberately removing editorial/data-quality tooling from normal
-// global navigation. The capability remains discoverable from owning content
-// surfaces rather than competing with the atlas's core product destinations.
+// global navigation. The capability remains available without competing with
+// the atlas's core product destinations.
 const shell = await readText("src/components/AppShell.tsx");
 if (shell.includes('label: "Reviewed coverage"') || shell.includes('path: "/coverage"')) {
   throw new Error("V3 navigation must not promote Reviewed Coverage in the normal application shell.");
@@ -35,9 +35,15 @@ for (const required of [
 if (coverage.includes("useLivePeopleExplorer") || coverage.includes("peoplegroups.org")) throw new Error("v1.4 local-first coverage page must not activate or directly depend on the PeopleGroups runtime corpus.");
 
 const peoples = await readText("src/pages/PeoplesPage.tsx");
-for (const required of ["reviewedOnly", "Reviewed context only", "people-editorial-badge", 'hrefFor("/coverage")']) {
-  if (!peoples.includes(required)) throw new Error(`v1.4 People Explorer coverage integration missing: ${required}`);
+for (const required of [
+  "reviewedOnly",
+  "Reviewed context only",
+  "v3-depth-tag",
+  "Reviewed coverage describes research depth, not mission importance.",
+]) {
+  if (!peoples.includes(required)) throw new Error(`v1.4/V3 Phase 9 People discovery coverage integration missing: ${required}`);
 }
+if (!peoples.includes('editorial.profilesByPeid.has(people.peid)')) throw new Error("V3 Phase 9 reviewed-depth labels must be derived from the editorial publication index.");
 
 const country = await readText("src/components/CountryGuidedStart.tsx");
 for (const required of ["countryIso3Anchors.includes(countryIso3)", "Deeper context published for", "publication coverage, not a ranking of mission importance"]) {
@@ -57,4 +63,4 @@ if (manifest.fixture !== false || !manifest.profileCount || manifest.profileCoun
   throw new Error("v1.4 requires the certified six-plus reviewed editorial manifest inherited from v1.3.");
 }
 
-console.log(`v1.4 capability checks passed on package ${pkg.version}: ${manifest.profileCount} reviewed profiles remain available through local-first contextual coverage navigation without changing mission-priority semantics or occupying V3 global navigation.`);
+console.log(`v1.4 capability checks passed on package ${pkg.version}: ${manifest.profileCount} reviewed profiles remain available through local-first contextual coverage while Phase 9 labels research depth without changing mission-priority semantics or promoting editorial tooling in global navigation.`);
