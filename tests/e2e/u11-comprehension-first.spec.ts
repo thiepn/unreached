@@ -146,20 +146,22 @@ test("country starts with three metrics and people before research tables", asyn
   await expect(research.getByText(`PGID PG910001 · PEID ${VISIBLE_TEST_PEID}`, { exact: true })).toBeVisible();
 });
 
-test("people explorer cards hide source identifiers and expose normal context filters", async ({ page }) => {
+test("people explorer hides source identifiers and keeps context refinements optional", async ({ page }) => {
   await page.goto("./#/peoples");
   await expect(page.getByRole("heading", { name: "Find a people group." })).toBeVisible();
+  await expect(page.locator("#people-search")).toHaveAttribute("placeholder", "Search people, country, language or source ID…");
 
-  const primary = page.locator(".people-primary-context-filters");
-  await expect(primary.getByRole("combobox", { name: "Country" })).toBeVisible();
-  await expect(primary.getByRole("combobox", { name: "Language" })).toBeVisible();
-  await expect(primary.getByRole("combobox", { name: "Religion" })).toBeVisible();
-  await expect(page.locator("#people-search")).toHaveAttribute("placeholder", "Search people, country or language");
+  const refinements = page.locator(".v3-discovery-refine");
+  await expect(refinements).not.toHaveAttribute("open", "");
+  await refinements.locator("summary").click();
+  await expect(refinements.getByRole("combobox", { name: "Country" })).toBeVisible();
+  await expect(refinements.getByRole("combobox", { name: "Language" })).toBeVisible();
+  await expect(refinements.getByRole("combobox", { name: "Religion" })).toBeVisible();
 
-  const card = page.locator(".people-card--comprehension", { hasText: VISIBLE_TEST_PEOPLE }).first();
-  await expect(card).toBeVisible({ timeout: 15_000 });
-  await expect(card).toContainText("Population");
-  await expect(card).toContainText("Bible resources");
-  await expect(card).toContainText("Learn about this people");
-  await expect(card.getByText(/PEID|PGID|GSEC/)).toHaveCount(0);
+  const result = page.locator(".v3-people-result", { hasText: VISIBLE_TEST_PEOPLE }).first();
+  await expect(result).toBeVisible({ timeout: 15_000 });
+  await expect(result).toContainText("Population");
+  await expect(result).toContainText("Religion");
+  await expect(result).toContainText("Open profile");
+  await expect(result.getByText(/PEID|PGID|GSEC/)).toHaveCount(0);
 });
