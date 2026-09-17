@@ -5,6 +5,11 @@ import { resolve } from "node:path";
 import { createMissionClassificationAssertion } from "../../src/mission/classification";
 import { joshuaProjectMissionAssertion, joshuaProjectComparisonRecordSchema } from "../../src/mission/joshua-project";
 import { compareMissionAssertions, REVIEWED_MISSION_SOURCE_CROSSWALKS } from "../../src/mission/multi-source";
+import {
+  APPROVED_JOSHUA_COMPARISON_LINKS,
+  fetchJoshuaComparisonRecord,
+  JoshuaSourceError,
+} from "../../worker/src/joshua-project";
 import { assertSourceUseAllowed, sourceRegistrySchema } from "../data/source-policy";
 
 const root = process.cwd();
@@ -12,6 +17,20 @@ const read = (path: string) => readFile(resolve(root, path), "utf8");
 
 function requireText(source: string, marker: string, label: string): void {
   if (!source.includes(marker)) throw new Error(`V3 Phase 13: missing ${label}: ${marker}`);
+}
+
+async function expectJoshuaError(
+  action: () => Promise<unknown>,
+  expectedStatus: number,
+  label: string,
+): Promise<void> {
+  try {
+    await action();
+  } catch (error) {
+    if (error instanceof JoshuaSourceError && error.status === expectedStatus) return;
+    throw error;
+  }
+  throw new Error(`V3 Phase 13 expected Joshua Project edge adapter to reject ${label} with HTTP ${expectedStatus}.`);
 }
 
 for (const path of [
@@ -39,6 +58,28 @@ for (const item of REVIEWED_MISSION_SOURCE_CROSSWALKS) {
   pgKeys.add(pgKey);
   jpKeys.add(item.joshuaPeopleId3Rog3);
 }
+
+const crosswalkJoshuaIds = [...REVIEWED_MISSION_SOURCE_CROSSWALKS].map((item) => item.joshuaPeopleId3Rog3).sort();
+const workerJoshuaIds = [...APPROVED_JOSHUA_COMPARISON_LINKS].map((item) => item.peopleId3Rog3).sort();
+if (JSON.stringify(crosswalkJoshuaIds) !== JSON.stringify(workerJoshuaIds)) {
+  throw new Error(`Phase 13 Worker allowlist drifted from reviewed crosswalks. Crosswalk=${crosswalkJoshuaIds.join(",")} Worker=${workerJoshuaIds.join(",")}`);
+}
+for (const workerLink of APPROVED_JOSHUA_COMPARISON_LINKS) {
+  const crosswalk = REVIEWED_MISSION_SOURCE_CROSSWALKS.find((item) => item.joshuaPeopleId3Rog3 === workerLink.peopleId3Rog3);
+  if (!crosswalk || crosswalk.joshuaPeopleId3 !== workerLink.peopleId3 || crosswalk.joshuaRog3 !== workerLink.rog3) {
+    throw new Error(`Phase 13 Worker allowlist metadata drifted for ${workerLink.peopleId3Rog3}.`);
+  }
+}
+await expectJoshuaError(
+  () => fetchJoshuaComparisonRecord("99999ZZ", "synthetic-key-not-used"),
+  404,
+  "an unreviewed provider identity",
+);
+await expectJoshuaError(
+  () => fetchJoshuaComparisonRecord(crosswalkJoshuaIds[0]!, undefined),
+  503,
+  "an approved identity when the server-side credential is absent",
+);
 
 const imbUnreached = createMissionClassificationAssertion({
   sourceId: "peoplegroups-org-api",
@@ -102,7 +143,7 @@ const page = await read("src/pages/PeoplePage.tsx");
 requireText(page, "<MultiSourceMissionPanel record={record} />", "people-profile integration");
 
 const edgeAdapter = await read("worker/src/joshua-project.ts");
-for (const marker of ["12140CH", "15755CH", "14327AF", "APPROVED_LINKS", "PeopleID3ROG3", "leastReached", "sourceProfileUrl", "cache: \"no-store\""]) {
+for (const marker of ["APPROVED_JOSHUA_COMPARISON_LINKS", "APPROVED_LINKS", "PeopleID3ROG3", "leastReached", "sourceProfileUrl", "cache: \"no-store\""]) {
   requireText(edgeAdapter, marker, "narrow Joshua Project edge adapter");
 }
 for (const forbidden of ["caches.open", "env.DB", "localStorage", "sessionStorage"]) {
@@ -152,4 +193,4 @@ const pkg = await read("package.json");
 requireText(pkg, '"v3:phase13-check": "tsx scripts/v3/phase13-check.ts"', "Phase 13 package gate");
 requireText(pkg, "npm run v3:phase12-readiness && npm run v3:phase13-check", "blocking Phase 13 build integration");
 
-console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks, source-native classifications, explicit comparison states, end-to-end no-store Joshua Project access, server-only credentials, attribution/legal notices and Gate D boundaries are enforced.");
+console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks and Worker allowlist are structurally identical, unreviewed IDs and missing credentials fail closed, source-native classifications and explicit comparison states remain intact, end-to-end no-store Joshua Project access and server-only credentials are enforced, and attribution/legal/Gate D boundaries remain current.");
