@@ -17,7 +17,7 @@ function shadowPublishedPackage(pkg: EditorialContextProfilePackage): EditorialC
         ...pkg.profile.review,
         status: "published",
         qualityTier: 3,
-        reviewedAt: "2026-09-17T00:00:00Z",
+        reviewedAt: new Date().toISOString(),
         reviewerRole: "Phase 12 mechanical candidate validation only",
         checklist: {
           namingChecked: true,
@@ -70,7 +70,7 @@ for (const name of entries) {
   // stays draft and does not acquire review metadata or count toward 3.0.
   const shadow = shadowPublishedPackage(pkg);
   const adapted = adaptLegacyContextPackageToV3Editorial(shadow, `data/v3/editorial/candidates/${name}`);
-  assertEditorialProfileIntegrity(adapted, new Date("2026-09-17T12:00:00Z"));
+  assertEditorialProfileIntegrity(adapted, new Date());
 }
 
 console.log(`V3 Phase 12 candidate checks passed for ${entries.length} review-ready draft${entries.length === 1 ? "" : "s"}. Drafts remain excluded from the ${catalog.reviewedProfiles.length}/100 published reviewed-profile count until maintainer evidence review.`);
