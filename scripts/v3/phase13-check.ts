@@ -21,6 +21,8 @@ for (const path of [
   "src/components/MultiSourceMissionPanel.tsx",
   "worker/src/joshua-project.ts",
   "docs/V3_PHASE13_MULTI_SOURCE_MISSION_INTELLIGENCE.md",
+  "docs/DATA_AND_LEGAL_POLICY.md",
+  "THIRD_PARTY_NOTICES.md",
   ".github/workflows/v3-phase13-multi-source-intelligence.yml",
 ]) {
   if (!existsSync(resolve(root, path))) throw new Error(`V3 Phase 13 required file is missing: ${path}`);
@@ -100,7 +102,7 @@ const page = await read("src/pages/PeoplePage.tsx");
 requireText(page, "<MultiSourceMissionPanel record={record} />", "people-profile integration");
 
 const edgeAdapter = await read("worker/src/joshua-project.ts");
-for (const marker of ["12140CH", "15755CH", "14327AF", "APPROVED_LINKS", "PeopleID3ROG3", "leastReached", "sourceProfileUrl"]) {
+for (const marker of ["12140CH", "15755CH", "14327AF", "APPROVED_LINKS", "PeopleID3ROG3", "leastReached", "sourceProfileUrl", "cache: \"no-store\""]) {
   requireText(edgeAdapter, marker, "narrow Joshua Project edge adapter");
 }
 for (const forbidden of ["caches.open", "env.DB", "localStorage", "sessionStorage"]) {
@@ -129,8 +131,25 @@ for (const marker of ["Gate D", "manual crosswalk", "agreement", "disagreement",
   requireText(docs, marker, "Phase 13 documentation");
 }
 
+const legalPolicy = await read("docs/DATA_AND_LEGAL_POLICY.md");
+for (const marker of [
+  "PHASE 13 OPTIONAL COMPARISON; POST-3.0 GATE",
+  "manually reviewed people-group-in-country identity links",
+  "Cache-Control: no-store",
+  "does not authorize bypassing the Phase 12 certification gate",
+]) requireText(legalPolicy, marker, "Phase 13 legal policy");
+
+const notices = await read("THIRD_PARTY_NOTICES.md");
+for (const marker of [
+  "Reviewed:** 17 September 2026",
+  "optional secondary mission-intelligence comparison",
+  "Data provided by Joshua Project",
+  "JOSHUA_PROJECT_API_KEY",
+  "no bulk endpoint",
+]) requireText(notices, marker, "Phase 13 third-party notice");
+
 const pkg = await read("package.json");
 requireText(pkg, '"v3:phase13-check": "tsx scripts/v3/phase13-check.ts"', "Phase 13 package gate");
 requireText(pkg, "npm run v3:phase12-readiness && npm run v3:phase13-check", "blocking Phase 13 build integration");
 
-console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks, source-native classifications, explicit comparison states, on-demand no-store Joshua Project access, server-only credentials, attribution and Gate D boundaries are enforced.");
+console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks, source-native classifications, explicit comparison states, end-to-end no-store Joshua Project access, server-only credentials, attribution/legal notices and Gate D boundaries are enforced.");
