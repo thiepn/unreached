@@ -1,6 +1,6 @@
 # Phase 12 Editorial Workbench
 
-Phase 12 now separates **research-ready candidates** from the public reviewed publication so content expansion can move quickly without weakening the meaning of “reviewed.”
+Phase 12 separates **research-ready candidates** from the public reviewed publication so content expansion can move quickly without weakening the meaning of “reviewed.”
 
 ## Candidate workspace
 
@@ -11,6 +11,23 @@ Candidate packages live under:
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
 The first review-ready candidate is `nateni-benin.json`. It contains claim-level citations from PeopleGroups.org / IMB, Glottolog, SIL Togo-Bénin and the Government of Benin. It is **not** part of `public/data/context/manifest.v1.json` and therefore does not count toward the 100-profile Unreached 3.0 certification target.
+
+## Start a new research packet from a PGID
+
+Run:
+
+```bash
+npm run v3:phase12-editorial-scaffold -- --pgid=PG012345
+```
+
+The scaffold fetches exactly one current PeopleGroups.org record, rejects records outside GSEC 0–3 and rejects PEIDs that are already in the public reviewed catalog. It writes a private workbench artifact under `artifacts/v3-phase12/workbench/` containing:
+
+- `source-record.json` — the source snapshot and full provider fields;
+- `review-packet.md` — identity facts, mission/source fields, independent-source slots, drafting guardrails and the maintainer publication checklist.
+
+The scaffold never creates a public profile and never edits the publication manifest. It is deliberately a research starting point rather than an automatic profile generator.
+
+The Phase 12 GitHub Actions workflow exposes the same tool through the optional `editorial_pgid` workflow-dispatch input and uploads the resulting packet as a private workflow artifact.
 
 ## Mechanical candidate gate
 
