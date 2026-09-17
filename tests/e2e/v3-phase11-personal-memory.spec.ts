@@ -22,6 +22,7 @@ async function assertNoHorizontalOverflow(page: Page): Promise<void> {
 
 async function installMemoryState(page: Page): Promise<void> {
   await page.addInitScript(({ key, savedId, prayerId, savedName }) => {
+    if (localStorage.getItem(key)) return;
     localStorage.setItem(key, JSON.stringify({
       version: 3,
       savedPeoples: [{
