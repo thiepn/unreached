@@ -81,10 +81,10 @@ for (const marker of ["partial", "interactive", "previewEntities", "previewPeopl
   if (!peopleLive.includes(marker)) throw new Error(`P2.1 People Explorer preview wrapper missing ${marker}.`);
 }
 for (const marker of [
-  "data-progressive-catalog",
-  "Loading the complete catalog",
+  "explorer.partial",
   "explorer.interactive",
-  'explorer.partial ? "loaded " : ""',
+  "Loading the complete source catalog",
+  "current matches may change while remaining pages arrive",
   "source records",
 ]) {
   if (!peoplesPage.includes(marker)) throw new Error(`P2.1 truthful progressive People Explorer UI missing ${marker}.`);
