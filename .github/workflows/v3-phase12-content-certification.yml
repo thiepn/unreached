@@ -9,6 +9,8 @@ on:
       - "package.json"
       - "package-lock.json"
       - "docs/V3_PHASE12_CONTENT_CERTIFICATION.md"
+      - "docs/V3_PHASE12_EDITORIAL_WORKBENCH.md"
+      - "data/v3/editorial/candidates/**"
       - "public/data/context/**"
       - "src/context/**"
       - "src/editorial/**"
@@ -31,6 +33,11 @@ on:
         required: false
         default: false
         type: boolean
+      editorial_pgid:
+        description: "Optional PGID (for example PG012345) to generate a private Phase 12 research/review scaffold artifact"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -51,6 +58,9 @@ jobs:
 
       - name: Install dependencies reproducibly
         run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 12 candidate workbench integrity
+        run: npm run v3:phase12-candidate-check
 
       - name: Verify Phase 12 automated readiness and editorial integrity
         run: npm run v3:phase12-readiness
@@ -122,5 +132,36 @@ jobs:
         with:
           name: unreached-v3-phase12-editorial-coverage-queue
           path: artifacts/v3-phase12/editorial-coverage-queue.json
+          if-no-files-found: error
+          retention-days: 30
+
+  editorial-review-scaffold:
+    if: github.event_name == 'workflow_dispatch' && inputs.editorial_pgid != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Generate source-grounded research scaffold
+        env:
+          EDITORIAL_PGID: ${{ inputs.editorial_pgid }}
+        run: npm run v3:phase12-editorial-scaffold -- --pgid="$EDITORIAL_PGID"
+
+      - name: Upload private review scaffold artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-editorial-scaffold-${{ inputs.editorial_pgid }}
+          path: artifacts/v3-phase12/workbench
           if-no-files-found: error
           retention-days: 30
