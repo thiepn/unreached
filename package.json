@@ -23,6 +23,7 @@
     "v3:phase12-readiness": "tsx scripts/v3/phase12-readiness.ts",
     "v3:phase12-certify": "tsx scripts/v3/phase12-certify.ts",
     "v3:phase12-editorial-queue": "tsx scripts/v3/phase12-editorial-queue.ts",
+    "v3:phase12-editorial-scaffold": "tsx scripts/v3/phase12-editorial-scaffold.ts",
     "v3:phase4-visual": "playwright test tests/e2e/v3-phase4-design-system.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:phase5-shell-visual": "playwright test tests/e2e/v3-phase5-shell-navigation.spec.ts --project=chromium --workers=1",
     "v3:phase6-explore-visual": "playwright test tests/e2e/v3-phase6-explore.spec.ts --project=chromium --workers=1",
