@@ -1,6 +1,7 @@
 import {
   entityResourceBreakdown,
   getRuntimePeopleSearchIndex,
+  usePeopleGroupsRouteRecord,
   usePeopleGroupsRuntimeStore,
   type RuntimePeopleEntity,
   type RuntimePeopleSearchIndex,
@@ -15,6 +16,21 @@ export const LIVE_PRAYER_TEMPLATE_REVIEW = {
   status: "release-certified-template",
   scope: "Fixed biblical prayer wording with only source-backed people, country, GSEC, and resource fields interpolated at runtime.",
 } as const;
+
+export type LivePrayerEntity = RuntimePeopleEntity;
+export type LivePrayerRouteState = ReturnType<typeof usePeopleGroupsRouteRecord>;
+
+export interface LivePrayerContextSummary {
+  peopleName: string;
+  countryName: string;
+  countryIso3: string;
+  languageName: string | null;
+  religionName: string | null;
+  bibleLabel: string | null;
+  gsecCode: number | null;
+  pgid: string;
+  sourceUpdatedAt: string | null;
+}
 
 export interface LivePrayerPrompt {
   id: string;
@@ -52,6 +68,36 @@ export function isLivePrayerEligible(entity: RuntimePeopleEntity): boolean {
   return entity.reach.unreachedContexts === 1;
 }
 
+/**
+ * Atlas-facing source summary for Prayer 3.0. It keeps normal prayer UI on
+ * human-readable facts while leaving PEID/PGID/GSEC mechanics available to
+ * explicit source disclosure. No new mission assertion is created here.
+ */
+export function livePrayerContextSummary(entity: RuntimePeopleEntity): LivePrayerContextSummary {
+  const context = entity.contexts[0]!;
+  const resources = entityResourceBreakdown(entity);
+  return {
+    peopleName: entity.displayName,
+    countryName: context.country.name,
+    countryIso3: context.country.iso3,
+    languageName: entity.primaryLanguage?.name ?? null,
+    religionName: entity.primaryReligion?.name ?? null,
+    bibleLabel: resources.bible[0]?.status ?? null,
+    gsecCode: context.reach.gsec.code,
+    pgid: context.pgid,
+    sourceUpdatedAt: entity.sourceUpdatedAt,
+  };
+}
+
+export function livePrayerPlainReason(entity: RuntimePeopleEntity): string {
+  const context = livePrayerContextSummary(entity);
+  return `PeopleGroups.org / IMB currently classifies this people-group record in ${context.countryName} as unreached under its less-than-2%-evangelical definition. Use that source context as a starting point for informed prayer without assuming every person shares the same beliefs, needs, or circumstances.`;
+}
+
+export function useLivePrayerRouteRecord(sourcePeopleId: number): LivePrayerRouteState {
+  return usePeopleGroupsRouteRecord(sourcePeopleId);
+}
+
 export function filterLivePrayerEntities(
   entities: RuntimePeopleEntity[],
   query: string,
@@ -86,6 +132,8 @@ export function buildLivePrayerProfile(entity: RuntimePeopleEntity): LivePrayerP
     ? `PeopleGroups.org reports the Bible availability label “${bibleLabel}” for ${context.pgid}.`
     : `PeopleGroups.org does not report a known Bible availability label for ${context.pgid}.`;
 
+  // Retained as a source/research explanation for compatibility. Prayer 3.0
+  // uses livePrayerPlainReason() for the normal reading surface.
   const whyPray = `PeopleGroups.org currently records ${entity.displayName} of ${context.country.name} (${context.pgid}, PEID ${entity.peid}) at GSEC 0–3. ${gsecPhrase}. Use this one people-group-in-country source record as a starting point for informed prayer, not as a statement about every individual or about same-named communities in other countries.`;
 
   const prompts: LivePrayerPrompt[] = [
