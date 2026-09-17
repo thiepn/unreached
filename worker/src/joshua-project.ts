@@ -16,11 +16,15 @@ interface ApprovedJoshuaLink {
   peopleId3Rog3: string;
 }
 
-const APPROVED_LINKS = new Map<string, ApprovedJoshuaLink>([
-  ["12140CH", { peopleId3: 12140, rog3: "CH", peopleId3Rog3: "12140CH" }],
-  ["15755CH", { peopleId3: 15755, rog3: "CH", peopleId3Rog3: "15755CH" }],
-  ["14327AF", { peopleId3: 14327, rog3: "AF", peopleId3Rog3: "14327AF" }],
-]);
+export const APPROVED_JOSHUA_COMPARISON_LINKS: readonly ApprovedJoshuaLink[] = [
+  { peopleId3: 12140, rog3: "CH", peopleId3Rog3: "12140CH" },
+  { peopleId3: 15755, rog3: "CH", peopleId3Rog3: "15755CH" },
+  { peopleId3: 14327, rog3: "AF", peopleId3Rog3: "14327AF" },
+] as const;
+
+const APPROVED_LINKS = new Map(
+  APPROVED_JOSHUA_COMPARISON_LINKS.map((link) => [link.peopleId3Rog3, link] as const),
+);
 
 function objectRecord(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
