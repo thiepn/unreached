@@ -131,6 +131,7 @@ for (const phrase of ["manual", "LeastReached", "do not average", "server-side s
 
 const panel = await read("src/components/MultiSourceMissionPanel.tsx");
 for (const marker of [
+  "Mission intelligence",
   "Compare source methodologies",
   "Compare mission sources",
   "Data provided by Joshua Project",
@@ -138,6 +139,7 @@ for (const marker of [
   "data-comparison-state",
   "LeastReached",
 ]) requireText(panel, marker, "multi-source UI boundary");
+if (panel.includes("Mission intelligence · Phase 13")) throw new Error("Public people-profile UI must not expose internal roadmap phase numbering.");
 
 const page = await read("src/pages/PeoplePage.tsx");
 requireText(page, "<MultiSourceMissionPanel record={record} />", "people-profile integration");
@@ -163,8 +165,16 @@ if (client.includes("JOSHUA_PROJECT_API_KEY") || client.includes("api_key")) thr
 requireText(client, "cache: \"no-store\"", "browser no-store request");
 
 const about = await read("src/pages/AboutPage.tsx");
-for (const marker of ["Source comparison", "Cross-source identity is reviewed, not guessed.", "Disagreement stays visible.", "Phase 13 · post-3.0 gate"]) {
-  requireText(about, marker, "public methodology disclosure");
+for (const marker of [
+  "Source comparison",
+  "Cross-source identity is reviewed, not guessed.",
+  "Disagreement stays visible.",
+  "Optional comparison",
+  "Release 2.1.5 preserves the certified data boundary",
+  "most recently reviewed on",
+]) requireText(about, marker, "public methodology disclosure");
+for (const forbidden of ["Phase 13 · post-3.0 gate", "Phase 13 adds an optional", "reviewed for Phase 13", "Release 2.1.3"]) {
+  if (about.includes(forbidden)) throw new Error(`Public About UI contains stale/internal release wording: ${forbidden}`);
 }
 
 const docs = await read("docs/V3_PHASE13_MULTI_SOURCE_MISSION_INTELLIGENCE.md");
@@ -193,4 +203,4 @@ const pkg = await read("package.json");
 requireText(pkg, '"v3:phase13-check": "tsx scripts/v3/phase13-check.ts"', "Phase 13 package gate");
 requireText(pkg, "npm run v3:phase12-readiness && npm run v3:phase13-check", "blocking Phase 13 build integration");
 
-console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks and Worker allowlist are structurally identical, unreviewed IDs and missing credentials fail closed, source-native classifications and explicit comparison states remain intact, end-to-end no-store Joshua Project access and server-only credentials are enforced, and attribution/legal/Gate D boundaries remain current.");
+console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks and Worker allowlist are structurally identical, unreviewed IDs and missing credentials fail closed, source-native classifications and explicit comparison states remain intact, end-to-end no-store Joshua Project access and server-only credentials are enforced, public UI is roadmap-jargon-free, and attribution/legal/Gate D boundaries remain current.");
