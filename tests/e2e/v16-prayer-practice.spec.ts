@@ -97,7 +97,10 @@ test("v1.6 migrates v1 local personalization without losing saved or recent data
 test("v1.6 can add a live prayer subject to the private list and persist v2 locally", async ({ page }) => {
   await page.goto("./#/pray", { waitUntil: "domcontentloaded" });
 
-  const libraryCard = page.locator(".prayer-card-grid .prayer-card").filter({ hasText: "Fon" }).first();
+  const picker = page.locator("details.v3-prayer-picker");
+  await expect(picker).toBeVisible({ timeout: 15_000 });
+  await picker.locator(":scope > summary").click();
+  const libraryCard = picker.locator(".prayer-card-grid .prayer-card").filter({ hasText: "Fon" }).first();
   await expect(libraryCard).toBeVisible({ timeout: 15_000 });
   await libraryCard.getByRole("button", { name: "Add Fon to private prayer list" }).click();
   await expect(libraryCard.getByRole("button", { name: "Remove Fon from private prayer list" })).toBeVisible();

@@ -46,7 +46,7 @@ test("focused prayer uses prompt-length choices rather than pseudo-time modes", 
   await expect(group.getByRole("button", { name: /Short.*3 prompts/ })).toBeVisible();
   await expect(group.getByRole("button", { name: /Standard.*5 prompts/ })).toHaveAttribute("aria-pressed", "true");
   await expect(group.getByRole("button", { name: /Extended.*7 prompts/ })).toBeVisible();
-  await expect(page.getByText("No timer runs, and there is no completion target.")).toBeVisible();
+  await expect(page.getByText(/No timer runs, and there is no completion target/)).toBeVisible();
   await expect(page.getByText(/\b(?:2|5|10) min\b/)).toHaveCount(0);
 
   await expect(page.locator(".prayer-step-dots span")).toHaveCount(5);
@@ -56,11 +56,14 @@ test("focused prayer uses prompt-length choices rather than pseudo-time modes", 
   await expect(page.locator(".prayer-step-dots span")).toHaveCount(7);
 });
 
-test("Prayer library progressively reveals every matching subject", async ({ page }) => {
+test("Prayer library progressively reveals every matching subject on demand", async ({ page }) => {
   await installLargePrayerFixture(page, 55);
   await page.goto("./#/pray");
 
-  const library = page.locator(".prayer-library");
+  const library = page.locator("details.v3-prayer-picker");
+  await expect(library).not.toHaveAttribute("open", "");
+  await library.locator(":scope > summary").click();
+  await expect(library).toHaveAttribute("open", "");
   await expect(library.locator(".prayer-library-progress")).toContainText("Showing 24 of 55");
   await expect(library.locator(".prayer-card-grid .prayer-card")).toHaveCount(24);
 
