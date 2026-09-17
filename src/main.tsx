@@ -67,6 +67,7 @@ import "./styles/atlas-foundation/shell.css";
 import "./styles/atlas-foundation/explore.css";
 import "./styles/atlas-foundation/geography.css";
 import "./styles/atlas-foundation/people-profile.css";
+import "./styles/atlas-foundation/discovery.css";
 import "./styles/foundation/accessibility.css";
 
 warmPeopleGroupsRuntime();

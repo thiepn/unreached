@@ -1,21 +1,31 @@
-import { ArrowUpRight, Clock3, Globe2, Languages, Search, UsersRound, X } from "lucide-preact";
+import { ArrowRight, ArrowUpRight, Clock3, Globe2, Languages, MapPinned, Search, UsersRound, X } from "lucide-preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
+import { hrefFor } from "../app/router";
+import { useEditorialContext } from "../context";
 import { searchDocuments, type SearchDomain } from "../discovery/search";
 import { useSharedSearchDocuments } from "../discovery/shared";
 import { useDebouncedValue } from "../hooks/useResponsiveWork";
 import { usePersonalization } from "../personalization";
 
 function domainIcon(domain: SearchDomain) {
+  if (domain === "region") return MapPinned;
   if (domain === "country") return Globe2;
   if (domain === "language") return Languages;
   return UsersRound;
 }
 
 function domainLabel(domain: SearchDomain): string {
+  if (domain === "region") return "Regions";
   if (domain === "country") return "Countries";
   if (domain === "language") return "Languages";
   return "Peoples";
+}
+
+function sourcePeopleId(id: string): number | null {
+  if (!id.startsWith("people:")) return null;
+  const value = Number(id.slice("people:".length));
+  return Number.isSafeInteger(value) && value > 0 ? value : null;
 }
 
 const FOCUSABLE_SELECTOR = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
@@ -29,6 +39,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
   const debouncedQuery = useDebouncedValue(query, 90);
   const searchActive = query.trim().length > 0;
   const sharedSearch = useSharedSearchDocuments(searchActive);
+  const editorial = useEditorialContext(searchActive);
   const personalization = usePersonalization();
 
   useEffect(() => {
@@ -69,7 +80,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   const results = useMemo(() => searchDocuments(sharedSearch.documents, debouncedQuery, 18), [sharedSearch.documents, debouncedQuery]);
-  const grouped = useMemo(() => (["people", "country", "language"] as const).map((domain) => ({ domain, results: results.filter((result) => result.domain === domain) })).filter((group) => group.results.length), [results]);
+  const grouped = useMemo(() => (["people", "region", "country", "language"] as const).map((domain) => ({ domain, results: results.filter((result) => result.domain === domain) })).filter((group) => group.results.length), [results]);
   const visualResults = useMemo(() => grouped.flatMap((group) => group.results), [grouped]);
   const visualIndexById = useMemo(() => new Map(visualResults.map((result, index) => [result.id, index])), [visualResults]);
 
@@ -90,12 +101,13 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
     onClose();
     window.location.hash = href.replace(/^#/, "");
   };
+  const fullSearchHref = hrefFor(`/search${query.trim() ? `?q=${encodeURIComponent(query.trim())}` : ""}`);
 
   return (
     <div class="search-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) onClose(); }}>
       <section ref={dialogRef} class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="global-search-heading">
         <header class="search-dialog__header">
-          <div><span class="eyebrow">Find anything</span><h2 id="global-search-heading">Search Unreached</h2></div>
+          <div><span class="eyebrow">Quick search</span><h2 id="global-search-heading">Search Unreached</h2></div>
           <button type="button" class="search-close" aria-label="Close search" onClick={onClose}><X size={19} aria-hidden="true" /></button>
         </header>
 
@@ -111,8 +123,8 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
               if (event.key === "Enter" && visualResults[activeIndex]) { event.preventDefault(); activate(visualResults[activeIndex]!.href); }
             }}
             type="search"
-            placeholder="People, country, language or ID…"
-            aria-label="Search peoples, countries or languages"
+            placeholder="People, region, country, language or ID…"
+            aria-label="Search peoples, regions, countries or languages"
             aria-activedescendant={visualResults[activeIndex] ? `search-result-${visualResults[activeIndex]!.id}` : undefined}
           />
           <kbd>Esc</kbd>
@@ -128,7 +140,7 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
               {personalization.state.recent.length ? personalization.state.recent.slice(0, 8).map((item) => {
                 const Icon = item.kind === "country" ? Globe2 : item.kind === "language" ? Languages : UsersRound;
                 return <a href={item.href} class="search-recent-row" key={`${item.kind}:${item.key}`} onClick={onClose}><Icon size={17} aria-hidden="true" /><span><strong>{item.label}</strong><small>{item.secondary ?? item.kind}</small></span><ArrowUpRight size={14} aria-hidden="true" /></a>;
-              }) : <p class="search-empty">Type above to search. The full remote corpus is loaded only when you need it.</p>}
+              }) : <p class="search-empty">Type above for a direct jump, or open full search to browse regions and guided discovery.</p>}
             </section>
           ) : grouped.length ? (
             <div class="search-groups">
@@ -138,9 +150,11 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
                   {group.results.map((result) => {
                     const index = visualIndexById.get(result.id) ?? -1;
                     const Icon = domainIcon(result.domain);
+                    const peid = sourcePeopleId(result.id);
+                    const reviewed = peid !== null && editorial.profilesByPeid.has(peid);
                     return (
                       <a id={`search-result-${result.id}`} href={result.href} class={`search-result-row${index === activeIndex ? " is-active" : ""}`} key={result.id} onMouseEnter={() => setActiveIndex(index)} onClick={onClose}>
-                        <Icon size={18} aria-hidden="true" /><span><strong>{result.label}</strong><small>{result.secondary ?? result.domain}</small></span><ArrowUpRight size={14} aria-hidden="true" />
+                        <Icon size={18} aria-hidden="true" /><span><strong>{result.label}</strong><small>{result.secondary ?? result.domain}{result.domain === "people" ? ` · ${reviewed ? "Reviewed context" : "Source profile"}` : ""}</small></span><ArrowUpRight size={14} aria-hidden="true" />
                       </a>
                     );
                   })}
@@ -148,11 +162,14 @@ function OpenSearchDialog({ onClose }: { onClose: () => void }) {
               ))}
             </div>
           ) : debouncedQuery.trim() && !sharedSearch.loading ? (
-            <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No current result matches “{debouncedQuery}”.</strong><p>Country geography is local; people and language results use the live PeopleGroups.org runtime corpus.</p></div>
+            <div class="search-empty search-empty--query"><Search size={22} aria-hidden="true" /><strong>No current result matches “{debouncedQuery}”.</strong><p>Try a people name, atlas region, country, language, ISO code or source ID.</p></div>
           ) : null}
         </div>
 
-        <footer class="search-dialog__footer"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span>Live corpus loads on demand.</span></footer>
+        <footer class="search-dialog__footer">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span>
+          <a href={fullSearchHref} onClick={onClose}>Full search <ArrowRight size={14} aria-hidden="true" /></a>
+        </footer>
       </section>
     </div>
   );

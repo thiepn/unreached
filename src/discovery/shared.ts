@@ -1,7 +1,8 @@
+import { atlasRegionForCountry } from "../geography/regions";
 import { useWorldGeography } from "../map/geography";
 import { usePeopleGroupsRuntimeStore } from "../providers/peoplegroups";
 import { getSharedLiveLanguageData } from "../languages/live";
-import { buildSearchDocuments, type SearchDocument } from "./search";
+import { buildSearchDocuments, type SearchDocument, type SearchRegionInput } from "./search";
 
 interface SharedSearchCache {
   peopleGeneration: number;
@@ -10,6 +11,21 @@ interface SharedSearchCache {
 }
 
 let cache: SharedSearchCache = { peopleGeneration: -1, geographyGeneration: -1, documents: [] };
+
+function buildRegionInputs(geography: ReturnType<typeof useWorldGeography>): SearchRegionInput[] {
+  const regions = new Map<string, SearchRegionInput>();
+  for (const country of geography.countries) {
+    const identity = atlasRegionForCountry(country);
+    if (!identity) continue;
+    const current = regions.get(identity.id) ?? { id: identity.id, name: identity.name, countryNames: [] };
+    if (!current.countryNames?.includes(country.properties.name)) current.countryNames?.push(country.properties.name);
+    regions.set(identity.id, current);
+  }
+  return [...regions.values()].map((region) => ({
+    ...region,
+    countryNames: [...(region.countryNames ?? [])].sort((a, b) => a.localeCompare(b, "en")),
+  }));
+}
 
 export function useSharedSearchDocuments(enabled = true) {
   const runtime = usePeopleGroupsRuntimeStore(enabled);
@@ -40,6 +56,7 @@ export function useSharedSearchDocuments(enabled = true) {
           cluster: prepared.peopleCluster,
           affinityBloc: prepared.affinityBloc,
         })),
+        regions: buildRegionInputs(geography),
         countries: geographicCountries,
         languages: languages.languages.map((language) => ({
           iso6393: language.iso6393,

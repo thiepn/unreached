@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 export type RouteId =
   | "explore"
   | "peoples"
+  | "search"
   | "regions"
   | "countries"
   | "languages"
@@ -28,6 +29,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/": "explore",
   "/explore": "explore",
   "/peoples": "peoples",
+  "/search": "search",
   "/regions": "regions",
   "/countries": "countries",
   "/languages": "languages",
@@ -91,6 +93,7 @@ function readRoute(): RouteState {
 function titleForRoute(route: RouteState): string {
   if (route.id === "explore") return "Explore | Unreached";
   if (route.id === "peoples") return route.peopleSourceId ? `PEID ${route.peopleSourceId} | Unreached` : "People Groups | Unreached";
+  if (route.id === "search") return "Search | Unreached";
   if (route.id === "regions") return route.regionSlug ? `${route.regionSlug.replace(/-/g, " ")} Region | Unreached` : "Regions | Unreached";
   if (route.id === "countries") return route.countryIso3 ? `${route.countryIso3} Country | Unreached` : "Countries | Unreached";
   if (route.id === "languages") return route.languageIso6393 ? `${route.languageIso6393.toUpperCase()} Language | Unreached` : "Languages | Unreached";

@@ -12,9 +12,11 @@ test.describe("Phase 6 URL-backed discovery state", () => {
     const search = page.locator("#people-search");
     await expect(search).toBeVisible();
     await search.fill("Browser Test");
-    const unreached = page.getByRole("button", { name: "Unreached", exact: true });
+    const unreached = page.getByRole("button", { name: "Unreached source records", exact: true });
     await unreached.click();
-    const country = page.locator(".people-primary-context-filters").getByRole("combobox", { name: "Country" });
+    const refinements = page.locator(".v3-discovery-refine");
+    await refinements.locator("summary").click();
+    const country = refinements.getByRole("combobox", { name: "Country" });
     await country.selectOption("BEN");
 
     await expect(page).toHaveURL(/#\/peoples\?.*q=Browser\+Test/);
@@ -26,9 +28,22 @@ test.describe("Phase 6 URL-backed discovery state", () => {
     await page.goBack();
 
     await expect(page.locator("#people-search")).toHaveValue("Browser Test");
-    await expect(page.getByRole("button", { name: "Unreached", exact: true })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".people-primary-context-filters").getByRole("combobox", { name: "Country" })).toHaveValue("BEN");
-    await expect(page.locator(".people-filter-panel--advanced")).not.toHaveAttribute("open", "");
+    await expect(page.getByRole("button", { name: "Unreached source records", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".v3-discovery-refine").getByRole("combobox", { name: "Country" })).toHaveValue("BEN");
+    await expect(page.locator(".v3-discovery-refine")).toHaveAttribute("open", "");
+  });
+
+  test("full Search restores query and scope from hash state", async ({ page }) => {
+    await page.goto("./#/search?q=Benin&scope=country");
+    await expect(page.getByRole("searchbox", { name: "Search the atlas" })).toHaveValue("Benin");
+    await expect(page.getByRole("button", { name: "Countries", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page).toHaveURL(/q=Benin/);
+    await expect(page).toHaveURL(/scope=country/);
+
+    await page.goto("./#/about");
+    await page.goBack();
+    await expect(page.getByRole("searchbox", { name: "Search the atlas" })).toHaveValue("Benin");
+    await expect(page.getByRole("button", { name: "Countries", exact: true })).toHaveAttribute("aria-pressed", "true");
   });
 
   test("Countries and Languages restore query, filters, sort and page from URLs", async ({ page }) => {
@@ -81,7 +96,7 @@ test.describe("Phase 6 router and search contracts", () => {
     await page.goto("./#/about");
     await page.locator("#main-content").focus();
     await page.keyboard.press("/");
-    const search = page.getByRole("searchbox", { name: "Search peoples, countries or languages" });
+    const search = page.getByRole("searchbox", { name: "Search peoples, regions, countries or languages" });
     await expect(search).toBeVisible();
     await search.fill("Benin");
 

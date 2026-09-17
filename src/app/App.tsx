@@ -24,6 +24,7 @@ const LanguagesPage = lazy(() => import("../pages/LanguagesPage").then((module) 
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((module) => ({ default: module.NotFoundPage })));
 const PeopleContextualPage = lazy(() => import("../pages/PeopleContextualPage").then((module) => ({ default: module.PeopleContextualPage })));
 const PeoplesPage = lazy(() => import("../pages/PeoplesPage").then((module) => ({ default: module.PeoplesPage })));
+const SearchPage = lazy(() => import("../pages/SearchPage").then((module) => ({ default: module.SearchPage })));
 const PrayPage = lazy(() => import("../pages/PrayPage").then((module) => ({ default: module.PrayPage })));
 const PrayerFocusPage = lazy(() => import("../pages/PrayerFocusPage").then((module) => ({ default: module.PrayerFocusPage })));
 const PrayerSessionPage = lazy(() => import("../pages/PrayerSessionPage").then((module) => ({ default: module.PrayerSessionPage })));
@@ -45,6 +46,7 @@ export function App() {
   switch (route.id) {
     case "explore": page = <ExplorePage />; break;
     case "peoples": page = route.peopleSourceId ? <PeopleContextualPage sourcePeopleId={route.peopleSourceId} /> : <PeoplesPage />; break;
+    case "search": page = <SearchPage />; break;
     case "regions": page = route.regionSlug ? <RegionPage regionId={route.regionSlug} /> : <RegionsPage />; break;
     case "countries": page = route.countryIso3 ? <CountryPage iso3={route.countryIso3} /> : <CountriesPage />; break;
     case "languages": page = route.languageIso6393 ? <LanguagePage iso6393={route.languageIso6393} /> : <LanguagesPage />; break;

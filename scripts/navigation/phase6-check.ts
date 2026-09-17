@@ -30,7 +30,8 @@ for (const marker of ["skipToContent", "event.preventDefault()", 'main?.focus({ 
 }
 
 const pageContracts: Array<[string, string[]]> = [
-  ["src/pages/PeoplesPage.tsx", ["initialPeopleState", "positiveHashPage", "replaceHashSearchParams", "useLayoutEffect", 'setOptionalHashParam(params, "page", page, 1)']],
+  ["src/pages/PeoplesPage.tsx", ["function initialState", "positiveHashPage", "replaceHashSearchParams", "useLayoutEffect", 'setOptionalHashParam(params, "page", page, 1)', 'setOptionalHashParam(params, "reviewed", reviewedOnly ? "1" : "")']],
+  ["src/pages/SearchPage.tsx", ["function initialState", "readHashSearchParams", "replaceHashSearchParams", "useLayoutEffect", 'setOptionalHashParam(params, "q", query)', 'setOptionalHashParam(params, "scope", scope, "all")']],
   ["src/pages/CountriesPage.tsx", ["initialCountryState", "positiveHashPage", "replaceHashSearchParams"]],
   ["src/pages/LanguagesPage.tsx", ["initialLanguageState", "positiveHashPage", "replaceHashSearchParams"]],
   ["src/pages/EditorialCoveragePage.tsx", ["initialCoverageState", "replaceHashSearchParams", 'setOptionalHashParam(params, "region", region)']],
@@ -58,12 +59,16 @@ for (const obsolete of [
 if (!phase0.includes('page.locator(".skip-link")')) throw new Error("Phase 6 skip-link regression must activate the actual skip link, independent of initial-route focus.");
 
 const phase6Browser = await readText("tests/e2e/phase6-navigation-state.spec.ts");
-if (!phase6Browser.includes("fresh direct route loads establish main-content keyboard focus")) {
-  throw new Error("Phase 6 must certify direct-route main-content focus in the browser suite.");
+for (const marker of [
+  "fresh direct route loads establish main-content keyboard focus",
+  "People search and filters survive profile navigation and Back",
+  "full Search restores query and scope from hash state",
+]) {
+  if (!phase6Browser.includes(marker)) throw new Error(`Phase 6 navigation browser certification missing: ${marker}.`);
 }
 
 const packageJson = JSON.parse(await readText("package.json")) as { scripts?: Record<string, string> };
 if (!packageJson.scripts?.["navigation:check"]?.includes("scripts/navigation/phase6-check.ts")) throw new Error("Phase 6 navigation:check is not wired.");
 if (!packageJson.scripts?.build?.includes("navigation:check")) throw new Error("Phase 6 navigation gate must run in the production build.");
 
-console.log("Phase 6 navigation checks passed: URL-backed discovery state is committed before paint where fast navigation can race it, direct-load focus and history-safe scrolling are distinct, dynamic titles and valid deep links are enforced, skip navigation is route-safe, and global-search keyboard navigation follows visual order.");
+console.log("Phase 6 navigation checks passed under V3 Phase 9: URL-backed discovery/search state is committed before paint, direct-load focus and history-safe scrolling are distinct, dynamic titles and valid deep links are enforced, skip navigation is route-safe, and quick-search keyboard navigation follows visual order.");

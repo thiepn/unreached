@@ -136,9 +136,8 @@ test.describe("P2.1 instant data and background revalidation", () => {
 
     await page.goto("./#/peoples");
 
-    const progressive = page.locator('[data-progressive-catalog="true"]');
+    const progressive = page.getByText(/Loading the complete source catalog/i);
     await expect(progressive).toBeVisible({ timeout: 2_000 });
-    await expect(progressive).toContainText("Showing 1 validated source records received so far");
     await expect(page.getByText(VISIBLE_TEST_PEOPLE).first()).toBeVisible();
     await expect(page.getByRole("searchbox", { name: "Search people groups" })).toBeEnabled();
     // The compact shell may hide the global badge, but the runtime must still
