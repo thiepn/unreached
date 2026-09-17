@@ -6,6 +6,7 @@ on:
       - main
       - phase/v3-phase10-prayer
     paths:
+      - "PRIVACY.md"
       - "docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md"
       - "docs/PERSONALIZATION_PRIVACY.md"
       - "src/pages/SavedPage.tsx"
@@ -15,6 +16,8 @@ on:
       - "src/main.tsx"
       - "scripts/v3/phase4-check.ts"
       - "scripts/v3/phase11-check.ts"
+      - "scripts/prayer/v16-check.ts"
+      - "scripts/sync/phase1-integrity-check.ts"
       - "tests/e2e/v3-phase11-personal-memory.spec.ts"
       - "tests/e2e/phase12-prayer-saved.spec.ts"
       - "package.json"
