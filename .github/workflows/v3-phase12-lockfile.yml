@@ -1,0 +1,43 @@
+name: V3 Phase 12 Lockfile Refresh
+
+on:
+  push:
+    branches:
+      - phase/v3-phase12-content-certification
+    paths:
+      - "package.json"
+      - ".github/workflows/v3-phase12-lockfile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+        with:
+          ref: phase/v3-phase12-content-certification
+          persist-credentials: true
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Refresh lockfile for pinned MapLibre
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Commit lockfile if changed
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Refresh lockfile for MapLibre 6.4.1"
+          git push origin HEAD:phase/v3-phase12-content-certification
