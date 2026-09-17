@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, HeartHandshake, Li
 import { hrefFor } from "../app/router";
 import { DefinitiveEditorialProfile } from "../components/DefinitiveEditorialProfile";
 import { MeaningSummary } from "../components/MeaningSummary";
+import { MultiSourceMissionPanel } from "../components/MultiSourceMissionPanel";
 import { ProfileLocalActions } from "../components/ProfileLocalActions";
 import { TermHelp } from "../components/TermHelp";
 import { UnreachedExplanation } from "../components/UnreachedExplanation";
@@ -116,7 +117,7 @@ function DeepSourceDetails({ record, loadedAt, stale }: { record: PeopleProfileR
     <details class="people-disclosure people-disclosure--sources v3-people-research-disclosure">
       <summary><Link2 size={18} aria-hidden="true" /> Detailed data, sources & methodology</summary>
       <div class="people-disclosure__body">
-        <p>This profile is assembled from one current PeopleGroups.org people-group-in-country record. The launch runtime keeps PEID/PGID identity source-scoped and does not infer a universal cross-country people entity from a repeated name.</p>
+        <p>This profile is assembled from one current PeopleGroups.org people-group-in-country record. Cross-source comparison, when offered, uses a separately reviewed identity link and does not redefine this canonical profile record.</p>
         <dl class="people-detail-list">
           <div><dt>Mission status</dt><dd>{localStatus(context)}</dd></div>
           <div><dt>GSEC</dt><dd>{gsecLabel(context)}</dd></div>
@@ -193,6 +194,7 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
         <div class="people-profile-context v3-people-mission-context" data-profile-stage="understand">
           <UnreachedExplanation record={record} />
           <SourceContext record={record} />
+          <MultiSourceMissionPanel record={record} />
           <ProviderContext record={record} />
         </div>
 
