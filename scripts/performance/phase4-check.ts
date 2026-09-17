@@ -47,8 +47,11 @@ if (!recentTracker.includes("usePeopleGroupsRouteRecord")) throw new Error("Phas
 if (recentTracker.includes("useLivePeopleExplorer")) throw new Error("Phase 4 Recent tracking must not activate the full people corpus on a profile route.");
 
 const prayerPage = await readText("src/pages/PrayerFocusPage.tsx");
-if (!prayerPage.includes("usePeopleGroupsRouteRecord")) throw new Error("Phase 4 focused prayer must use route-specific loading.");
+const prayerBoundary = await readText("src/prayer/live.ts");
+if (!prayerPage.includes("useLivePrayerRouteRecord")) throw new Error("Phase 4/V3 focused prayer must use the route-specific Prayer boundary.");
 if (prayerPage.includes("useLivePrayerExperience")) throw new Error("Phase 4 focused prayer must not activate the full prayer corpus.");
+if (prayerPage.includes('from "../providers/peoplegroups"')) throw new Error("Prayer 3.0 focused route must not import provider modules directly.");
+if (!prayerBoundary.includes("usePeopleGroupsRouteRecord(sourcePeopleId)")) throw new Error("Phase 4/V3 Prayer boundary must preserve the provider route-record loader.");
 
 const cache = await readText("src/providers/peoplegroups/cache.ts");
 for (const marker of ["PEOPLE_GROUPS_RECORD_STORE", 'db.createObjectStore(PEOPLE_GROUPS_RECORD_STORE', "transaction.oncomplete"]) {
@@ -66,4 +69,4 @@ for (const marker of [
   if (!browser.includes(marker)) throw new Error(`Phase 4 browser certification missing ${marker}.`);
 }
 
-console.log("Phase 4 route-loading checks passed under V3: the people boundary preserves one-record loading/caching, profile actions consume the loaded entity, Recent and prayer keep route-specific stores, and full-corpus promotion remains explicit.");
+console.log("Phase 4 route-loading checks passed under V3: people and Prayer boundaries preserve one-record loading/caching, profile actions consume loaded entities, Recent keeps route-specific stores, and full-corpus promotion remains explicit.");
