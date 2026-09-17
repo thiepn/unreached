@@ -92,6 +92,6 @@ requireText(packageJson, '"v3:phase9-check": "tsx scripts/v3/phase9-check.ts"', 
 requireText(packageJson, "npm run v3:phase8-check && npm run v3:phase9-check", "blocking Phase 9 build integration");
 
 const docs = await read("docs/V3_PHASE9_SEARCH_DISCOVERY_COLLECTIONS.md");
-for (const marker of ["Search, Discovery & Collections", "review depth is not importance", "World → Region → Country → People", "Phase 10", "no mission-priority score"]) requireText(docs, marker, "Phase 9 documentation");
+for (const marker of ["Search, Discovery & Collections", "Review depth is not importance", "World → Region → Country → People", "Phase 10", "no mission-priority score"]) requireText(docs, marker, "Phase 9 documentation");
 
 console.log("V3 Phase 9 checks passed: unified four-domain search, direct definitive-profile routing, reduced people-filter complexity, transparent non-ranking guided collections, and editorial-depth labeling are enforced.");
