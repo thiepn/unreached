@@ -112,7 +112,7 @@ export function SavedPage() {
   const noteFor = (sourcePeopleId: number) => state.personalNotes.find((note) => note.sourcePeopleId === sourcePeopleId) ?? null;
 
   return (
-    <main class="v3-memory-page saved-page" data-v3-memory-page="true" aria-labelledby="saved-title">
+    <div class="v3-memory-page saved-page" data-v3-memory-page="true" aria-labelledby="saved-title">
       <header class="v3-memory-hero saved-hero">
         <div class="v3-memory-hero__copy">
           <span class="v3-memory-eyebrow">Remember</span>
@@ -259,6 +259,6 @@ export function SavedPage() {
           <p class="v3-memory-local-note"><LockKeyhole size={14} aria-hidden="true" /> Recent browsing never syncs and stays on this device.</p>
         </div>
       </details>
-    </main>
+    </div>
   );
 }
