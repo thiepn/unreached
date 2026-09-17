@@ -68,6 +68,7 @@ export async function fetchJoshuaComparisonRecord(id: string, apiKey: string | u
       method: "GET",
       headers: { Accept: "application/json" },
       redirect: "follow",
+      cache: "no-store",
     });
   } catch {
     throw new JoshuaSourceError(502, "Joshua Project could not be reached.");
