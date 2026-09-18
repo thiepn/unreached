@@ -107,6 +107,9 @@ test("3.0 core loop connects world discovery to people, prayer and memory", asyn
   const peopleLink = selected.locator(`a[href="#/peoples/${VISIBLE_TEST_PEID}"]`, { hasText: VISIBLE_TEST_PEOPLE });
   await expect(peopleLink).toBeVisible();
   await expect(peopleLink).toHaveAttribute("href", `#/peoples/${VISIBLE_TEST_PEID}`);
+
+  const transitionPageErrors: string[] = [];
+  page.on("pageerror", (error) => transitionPageErrors.push(error.message));
   await Promise.all([
     page.waitForURL((url) => url.hash === `#/peoples/${VISIBLE_TEST_PEID}`),
     peopleLink.click(),
@@ -114,6 +117,7 @@ test("3.0 core loop connects world discovery to people, prayer and memory", asyn
 
   await expect(page.locator(".v3-people-profile")).toHaveAttribute("data-people-pgid", "PG910001", { timeout: 15_000 });
   await expect(page.getByRole("heading", { level: 1, name: VISIBLE_TEST_PEOPLE, exact: true })).toBeVisible();
+  expect(transitionPageErrors, "Explore → People navigation must not throw while the map is torn down").toEqual([]);
   await expect(page.locator(".v3-people-profile")).toHaveAttribute("data-editorial-tier", "source");
   await page.getByRole("button", { name: "Save for later" }).click();
   await expect(page.getByRole("button", { name: "Remove from saved" })).toHaveAttribute("aria-pressed", "true");
