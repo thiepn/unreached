@@ -178,6 +178,17 @@ test("a mismatched secondary identity is rejected instead of being compared", as
   await expect(panel.getByRole("link", { name: "Data provided by Joshua Project" })).toHaveCount(0);
 });
 
+test("transparency page exposes Joshua Project as an optional comparison source", async ({ page }) => {
+  await page.goto("./#/about");
+
+  const sources = page.locator('section[aria-labelledby="sources-heading"]');
+  await expect(sources.getByText("PeopleGroups.org / IMB Global Research", { exact: true })).toBeVisible();
+  await expect(sources.getByText("Runtime active", { exact: true })).toBeVisible();
+  await expect(sources.getByText("Joshua Project API", { exact: true })).toBeVisible();
+  await expect(sources.getByText("Optional comparison", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The current release preserves the certified data boundary" })).toBeVisible();
+});
+
 test("Phase 13 comparison remains readable on mobile", async ({ page }) => {
   await page.route(JOSHUA_URL, async (route) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(joshuaPayload(true)) });
