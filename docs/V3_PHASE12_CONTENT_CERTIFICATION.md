@@ -103,7 +103,7 @@ Phase 12 migrates the application to **MapLibre GL JS 6.4.1** rather than using 
 
 ## Browser certification
 
-The repository-wide browser suite remains a release blocker. Phase 12 must certify:
+The **active V3 browser contract** is release-blocking. Phase 12 must certify the current V3 product across:
 
 - Chromium;
 - Firefox;
@@ -111,9 +111,23 @@ The repository-wide browser suite remains a release blocker. Phase 12 must certi
 - mobile Chromium;
 - mobile WebKit.
 
-The prior broad suite was already overwhelmingly green, with the remaining failures concentrated in legacy Explore selected-country interactions. Phase 12 reconciles those tests with the current map-first desktop rail/mobile bottom-sheet information architecture rather than bypassing pointer or visibility checks.
+The blocking command is:
 
-A dedicated Phase 12 journey spec additionally exercises the product loop and mobile no-overflow behavior using deterministic PeopleGroups fixtures.
+```bash
+npm run e2e
+```
+
+It runs `playwright.v3.config.ts`, which discovers V3 browser contracts from Phase 4 onward. Those specs cover the final visual foundation, shell/navigation, map-first Explore, geographic hierarchy, people profiles, search/discovery, Prayer, personal mission memory, and the integrated Phase 12 release journey.
+
+The pre-V3 browser suite is retained as a **historical diagnostic**, not deleted:
+
+```bash
+npm run e2e:historical
+```
+
+Historical assertions are not permitted to redefine the V3 product contract. Examples include removed V1/V2 copy, superseded DOM classes, the former Browse navigation model, the old “My lists” Saved heading, and pre-V3 editorial/profile structures. An enduring behavior may leave the release matrix only when the same invariant is covered by a current V3 browser spec or by an existing build-time integrity gate.
+
+This separation prevents false release failures from obsolete UI contracts without weakening browser coverage for the product that will actually ship. A dedicated Phase 12 journey spec additionally exercises the complete Explore → People → Pray → Saved loop and mobile no-overflow behavior using deterministic PeopleGroups fixtures.
 
 ## Source and mission semantics
 

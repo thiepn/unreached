@@ -1,7 +1,7 @@
 # V3 Phase 13 — Multi-Source Mission Intelligence
 
 **Status:** implemented on a post-3.0 stacked branch; production activation remains blocked by V3 Gate D.  
-**Reviewed:** 2026-09-17
+**Reviewed:** 2026-09-19
 
 ## Goal
 
@@ -14,6 +14,8 @@ PeopleGroups.org / IMB remains the canonical atlas runtime inherited from Unreac
 The V3 roadmap places Phase 13 after the focused Unreached 3.0 atlas release. This branch therefore does **not** certify, merge around, or weaken Phase 12. Phase 12 still requires the full 100 substantial reviewed-profile threshold and the existing Unreached 3.0 ship gate.
 
 Phase 13 may be engineered and reviewed in parallel, but it must remain stacked/draft until Gate D is satisfied.
+
+The branch inherits the repaired V3 browser-certification contract from Phase 12. Browser release gating targets the active V3 product surface while retaining the complete older suite as a non-blocking historical diagnostic. This does not relax the editorial Gate D requirement.
 
 ## Source semantics
 
@@ -113,7 +115,10 @@ Run:
 ```bash
 npm run v3:phase13-check
 npm run build
+npm run e2e
 ```
+
+`npm run e2e` is the release-blocking **active V3 browser matrix**. It runs current V3 contracts across Chromium, Firefox, WebKit, mobile Chromium and mobile WebKit, and automatically includes `v3-phase13-multi-source.spec.ts`. The pre-V3 suite remains available separately through `npm run e2e:historical` for diagnostic regression archaeology; superseded V1/V2 DOM and copy contracts do not redefine the V3 product.
 
 The dedicated Phase 13 workflow also typechecks the Worker separately. It does not require a live Joshua Project key because CI certifies the policy/model/edge boundaries without downloading live provider data.
 

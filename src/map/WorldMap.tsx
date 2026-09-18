@@ -42,11 +42,20 @@ function fatalRenderingError(message: string): boolean {
   return /webgl|gpu|context lost|context creation|failed to initialize|could not start|worker.*(?:failed|error)/i.test(message);
 }
 
+const WEBGL2_REQUIRED_MESSAGE = "The interactive map requires WebGL 2. Use the country finder below or a browser/device with WebGL 2 support.";
+
 function mapStartError(error: unknown): string {
-  if (error instanceof GPUInitializationError) {
-    return "The interactive map requires WebGL 2. Use the country finder below or a browser/device with WebGL 2 support.";
-  }
+  if (error instanceof GPUInitializationError) return WEBGL2_REQUIRED_MESSAGE;
   return error instanceof Error ? error.message : "The interactive map could not start.";
+}
+
+function webGL2Available(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(canvas.getContext("webgl2"));
+  } catch {
+    return false;
+  }
 }
 
 function boundsFor(feature: MapCountryFeature): LngLatBounds {
@@ -173,6 +182,16 @@ export function WorldMap({
     delete container.dataset.mapReady;
     delete container.dataset.mapError;
     delete container.dataset.mapErrorStack;
+
+    // MapLibre 6 requires WebGL2. In browsers/environments where WebGL2 is
+    // unavailable, constructing MapLibre can leave a partially initialized map
+    // whose teardown throws during route changes. Detect that boundary before
+    // construction and keep the country finder as the functional fallback.
+    if (!webGL2Available()) {
+      container.dataset.mapError = WEBGL2_REQUIRED_MESSAGE;
+      onErrorRef.current(WEBGL2_REQUIRED_MESSAGE);
+      return;
+    }
 
     try {
       map = new MapLibreMap({
@@ -305,7 +324,14 @@ export function WorldMap({
       delete container.dataset.mapErrorStack;
       mapRef.current = null;
       onHoverRef.current(null);
-      map.remove();
+      try {
+        map.remove();
+      } catch (error) {
+        // Third-party renderer teardown must never abort an application route
+        // transition. The component DOM is being removed regardless; keep the
+        // fallback/navigation path usable even after partial GPU startup.
+        console.warn("MapLibre cleanup failed; continuing route transition.", error);
+      }
     };
   }, [geography, initialView]);
 

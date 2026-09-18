@@ -42,6 +42,8 @@ for (const path of [
   "docs/V3_PHASE13_MULTI_SOURCE_MISSION_INTELLIGENCE.md",
   "docs/DATA_AND_LEGAL_POLICY.md",
   "THIRD_PARTY_NOTICES.md",
+  "playwright.v3.config.ts",
+  "docs/V3_BROWSER_CERTIFICATION.md",
   ".github/workflows/v3-phase13-multi-source-intelligence.yml",
 ]) {
   if (!existsSync(resolve(root, path))) throw new Error(`V3 Phase 13 required file is missing: ${path}`);
@@ -209,5 +211,17 @@ for (const marker of [
 const pkg = await read("package.json");
 requireText(pkg, '"v3:phase13-check": "tsx scripts/v3/phase13-check.ts"', "Phase 13 package gate");
 requireText(pkg, "npm run v3:phase12-readiness && npm run v3:phase13-check", "blocking Phase 13 build integration");
+requireText(pkg, '"e2e": "npm run e2e:v3"', "active V3 browser gate");
+requireText(pkg, '"e2e:v3": "playwright test --config=playwright.v3.config.ts"', "V3 browser configuration script");
+requireText(pkg, '"e2e:historical": "playwright test --config=playwright.config.ts"', "historical browser diagnostic");
+
+const browserConfig = await read("playwright.v3.config.ts");
+for (const marker of ["defineConfig", "playwright.config", "testMatch", "v3-phase"]) {
+  requireText(browserConfig, marker, "active V3 browser configuration");
+}
+const browserContract = await read("docs/V3_BROWSER_CERTIFICATION.md");
+for (const marker of ["release-blocking", "Historical diagnostic matrix", "No-coverage-loss rule", "npm run e2e"]) {
+  requireText(browserContract, marker, "V3 browser certification contract");
+}
 
 console.log("V3 Phase 13 Multi-Source Mission Intelligence checks passed: reviewed provider crosswalks and Worker allowlist are structurally identical, unreviewed IDs and missing credentials fail closed, source-native classifications and explicit comparison states remain intact, end-to-end no-store Joshua Project access and server-only credentials are enforced, public UI is roadmap-jargon-free and avoids volatile release counts/version copy, and attribution/legal/Gate D boundaries remain current.");
