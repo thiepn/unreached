@@ -69,11 +69,13 @@
     "release:dist": "tsx scripts/release/check-dist.ts",
     "audit:baseline": "tsx scripts/audit/phase0-baseline.ts",
     "audit:phase0": "npm run audit:baseline && playwright test tests/e2e/phase0-regression.spec.ts tests/e2e/phase0-stress.spec.ts --project=chromium",
-    "e2e": "playwright test",
+    "e2e": "npm run e2e:v3",
     "preview": "vite preview",
     "check": "npm run build",
     "operations:check": "tsx scripts/operations/phase4-check.ts",
-    "audit:licenses": "node scripts/operations/dependency-license-audit.mjs"
+    "audit:licenses": "node scripts/operations/dependency-license-audit.mjs",
+    "e2e:v3": "playwright test --config=playwright.v3.config.ts",
+    "e2e:historical": "playwright test --config=playwright.config.ts"
   },
   "engines": {
     "node": ">=22.12.0"
