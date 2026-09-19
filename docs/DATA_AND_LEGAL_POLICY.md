@@ -62,7 +62,7 @@ The About/source UI and repository notices must keep provider attribution visibl
 **Status:** CONDITIONAL — DEVICE-PRIVATE OBSERVATION HISTORY ONLY  
 **Reviewed:** 19 September 2026
 
-Phase 14 may retain a bounded history of distinct PeopleGroups.org mission-source states actually observed on the current device. PeopleGroups.org documents a source-native `UpdatedDate`, but Unreached does not assume that the public API exposes prior revisions.
+Phase 14 may retain a bounded history of distinct PeopleGroups.org mission-source states actually observed on the current device. PeopleGroups.org documents a source-native `UpdatedDate`. It also publishes historical GSEC overview PDFs at global aggregate level for 2011–2024 and states that archive is no longer currently updated. Those reports are not treated as individual PGID revision history.
 
 Approved use:
 
@@ -70,12 +70,14 @@ Approved use:
 - retain at most 24 distinct tracked states for one PGID;
 - de-duplicate repeated identical tracked states;
 - display concrete field changes between adjacent locally observed states;
-- reset the local history to the current source state.
+- reset the local history to the current source state;
+- link users to the provider-hosted historical GSEC overview archive without copying those PDF reports into the Phase 14 application corpus.
 
 Not approved:
 
 - backfilling, interpolation or reconstruction of source states the device never observed;
 - a public or downloadable historical PeopleGroups.org snapshot archive;
+- copying or parsing the provider-hosted historical GSEC overview PDF archive into a new Unreached dataset without a separate rights and methodology review;
 - server-side history storage, D1 history, account sync or server-held export of this ledger;
 - claims that a changed field proves progress, decline, causation or ministry effectiveness;
 - storing Joshua Project comparison responses in the historical ledger.
