@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-weme-benin-api",
+      "sourceId": "peoplegroups-pgid-PG012359-api",
+      "title": "PeopleGroups.org API — Weme of Benin (PG012359)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012359",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T01:00:00Z",
+      "locator": "Single-record provider endpoint for PG012359; live identity must be re-fetched by the guarded Phase 12 review command before publication"
+    },
+    {
+      "id": "ctx-source:peoplegroups-weme-benin",
+      "sourceId": "peoplegroups-profile-PG012359",
+      "title": "PeopleGroups.org — Weme of Benin (PGID PG012359)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012359/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T01:00:00Z",
+      "locator": "Profile summary and fast facts: Weme in Benin, wem, aggregate religion, GSEC/engagement and provider resource surfaces"
+    },
+    {
+      "id": "ctx-source:glottolog-weme",
+      "sourceId": "glottolog-weme1239",
+      "title": "Glottolog 5.3 — Weme Gbe",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/weme1239",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T01:00:00Z",
+      "locator": "Weme Gbe language entry: glottocode weme1239, ISO 639-3 wem, country Benin; AES source labels the language vigorous"
+    },
+    {
+      "id": "ctx-source:sil-weme-survey",
+      "sourceId": "sil-togo-benin-90444",
+      "title": "Un résumé de l’enquête sociolinguistique sur le weme du Benin",
+      "publisher": "SIL Togo-Bénin / SIL International",
+      "url": "https://togo-benin.sil.org/resources/archives/90444",
+      "sourceType": "academic",
+      "publicationDate": "2021-01-01",
+      "accessedAt": "2026-09-19T01:00:00Z",
+      "locator": "Published 2021 summary of an older Weme survey: dialect situation, Fon/Gun comprehension, language use and vitality; editor explicitly cautions that more recent research may exist"
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12359",
+    "peid": 12359,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12359,
+      "verifiedPeopleName": "Weme",
+      "pgidAnchors": [
+        "PG012359"
+      ],
+      "countryIso3Anchors": [
+        "BEN"
+      ],
+      "languageIso6393Anchors": [
+        "wem"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T01:00:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Weme in Benin and ties the record to Weme Gbe (wem). Glottolog independently lists Weme Gbe in Benin, while a published sociolinguistic survey provides bounded historical evidence about language use and vitality.",
+      "claimIds": [
+        "claim:weme-benin-identity",
+        "claim:weme-language",
+        "claim:weme-language-vitality-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org provides an aggregate primary-religion label for this people-group-in-country record. It is retained as source context and not generalized into a claim about the belief or practice of every Weme person.",
+      "claimIds": [
+        "claim:weme-benin-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Weme language use, culture and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently presents PG012359 as GSEC 1, less than 2% evangelical, and Engaged yet Unreached.",
+        "claimIds": [
+          "claim:weme-benin-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resource labels stay narrow",
+        "summary": "The current provider page reports no film entries on its Weme media surface and separately links Weme Bible-resource providers; those labels are not converted into a claim of total presence or absence.",
+        "claimIds": [
+          "claim:weme-benin-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:weme-benin-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG012359 identifies the people-group record as Weme in Benin and lists Gbe, Weme (wem) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-weme-benin-api",
+          "ctx-source:peoplegroups-weme-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:weme-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Weme Gbe with glottocode weme1239 and ISO 639-3 code wem and lists Benin as its country.",
+        "citationIds": [
+          "ctx-source:glottolog-weme"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:weme-language-vitality-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "At their respective assessments, Glottolog’s current reference entry characterizes Weme as vigorous and the published SIL survey reports Weme as a viable language used broadly in everyday domains, while the SIL editor explicitly cautions that newer research may supersede the older survey data.",
+        "citationIds": [
+          "ctx-source:glottolog-weme",
+          "ctx-source:sil-weme-survey"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The SIL survey reflects older field data; this synthesis compares documented assessments and does not claim that every present-day Weme community has identical language-use patterns."
+      },
+      {
+        "id": "claim:weme-benin-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Weme of Benin profile reports Animism as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-weme-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG012359 and not a statement about every Weme person’s belief or practice."
+      },
+      {
+        "id": "claim:weme-benin-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1 and less than 2% evangelical for PG012359 and presents the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-weme-benin-api",
+          "ctx-source:peoplegroups-weme-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:weme-benin-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile reports no film entries for Gbe, Weme (wem) on its media-resource surface and separately links Weme Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-weme-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not establish distribution, comprehension, use or translation completeness in Weme communities."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-weme-benin-api",
+      "ctx-source:peoplegroups-weme-benin",
+      "ctx-source:glottolog-weme",
+      "ctx-source:sil-weme-survey"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

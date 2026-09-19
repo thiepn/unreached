@@ -87,10 +87,11 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready draft candidates in the workbench: **3**.
+- Review-ready draft candidates in the workbench: **4**.
 - Nateni candidate: source audit refreshed on **19 September 2026**; no material contradiction found, but human maintainer attestation is still required.
 - Hausa of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and Cambridge evidence; human maintainer attestation is required.
 - Anii of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog, SIL and Cambridge evidence; human maintainer attestation is required.
+- Weme of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and a dedicated SIL sociolinguistic survey; human maintainer attestation is required.
 - Remaining public reviewed-profile gap: **88** until a candidate is actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.
