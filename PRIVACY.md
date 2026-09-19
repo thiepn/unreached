@@ -1,6 +1,6 @@
 # Unreached Privacy Notice
 
-**Effective / reviewed:** 17 September 2026  
+**Effective / reviewed:** 19 September 2026  
 **Applies to:** https://www.thiepn.dev/unreached/
 
 Unreached is designed to work without an account. Local-only use is the default.
@@ -16,10 +16,10 @@ Depending on the features you use, browser storage can contain:
 - up to the latest 30 prayer-memory entries created by an explicit **Record prayer today** action;
 - a bounded recent-route list used for local navigation convenience;
 - local sync metadata and pending mutations if you enable private continuity;
-- a validated PeopleGroups.org data snapshot in IndexedDB for offline/resilience behavior;
+- a validated PeopleGroups.org data snapshot in IndexedDB for offline/resilience behavior;\n- a bounded device-local history of PeopleGroups.org mission-source state transitions observed by this browser;
 - a session-only Cloudflare Access token in `sessionStorage` while signed in.
 
-Clearing site data in your browser removes device-local state. Signing out or deleting server-held account data does not automatically erase local Saved/prayer data, private notes, prayer memory or recent browsing.
+Clearing site data in your browser removes device-local state. Signing out or deleting server-held account data does not automatically erase local Saved/prayer data, private notes, prayer memory, recent browsing or local mission-source history.
 
 ## Optional private continuity
 
@@ -43,7 +43,7 @@ The service is designed **not** to store:
 - recent browsing history;
 - prayer counts, totals, streaks, scores, rankings or completion metrics;
 - guided-session history;
-- the PeopleGroups.org corpus or its browser cache;
+- the PeopleGroups.org corpus or its browser cache;\n- device-local PeopleGroups mission-source history;
 - Natural Earth geography or reviewed editorial publication data.
 
 Private notes are personal writing. Unreached does not treat them as PeopleGroups.org/IMB facts or editorial claims.
@@ -70,13 +70,13 @@ The Account page provides controls to:
 - sign out;
 - delete server-held private account data.
 
-The Saved page provides local controls to remove Saved/prayer-list membership, delete a private note, clear prayer memory, and clear recent browsing. Removing the final Saved or prayer-list relationship to a person also removes that person's private note so hidden note data is not retained without a visible return point.
+The Saved page provides local controls to remove Saved/prayer-list membership, delete a private note, clear prayer memory, and clear recent browsing. Each people profile with local source history also provides a control to reset that history to the current observed source state. Removing the final Saved or prayer-list relationship to a person also removes that person's private note so hidden note data is not retained without a visible return point.
 
 Deleting the private account removes the D1 user record and associated server-held continuity records. Local browser data remains until separately cleared.
 
 ## Mission-data cache
 
-The PeopleGroups.org snapshot cache is device-local resilience data. It is not uploaded to the private continuity service and is not exposed by Unreached as a public dataset download or API.
+The PeopleGroups.org snapshot cache is device-local resilience data. It is not uploaded to the private continuity service and is not exposed by Unreached as a public dataset download or API. Historical mission intelligence is stored separately as a bounded local log of observed source-state transitions. Consecutive repeated observations of the same tracked state are de-duplicated; a later return after an intervening state remains a separate historical transition. This history is not synced, stored in D1 or the Worker, included in server-held account export, or used to persist Joshua Project responses.
 
 ## Children and sensitive information
 
@@ -88,7 +88,7 @@ Material privacy changes must update this notice, the in-repository privacy arch
 
 ## Related documents
 
-- [`docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md`](docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md)
+- [`docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md`](docs/V3_PHASE11_PERSONAL_MISSION_MEMORY.md)\n- [`docs/V3_PHASE14_HISTORICAL_MISSION_INTELLIGENCE.md`](docs/V3_PHASE14_HISTORICAL_MISSION_INTELLIGENCE.md)
 - [`docs/V20_PRIVATE_CONTINUITY.md`](docs/V20_PRIVATE_CONTINUITY.md)
 - [`docs/PERSONALIZATION_PRIVACY.md`](docs/PERSONALIZATION_PRIVACY.md)
 - [`docs/DATA_AND_LEGAL_POLICY.md`](docs/DATA_AND_LEGAL_POLICY.md)
