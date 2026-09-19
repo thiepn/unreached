@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-kabyle-algeria",
+      "sourceId": "peoplegroups-profile-PG011265",
+      "title": "PeopleGroups.org — Kabyle of Algeria (PGID PG011265)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg011265/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Current profile fast facts and resource sections: Kabyle in Algeria, Kabyle (kab), aggregate Folk Islam label, GSEC 1 / Engaged yet Unreached, JESUS and Magdalena listings, and linked Bible-resource surfaces. Live PEID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-kabyle",
+      "sourceId": "glottolog-kaby1243",
+      "title": "Glottolog 5.3 — Kabyle",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/kaby1243",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Kabyle spoken L1 language entry: glottocode kaby1243, ISO 639-3 kab, country Algeria."
+    },
+    {
+      "id": "ctx-source:cambridge-kabyle-literary-history",
+      "sourceId": "cambridge-romes-kabyle-literary-history",
+      "title": "Kabyle Literary History and Questions Related to its Periodization: The Case of Poetry",
+      "publisher": "Cambridge University Press / Review of Middle East Studies",
+      "url": "https://www.cambridge.org/core/journals/review-of-middle-east-studies/article/kabyle-literary-history-and-questions-related-to-its-periodization-the-case-of-poetry/5CC6804687D61191872002DAE7773088",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Historical discussion of Kabyle literary and cultural expression, including post-independence language policy and the role of Kabyle-language poetry/song in cultural renewal."
+    },
+    {
+      "id": "ctx-source:cambridge-amazigh-category-critique",
+      "sourceId": "cambridge-romes-arab-berber-divide",
+      "title": "Reflections on Race and Ethnicity in North Africa: Towards a Conceptual Critique of the Arab–Berber Divide",
+      "publisher": "Cambridge University Press / Review of Middle East Studies",
+      "url": "https://www.cambridge.org/core/journals/review-of-middle-east-studies/article/reflections-on-race-and-ethnicity-in-north-africa-towards-a-conceptual-critique-of-the-arabberber-divide/50669B731589399D4D1B5E552CC28681",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Conceptual critique of fixed Arab/Berber categories in North Africa and the role of colonial and nation-state classification; used as a guardrail against essentializing Kabyle identity."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:11265",
+    "peid": 11265,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 11265,
+      "verifiedPeopleName": "Kabyle",
+      "pgidAnchors": [
+        "PG011265"
+      ],
+      "countryIso3Anchors": [
+        "DZA"
+      ],
+      "languageIso6393Anchors": [
+        "kab"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:52:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Kabyle in Algeria and ties the record to Kabyle (kab). Glottolog independently identifies Kabyle as a language of Algeria, while academic work documents a substantial Kabyle literary tradition and cautions against treating North African Arab/Amazigh categories as simple, fixed binaries.",
+      "claimIds": [
+        "claim:kabyle-algeria-identity",
+        "claim:kabyle-language",
+        "claim:kabyle-literary-context",
+        "claim:kabyle-identity-caution"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Folk Islam label for this people-group-in-country record. It is retained as source context and not generalized into a statement about every Kabyle person's beliefs or practice.",
+      "claimIds": [
+        "claim:kabyle-algeria-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current unreached classification only from PeopleGroups.org mission-status evidence. Amazigh identity, language, regional history and religion are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG011265 below the 2% evangelical threshold with GSEC 1 and no recent church-planting activity, while its SPI presentation is Engaged yet Unreached.",
+        "claimIds": [
+          "claim:kabyle-algeria-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported language resources do not prove universal access",
+        "summary": "The provider lists Kabyle-language films and Bible-resource links; those listings are preserved as provider facts rather than converted into claims about distribution, comprehension or use.",
+        "claimIds": [
+          "claim:kabyle-algeria-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:kabyle-algeria-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG011265 identifies the people-group record as Kabyle in Algeria and lists Kabyle (kab) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kabyle-algeria"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; the guarded maintainer review must re-fetch the live record and verify PEID before publication."
+      },
+      {
+        "id": "claim:kabyle-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Kabyle with glottocode kaby1243 and ISO 639-3 code kab and lists Algeria as its country.",
+        "citationIds": [
+          "ctx-source:glottolog-kabyle"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:kabyle-literary-context",
+        "dimension": "culture",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Academic literary history documents Kabyle-language poetry and song as important forms of cultural expression and describes a twentieth-century renewal of written and performed Kabyle cultural production.",
+        "citationIds": [
+          "ctx-source:cambridge-kabyle-literary-history"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a literary-historical observation, not a claim that all Kabyle individuals participate in the same cultural forms."
+      },
+      {
+        "id": "claim:kabyle-identity-caution",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Scholarship on North African identity cautions that Arab/Amazigh categories have been shaped by colonial and state classification as well as local self-identification; this candidate therefore treats the PeopleGroups Kabyle label as a scoped source identity rather than a complete description of every person's identity.",
+        "citationIds": [
+          "ctx-source:cambridge-amazigh-category-critique",
+          "ctx-source:peoplegroups-kabyle-algeria"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The synthesis is a guardrail against essentialism and does not replace the provider's source identity with a new taxonomy."
+      },
+      {
+        "id": "claim:kabyle-algeria-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Kabyle of Algeria profile reports Folk Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kabyle-algeria"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG011265, not a statement about every Kabyle person's belief or practice."
+      },
+      {
+        "id": "claim:kabyle-algeria-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG011265, while presenting the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kabyle-algeria"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:kabyle-algeria-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists JESUS and Magdalena film entries on the Kabyle (kab) resource surface and links Kabyle Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kabyle-algeria"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-kabyle-algeria",
+      "ctx-source:glottolog-kabyle",
+      "ctx-source:cambridge-kabyle-literary-history",
+      "ctx-source:cambridge-amazigh-category-critique"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
