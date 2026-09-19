@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The first review-ready candidate is `nateni-benin.json`. It contains claim-level citations from PeopleGroups.org / IMB, Glottolog, SIL Togo-Bénin and the Government of Benin. It is **not** part of `public/data/context/manifest.v1.json` and therefore does not count toward the 100-profile Unreached 3.0 certification target.
+The workbench currently contains `nateni-benin.json` and `hausa-benin.json`. Both use claim-level citations and remain outside `public/data/context/manifest.v1.json`, so neither counts toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -87,8 +87,9 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready draft candidates in the workbench: **1**.
+- Review-ready draft candidates in the workbench: **2**.
 - Nateni candidate: source audit refreshed on **19 September 2026**; no material contradiction found, but human maintainer attestation is still required.
+- Hausa of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and Cambridge evidence; human maintainer attestation is required.
 - Remaining public reviewed-profile gap: **88** until a candidate is actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.
