@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains **16 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbeks of Uzbekistan and Saho of Eritrea. Batch 3 promotes the completed Issue #97 research set: Dendi, Foodo, Gun and Aizo of Benin. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
+The workbench currently contains **20 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbeks of Uzbekistan and Saho of Eritrea. Batch 3 promotes the completed Issue #97 research set: Dendi, Foodo, Gun and Aizo of Benin. Batch 4 promotes the completed Issue #100 research set: Kham Tibetans of China, Turkmen of Turkmenistan, Acehnese of Indonesia and Hararghe Oromo of Ethiopia. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -151,12 +151,13 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready Tier-3 draft candidates in the workbench: **16**.
+- Review-ready Tier-3 draft candidates in the workbench: **20**.
 - Batch 1 — Benin: Nateni, Hausa, Anii and Weme. Human evidence sign-off is tracked in **Issue #96**.
-- Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbek (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
+- Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbeks (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
 - Batch 3 — Benin research promotions: Dendi, Foodo, Gun and Aizo. Research/provenance is closed in **Issue #97**; human evidence sign-off is tracked in **Issue #99**.
-- Batch 4 — cross-region research only: Kham Tibetan (China), Turkmen (Turkmenistan), Acehnese (Indonesia) and Hararghe Oromo (Ethiopia). Live identity/GSEC research is tracked in **Issue #100**; no Batch 4 candidate drafts exist yet and the workbench count remains 16.
-- All current draft packages pass the mechanical Tier-3 candidate integrity policy. Live identity revalidation and human evidence review remain mandatory before publication.
+- Batch 4 — cross-region research promotions: Kham Tibetans (China), Turkmen (Turkmenistan), Acehnese (Indonesia) and Hararghe Oromo (Ethiopia). Research/provenance is closed in **Issue #100**; human evidence sign-off is tracked in **Issue #101**.
+- All **20/20** current drafts pass the mechanical Tier-3 candidate gate and live PEID/PGID/name/country/language + GSEC 0–3 validation. Each has exactly one indexed AI-assisted pre-review evidence audit.
+- The latest Phase 12 production build, dedicated desktop/mobile release journey, security/license audit, Private Sync certification and five-engine V3 browser matrix are green.
 - Remaining public reviewed-profile gap: **88** until candidates are actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.
