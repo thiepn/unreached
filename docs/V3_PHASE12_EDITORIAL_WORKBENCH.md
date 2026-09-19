@@ -75,6 +75,22 @@ The workflow step deliberately uses `continue-on-error`: a PeopleGroups/network 
 
 When the live diagnostic succeeds, the Phase 12 PR workflow automatically runs `v3:phase12-review-workbench` and includes the maintainer-ready JSON/Markdown review index in the normal Phase 12 artifact bundle. A separate workflow dispatch is still available for an explicit refresh, but routine PR review no longer requires it.
 
+## Tracked research-batch registry
+
+Research-only batches can now be registered under:
+
+`data/v3/editorial/research-batches/`
+
+The current registry contains Issue #97's explicit Benin batch. On every Phase 12 PR, this command runs as a **non-blocking live diagnostic**:
+
+```bash
+npm run v3:phase12-live-research-batches
+```
+
+For each tracked PGID it fetches the current PeopleGroups record and records the authoritative PEID, display name, country, language/code, GSEC, mission/resource fields and provider update date. It also identifies whether that live PEID is already published, already exists as a candidate, is still research-ready, or has moved outside the GSEC 0–3 scope.
+
+The registry is explicitly **non-ranking** and has `publicationEffect: "none"`. It creates no candidate claims and changes no public content. Its purpose is to make the transition from an explicit research PGID list to a correctly anchored candidate possible without ever inferring PEID from PGID.
+
 ## Guarded review and publication command
 
 Prepare a live-identity-checked, non-mutating review packet:
