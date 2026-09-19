@@ -54,6 +54,11 @@ for (const marker of [
   if (!workbenchDocs.includes(marker)) throw new Error(`Phase 12 editorial workbench document missing: ${marker}`);
 }
 
+const evidenceAuditLoader = await readText("scripts/v3/phase12-evidence-audits.ts");
+for (const marker of ["pre-review-only", "not maintainer approval", "evidence-audits.json"]) {
+  if (!evidenceAuditLoader.includes(marker)) throw new Error(`Phase 12 evidence-audit loader is missing boundary: ${marker}`);
+}
+
 const reviewCandidateScript = await readText("scripts/v3/phase12-review-candidate.ts");
 const reviewWorkbenchScript = await readText("scripts/v3/phase12-review-workbench.ts");
 for (const [label, source] of [
