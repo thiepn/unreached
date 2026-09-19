@@ -1,0 +1,43 @@
+name: V3 Phase 12 Batch 2 Source Scaffold
+
+on:
+  push:
+    branches:
+      - phase/v3-phase12-content-certification
+    paths:
+      - ".github/workflows/v3-phase12-batch2-source-scaffold.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Fetch verified Batch 2 source identities
+        run: npm run v3:phase12-editorial-scaffold-batch -- --pgids=PG012316,PG012320,PG012325,PG012297
+
+      - name: Print machine-readable identity index
+        run: cat artifacts/v3-phase12/workbench/batch-scaffold-index.json
+
+      - name: Upload private Batch 2 research scaffolds
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-batch2-source-scaffolds
+          path: artifacts/v3-phase12/workbench
+          if-no-files-found: error
+          retention-days: 30
