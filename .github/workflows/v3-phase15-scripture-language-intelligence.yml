@@ -1,0 +1,67 @@
+name: V3 Phase 15 Scripture & Language Intelligence
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase14-historical-mission-intelligence
+    paths:
+      - "package.json"
+      - "data/source-registry.json"
+      - "docs/V3_PHASE15_SCRIPTURE_LANGUAGE_INTELLIGENCE.md"
+      - "docs/DATA_AND_LEGAL_POLICY.md"
+      - "THIRD_PARTY_NOTICES.md"
+      - "src/languages/**"
+      - "src/components/LanguageIntelligencePanel.tsx"
+      - "src/pages/LanguagePage.tsx"
+      - "src/pages/AboutPage.tsx"
+      - "src/styles/language/intelligence.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase15-check.ts"
+      - "tests/e2e/v3-phase15-scripture-language.spec.ts"
+      - ".github/workflows/v3-phase15-scripture-language-intelligence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 15 source evidence and language relationships
+        run: npm run v3:phase15-check
+
+      - name: Run complete production build gate
+        run: npm run build
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify Scripture and language intelligence on desktop and mobile
+        run: npm run v3:phase15-visual
+
+      - name: Upload Phase 15 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase15-scripture-language
+          path: artifacts/v3-phase15
+          if-no-files-found: warn
+          retention-days: 30
