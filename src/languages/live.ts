@@ -13,6 +13,20 @@ export interface LiveLanguageCountrySummary {
   knownPopulation: number;
 }
 
+export interface LiveLanguageContextEvidence {
+  peid: number;
+  pgid: string;
+  peopleName: string;
+  countryIso3: string;
+  countryName: string;
+  population: number | null;
+  reachClassification: "unreached" | "other" | "unknown";
+  bibleAvailability: string | null;
+  jesusFilmAvailability: string | null;
+  totalResources: number | null;
+  sourceUpdatedAt: string | null;
+}
+
 export interface LiveLanguagePeopleSummary {
   peid: number;
   name: string;
@@ -50,6 +64,11 @@ export interface LiveLanguageRecord {
     knownContextCount: number;
     values: LiveLanguageBreakdownItem[];
   };
+  family: {
+    knownContextCount: number;
+    breakdown: LiveLanguageBreakdownItem[];
+  };
+  contexts: LiveLanguageContextEvidence[];
   countries: LiveLanguageCountrySummary[];
   peoples: LiveLanguagePeopleSummary[];
   sourceUpdatedAt: string | null;
@@ -128,6 +147,26 @@ function countrySummaries(contexts: RuntimePeopleContext[]): LiveLanguageCountry
   })).sort((a, b) => b.contextCount - a.contextCount || a.name.localeCompare(b.name));
 }
 
+function contextEvidence(contexts: RuntimePeopleContext[]): LiveLanguageContextEvidence[] {
+  return contexts.map((context) => ({
+    peid: context.peid,
+    pgid: context.pgid,
+    peopleName: context.displayName,
+    countryIso3: context.country.iso3,
+    countryName: context.country.name,
+    population: context.population.value,
+    reachClassification: context.reach.classification,
+    bibleAvailability: context.resources.bibleAvailability,
+    jesusFilmAvailability: context.resources.jesusFilmAvailability,
+    totalResources: context.resources.totalReported,
+    sourceUpdatedAt: context.sourceUpdatedAt,
+  })).sort((a, b) =>
+    a.countryName.localeCompare(b.countryName)
+    || a.peopleName.localeCompare(b.peopleName)
+    || a.pgid.localeCompare(b.pgid)
+  );
+}
+
 function peopleSummaries(contexts: RuntimePeopleContext[]): LiveLanguagePeopleSummary[] {
   const groups = new Map<number, RuntimePeopleContext[]>();
   for (const context of contexts) {
@@ -161,7 +200,8 @@ export function buildLiveLanguageRecords(contexts: RuntimePeopleContext[]): Live
     const populationKnownContextCount = items.filter((item) => item.population.value !== null).length;
     const bibleValues = items.map((item) => item.resources.bibleAvailability);
     const jesusValues = items.map((item) => item.resources.jesusFilmAvailability);
-    const familyName = mode(items.map((item) => item.language.family));
+    const familyValues = items.map((item) => item.language.family);
+    const familyName = mode(familyValues);
     const peoples = peopleSummaries(items);
     return {
       id: `language:peoplegroups:${iso6393}`,
@@ -183,6 +223,11 @@ export function buildLiveLanguageRecords(contexts: RuntimePeopleContext[]): Live
         knownContextCount: items.filter((item) => item.resources.totalReported !== null).length,
         values: resourceBreakdown(items),
       },
+      family: {
+        knownContextCount: familyValues.filter(Boolean).length,
+        breakdown: breakdown(familyValues),
+      },
+      contexts: contextEvidence(items),
       countries: countrySummaries(items),
       peoples,
       sourceUpdatedAt: latestTimestamp(items.map((item) => item.sourceUpdatedAt)),
@@ -202,6 +247,7 @@ export function getLiveLanguageSearchIndex(records: LiveLanguageRecord[]): LiveL
       record.name,
       record.iso6393,
       record.familyName,
+      ...record.family.breakdown.map((item) => item.label),
       ...record.countries.map((country) => country.name),
       ...record.peoples.map((people) => people.name),
       ...record.bible.breakdown.map((item) => item.label),

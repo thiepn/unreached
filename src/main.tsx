@@ -18,6 +18,7 @@ import "./styles/context.css";
 import "./styles/prayer.css";
 import "./styles/languages.css";
 import "./styles/language/resource-breakdown.css";
+import "./styles/language/intelligence.css";
 import "./styles/discovery.css";
 import "./styles/about.css";
 import "./styles/shell/overflow-guard.css";

@@ -1,7 +1,7 @@
 # Unreached — Data, Licensing & Provenance Policy
 
 **Status:** production policy  
-**Reviewed:** 19 September 2026
+**Reviewed:** 20 September 2026
 
 This policy describes the external data, media and authored content that may enter the public Unreached application and the conditions under which they may be used.
 
@@ -25,7 +25,7 @@ Reviewed contextual articles are project-authored publication shards with explic
 
 **Status:** CONDITIONAL — APPROVED FOR PUBLIC RUNTIME ACCESS  
 **Provider:** Global Research Department of the International Mission Board  
-**Reviewed:** 19 September 2026
+**Reviewed:** 20 September 2026
 
 PeopleGroups.org currently documents a free, public, read-only API and explicitly suggests maps, prayer tools and research applications. That published runtime-use invitation is the basis for Unreached's public browser integration.
 
@@ -36,6 +36,7 @@ Approved production use:
 - narrow source-native aggregations with coverage disclosure;
 - a validated device-local resilience cache;
 - a bounded device-private history of observed source-state transitions, capped per PGID and excluded from sync/server storage/export;
+- source-evidence language/resource relationships using public API fields with explicit PGID denominators;
 - attribution and links back to PeopleGroups.org.
 
 Not approved by Unreached policy:
@@ -45,7 +46,10 @@ Not approved by Unreached policy:
 - claiming ownership of or relicensing provider records;
 - redistribution of provider-linked or third-party people photos without separate rights review;
 - silently converting PeopleGroups.org fields into Joshua Project JPScale/Frontier or stronger Scripture-completeness claims;
-- backfilling, interpolating or inferring historical source states that were not actually observed.
+- backfilling, interpolating or inferring historical source states that were not actually observed;
+- converting Bible/Jesus/resource fields into stronger translation milestones not supplied by the source;
+- treating shared language-family labels as proof of mutual intelligibility or dialect equivalence;
+- treating same-country language records as proof of bilingualism or cross-language resource usability.
 
 The device-local cache is an operational continuity mechanism, not a statement that Unreached has obtained a broad redistribution license. If the provider publishes new terms restricting runtime use or local caching, affected behavior must be disabled or revised before the next release.
 
@@ -83,6 +87,32 @@ Not approved:
 - storing Joshua Project comparison responses in the historical ledger.
 
 This local history does not change the rights basis for the canonical provider corpus and does not create a public redistribution channel.
+
+## 3B. Phase 15 Scripture & language intelligence
+
+**Status:** CONDITIONAL — SOURCE-EVIDENCE RELATIONSHIPS ONLY  
+**Reviewed:** 20 September 2026
+
+Phase 15 may use PeopleGroups.org `ROL`, `Lang`, `LangFamily`, `Bible`, `Jesus`, `ResTot` and `UpdatedDate` fields already returned by the approved public runtime API.
+
+Approved use:
+
+- aggregate exact source labels by ISO 639-3 language with explicit PGID denominators;
+- distinguish complete, partial and absent reporting coverage;
+- distinguish uniform versus mixed source labels;
+- show Bible, Jesus Film and resource-count fields observed together on the same PGID;
+- show other languages sharing a PeopleGroups.org family label;
+- show other primary-language records occurring in the same countries.
+
+Not approved:
+
+- inferring Scripture portions, New Testament, complete Bible or translation-progress milestones from the current API fields;
+- treating a shared family label as proof of mutual intelligibility, dialect equivalence or interchangeable resources;
+- treating country co-presence as evidence of bilingualism;
+- direct ProgressBible registered-data ingestion without written permission;
+- proprietary Ethnologue supplementation without an appropriate license or permission.
+
+ProgressBible and Ethnologue therefore remain excluded as direct Phase 15 providers.
 
 ## 4. Natural Earth
 
@@ -177,6 +207,8 @@ Production source records should remain traceable to the provider and provider i
 
 For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Consecutive repeated observations of the same tracked state must be de-duplicated, while a later return after an intervening state remains a historical transition.
 
+For language/resource intelligence, raw provider labels, PGID denominators and missing values must remain visible. Shared family labels and country overlap are descriptive source relationships only; they must not be upgraded into intelligibility, bilingualism or translation-completeness claims.
+
 For multi-source comparisons, each assertion must retain its own provider and methodology identity. Cross-source agreement must not be presented as proof that definitions are identical, and disagreement must not be silently resolved into one provider-independent verdict.
 
 For reviewed editorial claims, citations and review/freshness information are stored separately from provider data.
@@ -199,7 +231,7 @@ Historical permission or historical terms are not assumed to override later chan
 
 | Source | Current role | Status |
 | --- | --- | --- |
-| PeopleGroups.org public API | canonical live mission runtime + bounded device-private observed history | runtime approved; local history only; static corpus redistribution not approved |
+| PeopleGroups.org public API | canonical live mission runtime + bounded device-private observed history + Phase 15 Scripture/language evidence | runtime approved; source-evidence relationships only; static corpus redistribution not approved |
 | Natural Earth | bundled geography | public domain / approved |
 | Reviewed Unreached editorial content | contextual publication | project-authored, citation/review controlled |
 | Joshua Project API | optional Phase 13 source comparison | conditional, non-commercial, manual-crosswalk/no-store/server-secret only; activation after Gate D |
@@ -216,6 +248,7 @@ A release must fail if any of the following is false:
 - `PRIVACY.md` and `/unreached/privacy.html` describe current optional sync rather than obsolete local-only behavior;
 - PeopleGroups.org is recorded as the canonical public runtime while static corpus redistribution remains blocked;
 - Phase 14 historical observations, if present, remain bounded, device-private, observed-only, consecutively de-duplicated and excluded from sync, server storage, server export and Joshua Project data;
+- Phase 15 Scripture/language intelligence preserves exact PeopleGroups resource/family semantics and does not infer translation milestones, intelligibility, bilingualism or resource transfer;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
@@ -226,7 +259,7 @@ A release must fail if any of the following is false:
 
 ## 15. References
 
-Reviewed for the governing policy on 19 September 2026; unchanged sources retain their source-specific review dates above.
+Reviewed for the governing policy on 20 September 2026; unchanged sources retain their source-specific review dates above.
 
 - PeopleGroups.org API: https://peoplegroups.org/using-the-api/
 - PeopleGroups.org privacy policy: https://peoplegroups.org/privacy-policy/

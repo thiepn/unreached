@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-**Reviewed:** 19 September 2026
+**Reviewed:** 20 September 2026
 
 Unreached combines project-authored software/content with external data and open-source components. Nothing in the Unreached project license changes the rights attached to third-party material.
 
@@ -27,6 +27,19 @@ Unreached may keep a bounded local history of PeopleGroups.org mission-source st
 - Redistribution: no public historical snapshot archive, bulk export or provider mirror
 - Interpretation: no backfill, interpolation, inferred intermediate state or causal claim
 - Joshua Project: Phase 13 comparison responses remain no-store and are not copied into this history
+
+### Phase 15 Scripture & language intelligence
+
+**Reviewed:** 20 September 2026
+
+Phase 15 deepens language/resource presentation using fields already returned by the public PeopleGroups.org runtime API: ISO 639-3 language code/name, language-family label, Bible availability, Jesus Film availability, resource-total count and source update date.
+
+- Exact source labels and PGID denominators are preserved.
+- Mixed labels remain mixed rather than becoming one language-wide verdict.
+- Shared family labels are not treated as proof of mutual intelligibility.
+- Same-country language records are not treated as proof of bilingualism.
+- The feature does not directly ingest ProgressBible registered data or Ethnologue proprietary content.
+- No stronger Scripture-completeness milestone is manufactured from the available fields.
 
 ## Natural Earth
 

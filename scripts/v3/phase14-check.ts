@@ -191,7 +191,7 @@ for (const marker of [
   "Source history",
   "History is observed, never backfilled.",
   "Historical mission-source observations are bounded and private to this device.",
-  "19 September 2026",
+  "Source and licensing records were most recently reviewed on",
 ]) requireText(about, marker, "public methodology disclosure");
 
 const privacy = await read("public/privacy.html");
@@ -204,7 +204,7 @@ for (const marker of [
 
 const registry = sourceRegistrySchema.parse(JSON.parse(await read("data/source-registry.json")) as unknown);
 const peopleGroups = registry.sources.find((source) => source.id === "peoplegroups-org-api");
-if (!peopleGroups || peopleGroups.termsReviewedAt !== "2026-09-19" || peopleGroups.browserRedistributionAllowed) {
+if (!peopleGroups || Date.parse(peopleGroups.termsReviewedAt) < Date.parse("2026-09-19") || peopleGroups.browserRedistributionAllowed) {
   throw new Error("Phase 14 PeopleGroups source policy must be freshly reviewed while public redistribution remains blocked.");
 }
 for (const phrase of ["on-device", "backfill", "de-duplicate"]) {

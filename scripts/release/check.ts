@@ -98,14 +98,14 @@ interface RegistrySource {
   termsReviewedAt: string;
 }
 const registry = await readJson<{ schemaVersion: number; reviewedAt: string; sources: RegistrySource[] }>("data/source-registry.json");
-if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-19") throw new Error("Source registry metadata is stale for the V3 Phase 14 source review.");
+if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-20") throw new Error("Source registry metadata is stale for the V3 Phase 15 source review.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 
 const peopleGroups = byId.get("peoplegroups-org-api");
 if (!peopleGroups?.runtimeReadAllowed || !peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) {
   throw new Error("PeopleGroups.org must remain the canonical approved public runtime while static/browser corpus redistribution stays blocked.");
 }
-if (peopleGroups.termsReviewedAt !== "2026-09-19") throw new Error("PeopleGroups.org Phase 14 historical-use review date is stale.");
+if (peopleGroups.termsReviewedAt !== "2026-09-20") throw new Error("PeopleGroups.org Phase 15 Scripture/language review date is stale.");
 
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed || naturalEarth.termsReviewedAt !== "2026-08-28") {
@@ -143,6 +143,11 @@ for (const marker of ["Gate D", "manual crosswalk", "JOSHUA_PROJECT_API_KEY", "n
 const phase14 = await readText("docs/V3_PHASE14_HISTORICAL_MISSION_INTELLIGENCE.md");
 for (const marker of ["Gate D", "24 retained timeline points", "A → B → A", "historical GSEC overview", "excluded from private continuity sync"]) {
   if (!phase14.includes(marker)) throw new Error(`Phase 14 historical source policy documentation missing: ${marker}`);
+}
+
+const phase15 = await readText("docs/V3_PHASE15_SCRIPTURE_LANGUAGE_INTELLIGENCE.md");
+for (const marker of ["Gate D", "Scripture & Language Intelligence", "ProgressBible and Ethnologue remain excluded", "mutual intelligibility", "Phase 16 — Mission Knowledge Graph"]) {
+  if (!phase15.includes(marker)) throw new Error(`Phase 15 Scripture/language policy documentation missing: ${marker}`);
 }
 
 const genericPublisher = ".github/workflows/publish-release.yml";
