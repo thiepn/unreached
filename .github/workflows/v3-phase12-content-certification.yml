@@ -77,6 +77,10 @@ jobs:
       - name: Verify Phase 12 candidate workbench integrity
         run: npm run v3:phase12-candidate-check
 
+      - name: Diagnostic live candidate identity and GSEC-scope audit
+        continue-on-error: true
+        run: npm run v3:phase12-live-candidate-audit
+
       - name: Verify Phase 12 automated readiness and editorial integrity
         run: npm run v3:phase12-readiness
 
