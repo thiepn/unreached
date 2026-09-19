@@ -6,6 +6,7 @@ on:
       - phase/v3-phase12-content-certification
     paths:
       - ".github/workflows/v3-phase12-batch2-source-scaffold.yml"
+      - "scripts/v3/phase12-editorial-scaffold-batch.ts"
 
 permissions:
   contents: read
@@ -29,15 +30,23 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Fetch verified Batch 2 source identities
+        id: batch_scaffold
+        continue-on-error: true
         run: npm run v3:phase12-editorial-scaffold-batch -- --pgids=PG012316,PG012320,PG012325,PG012297
 
       - name: Print machine-readable identity index
+        if: always()
         run: cat artifacts/v3-phase12/workbench/batch-scaffold-index.json
 
       - name: Upload private Batch 2 research scaffolds
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: unreached-v3-phase12-batch2-source-scaffolds
           path: artifacts/v3-phase12/workbench
           if-no-files-found: error
           retention-days: 30
+
+      - name: Fail if no Batch 2 source identities were prepared
+        if: steps.batch_scaffold.outcome != 'success'
+        run: exit 1
