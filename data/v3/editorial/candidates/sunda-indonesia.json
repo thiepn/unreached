@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-sunda-indonesia-api",
+      "sourceId": "peoplegroups-pgid-PG022435-api",
+      "title": "PeopleGroups.org API — Sunda of Indonesia (PG022435)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG022435",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Live Phase 12 research registry: PEID 22435; Sunda in Indonesia; Sunda (sun); Islam - Sunni; GSEC 2; Engaged; congregations exist; concentrated church planting; Bible and Jesus Film Available; 5 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-sunda-indonesia",
+      "sourceId": "peoplegroups-profile-PG022435",
+      "title": "PeopleGroups.org — Sunda of Indonesia (PGID PG022435)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg022435/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Public profile fast facts and provider mission/resource presentation for Sunda in Indonesia."
+    },
+    {
+      "id": "ctx-source:glottolog-sundanese",
+      "sourceId": "glottolog-sund1252",
+      "title": "Glottolog 5.3 — Sundanese",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/sund1252",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Sundanese spoken L1 language entry: glottocode sund1252, ISO 639-3 sun; Glottolog notes a developing language with de facto provincial-identity role in western Java."
+    },
+    {
+      "id": "ctx-source:ijsrm-sundanese-maintenance-cianjur",
+      "sourceId": "ijsrm-2020-sundanese-cianjur",
+      "title": "Sundanese Language Maintenance in Cianjur City (Ethnographic Research)",
+      "publisher": "International Journal of Scientific Research and Management",
+      "url": "https://ijsrm.net/index.php/ijsrm/article/view/2802",
+      "sourceType": "academic",
+      "publicationDate": "2020-07-03",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Ethnographic study in Cianjur City examining domains of use, attitudes, threats, preservation efforts and intergenerational transmission of Sundanese."
+    },
+    {
+      "id": "ctx-source:upi-sundanese-vitality-cianjur",
+      "sourceId": "upi-2021-sundanese-vitality",
+      "title": "Language Vitality of Sundanese in Cianjur City",
+      "publisher": "Universitas Pendidikan Indonesia / Jurnal Pendidikan Bahasa dan Sastra",
+      "url": "https://ejournal.upi.edu/index.php/BS_JPBSP/article/view/36657",
+      "sourceType": "academic",
+      "publicationDate": "2021-04-01",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Ethnographic Cianjur City study reporting decreasing intergenerational vitality alongside continued use in multiple domains, media, education and literacy."
+    },
+    {
+      "id": "ctx-source:ui-sundanese-family-maintenance",
+      "sourceId": "ui-2021-leuwinanggung-sundanese",
+      "title": "Family as a supporting factor for language maintenance in Indonesian young adults from Leuwinanggung village",
+      "publisher": "Universitas Indonesia / Nova Science Publishers",
+      "url": "https://scholar.ui.ac.id/en/publications/family-as-a-supporting-factor-for-language-maintenance-in-indones/",
+      "sourceType": "academic",
+      "publicationDate": "2021-06-11",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Mixed-method study of young adults with Sundanese parents in Leuwinanggung, Depok, focusing on family and neighborhood use and language-maintenance pressures."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:22435",
+    "peid": 22435,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 22435,
+      "verifiedPeopleName": "Sunda",
+      "pgidAnchors": [
+        "PG022435"
+      ],
+      "countryIso3Anchors": [
+        "IDN"
+      ],
+      "languageIso6393Anchors": [
+        "sun"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T20:07:17.329Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Sunda in Indonesia and ties the record to Sunda/Sundanese (sun). Glottolog independently identifies Sundanese and its provincial-identity role in western Java, while locality-specific studies document both ongoing family/community use and pressures on intergenerational transmission.",
+      "claimIds": [
+        "claim:sunda-indonesia-identity",
+        "claim:sundanese-language",
+        "claim:sundanese-maintenance-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Islam - Sunni' label for this record. It is retained as source context and is not generalized into a statement about every Sundanese person's belief or practice.",
+      "claimIds": [
+        "claim:sunda-indonesia-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Sundanese language vitality, family language use and Sunni identity are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 2 and less than 2% evangelical presence with concentrated church-planting activity, while reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:sunda-indonesia-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resource availability remains a source field",
+        "summary": "The source reports Bible and Jesus Film availability. Those fields are not treated as evidence of universal distribution, comprehension or use.",
+        "claimIds": [
+          "claim:sunda-indonesia-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:sunda-indonesia-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG022435 reports PEID 22435, display name Sunda, country Indonesia and primary language Sunda (sun).",
+        "citationIds": [
+          "ctx-source:peoplegroups-sunda-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:sundanese-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "Glottolog identifies Sundanese with glottocode sund1252 and ISO 639-3 code sun and describes it as a developing language with a de facto provincial-identity role in western Java.",
+        "citationIds": [
+          "ctx-source:glottolog-sundanese"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "This is language-level context and does not imply identical language practice across all Sundanese communities."
+      },
+      {
+        "id": "claim:sundanese-maintenance-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Studies in Cianjur City and Leuwinanggung document continued Sundanese use in family and community domains alongside locality-specific pressures on intergenerational transmission and language vitality.",
+        "citationIds": [
+          "ctx-source:ijsrm-sundanese-maintenance-cianjur",
+          "ctx-source:upi-sundanese-vitality-cianjur",
+          "ctx-source:ui-sundanese-family-maintenance"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "These findings come from specific West Java/Depok localities and samples. They are not generalized into one present-day language-use pattern for all Sundanese communities."
+      },
+      {
+        "id": "claim:sunda-indonesia-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Islam - Sunni' as the aggregate primary-religion label for PG022435.",
+        "citationIds": [
+          "ctx-source:peoplegroups-sunda-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Sundanese person's belief or practice."
+      },
+      {
+        "id": "claim:sunda-indonesia-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 2, less than 2% evangelical presence and concentrated church-planting activity for PG022435; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-sunda-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:sunda-indonesia-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and five total evangelical resources for PG022435.",
+        "citationIds": [
+          "ctx-source:peoplegroups-sunda-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-sunda-indonesia-api",
+      "ctx-source:peoplegroups-sunda-indonesia",
+      "ctx-source:glottolog-sundanese",
+      "ctx-source:ijsrm-sundanese-maintenance-cianjur",
+      "ctx-source:upi-sundanese-vitality-cianjur",
+      "ctx-source:ui-sundanese-family-maintenance"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
