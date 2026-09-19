@@ -19,19 +19,18 @@ if (!entries.length) throw new Error("Phase 12 candidate workbench is empty.");
 const client = createPeopleGroupsApiClient();
 const reports: Array<Record<string, unknown>> = [];
 
-for (const name of entries) {
+async function auditCandidate(name: string): Promise<Record<string, unknown>> {
   const candidate = editorialContextProfilePackageSchema.parse(
     JSON.parse(await readFile(resolve(candidateDir, name), "utf8")) as unknown,
   );
   const pgid = candidate.profile.identity.pgidAnchors[0] ?? null;
   if (!pgid) {
-    reports.push({
+    return {
       candidate: name,
       status: "candidate-invalid",
       reason: "missing-pgid-anchor",
       expected: { peid: candidate.profile.peid },
-    });
-    continue;
+    };
   }
 
   try {
@@ -47,7 +46,7 @@ for (const name of entries) {
     const gsec = live.GSEC ?? null;
     const inPhase12Scope = gsec !== null && gsec >= 0 && gsec <= 3;
 
-    reports.push({
+    return {
       candidate: name,
       status: mismatches.length ? "identity-mismatch" : inPhase12Scope ? "pass" : "out-of-scope",
       checks,
@@ -79,15 +78,21 @@ for (const name of entries) {
         totalResources: live.ResTot ?? null,
         sourceUpdatedAt: live.UpdatedDate ?? null,
       },
-    });
+    };
   } catch (error) {
-    reports.push({
+    return {
       candidate: name,
       status: "provider-error",
       expected: { peid: candidate.profile.peid, pgid },
       reason: error instanceof Error ? error.message : "unknown-provider-error",
-    });
+    };
   }
+}
+
+const LIVE_FETCH_CONCURRENCY = 4;
+for (let offset = 0; offset < entries.length; offset += LIVE_FETCH_CONCURRENCY) {
+  const chunk = entries.slice(offset, offset + LIVE_FETCH_CONCURRENCY);
+  reports.push(...await Promise.all(chunk.map(auditCandidate)));
 }
 
 const mismatchCount = reports.filter((item) => item.status === "identity-mismatch").length;
