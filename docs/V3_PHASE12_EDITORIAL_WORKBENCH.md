@@ -61,6 +61,18 @@ The gate verifies that each candidate:
 
 The in-memory shadow review exists only to test structure, freshness, citation integrity, prohibited language and section depth. It never writes review metadata back to the candidate and never increments the public reviewed-profile count.
 
+## Automatic live candidate diagnostic
+
+Every Phase 12 pull request now runs a **non-blocking** live candidate audit:
+
+```bash
+npm run v3:phase12-live-candidate-audit
+```
+
+It re-fetches every draft's anchored PGID and records the live PEID, name, country, language, GSEC, mission fields, resource labels and provider update date. Each draft is classified as `pass`, `identity-mismatch`, `out-of-scope` or `provider-error`, with JSON and Markdown evidence under `artifacts/v3-phase12/`.
+
+The workflow step deliberately uses `continue-on-error`: a PeopleGroups/network outage must not make the deterministic release build red. **Identity mismatches and GSEC scope drift remain publication blockers** and must be corrected before human review/promotion.
+
 ## Guarded review and publication command
 
 Prepare a live-identity-checked, non-mutating review packet:
