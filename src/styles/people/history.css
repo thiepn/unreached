@@ -1,0 +1,133 @@
+.mission-history-panel {
+  container-type: inline-size;
+}
+
+.mission-history-boundary,
+.mission-history-summary {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--ocean-100) 42%, var(--paper-0));
+}
+
+.mission-history-boundary p,
+.mission-history-summary span {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.mission-history-timeline {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mission-history-card {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-panel);
+}
+
+.mission-history-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.mission-history-card__head > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.mission-history-card__head span,
+.mission-history-card__head time,
+.mission-history-card__seen,
+.mission-history-card__baseline,
+.mission-history-card__unchanged {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+
+.mission-history-card__head strong {
+  font-size: 1.05rem;
+}
+
+.mission-history-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.mission-history-metrics > div {
+  min-width: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--paper-1);
+}
+
+.mission-history-metrics dt {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.mission-history-metrics dd {
+  margin: var(--space-1) 0 0;
+  overflow-wrap: anywhere;
+  font-weight: 650;
+}
+
+.mission-history-change-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mission-history-change-list li {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.45fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.mission-history-change-list span {
+  overflow-wrap: anywhere;
+  color: var(--ink-1);
+}
+
+.mission-history-card__seen,
+.mission-history-card__baseline,
+.mission-history-card__unchanged {
+  margin: 0;
+}
+
+@container (max-width: 640px) {
+  .mission-history-card__head,
+  .mission-history-change-list li {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .mission-history-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .mission-history-metrics {
+    grid-template-columns: 1fr;
+  }
+}
