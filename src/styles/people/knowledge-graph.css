@@ -1,0 +1,279 @@
+.mission-knowledge-graph {
+  display: grid;
+  gap: var(--space-5);
+  margin: var(--space-8) 0;
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-panel);
+}
+
+.mission-knowledge-graph__heading,
+.mission-knowledge-graph__focus-head,
+.mission-knowledge-graph__neighbors-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.mission-knowledge-graph__heading h2,
+.mission-knowledge-graph__focus h3 {
+  margin: var(--space-1) 0 0;
+}
+
+.mission-knowledge-graph__intro,
+.mission-knowledge-graph__boundary p,
+.mission-knowledge-graph__focus p,
+.mission-knowledge-graph__neighbors-heading span,
+.mission-knowledge-graph__edge small,
+.mission-knowledge-graph__edge details p {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.mission-knowledge-graph__boundary {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--ocean-100) 42%, var(--paper-0));
+}
+
+.mission-knowledge-graph__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.mission-knowledge-graph__stats > div {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-1);
+}
+
+.mission-knowledge-graph__stats span,
+.mission-knowledge-graph__focus-head span {
+  color: var(--ink-2);
+  font-size: .82rem;
+  font-weight: 650;
+}
+
+.mission-knowledge-graph__layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.mission-knowledge-graph__layers button {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 44px;
+  padding: .55rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper-0);
+  color: var(--ink-1);
+}
+
+.mission-knowledge-graph__layers button.is-active {
+  border-color: var(--forest-700);
+  background: var(--forest-100);
+  color: var(--ink-0);
+}
+
+.mission-knowledge-graph__workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, .8fr) minmax(0, 1.45fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.mission-knowledge-graph__focus,
+.mission-knowledge-graph__edge {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-0);
+}
+
+.mission-knowledge-graph__focus {
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-4));
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.mission-knowledge-graph__details,
+.mission-knowledge-graph__edge details dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.mission-knowledge-graph__details > div,
+.mission-knowledge-graph__edge details dl > div {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, .45fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.mission-knowledge-graph__details dt,
+.mission-knowledge-graph__edge details dt {
+  color: var(--ink-2);
+  font-size: .82rem;
+  font-weight: 650;
+}
+
+.mission-knowledge-graph__details dd,
+.mission-knowledge-graph__edge details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.mission-knowledge-graph__focus-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.mission-knowledge-graph__focus-actions a {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.mission-knowledge-graph__neighbors {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.mission-knowledge-graph__neighbors-heading {
+  align-items: baseline;
+  padding: 0 var(--space-1);
+}
+
+.mission-knowledge-graph__edge {
+  overflow: hidden;
+}
+
+.mission-knowledge-graph__edge-main {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-4);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.mission-knowledge-graph__edge-main:hover,
+.mission-knowledge-graph__edge-main:focus-visible {
+  background: var(--paper-1);
+}
+
+.mission-knowledge-graph__edge-relation {
+  color: var(--forest-700);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.mission-knowledge-graph__edge details {
+  border-top: 1px solid var(--line);
+}
+
+.mission-knowledge-graph__edge details > summary {
+  cursor: pointer;
+  padding: var(--space-3) var(--space-4);
+  color: var(--ink-2);
+  font-size: .88rem;
+}
+
+.mission-knowledge-graph__edge details > div {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.mission-knowledge-graph__edge--reviewed-editorial {
+  border-inline-start: 3px solid var(--ocean-700);
+}
+
+.mission-knowledge-graph__edge--source-taxonomy {
+  border-inline-start: 3px solid var(--sand-600);
+}
+
+.mission-knowledge-graph__edge--derived-source-relationship {
+  border-inline-start: 3px solid var(--forest-700);
+}
+
+.mission-knowledge-graph__empty {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-5);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  color: var(--ink-2);
+}
+
+.mission-knowledge-graph__empty p {
+  margin: 0;
+}
+
+.mission-knowledge-graph__method {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-4);
+}
+
+.mission-knowledge-graph__method > summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.mission-knowledge-graph__method ul {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--ink-2);
+}
+
+@media (max-width: 900px) {
+  .mission-knowledge-graph__workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-knowledge-graph__focus {
+    position: static;
+  }
+}
+
+@media (max-width: 620px) {
+  .mission-knowledge-graph {
+    padding: var(--space-4);
+  }
+
+  .mission-knowledge-graph__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mission-knowledge-graph__focus-head,
+  .mission-knowledge-graph__neighbors-heading {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .mission-knowledge-graph__details > div,
+  .mission-knowledge-graph__edge details dl > div {
+    grid-template-columns: 1fr;
+  }
+}
