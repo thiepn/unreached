@@ -19,6 +19,7 @@ const root = process.cwd();
 const registryDir = resolve(root, "data/v3/editorial/research-batches");
 const candidateDir = resolve(root, "data/v3/editorial/candidates");
 const outputDir = resolve(root, "artifacts/v3-phase12/research-batches");
+const RESEARCH_FETCH_CONCURRENCY = 4;
 
 function parseBatch(raw: unknown, file: string): ResearchBatch {
   if (!raw || typeof raw !== "object") throw new Error(file + " is not an object.");
@@ -76,64 +77,69 @@ let researchReadyCount = 0;
 
 await mkdir(outputDir, { recursive: true });
 
+async function resolvePgid(pgid: string): Promise<Record<string, unknown>> {
+  try {
+    const live = await client.fetchByPgid(pgid);
+    const gsec = live.GSEC ?? null;
+    const published = catalog.reviewedPeids.has(live.PEID);
+    const candidate = candidatePeids.get(live.PEID) ?? null;
+    const inScope = gsec !== null && gsec >= 0 && gsec <= 3;
+    const status = published
+      ? "already-published"
+      : candidate
+        ? "candidate-exists"
+        : inScope
+          ? "research-ready"
+          : "out-of-scope";
+
+    if (status === "research-ready") researchReadyCount += 1;
+
+    return {
+      requestedPgid: pgid,
+      status,
+      candidateFile: candidate,
+      live: {
+        peid: live.PEID,
+        pgid: live.PGID,
+        name: live.NmDisp,
+        alternateName: live.NmAlt ?? null,
+        country: live.Ctry,
+        countryIso3: live.ISOalpha3,
+        region: live.Regn ?? null,
+        subregion: live.RegnSub ?? null,
+        language: live.Lang ?? null,
+        languageIso6393: live.ROL ?? null,
+        languageFamily: live.LangFamily ?? null,
+        religion: live.Rlgn ?? null,
+        population: live.Pop ?? null,
+        gsec,
+        gsecBrief: live.GSECbrf ?? null,
+        evangelicalLevel: live.EvngLvl ?? null,
+        engagementStatus: live.EngStat ?? null,
+        congregationExists: live.CongExst ?? null,
+        churchPlanting: live.Plnting ?? null,
+        bibleAvailability: live.Bible ?? null,
+        jesusFilmAvailability: live.Jesus ?? null,
+        totalResources: live.ResTot ?? null,
+        sourceUpdatedAt: live.UpdatedDate ?? null,
+        sourceRecordUrl: "https://peoplegroups.org/wp-json/pg/v1/people-groups/" + live.PGID,
+      },
+    };
+  } catch (error) {
+    providerErrorCount += 1;
+    return {
+      requestedPgid: pgid,
+      status: "provider-error",
+      reason: error instanceof Error ? error.message : "unknown-provider-error",
+    };
+  }
+}
+
 for (const batch of batches) {
   const records: Array<Record<string, unknown>> = [];
-  for (const pgid of batch.pgids) {
-    try {
-      const live = await client.fetchByPgid(pgid);
-      const gsec = live.GSEC ?? null;
-      const published = catalog.reviewedPeids.has(live.PEID);
-      const candidate = candidatePeids.get(live.PEID) ?? null;
-      const inScope = gsec !== null && gsec >= 0 && gsec <= 3;
-      const status = published
-        ? "already-published"
-        : candidate
-          ? "candidate-exists"
-          : inScope
-            ? "research-ready"
-            : "out-of-scope";
-
-      if (status === "research-ready") researchReadyCount += 1;
-
-      records.push({
-        requestedPgid: pgid,
-        status,
-        candidateFile: candidate,
-        live: {
-          peid: live.PEID,
-          pgid: live.PGID,
-          name: live.NmDisp,
-          alternateName: live.NmAlt ?? null,
-          country: live.Ctry,
-          countryIso3: live.ISOalpha3,
-          region: live.Regn ?? null,
-          subregion: live.RegnSub ?? null,
-          language: live.Lang ?? null,
-          languageIso6393: live.ROL ?? null,
-          languageFamily: live.LangFamily ?? null,
-          religion: live.Rlgn ?? null,
-          population: live.Pop ?? null,
-          gsec,
-          gsecBrief: live.GSECbrf ?? null,
-          evangelicalLevel: live.EvngLvl ?? null,
-          engagementStatus: live.EngStat ?? null,
-          congregationExists: live.CongExst ?? null,
-          churchPlanting: live.Plnting ?? null,
-          bibleAvailability: live.Bible ?? null,
-          jesusFilmAvailability: live.Jesus ?? null,
-          totalResources: live.ResTot ?? null,
-          sourceUpdatedAt: live.UpdatedDate ?? null,
-          sourceRecordUrl: "https://peoplegroups.org/wp-json/pg/v1/people-groups/" + live.PGID,
-        },
-      });
-    } catch (error) {
-      providerErrorCount += 1;
-      records.push({
-        requestedPgid: pgid,
-        status: "provider-error",
-        reason: error instanceof Error ? error.message : "unknown-provider-error",
-      });
-    }
+  for (let offset = 0; offset < batch.pgids.length; offset += RESEARCH_FETCH_CONCURRENCY) {
+    const chunk = batch.pgids.slice(offset, offset + RESEARCH_FETCH_CONCURRENCY);
+    records.push(...await Promise.all(chunk.map(resolvePgid)));
   }
 
   const report = {
@@ -157,6 +163,7 @@ const index = {
   generatedAt,
   mode: "non-ranking-live-research-registry",
   notice: "This registry only captures current source identity and research eligibility. It does not rank peoples, create candidate editorial claims, approve evidence, publish content or change the reviewed-profile count.",
+  fetchConcurrency: RESEARCH_FETCH_CONCURRENCY,
   batchCount: batches.length,
   requestedRecordCount: globallySeenPgids.size,
   researchReadyCount,
@@ -170,6 +177,7 @@ const markdown: string[] = [
   "",
   "**Generated:** " + generatedAt,
   "",
+  "- Fetch concurrency: " + RESEARCH_FETCH_CONCURRENCY,
   "- Batches: " + batches.length,
   "- Explicit PGIDs: " + globallySeenPgids.size,
   "- Research-ready records: " + researchReadyCount,

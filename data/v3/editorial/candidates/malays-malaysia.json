@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-malays-malaysia-api",
+      "sourceId": "peoplegroups-pgid-PG020134-api",
+      "title": "PeopleGroups.org API — Malays of Malaysia (PG020134)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG020134",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Live Phase 12 registry: PEID 20134; Malays in Malaysia; Malay (zlm); Islam - Sunni; GSEC 1; Engaged; congregations exist; no churches planted; Bible and Jesus Film Available; 4 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-malays-malaysia",
+      "sourceId": "peoplegroups-profile-PG020134",
+      "title": "PeopleGroups.org — Malays of Malaysia (PGID PG020134)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg020134/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Public profile and provider resource presentation for Malays in Malaysia."
+    },
+    {
+      "id": "ctx-source:glottolog-central-malay",
+      "sourceId": "glottolog-mala1479",
+      "title": "Glottolog 5.3 — Central Malay",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/mala1479",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Central Malay language entry: glottocode mala1479, ISO 639-3 zlm; Malaysia language context."
+    },
+    {
+      "id": "ctx-source:cambridge-shamsul-malayness",
+      "sourceId": "cambridge-jseas-malayness",
+      "title": "A History of an Identity, an Identity of a History: The Idea and Practice of Malayness in Malaysia Reconsidered",
+      "publisher": "Cambridge University Press / Journal of Southeast Asian Studies",
+      "url": "https://www.cambridge.org/core/journals/journal-of-southeast-asian-studies/article/history-of-an-identity-an-identity-of-a-history-the-idea-and-practice-of-amalaynessa-in-malaysia-reconsidered/35E9E214130B8AA0C1164DF31956622D",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Historical/conceptual reconsideration of Malayness in Malaysia, used to avoid treating Malay identity as timeless or singular."
+    },
+    {
+      "id": "ctx-source:cambridge-reid-melayu-identities",
+      "sourceId": "cambridge-jseas-melayu-identities",
+      "title": "Understanding Melayu (Malay) as a Source of Diverse Modern Identities",
+      "publisher": "Cambridge University Press / Journal of Southeast Asian Studies",
+      "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/S0022463401000157",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Study of Melayu/Malay as a source of diverse modern identities; used as identity-complexity context."
+    },
+    {
+      "id": "ctx-source:cambridge-lee-malaysia-language-policy",
+      "sourceId": "cambridge-language-nation-malaysia",
+      "title": "Ethnic Politics, National Development and Language Policy in Malaysia",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/language-nation-and-development-in-southeast-asia/ethnic-politics-national-development-and-language-policy-in-malaysia/4D0C3733BD4835E95E763264A7D8E46C",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Historical/institutional analysis of Malaysian language policy and national development in a multilingual setting."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:20134",
+    "peid": 20134,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 20134,
+      "verifiedPeopleName": "Malays",
+      "pgidAnchors": [
+        "PG020134"
+      ],
+      "countryIso3Anchors": [
+        "MYS"
+      ],
+      "languageIso6393Anchors": [
+        "zlm"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T21:04:21.126Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Malays in Malaysia and ties the record to Malay (zlm). Glottolog independently identifies Central Malay, while historical and sociolinguistic scholarship treats 'Malayness' as a changing and diverse identity category shaped by specific historical, institutional and multilingual contexts.",
+      "claimIds": [
+        "claim:malays-malaysia-identity",
+        "claim:malay-language",
+        "claim:malay-identity-language-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports Islam - Sunni as the aggregate primary-religion label for this record. It is retained as provider context and not generalized into a statement about every Malay person's belief or practice.",
+      "claimIds": [
+        "claim:malays-malaysia-religion"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Malay language, legal/national categories, identity history and Sunni affiliation are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity while reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:malays-malaysia-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources remain source-specific",
+        "summary": "The source reports Bible and Jesus Film availability; these provider fields do not establish distribution, comprehension or use across Malay communities.",
+        "claimIds": [
+          "claim:malays-malaysia-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:malays-malaysia-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG020134 reports PEID 20134, display name Malays, country Malaysia and primary language Malay (zlm).",
+        "citationIds": [
+          "ctx-source:peoplegroups-malays-malaysia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:malay-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Central Malay with glottocode mala1479 and ISO 639-3 code zlm.",
+        "citationIds": [
+          "ctx-source:glottolog-central-malay"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:malay-identity-language-context",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Scholarship on Malayness and Melayu describes multiple historical forms of Malay identity, while Malaysian language-policy research places Malay's national role within a broader multilingual and institutional setting; together these sources argue against collapsing language, legal/national category and personal identity into one timeless definition.",
+        "citationIds": [
+          "ctx-source:cambridge-shamsul-malayness",
+          "ctx-source:cambridge-reid-melayu-identities",
+          "ctx-source:cambridge-lee-malaysia-language-policy"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This synthesis preserves distinctions among language, institutional categories and personal identity and does not claim every Malay person understands identity in the same way."
+      },
+      {
+        "id": "claim:malays-malaysia-religion",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports Islam - Sunni as the aggregate primary-religion label for PG020134.",
+        "citationIds": [
+          "ctx-source:peoplegroups-malays-malaysia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Malay person's belief or practice."
+      },
+      {
+        "id": "claim:malays-malaysia-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG020134; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-malays-malaysia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields and not a judgment about individuals."
+      },
+      {
+        "id": "claim:malays-malaysia-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and four total evangelical resources for PG020134.",
+        "citationIds": [
+          "ctx-source:peoplegroups-malays-malaysia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-malays-malaysia-api",
+      "ctx-source:peoplegroups-malays-malaysia",
+      "ctx-source:glottolog-central-malay",
+      "ctx-source:cambridge-shamsul-malayness",
+      "ctx-source:cambridge-reid-melayu-identities",
+      "ctx-source:cambridge-lee-malaysia-language-policy"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

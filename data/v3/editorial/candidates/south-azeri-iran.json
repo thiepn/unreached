@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-south-azeri-iran-api",
+      "sourceId": "peoplegroups-pgid-PG024136-api",
+      "title": "PeopleGroups.org API — South Azeri of Iran (PG024136)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG024136",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Live Phase 12 registry: PEID 24136; South Azeri in Iran; Azerbaijani, South (azb); Islam - Shia; GSEC 1; Engaged; congregations exist; no churches planted; Bible and Jesus Film Available; 4 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-south-azeri-iran",
+      "sourceId": "peoplegroups-profile-PG024136",
+      "title": "PeopleGroups.org — South Azeri of Iran (PGID PG024136)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg024136/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Public profile and provider resource presentation for South Azeri in Iran."
+    },
+    {
+      "id": "ctx-source:glottolog-south-azerbaijani",
+      "sourceId": "glottolog-sout2697",
+      "title": "Glottolog 5.3 — South Azerbaijani",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/glottolog?iso=azb",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "South Azerbaijani language entry: glottocode sout2697, ISO 639-3 azb; Iran-centered language context."
+    },
+    {
+      "id": "ctx-source:cambridge-bahmany-azeri-writing",
+      "sourceId": "cambridge-iranian-studies-azeri-2024",
+      "title": "Monolingualism in Iran: The Politics of Writing in Azeri Turkish",
+      "publisher": "Cambridge University Press / Iranian Studies",
+      "url": "https://www.cambridge.org/core/journals/iranian-studies/article/monolingualism-in-iran-the-politics-of-writing-in-azeri-turkish/4C909EB4F5BF0FAC6855A6A8C677B7B3",
+      "sourceType": "academic",
+      "publicationDate": "2024-01-01",
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Study of Azeri Turkish writing and Iranian language-policy/monolingualism debates; used only as historical/institutional language context."
+    },
+    {
+      "id": "ctx-source:cambridge-shaffer-azeri-identity",
+      "sourceId": "cambridge-nationalities-azeri-iran",
+      "title": "The Formation of Azerbaijani Collective Identity in Iran",
+      "publisher": "Cambridge University Press / Nationalities Papers",
+      "url": "https://www.cambridge.org/core/journals/nationalities-papers/article/abs/formation-of-azerbaijani-collective-identity-in-iran/FB790AD7E5F931FAA8F9C42ED732E9B9",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Historical study of changing Azerbaijani collective identity in Iran; used as evidence against treating identity as timeless or politically uniform."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:24136",
+    "peid": 24136,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 24136,
+      "verifiedPeopleName": "South Azeri",
+      "pgidAnchors": [
+        "PG024136"
+      ],
+      "countryIso3Anchors": [
+        "IRN"
+      ],
+      "languageIso6393Anchors": [
+        "azb"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T21:04:21.126Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies South Azeri in Iran and ties the record to South Azerbaijani (azb). Glottolog independently identifies the language, while scholarship on writing, language policy and collective identity shows that Iranian Azerbaijani identity and public language use have developed through specific historical and institutional contexts.",
+      "claimIds": [
+        "claim:south-azeri-iran-identity",
+        "claim:south-azeri-language",
+        "claim:south-azeri-language-identity-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports Islam - Shia as the aggregate primary-religion label for this record. It is retained as source context and not generalized into a statement about every South Azeri person's belief or practice.",
+      "claimIds": [
+        "claim:south-azeri-iran-religion"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Language policy, ethnic identity and Shia affiliation are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity while reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:south-azeri-iran-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resource availability is not universal access",
+        "summary": "The source reports Bible and Jesus Film availability; those provider fields are not converted into distribution, comprehension or usage claims.",
+        "claimIds": [
+          "claim:south-azeri-iran-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:south-azeri-iran-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG024136 reports PEID 24136, display name South Azeri, country Iran and primary language Azerbaijani, South (azb).",
+        "citationIds": [
+          "ctx-source:peoplegroups-south-azeri-iran-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:south-azeri-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies South Azerbaijani with glottocode sout2697 and ISO 639-3 code azb.",
+        "citationIds": [
+          "ctx-source:glottolog-south-azerbaijani"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:south-azeri-language-identity-context",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Recent scholarship on Azeri Turkish writing in Iran and historical research on Azerbaijani collective identity both show that language use and collective identity have been shaped by changing institutional and historical conditions rather than one timeless political identity.",
+        "citationIds": [
+          "ctx-source:cambridge-bahmany-azeri-writing",
+          "ctx-source:cambridge-shaffer-azeri-identity"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This synthesis is deliberately non-predictive: it does not infer separatist, nationalist or state-loyalist views from South Azeri identity."
+      },
+      {
+        "id": "claim:south-azeri-iran-religion",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports Islam - Shia as the aggregate primary-religion label for PG024136.",
+        "citationIds": [
+          "ctx-source:peoplegroups-south-azeri-iran-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every South Azeri person's belief or practice."
+      },
+      {
+        "id": "claim:south-azeri-iran-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG024136; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-south-azeri-iran-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields and not a judgment about individuals."
+      },
+      {
+        "id": "claim:south-azeri-iran-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and four total evangelical resources for PG024136.",
+        "citationIds": [
+          "ctx-source:peoplegroups-south-azeri-iran-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-south-azeri-iran-api",
+      "ctx-source:peoplegroups-south-azeri-iran",
+      "ctx-source:glottolog-south-azerbaijani",
+      "ctx-source:cambridge-bahmany-azeri-writing",
+      "ctx-source:cambridge-shaffer-azeri-identity"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

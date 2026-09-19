@@ -92,7 +92,7 @@ jobs:
       - name: Generate maintainer-ready workbench review packet
         if: steps.live_candidate_audit.outcome == 'success'
         continue-on-error: true
-        run: npm run v3:phase12-review-workbench
+        run: npm run v3:phase12-review-workbench -- --from-live-audit
 
       - name: Audit tracked editorial research batches against live source records
         id: live_research_batches
@@ -105,6 +105,19 @@ jobs:
           if [ -f artifacts/v3-phase12/research-batches/index.md ]; then
             cat artifacts/v3-phase12/research-batches/index.md >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Upload live editorial diagnostics early
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-live-editorial
+          path: |
+            artifacts/v3-phase12/live-candidate-audit.json
+            artifacts/v3-phase12/live-candidate-audit.md
+            artifacts/v3-phase12/reviews
+            artifacts/v3-phase12/research-batches
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Verify Phase 12 automated readiness and editorial integrity
         run: npm run v3:phase12-readiness

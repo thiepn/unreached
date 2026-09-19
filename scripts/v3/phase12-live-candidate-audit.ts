@@ -19,19 +19,18 @@ if (!entries.length) throw new Error("Phase 12 candidate workbench is empty.");
 const client = createPeopleGroupsApiClient();
 const reports: Array<Record<string, unknown>> = [];
 
-for (const name of entries) {
+async function auditCandidate(name: string, attempt = 1): Promise<Record<string, unknown>> {
   const candidate = editorialContextProfilePackageSchema.parse(
     JSON.parse(await readFile(resolve(candidateDir, name), "utf8")) as unknown,
   );
   const pgid = candidate.profile.identity.pgidAnchors[0] ?? null;
   if (!pgid) {
-    reports.push({
+    return {
       candidate: name,
       status: "candidate-invalid",
       reason: "missing-pgid-anchor",
       expected: { peid: candidate.profile.peid },
-    });
-    continue;
+    };
   }
 
   try {
@@ -47,7 +46,7 @@ for (const name of entries) {
     const gsec = live.GSEC ?? null;
     const inPhase12Scope = gsec !== null && gsec >= 0 && gsec <= 3;
 
-    reports.push({
+    return {
       candidate: name,
       status: mismatches.length ? "identity-mismatch" : inPhase12Scope ? "pass" : "out-of-scope",
       checks,
@@ -60,6 +59,7 @@ for (const name of entries) {
         countryIso3: candidate.profile.identity.countryIso3Anchors,
         languageIso6393: candidate.profile.identity.languageIso6393Anchors,
       },
+      attempt,
       live: {
         peid: live.PEID,
         pgid: live.PGID,
@@ -79,16 +79,34 @@ for (const name of entries) {
         totalResources: live.ResTot ?? null,
         sourceUpdatedAt: live.UpdatedDate ?? null,
       },
-    });
+    };
   } catch (error) {
-    reports.push({
+    return {
       candidate: name,
       status: "provider-error",
       expected: { peid: candidate.profile.peid, pgid },
+      attempt,
       reason: error instanceof Error ? error.message : "unknown-provider-error",
-    });
+    };
   }
 }
+
+const LIVE_FETCH_CONCURRENCY = 2;
+for (let offset = 0; offset < entries.length; offset += LIVE_FETCH_CONCURRENCY) {
+  const chunk = entries.slice(offset, offset + LIVE_FETCH_CONCURRENCY);
+  reports.push(...await Promise.all(chunk.map((name) => auditCandidate(name, 1))));
+}
+
+// Retry only transient provider/network failures once, serially. Identity or
+// scope mismatches are deterministic content failures and are never retried.
+const byCandidate = new Map(reports.map((item) => [String(item.candidate), item]));
+const retryNames = reports
+  .filter((item) => item.status === "provider-error")
+  .map((item) => String(item.candidate));
+for (const name of retryNames) {
+  byCandidate.set(name, await auditCandidate(name, 2));
+}
+reports.splice(0, reports.length, ...entries.map((name) => byCandidate.get(name)!));
 
 const mismatchCount = reports.filter((item) => item.status === "identity-mismatch").length;
 const outOfScopeCount = reports.filter((item) => item.status === "out-of-scope").length;
@@ -106,6 +124,8 @@ const report = {
   mismatchCount,
   outOfScopeCount,
   providerErrorCount,
+  fetchConcurrency: LIVE_FETCH_CONCURRENCY,
+  retryPolicy: "one serial retry for provider/network errors only",
   reports,
 };
 
@@ -121,7 +141,9 @@ const markdown: string[] = [
   "- Passed live identity + scope: " + passedCount,
   "- Identity mismatches: " + mismatchCount,
   "- Outside GSEC 0–3 scope: " + outOfScopeCount,
-  "- Provider/network errors: " + providerErrorCount,
+  "- Fetch concurrency: " + LIVE_FETCH_CONCURRENCY,
+  "- Retry policy: one serial retry for provider/network errors only",
+  "- Provider/network errors after retry: " + providerErrorCount,
   "",
   "This report is diagnostic and non-publishing. A provider outage must not weaken the deterministic build gate, but identity/scope mismatches must be corrected before human publication review.",
   "",

@@ -17,6 +17,9 @@ import { loadPhase12ReviewBatchIndex, reviewAssignmentMap } from "./phase12-revi
 const root = process.cwd();
 const candidateDir = resolve(root, "data/v3/editorial/candidates");
 const outputDir = resolve(root, "artifacts/v3-phase12/reviews");
+const useLiveAuditSnapshot = process.argv.includes("--from-live-audit");
+const liveAuditPath = resolve(root, "artifacts/v3-phase12/live-candidate-audit.json");
+
 
 function normalized(value: string | null | undefined): string {
   return (value ?? "").trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
@@ -70,6 +73,17 @@ const reviewAssignments = reviewAssignmentMap(await loadPhase12ReviewBatchIndex(
 const client = createPeopleGroupsApiClient();
 const reports: Array<Record<string, unknown>> = [];
 
+const liveAuditByCandidate = new Map<string, Record<string, unknown>>();
+if (useLiveAuditSnapshot) {
+  const raw = JSON.parse(await readFile(liveAuditPath, "utf8")) as Record<string, unknown>;
+  if (!Array.isArray(raw.reports)) throw new Error("Phase 12 live audit snapshot has no reports array.");
+  for (const item of raw.reports) {
+    if (!item || typeof item !== "object") continue;
+    const record = item as Record<string, unknown>;
+    if (typeof record.candidate === "string") liveAuditByCandidate.set(record.candidate, record);
+  }
+}
+
 for (const name of entries) {
   const candidate = editorialContextProfilePackageSchema.parse(
     JSON.parse(await readFile(resolve(candidateDir, name), "utf8")) as unknown,
@@ -90,37 +104,86 @@ for (const name of entries) {
   const pgid = candidate.profile.identity.pgidAnchors[0];
   if (!pgid) throw new Error(name + " has no PGID identity anchor.");
 
-  const live = await client.fetchByPgid(pgid);
-  const identityChecks = {
-    peid: live.PEID === candidate.profile.peid,
-    pgid: live.PGID === pgid,
-    peopleName: normalized(live.NmDisp) === normalized(candidate.profile.identity.verifiedPeopleName),
-    country: candidate.profile.identity.countryIso3Anchors.includes(live.ISOalpha3),
-    language: Boolean(live.ROL && candidate.profile.identity.languageIso6393Anchors.includes(live.ROL)),
-  };
-  const failed = Object.entries(identityChecks)
-    .filter(([, passed]) => !passed)
-    .map(([key]) => key);
-  if (failed.length) {
-    throw new Error(name + " failed live identity checks: " + failed.join(", ") + ".");
-  }
+  let identityChecks: Record<string, boolean>;
+  let liveMission: Record<string, unknown>;
+  let liveIdentity: Record<string, unknown>;
 
-  const liveGsec = live.GSEC ?? null;
-  if (liveGsec === null || liveGsec < 0 || liveGsec > 3) {
-    throw new Error(name + " moved outside the Phase 12 GSEC 0–3 scope (current GSEC: " + (liveGsec ?? "unknown") + ").");
+  if (useLiveAuditSnapshot) {
+    const snapshot = liveAuditByCandidate.get(name);
+    if (!snapshot || snapshot.status !== "pass") {
+      throw new Error(name + " has no passing same-job live audit snapshot.");
+    }
+    const checks = snapshot.checks;
+    const live = snapshot.live;
+    if (!checks || typeof checks !== "object" || !live || typeof live !== "object") {
+      throw new Error(name + " live audit snapshot is missing checks/live data.");
+    }
+    identityChecks = checks as Record<string, boolean>;
+    const liveRecord = live as Record<string, unknown>;
+    const liveGsec = typeof liveRecord.gsec === "number" ? liveRecord.gsec : null;
+    if (liveGsec === null || liveGsec < 0 || liveGsec > 3) {
+      throw new Error(name + " live audit snapshot is outside Phase 12 GSEC 0–3 scope.");
+    }
+    liveMission = {
+      gsec: liveGsec,
+      gsecBrief: liveRecord.gsecBrief ?? null,
+      evangelicalLevel: liveRecord.evangelicalLevel ?? null,
+      engagementStatus: liveRecord.engagementStatus ?? null,
+      congregationExists: liveRecord.congregationExists ?? null,
+      churchPlanting: liveRecord.churchPlanting ?? null,
+      bibleAvailability: liveRecord.bibleAvailability ?? null,
+      jesusFilmAvailability: liveRecord.jesusFilmAvailability ?? null,
+      totalResources: liveRecord.totalResources ?? null,
+      sourceUpdatedAt: liveRecord.sourceUpdatedAt ?? null,
+    };
+    liveIdentity = {
+      name: liveRecord.name ?? null,
+      country: liveRecord.country ?? null,
+      countryIso3: liveRecord.countryIso3 ?? null,
+      language: liveRecord.language ?? null,
+      languageIso6393: liveRecord.languageIso6393 ?? null,
+      sourceUpdatedAt: liveRecord.sourceUpdatedAt ?? null,
+    };
+  } else {
+    const live = await client.fetchByPgid(pgid);
+    identityChecks = {
+      peid: live.PEID === candidate.profile.peid,
+      pgid: live.PGID === pgid,
+      peopleName: normalized(live.NmDisp) === normalized(candidate.profile.identity.verifiedPeopleName),
+      country: candidate.profile.identity.countryIso3Anchors.includes(live.ISOalpha3),
+      language: Boolean(live.ROL && candidate.profile.identity.languageIso6393Anchors.includes(live.ROL)),
+    };
+    const failed = Object.entries(identityChecks)
+      .filter(([, passed]) => !passed)
+      .map(([key]) => key);
+    if (failed.length) {
+      throw new Error(name + " failed live identity checks: " + failed.join(", ") + ".");
+    }
+    const liveGsec = live.GSEC ?? null;
+    if (liveGsec === null || liveGsec < 0 || liveGsec > 3) {
+      throw new Error(name + " moved outside the Phase 12 GSEC 0–3 scope (current GSEC: " + (liveGsec ?? "unknown") + ").");
+    }
+    liveMission = {
+      gsec: liveGsec,
+      gsecBrief: live.GSECbrf ?? null,
+      evangelicalLevel: live.EvngLvl ?? null,
+      engagementStatus: live.EngStat ?? null,
+      congregationExists: live.CongExst ?? null,
+      churchPlanting: live.Plnting ?? null,
+      bibleAvailability: live.Bible ?? null,
+      jesusFilmAvailability: live.Jesus ?? null,
+      totalResources: live.ResTot ?? null,
+      sourceUpdatedAt: live.UpdatedDate ?? null,
+    };
+    liveIdentity = {
+      name: live.NmDisp,
+      country: live.Ctry,
+      countryIso3: live.ISOalpha3,
+      language: live.Lang ?? null,
+      languageIso6393: live.ROL ?? null,
+      sourceUpdatedAt: live.UpdatedDate ?? null,
+    };
   }
-  const liveMission = {
-    gsec: liveGsec,
-    gsecBrief: live.GSECbrf ?? null,
-    evangelicalLevel: live.EvngLvl ?? null,
-    engagementStatus: live.EngStat ?? null,
-    congregationExists: live.CongExst ?? null,
-    churchPlanting: live.Plnting ?? null,
-    bibleAvailability: live.Bible ?? null,
-    jesusFilmAvailability: live.Jesus ?? null,
-    totalResources: live.ResTot ?? null,
-    sourceUpdatedAt: live.UpdatedDate ?? null,
-  };
 
   const shadow = shadowPublished(candidate, checkedAt);
   assertEditorialProfileIntegrity(
@@ -143,14 +206,7 @@ for (const name of entries) {
     preReviewAudit,
     reviewAssignment,
     liveMission,
-    liveIdentity: {
-      name: live.NmDisp,
-      country: live.Ctry,
-      countryIso3: live.ISOalpha3,
-      language: live.Lang ?? null,
-      languageIso6393: live.ROL ?? null,
-      sourceUpdatedAt: live.UpdatedDate ?? null,
-    },
+    liveIdentity,
     sources: candidate.sources.map((source) => ({
       id: source.id,
       title: source.title,

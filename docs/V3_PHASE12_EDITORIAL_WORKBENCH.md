@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains **24 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbeks of Uzbekistan and Saho of Eritrea. Batch 3 promotes the completed Issue #97 research set: Dendi, Foodo, Gun and Aizo of Benin. Batch 4 promotes the completed Issue #100 research set: Kham Tibetans of China, Turkmen of Turkmenistan, Acehnese of Indonesia and Hararghe Oromo of Ethiopia. Batch 5 promotes the Issue #102 research set: Japanese of Japan, Kyrgyz of Kyrgyzstan, Sunda of Indonesia and Thai of Thailand. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
+The workbench currently contains **28 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbeks of Uzbekistan and Saho of Eritrea. Batch 3 promotes the completed Issue #97 research set: Dendi, Foodo, Gun and Aizo of Benin. Batch 4 promotes the completed Issue #100 research set: Kham Tibetans of China, Turkmen of Turkmenistan, Acehnese of Indonesia and Hararghe Oromo of Ethiopia. Batch 5 promotes the Issue #102 research set: Japanese of Japan, Kyrgyz of Kyrgyzstan, Sunda of Indonesia and Thai of Thailand. Batch 6 promotes the Issue #104 research set: Chechens of the Russian Federation, South Azeri of Iran, Kashmiri of India and Malays of Malaysia. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -85,7 +85,7 @@ It re-fetches every draft's anchored PGID and records the live PEID, name, count
 
 The workflow step deliberately uses `continue-on-error`: a PeopleGroups/network outage must not make the deterministic release build red. **Identity mismatches and GSEC scope drift remain publication blockers** and must be corrected before human review/promotion.
 
-When the live diagnostic succeeds, the Phase 12 PR workflow automatically runs `v3:phase12-review-workbench` and includes the maintainer-ready JSON/Markdown review index in the normal Phase 12 artifact bundle. A separate workflow dispatch is still available for an explicit refresh, but routine PR review no longer requires it.
+When the live diagnostic succeeds, the Phase 12 PR workflow automatically runs `v3:phase12-review-workbench -- --from-live-audit` and includes the maintainer-ready JSON/Markdown review index in the normal Phase 12 artifact bundle. The automatic path **reuses the same-job live audit snapshot** instead of fetching all candidate records a second time. A separate workflow dispatch is still available for an explicit fresh re-fetch, but routine PR review no longer doubles provider traffic.
 
 ## Tracked research-batch registry
 
@@ -109,7 +109,7 @@ Every current draft must be assigned to exactly one accountable human review bat
 
 `data/v3/editorial/review-batches.json`
 
-The registry currently maps all 24 drafts across Issues **#96, #98, #99, #101 and #103**. The candidate gate rejects:
+The registry currently maps all 28 drafts across Issues **#96, #98, #99, #101, #103 and #105**. The candidate gate rejects:
 
 - a draft with no review assignment;
 - a candidate assigned to more than one review batch;
@@ -166,13 +166,14 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready Tier-3 draft candidates in the workbench: **24**.
+- Review-ready Tier-3 draft candidates in the workbench: **28**.
 - Batch 1 — Benin: Nateni, Hausa, Anii and Weme. Human evidence sign-off is tracked in **Issue #96**.
 - Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbeks (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
 - Batch 3 — Benin research promotions: Dendi, Foodo, Gun and Aizo. Research/provenance is closed in **Issue #97**; human evidence sign-off is tracked in **Issue #99**.
 - Batch 4 — cross-region research promotions: Kham Tibetans (China), Turkmen (Turkmenistan), Acehnese (Indonesia) and Hararghe Oromo (Ethiopia). Research/provenance is closed in **Issue #100**; human evidence sign-off is tracked in **Issue #101**.
-- Batch 5 — East/Central/Southeast Asia research promotions: Japanese (Japan), Kyrgyz (Kyrgyzstan), Sunda (Indonesia) and Thai (Thailand). Research/provenance originates in **Issue #102**; human evidence sign-off remains separate.
-- All **24/24** current drafts pass the mechanical Tier-3 candidate gate and live PEID/PGID/name/country/language + GSEC 0–3 validation. Each has exactly one indexed AI-assisted pre-review evidence audit.
+- Batch 5 — East/Central/Southeast Asia research promotions: Japanese (Japan), Kyrgyz (Kyrgyzstan), Sunda (Indonesia) and Thai (Thailand). Research/provenance is closed in **Issue #102**; human evidence sign-off is tracked in **Issue #103**.
+- Batch 6 — Eurasia/South/Southeast Asia research promotions: Chechens (Russian Federation), South Azeri (Iran), Kashmiri (India) and Malays (Malaysia). Research/provenance originates in **Issue #104**; human evidence sign-off is tracked in **Issue #105**.
+- All **28/28** current drafts pass the mechanical Tier-3 candidate gate and live PEID/PGID/name/country/language + GSEC 0–3 validation. Each has exactly one indexed AI-assisted pre-review evidence audit.
 - The latest Phase 12 production build, dedicated desktop/mobile release journey, security/license audit, Private Sync certification and five-engine V3 browser matrix are green.
 - Remaining public reviewed-profile gap: **88** until candidates are actually reviewed and published.
 
