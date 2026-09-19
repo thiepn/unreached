@@ -26,7 +26,7 @@ function parseBatch(raw: unknown, file: string): ResearchBatch {
   if (item.schemaVersion !== 1) throw new Error(file + " must use schemaVersion 1.");
   if (typeof item.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/.test(item.id)) throw new Error(file + " has an invalid id.");
   if (typeof item.title !== "string" || !item.title.trim()) throw new Error(file + " has no title.");
-  if (item.issue !== null && (!Number.isInteger(item.issue) || Number(item.issue) <= 0)) throw new Error(file + " has an invalid issue.");
+  if (item.issue !== null && (typeof item.issue !== "number" || !Number.isInteger(item.issue) || item.issue <= 0)) throw new Error(file + " has an invalid issue.");
   if (item.publicationEffect !== "none") throw new Error(file + " must have publicationEffect=none.");
   if (typeof item.selectionNote !== "string" || !item.selectionNote.trim()) throw new Error(file + " has no selection note.");
   if (!Array.isArray(item.pgids) || item.pgids.length < 1 || item.pgids.length > 25) throw new Error(file + " must contain 1-25 PGIDs.");
