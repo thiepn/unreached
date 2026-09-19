@@ -21,12 +21,82 @@ const nullableIso6393 = z.preprocess(
   (value) => value === null || value === undefined || value === "" ? null : String(value).trim().toLowerCase(),
   z.string().regex(/^[a-z]{3}$/).nullable(),
 );
+function normalizedSourceTimestamp(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
+  const raw = String(value).trim();
+  if (/^[0-9]{13}$/.test(raw)) {
+    const epochMs = Number(raw);
+    if (Number.isSafeInteger(epochMs)) {
+      const date = new Date(epochMs);
+      if (!Number.isNaN(date.getTime())) return date.toISOString();
+    }
+  }
+  return raw;
+}
+
 const nullableTimestamp = z.preprocess(
-  (value) => value === null || value === undefined || value === "" ? null : String(value).trim(),
+  normalizedSourceTimestamp,
   z.string().refine((value) => !Number.isNaN(Date.parse(value)), "Invalid source timestamp").nullable(),
 );
 
-export const peopleGroupsApiRecordSchema = z.object({
+function providerField(
+  record: Record<string, unknown>,
+  canonical: string,
+  ...aliases: string[]
+): unknown {
+  if (Object.prototype.hasOwnProperty.call(record, canonical)) return record[canonical];
+  for (const alias of aliases) {
+    if (Object.prototype.hasOwnProperty.call(record, alias)) return record[alias];
+  }
+  return undefined;
+}
+
+function normalizePeopleGroupsProviderRecord(value: unknown): unknown {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+  const record = value as Record<string, unknown>;
+
+  return {
+    ...record,
+    NmDisp: providerField(record, "NmDisp", "DisplayName", "Name"),
+    NmAlt: providerField(record, "NmAlt", "AlternateNames"),
+    ISOalpha3: providerField(record, "ISOalpha3", "ISOAlpha3", "CountryCode"),
+    Ctry: providerField(record, "Ctry", "CountryName", "CountryDisplayName"),
+    Regn: providerField(record, "Regn", "UNm49RegionName"),
+    RegnSub: providerField(record, "RegnSub", "UNm49SubRegionName"),
+    Pop: providerField(record, "Pop", "Population"),
+    Latitude: providerField(record, "Latitude", "Lat"),
+    Longitude: providerField(record, "Longitude", "Long"),
+    ROL: providerField(record, "ROL", "LanguageCode", "ROLROLV"),
+    Lang: providerField(record, "Lang", "LanguageName"),
+    LangFamily: providerField(record, "LangFamily", "LanguageFamily"),
+    ROR: providerField(record, "ROR", "ReligionCode"),
+    Rlgn: providerField(record, "Rlgn", "ReligionName"),
+    RlgnDiv: providerField(record, "RlgnDiv", "ReligionDisplayName"),
+    EvngLvl: providerField(record, "EvngLvl", "EvangelicalLevel"),
+    CongExst: providerField(record, "CongExst", "CongregationsExist"),
+    Plnting: providerField(record, "Plnting", "ChurchPlantingWithinLast2Years"),
+    EngStat: providerField(record, "EngStat", "EngagementStatus"),
+    GSECbrf: providerField(record, "GSECbrf", "GSECDescription"),
+    GSEClng: providerField(record, "GSEClng", "GSECLongDescription"),
+    SPI: providerField(record, "SPI", "EngagementProgress"),
+    SPIdesc: providerField(record, "SPIdesc", "EngagementProgressDesc"),
+    LPI: providerField(record, "LPI", "LostnessPriority"),
+    LPIname: providerField(record, "LPIname", "LostnessPriorityName"),
+    LPIdesc: providerField(record, "LPIdesc", "LostnessPriorityDescription"),
+    Affbloc: providerField(record, "Affbloc", "imbAffinityName"),
+    PplClstr: providerField(record, "PplClstr", "ROP2Name"),
+    PplNm: providerField(record, "PplNm", "ROP3Name"),
+    Ethne: providerField(record, "Ethne", "ROP25Name"),
+    Bible: providerField(record, "Bible", "BibleAvailability"),
+    Jesus: providerField(record, "Jesus", "JesusFilmAvailability"),
+    ResTot: providerField(record, "ResTot", "ResourceTotal"),
+    PeopleDesc: providerField(record, "PeopleDesc", "Description"),
+    LocationDesc: providerField(record, "LocationDesc", "LocationDescription"),
+    UpdatedDate: providerField(record, "UpdatedDate"),
+  };
+}
+
+const canonicalPeopleGroupsApiRecordSchema = z.object({
   PEID: z.coerce.number().int().positive(),
   PGID: z.string().trim().toUpperCase().regex(/^PG[0-9]+$/),
   NmDisp: z.string().trim().min(1),
@@ -67,6 +137,11 @@ export const peopleGroupsApiRecordSchema = z.object({
   LocationDesc: nullableString.optional(),
   UpdatedDate: nullableTimestamp.optional(),
 }).passthrough();
+
+export const peopleGroupsApiRecordSchema = z.preprocess(
+  normalizePeopleGroupsProviderRecord,
+  canonicalPeopleGroupsApiRecordSchema,
+);
 
 export const peopleGroupsApiPageSchema = z.array(peopleGroupsApiRecordSchema);
 export type PeopleGroupsApiRecord = z.infer<typeof peopleGroupsApiRecordSchema>;
