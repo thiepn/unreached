@@ -1,0 +1,65 @@
+name: V3 Phase 16 Mission Knowledge Graph
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase15-scripture-language-intelligence
+    paths:
+      - "package.json"
+      - "docs/V3_PHASE16_MISSION_KNOWLEDGE_GRAPH.md"
+      - "docs/DATA_AND_LEGAL_POLICY.md"
+      - "src/knowledge-graph/**"
+      - "src/components/MissionKnowledgeGraphPanel.tsx"
+      - "src/pages/PeoplePage.tsx"
+      - "src/pages/AboutPage.tsx"
+      - "src/styles/people/knowledge-graph.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase16-check.ts"
+      - "tests/e2e/v3-phase16-knowledge-graph.spec.ts"
+      - ".github/workflows/v3-phase16-mission-knowledge-graph.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 16 typed graph and evidence boundaries
+        run: npm run v3:phase16-check
+
+      - name: Run complete production build gate
+        run: npm run build
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify mission knowledge graph on desktop and mobile
+        run: npm run v3:phase16-visual
+
+      - name: Upload Phase 16 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase16-knowledge-graph
+          path: artifacts/v3-phase16
+          if-no-files-found: warn
+          retention-days: 30
