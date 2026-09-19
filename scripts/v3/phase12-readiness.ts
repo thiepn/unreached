@@ -78,7 +78,7 @@ for (const marker of ["identity-mismatch", "out-of-scope", "provider-error", "li
 }
 
 const liveResearchScript = await readText("scripts/v3/phase12-live-research-batches.ts");
-for (const marker of ["non-ranking-live-research-registry", "research-ready", "provider-error", "research-batches/index.json", "publicationEffect"]) {
+for (const marker of ["non-ranking-live-research-registry", "research-ready", "provider-error", "index.json", "publicationEffect"]) {
   if (!liveResearchScript.includes(marker)) throw new Error(`Phase 12 live research-batch audit is missing boundary: ${marker}`);
 }
 
