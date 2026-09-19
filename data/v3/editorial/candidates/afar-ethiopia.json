@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-afar-ethiopia",
+      "sourceId": "peoplegroups-profile-PG011536",
+      "title": "PeopleGroups.org — Afar of Ethiopia (PGID PG011536)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg011536/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Current profile fast facts and resource sections: Afar in Ethiopia, Afar (aar), aggregate Sunni Islam label, GSEC/SPI presentation, JESUS/Magdalena and linked Bible-resource surfaces. Live PEID/PGID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-afar",
+      "sourceId": "glottolog-afar1241",
+      "title": "Glottolog 5.3 — Afar",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/afar1241",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Afar spoken L1 language entry: glottocode afar1241, ISO 639-3 aar; current language-status metadata and classification references."
+    },
+    {
+      "id": "ctx-source:cambridge-afar-pastoral-systems",
+      "sourceId": "cambridge-afar-flood-land-restoration",
+      "title": "Facilitating livelihoods diversification through flood-based land restoration in pastoral systems of Afar, Ethiopia",
+      "publisher": "Cambridge University Press / Renewable Agriculture and Food Systems",
+      "url": "https://www.cambridge.org/core/journals/renewable-agriculture-and-food-systems/article/facilitating-livelihoods-diversification-through-floodbased-land-restoration-in-pastoral-systems-of-afar-ethiopia/A757DE59818450EF180A5D06B99D749E",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Introduction and study framing on pastoral and agro-pastoral livelihood systems in Ethiopia's Afar Region, mobility, resource access and livelihood diversification pressures."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:11536",
+    "peid": 11536,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 11536,
+      "verifiedPeopleName": "Afar",
+      "pgidAnchors": [
+        "PG011536"
+      ],
+      "countryIso3Anchors": [
+        "ETH"
+      ],
+      "languageIso6393Anchors": [
+        "aar"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:23:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Afar in Ethiopia and ties the record to the Afar language (aar). Glottolog independently identifies Afar as a spoken L1 language, while region-focused academic research documents pastoral and agro-pastoral livelihood systems in Ethiopia's Afar Region without implying one occupation or lifestyle for every Afar person.",
+      "claimIds": [
+        "claim:afar-ethiopia-identity",
+        "claim:afar-language",
+        "claim:afar-livelihood-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Sunni Islam label for this people-group-in-country record. It is retained as source context and not generalized into a claim about the belief or practice of every Afar person.",
+      "claimIds": [
+        "claim:afar-ethiopia-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current unreached classification only from PeopleGroups.org mission-status fields. Pastoralism, geography, language and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports the Afar of Ethiopia below the 2% evangelical threshold and assigns GSEC 3, indicating dispersed church-planting activity while retaining an unreached classification.",
+        "claimIds": [
+          "claim:afar-ethiopia-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources exist, but availability is not the same as access",
+        "summary": "The provider page links Afar-language film and Bible resources; this candidate preserves those source labels without inferring distribution, comprehension or use across Afar communities.",
+        "claimIds": [
+          "claim:afar-ethiopia-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:afar-ethiopia-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG011536 identifies the people-group record as Afar in Ethiopia and lists Afar (aar) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-afar-ethiopia"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; live PEID identity must still be re-fetched by the guarded publication review before this draft can be published."
+      },
+      {
+        "id": "claim:afar-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Afar with glottocode afar1241 and ISO 639-3 code aar.",
+        "citationIds": [
+          "ctx-source:glottolog-afar"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:afar-livelihood-context",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Academic research focused on Ethiopia's Afar Region describes pastoralism and agro-pastoralism as important regional livelihood systems and documents pressures toward livelihood diversification; this supports regional human context but not an assumption that every Afar household has the same livelihood.",
+        "citationIds": [
+          "ctx-source:cambridge-afar-pastoral-systems",
+          "ctx-source:peoplegroups-afar-ethiopia"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The academic study concerns pastoral systems in Afar Region rather than a census of every person represented by PG011536."
+      },
+      {
+        "id": "claim:afar-ethiopia-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Afar of Ethiopia profile reports Sunni Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-afar-ethiopia"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider-level aggregate classification for one people-group-in-country record, not a statement about every Afar person's belief or practice."
+      },
+      {
+        "id": "claim:afar-ethiopia-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports less than 2% evangelical presence and GSEC 3, 'Less than 2% Evangelical, Dispersed CP Activity,' for PG011536 and presents the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-afar-ethiopia"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record and are not a judgment about individuals."
+      },
+      {
+        "id": "claim:afar-ethiopia-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists JESUS and Magdalena film resources for Afar (aar) and links Afar Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-afar-ethiopia"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not establish local distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-afar-ethiopia",
+      "ctx-source:glottolog-afar",
+      "ctx-source:cambridge-afar-pastoral-systems"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

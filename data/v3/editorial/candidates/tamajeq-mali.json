@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-tamajeq-mali",
+      "sourceId": "peoplegroups-profile-PG013571",
+      "title": "PeopleGroups.org — Tamajeq of Mali (PGID PG013571)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg013571/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Current profile fast facts and resource sections: Tamajeq in Mali, Tamajaq/Tawallammat (ttq), aggregate Folk Islam label, GSEC/SPI presentation, JESUS and linked Bible-resource surfaces. Live PEID/PGID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-tawallammat",
+      "sourceId": "glottolog-tawa1286",
+      "title": "Glottolog 5.3 — Tawallammat Tamajaq",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/tawa1286",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Tawallammat Tamajaq spoken L1 language entry: glottocode tawa1286, ISO 639-3 ttq; current language-status and subclassification references."
+    },
+    {
+      "id": "ctx-source:cambridge-tuareg-representation",
+      "sourceId": "cambridge-asr-2017-tuareg-mali",
+      "title": "Global Media and Local Verbal Art Representations of Northern Malian Tuareg",
+      "publisher": "Cambridge University Press / African Studies Review",
+      "url": "https://www.cambridge.org/core/journals/african-studies-review/article/abs/global-media-and-local-verbal-art-representations-of-northern-malian-tuareg/64EB83F724A3905AF355F292323DD06C",
+      "sourceType": "academic",
+      "publicationDate": "2017-04-03",
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Abstract: critique of stereotyped portrayals of northern Malian Tuareg and discussion of oral historical accounts expressing identity through language, culture and flexible social affiliation."
+    },
+    {
+      "id": "ctx-source:cambridge-tuareg-change",
+      "sourceId": "cambridge-lecocq-teshumara",
+      "title": "Unemployed Intellectuals in the Sahara: The Teshumara Nationalist Movement and the Revolutions in Tuareg Society",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/popular-intellectuals-and-social-movements/unemployed-intellectuals-in-the-sahara-the-teshumara-nationalist-movement-and-the-revolutions-in-tuareg-society/7895F0416E6E4FAD554B30F5A97C3636",
+      "sourceType": "academic",
+      "publicationDate": "2005-01-01",
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Chapter summary on major twentieth-century socioeconomic and political changes affecting Tuareg societies in Mali and Niger; used only as bounded historical context."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:13571",
+    "peid": 13571,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 13571,
+      "verifiedPeopleName": "Tamajeq",
+      "pgidAnchors": [
+        "PG013571"
+      ],
+      "countryIso3Anchors": [
+        "MLI"
+      ],
+      "languageIso6393Anchors": [
+        "ttq"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:23:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Tamajeq in Mali and ties the record to Tawallammat Tamajaq (ttq). Glottolog independently identifies that language, while scholarship on northern Malian Tuareg emphasizes flexible social affiliation and warns against reducing Tuareg communities to stereotypes.",
+      "claimIds": [
+        "claim:tamajeq-mali-identity",
+        "claim:tamajeq-language",
+        "claim:tamajeq-social-identity-context",
+        "claim:tamajeq-historical-change-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Folk Islam label for this source record. The label is retained as mission-research context rather than treated as a statement about every Tamajeq person's belief or practice.",
+      "claimIds": [
+        "claim:tamajeq-mali-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate keeps the unreached classification source-scoped. Tuareg history, social identity, language, mobility and religion are not treated as causes of the mission-status label.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG013571 below the 2% evangelical threshold with GSEC 1 and no active church-planting activity.",
+        "claimIds": [
+          "claim:tamajeq-mali-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported language resources remain narrow evidence",
+        "summary": "The provider page links a ttq-language JESUS resource and Bible-resource providers. Those links show provider-reported resource presence, not universal access, comprehension or use in Mali.",
+        "claimIds": [
+          "claim:tamajeq-mali-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:tamajeq-mali-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG013571 identifies the people-group record as Tamajeq in Mali and lists Tamajaq, Tawallammat (ttq) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-tamajeq-mali"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; live PEID identity must still be re-fetched before publication."
+      },
+      {
+        "id": "claim:tamajeq-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Tawallammat Tamajaq with glottocode tawa1286 and ISO 639-3 code ttq.",
+        "citationIds": [
+          "ctx-source:glottolog-tawallammat"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:tamajeq-social-identity-context",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Research on northern Malian Tuareg critiques externally imposed warrior/criminal stereotypes and describes local identity as articulated through language, culture and flexible social affiliation; this supports a deliberately non-stereotyped reading of the PeopleGroups Tamajeq record.",
+        "citationIds": [
+          "ctx-source:cambridge-tuareg-representation",
+          "ctx-source:peoplegroups-tamajeq-mali"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The academic study concerns northern Malian Tuareg broadly and is not treated as a description of every person represented by PG013571."
+      },
+      {
+        "id": "claim:tamajeq-historical-change-context",
+        "dimension": "history",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Historical scholarship describes major twentieth-century socioeconomic and political changes in Tuareg societies of Mali and Niger, including post-independence transformation, drought-driven migration and the rebellions of the 1990s.",
+        "citationIds": [
+          "ctx-source:cambridge-tuareg-change"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is historical regional context and must not be converted into a claim about present political affiliation, security status or individual experience."
+      },
+      {
+        "id": "claim:tamajeq-mali-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Tamajeq of Mali profile reports Folk Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-tamajeq-mali"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG013571, not a statement about every Tamajeq person's belief or practice."
+      },
+      {
+        "id": "claim:tamajeq-mali-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1, less than 2% evangelical presence and no active church-planting activity for PG013571, while presenting the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-tamajeq-mali"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:tamajeq-mali-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists a JESUS film entry on the ttq resource surface and links Bible-resource providers for Tamajaq, Tawallammat.",
+        "citationIds": [
+          "ctx-source:peoplegroups-tamajeq-mali"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The film entry is a language-code resource listing; it does not establish that a specific resource is distributed, understood or used throughout the Malian communities represented by this record."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-tamajeq-mali",
+      "ctx-source:glottolog-tawallammat",
+      "ctx-source:cambridge-tuareg-representation",
+      "ctx-source:cambridge-tuareg-change"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

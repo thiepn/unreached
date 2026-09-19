@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-fur-sudan",
+      "sourceId": "peoplegroups-profile-PG012025",
+      "title": "PeopleGroups.org — Fur of Sudan (PGID PG012025)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012025/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Current profile fast facts and resource sections: Fur in Sudan, Fur (fvr), aggregate Sunni Islam label, GSEC/SPI presentation, JESUS/Magdalena and linked Bible-resource surfaces. Live PEID/PGID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-fur",
+      "sourceId": "glottolog-furr1244",
+      "title": "Glottolog 5.3 — Fur",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/furr1244",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Fur spoken L1 language entry: glottocode furr1244, ISO 639-3 fvr; countries include Sudan and Chad."
+    },
+    {
+      "id": "ctx-source:cambridge-darfur-sultanate",
+      "sourceId": "cambridge-land-in-dar-fur-ch1",
+      "title": "The Dār Fūr Sultanate",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/land-in-dar-fur/dar-fur-sultanate/863CC559C1246D23AF6975560DEFE627",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Historical chapter summary: the Fur kingdom around the Marra Mountains formed the nucleus of the Dār Fūr sultanate; discussion is historical and not a claim about current political identity."
+    },
+    {
+      "id": "ctx-source:cambridge-darfur-literacy",
+      "sourceId": "cambridge-land-in-dar-fur-ch3",
+      "title": "Literacy and Chancery",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/land-in-dar-fur/literacy-and-chancery/EF016035675EA1E9A4AF67C7062BF8E6",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Historical chapter on the Dar Fur sultanate: official correspondence was in Arabic while Fur was generally the spoken language at court; used only as bounded historical language context."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12025",
+    "peid": 12025,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12025,
+      "verifiedPeopleName": "Fur",
+      "pgidAnchors": [
+        "PG012025"
+      ],
+      "countryIso3Anchors": [
+        "SDN"
+      ],
+      "languageIso6393Anchors": [
+        "fvr"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:23:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Fur in Sudan and ties the record to the Fur language (fvr). Glottolog independently identifies Fur, while historical scholarship locates the Fur state tradition around the Marra Mountains and documents Fur as an important spoken language within the historical sultanate.",
+      "claimIds": [
+        "claim:fur-sudan-identity",
+        "claim:fur-language",
+        "claim:fur-historical-context",
+        "claim:fur-historical-language-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Sunni Islam label for this people-group-in-country record. It is retained as source context rather than generalized into a statement about the belief or practice of every Fur person.",
+      "claimIds": [
+        "claim:fur-sudan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current mission classification only from PeopleGroups.org source-native fields. Darfur's history, Fur identity, language and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG012025 below the 2% evangelical threshold with GSEC 1 and no recent church-planting activity.",
+        "claimIds": [
+          "claim:fur-sudan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources do not prove local reach",
+        "summary": "The provider page lists Fur-language film and Bible-resource links. This candidate preserves those source labels without inferring distribution, comprehension or use.",
+        "claimIds": [
+          "claim:fur-sudan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:fur-sudan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG012025 identifies the people-group record as Fur in Sudan and lists Fur (fvr) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-fur-sudan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; live PEID identity must still be re-fetched before publication."
+      },
+      {
+        "id": "claim:fur-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Fur with glottocode furr1244 and ISO 639-3 code fvr and lists Sudan among the language's countries.",
+        "citationIds": [
+          "ctx-source:glottolog-fur"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:fur-historical-context",
+        "dimension": "history",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Historical scholarship describes a Fur kingdom centered on the Marra Mountains as the nucleus of the Dār Fūr sultanate, whose political history developed over centuries before colonial conquest.",
+        "citationIds": [
+          "ctx-source:cambridge-darfur-sultanate"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is historical context and does not imply present political affiliation or a uniform historical experience for every Fur community."
+      },
+      {
+        "id": "claim:fur-historical-language-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Historical records of the Dar Fur sultanate describe Arabic as the language of official correspondence while Fur was generally spoken at court, adding historical evidence of Fur-language use beyond the current linguistic classification.",
+        "citationIds": [
+          "ctx-source:cambridge-darfur-literacy",
+          "ctx-source:glottolog-fur"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The historical court context is not a claim about present-day literacy or language use across all Fur communities."
+      },
+      {
+        "id": "claim:fur-sudan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Fur of Sudan profile reports Sunni Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-fur-sudan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG012025, not a statement about every Fur person's belief or practice."
+      },
+      {
+        "id": "claim:fur-sudan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG012025, and presents the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-fur-sudan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:fur-sudan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists JESUS and Magdalena film resources for Fur (fvr) and links Fur Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-fur-sudan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-fur-sudan",
+      "ctx-source:glottolog-fur",
+      "ctx-source:cambridge-darfur-sultanate",
+      "ctx-source:cambridge-darfur-literacy"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
