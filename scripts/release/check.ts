@@ -150,6 +150,11 @@ for (const marker of ["Gate D", "Scripture & Language Intelligence", "ProgressBi
   if (!phase15.includes(marker)) throw new Error(`Phase 15 Scripture/language policy documentation missing: ${marker}`);
 }
 
+const phase16 = await readText("docs/V3_PHASE16_MISSION_KNOWLEDGE_GRAPH.md");
+for (const marker of ["Gate D", "Mission Knowledge Graph", "Derived source relationships", "no D1 schema", "hidden similarity"]) {
+  if (!phase16.includes(marker)) throw new Error(`Phase 16 knowledge-graph policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
