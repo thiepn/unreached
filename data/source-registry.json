@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "reviewedAt": "2026-09-17",
+  "reviewedAt": "2026-09-19",
   "sources": [
     {
       "id": "peoplegroups-org-api",
@@ -8,14 +8,21 @@
       "provider": "Global Research Department of the International Mission Board",
       "canonicalUrl": "https://peoplegroups.org/using-the-api/",
       "privacyUrl": "https://peoplegroups.org/privacy-policy/",
-      "contentTypes": ["people_groups", "countries", "languages", "religions", "mission_status", "resource_indicators"],
+      "contentTypes": [
+        "people_groups",
+        "countries",
+        "languages",
+        "religions",
+        "mission_status",
+        "resource_indicators"
+      ],
       "status": "conditional",
       "commercialUse": null,
       "runtimeReadAllowed": true,
       "publicReleaseAllowed": true,
       "browserRedistributionAllowed": false,
       "publicRedistribution": "No static corpus mirror or Unreached bulk-data API. Provider data is accessed through the provider's public read-only API and is not relicensed by Unreached.",
-      "cacheStatus": "device-local validated resilience cache only; not a public redistribution channel",
+      "cacheStatus": "device-local validated resilience cache plus bounded device-private mission-history observations; never synced, exported, or publicly redistributed",
       "attributionRequired": null,
       "attributionText": "Data provided and maintained by the Global Research Department of the International Mission Board via PeopleGroups.org",
       "developmentIngestionAllowed": true,
@@ -27,10 +34,13 @@
         "do not claim ownership of or relicense PeopleGroups.org data",
         "keep any resilience cache private to the user's browser and separate from the public service-worker asset cache",
         "do not reuse provider-linked or third-party photos without separate item-level rights review",
-        "re-review the beta API documentation before releases that materially change provider access or caching"
+        "re-review the beta API documentation before releases that materially change provider access or caching",
+        "historical observations may persist only on-device as a bounded private log and must remain excluded from private sync, server storage, exports and public redistribution",
+        "store only source-returned mission fields plus source UpdatedDate and local observation times; do not backfill, interpolate or infer past source states",
+        "de-duplicate identical tracked mission states so repeated visits do not manufacture time-series points"
       ],
-      "permissionGate": "Phase 1 reviewed the current public API on 2026-09-16. The provider explicitly offers free public read-only access without an API key and invites maps, prayer tools and research applications. Direct public runtime reads remain the approved V3 launch architecture; static redistribution, relicensing, public snapshots and third-party image reuse remain separately unapproved.",
-      "termsReviewedAt": "2026-09-16"
+      "permissionGate": "Phase 14 re-reviewed the current PeopleGroups.org public API documentation on 2026-09-19. The API remains a free public read-only runtime source and documents UpdatedDate for source records. Historical intelligence is approved only as a bounded device-private observation history created from ordinary runtime reads; no public snapshot archive, bulk export, server history service, provider mirror or inferred backfill is introduced.",
+      "termsReviewedAt": "2026-09-19"
     },
     {
       "id": "natural-earth",
@@ -38,7 +48,10 @@
       "provider": "Natural Earth",
       "canonicalUrl": "https://www.naturalearthdata.com/",
       "termsUrl": "https://www.naturalearthdata.com/about/terms-of-use/",
-      "contentTypes": ["vector_geography", "raster_geography"],
+      "contentTypes": [
+        "vector_geography",
+        "raster_geography"
+      ],
       "status": "approved",
       "commercialUse": true,
       "runtimeReadAllowed": false,
@@ -49,7 +62,10 @@
       "attributionRequired": false,
       "attributionText": "Made with Natural Earth",
       "developmentIngestionAllowed": true,
-      "requirements": ["document deliberate boundary modifications", "retain awareness of disputed-boundary representation"],
+      "requirements": [
+        "document deliberate boundary modifications",
+        "retain awareness of disputed-boundary representation"
+      ],
       "termsReviewedAt": "2026-08-28"
     },
     {
@@ -58,7 +74,13 @@
       "provider": "Joshua Project",
       "canonicalUrl": "https://api.joshuaproject.net/",
       "termsUrl": "https://api.joshuaproject.net/terms_of_use",
-      "contentTypes": ["people_groups", "countries", "languages", "mission_metrics", "scripture_resource_indicators"],
+      "contentTypes": [
+        "people_groups",
+        "countries",
+        "languages",
+        "mission_metrics",
+        "scripture_resource_indicators"
+      ],
       "status": "conditional",
       "commercialUse": false,
       "runtimeReadAllowed": true,
@@ -89,7 +111,9 @@
       "name": "Joshua Project People-Group Photos",
       "provider": "Joshua Project / third-party rights holders",
       "canonicalUrl": "https://joshuaproject.net/resources/media",
-      "contentTypes": ["images"],
+      "contentTypes": [
+        "images"
+      ],
       "status": "per-item",
       "commercialUse": null,
       "runtimeReadAllowed": false,
@@ -99,7 +123,10 @@
       "cacheStatus": "not approved by default",
       "attributionRequired": null,
       "developmentIngestionAllowed": false,
-      "requirements": ["verify rights for each individual image", "do not scrape or mirror the photo library"],
+      "requirements": [
+        "verify rights for each individual image",
+        "do not scrape or mirror the photo library"
+      ],
       "termsReviewedAt": "2026-08-28"
     },
     {
@@ -108,7 +135,11 @@
       "provider": "SIL International / ProgressBible",
       "canonicalUrl": "https://progress.bible/",
       "termsUrl": "https://progress.bible/terms-of-use/",
-      "contentTypes": ["languages", "scripture_status", "translation_progress"],
+      "contentTypes": [
+        "languages",
+        "scripture_status",
+        "translation_progress"
+      ],
       "status": "permission-required",
       "commercialUse": false,
       "runtimeReadAllowed": false,
@@ -118,7 +149,10 @@
       "cacheStatus": "not approved",
       "attributionRequired": true,
       "developmentIngestionAllowed": false,
-      "requirements": ["do not incorporate registered supplied data into Unreached without written permission", "do not scrape the public site into a replacement dataset"],
+      "requirements": [
+        "do not incorporate registered supplied data into Unreached without written permission",
+        "do not scrape the public site into a replacement dataset"
+      ],
       "permissionGate": "Written permission explicitly covering this public product is required.",
       "termsReviewedAt": "2026-08-28"
     },
@@ -128,7 +162,9 @@
       "provider": "SIL International",
       "canonicalUrl": "https://www.ethnologue.com/",
       "termsUrl": "https://shop.ethnologue.com/policies/terms-of-service",
-      "contentTypes": ["linguistic_data"],
+      "contentTypes": [
+        "linguistic_data"
+      ],
       "status": "permission-required",
       "commercialUse": null,
       "runtimeReadAllowed": false,
@@ -138,7 +174,10 @@
       "cacheStatus": "not approved",
       "attributionRequired": null,
       "developmentIngestionAllowed": false,
-      "requirements": ["do not scrape or bulk reproduce proprietary linguistic data", "obtain a compatible license before product/service reuse"],
+      "requirements": [
+        "do not scrape or bulk reproduce proprietary linguistic data",
+        "obtain a compatible license before product/service reuse"
+      ],
       "permissionGate": "Separate license or written permission is required before dataset integration.",
       "termsReviewedAt": "2026-08-28"
     },
@@ -148,7 +187,10 @@
       "provider": "individual media rights holders / Wikimedia Commons",
       "canonicalUrl": "https://commons.wikimedia.org/",
       "termsUrl": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
-      "contentTypes": ["images", "media"],
+      "contentTypes": [
+        "images",
+        "media"
+      ],
       "status": "per-item",
       "commercialUse": null,
       "runtimeReadAllowed": false,
@@ -158,7 +200,12 @@
       "cacheStatus": "depends on individual file license",
       "attributionRequired": null,
       "developmentIngestionAllowed": false,
-      "requirements": ["verify the individual file license", "record creator/source/license/credit/modification status", "satisfy ShareAlike obligations where applicable", "consider privacy/personality rights separately"],
+      "requirements": [
+        "verify the individual file license",
+        "record creator/source/license/credit/modification status",
+        "satisfy ShareAlike obligations where applicable",
+        "consider privacy/personality rights separately"
+      ],
       "termsReviewedAt": "2026-08-28"
     }
   ]
