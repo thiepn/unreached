@@ -81,6 +81,13 @@ jobs:
         continue-on-error: true
         run: npm run v3:phase12-live-candidate-audit
 
+      - name: Surface live candidate diagnostic in job summary
+        if: always()
+        run: |
+          if [ -f artifacts/v3-phase12/live-candidate-audit.md ]; then
+            cat artifacts/v3-phase12/live-candidate-audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Verify Phase 12 automated readiness and editorial integrity
         run: npm run v3:phase12-readiness
 
