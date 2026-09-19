@@ -80,7 +80,7 @@ for (const path of [
 
 if (MISSION_HISTORY_DB !== "unreached-mission-history-v1") throw new Error("Phase 14 history DB identity drifted.");
 if (MISSION_HISTORY_STORE !== "peoplegroups-observations") throw new Error("Phase 14 history store identity drifted.");
-if (MISSION_HISTORY_LIMIT_PER_RECORD !== 24) throw new Error("Phase 14 must retain at most 24 distinct states per PGID.");
+if (MISSION_HISTORY_LIMIT_PER_RECORD !== 24) throw new Error("Phase 14 must retain at most 24 timeline points per PGID.");
 
 const base = observation("11111111");
 const same = observation("11111111", {
@@ -116,6 +116,23 @@ for (const field of ["classification", "gsec", "population"] as const) {
 }
 if (changes.length !== 3) throw new Error(`Phase 14 synthetic change comparison expected 3 fields, received ${changes.length}.`);
 
+const reverted = observation("11111111", {
+  id: "PG007206:2026-09-21T12:00:00.000Z:11111111",
+  sourceUpdatedAt: "2026-09-21T00:00:00.000Z",
+  latestSourceUpdatedAt: "2026-09-21T00:00:00.000Z",
+  firstObservedAt: "2026-09-21T12:00:00.000Z",
+  lastObservedAt: "2026-09-21T12:00:00.000Z",
+  metrics: { ...base.metrics },
+});
+const withReversion = mergeMissionHistoryObservations(distinct, reverted);
+if (withReversion.length !== 3 || withReversion[0]?.signature !== "11111111") {
+  throw new Error("Phase 14 must preserve A → B → A as three timeline points rather than collapsing the reversion.");
+}
+const reversionChanges = compareMissionHistoryObservations(changed, reverted);
+for (const field of ["classification", "gsec", "population"] as const) {
+  if (!reversionChanges.some((change) => change.field === field)) throw new Error(`Phase 14 reversion comparison missed ${field}.`);
+}
+
 let capped: MissionHistoryObservation[] = [];
 for (let index = 0; index < 30; index += 1) {
   const signature = (index + 1).toString(16).padStart(8, "0");
@@ -136,7 +153,7 @@ for (const marker of [
   "firstObservedAt",
   "lastObservedAt",
   "mergeMissionHistoryObservations",
-  "Repeated visits",
+  "later return",
 ]) requireText(historyModel, marker, "observed-history model");
 
 const historyStore = await read("src/mission/history-store.ts");
@@ -180,7 +197,7 @@ for (const marker of [
 const privacy = await read("public/privacy.html");
 for (const marker of [
   "Effective and reviewed 19 September 2026",
-  "bounded history of distinct PeopleGroups.org mission-source states",
+  "bounded history of PeopleGroups.org mission-source state transitions",
   "not synced",
   "Clearing browser site data removes it",
 ]) requireText(privacy, marker, "privacy disclosure");
@@ -220,7 +237,7 @@ for (const marker of [
   "Gate D",
   "observed",
   "backfill",
-  "24 distinct states",
+  "24 retained timeline points",
   "Joshua Project",
   "excluded from private continuity sync",
 ]) requireText(docs, marker, "Phase 14 documentation");
@@ -241,4 +258,4 @@ requireText(pkg, '"v3:phase14-visual": "playwright test tests/e2e/v3-phase14-his
 const browserConfig = await read("playwright.v3.config.ts");
 requireText(browserConfig, "1[0-9]", "active V3 browser matrix inclusion for Phase 14");
 
-console.log("V3 Phase 14 Historical Mission Intelligence checks passed: history is source-observed rather than backfilled, identical tracked states de-duplicate, real field changes form distinct bounded timeline points, the 24-state per-PGID cap is enforced, PeopleGroups history remains device-private and excluded from sync/Worker/server export, Joshua Project remains no-store, and public methodology/privacy disclosures describe the actual boundary.");
+console.log("V3 Phase 14 Historical Mission Intelligence checks passed: history is source-observed rather than backfilled, consecutive identical tracked states de-duplicate, A-to-B-to-A reversions remain visible, real field changes form bounded timeline points, the 24-point per-PGID cap is enforced, PeopleGroups history remains device-private and excluded from sync/Worker/server export, Joshua Project remains no-store, and public methodology/privacy disclosures describe the actual boundary.");
