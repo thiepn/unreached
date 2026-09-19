@@ -92,8 +92,8 @@ test("release transparency page contains definitions and permission state", asyn
   await expect(sources.getByText("PeopleGroups.org / IMB Global Research", { exact: true })).toBeVisible();
   await expect(sources.getByText("Runtime active", { exact: true })).toBeVisible();
   await expect(sources.getByText("Joshua Project API", { exact: true })).toBeVisible();
-  await expect(sources.getByText("Not active", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Release 2\.1\.3 preserves the certified data boundary and fixes narrow Explore methodology layout/ })).toBeVisible();
+  await expect(sources.getByText("Optional comparison", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The current release preserves the certified data boundary" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 

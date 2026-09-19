@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-**Reviewed:** 28 August 2026
+**Reviewed:** 17 September 2026
 
 Unreached combines project-authored software/content with external data and open-source components. Nothing in the Unreached project license changes the rights attached to third-party material.
 
@@ -10,7 +10,7 @@ Production mission data is read from the public PeopleGroups.org API operated by
 
 - API documentation: https://peoplegroups.org/using-the-api/
 - Provider: PeopleGroups.org / Global Research Department of the International Mission Board
-- Production use: direct read-only runtime access for maps, people, countries, languages, mission status, resource fields and prayer-subject selection
+- Production use: canonical direct read-only runtime access for maps, people, countries, languages, mission status, resource fields and prayer-subject selection
 - Redistribution policy: Unreached does not publish or relicense a static mirror of the provider corpus
 - Images: linked/provider or third-party images are not redistributed by Unreached without separate rights review
 
@@ -26,9 +26,20 @@ Natural Earth vector/raster map data is public domain.
 
 ## Joshua Project
 
-Joshua Project is not the active production people-data runtime. Its API remains gated in project policy. If it is reintroduced, its non-commercial, attribution, anti-replication and termination/cache-deletion terms must be followed.
+Phase 13 introduces Joshua Project only as an optional secondary mission-intelligence comparison for a small set of manually reviewed people-group-in-country identity links. PeopleGroups.org remains the canonical atlas runtime.
 
-- Terms: https://api.joshuaproject.net/terms_of_use
+- API terms: https://api.joshuaproject.net/terms_of_use
+- API documentation: https://api.joshuaproject.net/v1/docs/available_api_requests
+- Production eligibility: post-Unreached-3.0 only; V3 Gate D must be satisfied before activation
+- Use: non-commercial, value-added source comparison
+- Attribution: pages displaying Joshua Project values link the text **Data provided by Joshua Project** to the corresponding provider profile
+- Credential: the API key is held only as the `JOSHUA_PROJECT_API_KEY` Worker secret
+- Storage: API responses use no-store handling and are not added to the Unreached corpus, D1, browser persistence or service-worker caches
+- Redistribution: no bulk endpoint, static mirror, general provider proxy or downloadable Joshua Project dataset is provided
+
+Joshua Project's provider classification remains source-native. Unreached does not average or silently reconcile it with PeopleGroups.org / IMB classifications.
+
+Joshua Project photos, maps and narrative profile text are not included by this integration. Those materials remain subject to separate item-level rights and use conditions.
 
 ## ProgressBible
 

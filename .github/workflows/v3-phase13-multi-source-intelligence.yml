@@ -1,0 +1,86 @@
+name: V3 Phase 13 Multi-Source Mission Intelligence
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase12-content-certification
+    paths:
+      - "package.json"
+      - "data/source-registry.json"
+      - "docs/V3_PHASE13_MULTI_SOURCE_MISSION_INTELLIGENCE.md"
+      - "src/mission/**"
+      - "src/components/MultiSourceMissionPanel.tsx"
+      - "src/pages/PeoplePage.tsx"
+      - "src/pages/AboutPage.tsx"
+      - "worker/**"
+      - "scripts/v3/phase13-check.ts"
+      - "tests/e2e/v3-phase13-multi-source.spec.ts"
+      - ".github/workflows/v3-phase13-multi-source-intelligence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install application dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 13 source comparison and policy boundaries
+        run: npm run v3:phase13-check
+
+      - name: Run complete production build gate
+        run: npm run build
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Install Worker dependencies reproducibly
+        working-directory: worker
+        run: npm ci --no-audit --no-fund
+
+      - name: Render isolated Worker certification configuration
+        working-directory: worker
+        env:
+          D1_DATABASE_ID: 00000000-0000-0000-0000-000000000001
+          ACCESS_AUD: certification-access-audience
+        run: node render-config.mjs
+
+      - name: Typecheck Worker and generated bindings
+        working-directory: worker
+        run: npm run check
+
+      - name: Verify repository and browser surfaces remain credential-free
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -R --line-number -E 'JOSHUA_PROJECT_API_KEY[[:space:]]*[:=][[:space:]]*[A-Za-z0-9_-]{12,}' . --exclude-dir=node_modules --exclude-dir=.git --exclude='wrangler.generated.jsonc'
+          ! grep -R --line-number -E 'api_key=[A-Za-z0-9_-]{12,}' src public tests docs data scripts .github || false
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify opt-in source comparison on desktop and mobile
+        run: npm run v3:phase13-visual
+
+      - name: Upload Phase 13 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase13-multi-source
+          path: artifacts/v3-phase13
+          if-no-files-found: warn
+          retention-days: 30
