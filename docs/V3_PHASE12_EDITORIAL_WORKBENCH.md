@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains `nateni-benin.json`, `hausa-benin.json`, `anii-benin.json` and `weme-benin.json`. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
+The workbench currently contains **12 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbek of Uzbekistan and Saho of Eritrea. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -109,11 +109,11 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready draft candidates in the workbench: **4**.
-- Nateni candidate: source audit refreshed on **19 September 2026**; no material contradiction found, but human maintainer attestation is still required.
-- Hausa of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and Cambridge evidence; human maintainer attestation is required.
-- Anii of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog, SIL and Cambridge evidence; human maintainer attestation is required.
-- Weme of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and a dedicated SIL sociolinguistic survey; human maintainer attestation is required.
-- Remaining public reviewed-profile gap: **88** until a candidate is actually reviewed and published.
+- Review-ready Tier-3 draft candidates in the workbench: **12**.
+- Batch 1 — Benin: Nateni, Hausa, Anii and Weme. Human evidence sign-off is tracked in **Issue #96**.
+- Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbek (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
+- Separate source-scaffold research for Dendi, Foodo, Gun and Aizo of Benin remains tracked in **Issue #97**; those records are not counted as candidate drafts until actual candidate packages are written and pass the candidate gate.
+- All current draft packages pass the mechanical Tier-3 candidate integrity policy. Live identity revalidation and human evidence review remain mandatory before publication.
+- Remaining public reviewed-profile gap: **88** until candidates are actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.
