@@ -76,9 +76,9 @@ async function replaceIndexedHistory(
 export async function readPeopleGroupsHistory(pgid: string): Promise<MissionHistoryObservation[]> {
   if (!canUseIndexedDb()) return structuredClone(memory.get(pgid) ?? []);
   const values = await readIndexedHistory(pgid);
-  if (!values.length) return [];
-  const latest = values[0]!;
-  return mergeMissionHistoryObservations(values.slice(1), latest, MISSION_HISTORY_LIMIT_PER_RECORD);
+  return values
+    .sort((left, right) => Date.parse(right.firstObservedAt) - Date.parse(left.firstObservedAt))
+    .slice(0, MISSION_HISTORY_LIMIT_PER_RECORD);
 }
 
 export async function recordPeopleGroupsObservation(record: PeopleProfileRecord): Promise<MissionHistoryObservation[]> {
