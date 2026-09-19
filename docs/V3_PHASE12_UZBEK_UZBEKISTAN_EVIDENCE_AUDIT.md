@@ -6,7 +6,7 @@
 
 ## Result
 
-No material contradiction was found. The live Phase 12 diagnostic passed current identity and GSEC 0–3 checks.
+No material contradiction was found. The first automated live diagnostic found one display-name anchor mismatch only: the draft used `Uzbek` while the current API `NmDisp` is `Uzbeks`. PEID 24324, PGID PG024324, Uzbekistan, `uzn` and GSEC 3 all matched. The draft identity anchor and identity wording were corrected to the exact live display name, and the subsequent live diagnostic passed the full identity and GSEC-scope checks.
 
 ## Evidence checked
 
