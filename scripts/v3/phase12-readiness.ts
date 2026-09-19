@@ -62,6 +62,7 @@ for (const script of [
   "v3:phase12-editorial-queue",
   "v3:phase12-editorial-scaffold",
   "v3:phase12-review-candidate",
+  "v3:phase12-review-workbench",
 ]) {
   if (!pkg.scripts?.[script]) throw new Error(`Phase 12 package script is not wired: ${script}.`);
 }

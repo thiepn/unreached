@@ -67,6 +67,17 @@ npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json --publish -
 ```
 
 Both an explicit human reviewer role and `--attest-review-complete` are required. Automated/mechanical/AI reviewer roles are rejected. The command writes the reviewed profile, updates the production manifest and public context count, then removes the draft candidate so duplicate identities fail closed.
+## Batch maintainer review packet
+
+To check every current draft against the live PeopleGroups identity boundary and generate one consolidated maintainer checklist, run:
+
+```bash
+npm run v3:phase12-review-workbench
+```
+
+This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks and the full reviewed-profile policy in shadow mode.
+
+Batch review never sets review metadata and never publishes. Final publication remains a deliberate one-candidate-at-a-time action through the guarded `v3:phase12-review-candidate -- --publish ... --attest-review-complete` path so each human attestation stays explicit and attributable.
 ## Maintainer publication boundary
 
 A candidate becomes publishable only after a maintainer checks the actual evidence and records the normal review contract:
