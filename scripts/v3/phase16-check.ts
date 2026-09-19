@@ -195,7 +195,7 @@ if (!claimEdge || !citationEdge || claimEdge.evidenceKind !== "reviewed-editoria
 
 if (graph.sourceIds.includes("joshua-project-api")) throw new Error("Phase 16 must not silently insert no-store Joshua Project comparison data.");
 for (const forbidden of ["similarity", "embedding", "score", "ranked"] as const) {
-  if (graph.edges.some((edge) => edge.relation.includes(forbidden as never))) throw new Error("Phase 16 graph leaked forbidden relation semantics: " + forbidden);
+  if (graph.edges.some((edge) => String(edge.relation).includes(forbidden))) throw new Error("Phase 16 graph leaked forbidden relation semantics: " + forbidden);
 }
 
 const centerNeighbors = knowledgeGraphNeighbors(graph, graph.focusNodeId);
