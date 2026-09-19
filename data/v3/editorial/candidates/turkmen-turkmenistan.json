@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-turkmen-turkmenistan-api",
+      "sourceId": "peoplegroups-pgid-PG024639-api",
+      "title": "PeopleGroups.org API — Turkmen of Turkmenistan (PG024639)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG024639",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Live Phase 12 research registry: PEID 24639; Turkmen in Turkmenistan; Turkmen (tuk); Islam - Sunni; GSEC 3; Engaged; congregations exist; dispersed church planting; Bible and Jesus Film Available; 5 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-turkmen-turkmenistan",
+      "sourceId": "peoplegroups-profile-PG024639",
+      "title": "PeopleGroups.org — Turkmen of Turkmenistan (PGID PG024639)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg024639/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Public profile fast facts: Turkmen in Turkmenistan, Turkmen (tuk), Sunni Islam, and provider mission/resource presentation."
+    },
+    {
+      "id": "ctx-source:glottolog-turkmen",
+      "sourceId": "glottolog-turk1304",
+      "title": "Glottolog 5.3 — Turkmen",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/turk1304",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Turkmen spoken L1 language entry: glottocode turk1304, ISO 639-3 tuk; national statutory language status and countries including Turkmenistan."
+    },
+    {
+      "id": "ctx-source:wiley-clement-turkmen-2014",
+      "sourceId": "wiley-nana-2014-turkmen-identity",
+      "title": "Articulating national identity in Turkmenistan: inventing tradition through myth, cult and language",
+      "publisher": "Wiley / Nations and Nationalism",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1111/nana.12052",
+      "sourceType": "academic",
+      "publicationDate": "2014-06-15",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Abstract and article: post-1991 state use of myth, public texts and language policy in constructing and articulating national identity in Turkmenistan; the study also notes citizen participation in cultural production."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:24639",
+    "peid": 24639,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 24639,
+      "verifiedPeopleName": "Turkmen",
+      "pgidAnchors": [
+        "PG024639"
+      ],
+      "countryIso3Anchors": [
+        "TKM"
+      ],
+      "languageIso6393Anchors": [
+        "tuk"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:52:53.050Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Turkmen in Turkmenistan and ties the record to Turkmen (tuk). Glottolog independently identifies Turkmen as the national statutory language, while scholarship documents how language policy and public cultural production were used in post-independence state nation-building.",
+      "claimIds": [
+        "claim:turkmen-turkmenistan-identity",
+        "claim:turkmen-language",
+        "claim:turkmen-modern-identity-policy-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Islam - Sunni' label for this record. It is source-level mission context and is not generalized into a claim about the belief or practice of every Turkmen person.",
+      "claimIds": [
+        "claim:turkmen-turkmenistan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Turkmen language, national history and Sunni identity are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 3 and less than 2% evangelical presence with dispersed church-planting activity, while reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:turkmen-turkmenistan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resource availability remains a source field",
+        "summary": "The structured record reports Bible and Jesus Film availability. Availability is not treated as evidence of universal distribution, comprehension or use.",
+        "claimIds": [
+          "claim:turkmen-turkmenistan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:turkmen-turkmenistan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG024639 reports PEID 24639, display name Turkmen, country Turkmenistan and primary language Turkmen (tuk).",
+        "citationIds": [
+          "ctx-source:peoplegroups-turkmen-turkmenistan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:turkmen-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "Glottolog identifies Turkmen with glottocode turk1304 and ISO 639-3 code tuk, lists Turkmenistan among its countries and records Turkmen as a statutory national language.",
+        "citationIds": [
+          "ctx-source:glottolog-turkmen"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Language status is an institutional statement and does not imply exclusive Turkmen-language use by every person."
+      },
+      {
+        "id": "claim:turkmen-modern-identity-policy-context",
+        "dimension": "history",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Research on post-1991 Turkmenistan documents state use of myth, public texts and language policy in national identity construction, while the language itself has statutory national status.",
+        "citationIds": [
+          "ctx-source:wiley-clement-turkmen-2014",
+          "ctx-source:glottolog-turkmen"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is historical institutional context about state cultural policy. It is not a claim that every Turkmen person shares one political outlook or personal identity."
+      },
+      {
+        "id": "claim:turkmen-turkmenistan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Islam - Sunni' as the aggregate primary-religion label for PG024639.",
+        "citationIds": [
+          "ctx-source:peoplegroups-turkmen-turkmenistan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Turkmen person's belief or practice."
+      },
+      {
+        "id": "claim:turkmen-turkmenistan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 3, less than 2% evangelical presence and dispersed church-planting activity for PG024639; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-turkmen-turkmenistan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:turkmen-turkmenistan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and five total evangelical resources for PG024639.",
+        "citationIds": [
+          "ctx-source:peoplegroups-turkmen-turkmenistan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-turkmen-turkmenistan-api",
+      "ctx-source:peoplegroups-turkmen-turkmenistan",
+      "ctx-source:glottolog-turkmen",
+      "ctx-source:wiley-clement-turkmen-2014"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

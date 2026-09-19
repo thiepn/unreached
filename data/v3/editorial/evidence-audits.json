@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "status": "pre-review-only",
+  "generatedAt": "2026-09-19T21:10:00Z",
+  "notice": "These AI-assisted evidence audits are pre-review aids only. They are not maintainer approval, do not complete the publication checklist, and do not change the public reviewed-profile count.",
+  "entries": [
+    {
+      "candidate": "nateni-benin.json",
+      "document": "docs/V3_PHASE12_NATENI_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "hausa-benin.json",
+      "document": "docs/V3_PHASE12_HAUSA_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "anii-benin.json",
+      "document": "docs/V3_PHASE12_ANII_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "weme-benin.json",
+      "document": "docs/V3_PHASE12_WEME_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "afar-ethiopia.json",
+      "document": "docs/V3_PHASE12_AFAR_ETHIOPIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "eastern-baloch-pakistan.json",
+      "document": "docs/V3_PHASE12_EASTERN_BALOCH_PAKISTAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "tamajeq-mali.json",
+      "document": "docs/V3_PHASE12_TAMAJEQ_MALI_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "fur-sudan.json",
+      "document": "docs/V3_PHASE12_FUR_SUDAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "kabyle-algeria.json",
+      "document": "docs/V3_PHASE12_KABYLE_ALGERIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "brahui-pakistan.json",
+      "document": "docs/V3_PHASE12_BRAHUI_PAKISTAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "uzbek-uzbekistan.json",
+      "document": "docs/V3_PHASE12_UZBEK_UZBEKISTAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "saho-eritrea.json",
+      "document": "docs/V3_PHASE12_SAHO_ERITREA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "dendi-benin.json",
+      "document": "docs/V3_PHASE12_DENDI_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "foodo-benin.json",
+      "document": "docs/V3_PHASE12_FOODO_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "gun-benin.json",
+      "document": "docs/V3_PHASE12_GUN_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "aizo-benin.json",
+      "document": "docs/V3_PHASE12_AIZO_BENIN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "kham-tibetans-china.json",
+      "document": "docs/V3_PHASE12_KHAM_TIBETANS_CHINA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "turkmen-turkmenistan.json",
+      "document": "docs/V3_PHASE12_TURKMEN_TURKMENISTAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "acehnese-indonesia.json",
+      "document": "docs/V3_PHASE12_ACEHNESE_INDONESIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "hararghe-oromo-ethiopia.json",
+      "document": "docs/V3_PHASE12_HARARGHE_OROMO_ETHIOPIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "japanese-japan.json",
+      "document": "docs/V3_PHASE12_JAPANESE_JAPAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "kyrgyz-kyrgyzstan.json",
+      "document": "docs/V3_PHASE12_KYRGYZ_KYRGYZSTAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "sunda-indonesia.json",
+      "document": "docs/V3_PHASE12_SUNDA_INDONESIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "thai-thailand.json",
+      "document": "docs/V3_PHASE12_THAI_THAILAND_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "chechens-russian-federation.json",
+      "document": "docs/V3_PHASE12_CHECHENS_RUSSIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "south-azeri-iran.json",
+      "document": "docs/V3_PHASE12_SOUTH_AZERI_IRAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "kashmiri-india.json",
+      "document": "docs/V3_PHASE12_KASHMIRI_INDIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "malays-malaysia.json",
+      "document": "docs/V3_PHASE12_MALAYS_MALAYSIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    }
+  ]
+}

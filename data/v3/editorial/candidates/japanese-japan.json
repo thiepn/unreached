@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-japanese-japan-api",
+      "sourceId": "peoplegroups-pgid-PG007559-api",
+      "title": "PeopleGroups.org API — Japanese of Japan (PG007559)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG007559",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Live Phase 12 research registry: PEID 7559; Japanese in Japan; Japanese (jpn); Ethnoreligion - Shinbutso-shugo; GSEC 1; Engaged; congregations exist; no churches planted; Bible and Jesus Film Available; 5 total resources; source updated 2026-08-12."
+    },
+    {
+      "id": "ctx-source:peoplegroups-japanese-japan",
+      "sourceId": "peoplegroups-profile-PG007559",
+      "title": "PeopleGroups.org — Japanese of Japan (PGID PG007559)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg007559/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Public profile fast facts and provider mission/resource presentation for Japanese in Japan. Structured API fields remain the current mission-status boundary."
+    },
+    {
+      "id": "ctx-source:glottolog-japanese",
+      "sourceId": "glottolog-nucl1643",
+      "title": "Glottolog 5.3 — Japanese",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/nucl1643",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Japanese spoken L1 language entry: glottocode nucl1643, ISO 639-3 jpn; current source labels Japanese a de facto national language."
+    },
+    {
+      "id": "ctx-source:cambridge-gottlieb-japan-identity",
+      "sourceId": "cambridge-language-society-japan-ch3",
+      "title": "Language and national identity: evolving views",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/language-and-society-in-japan/language-and-national-identity-evolving-views/663B4982B668140F093E8175CC122B5C",
+      "sourceType": "academic",
+      "publicationDate": "2005-01-01",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Chapter on historical ideological links between Japanese language and cultural/national identity, including modern standardization and earlier regional dialect diversity."
+    },
+    {
+      "id": "ctx-source:cambridge-okamoto-standard-japanese",
+      "sourceId": "cambridge-social-life-japanese-ch1",
+      "title": "Standard Japanese and its others: Building the national language",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/social-life-of-the-japanese-language/standard-japanese-and-its-others-building-the-national-language/E2D7765976007CAA6A6783F1B2DABCB3",
+      "sourceType": "academic",
+      "publicationDate": "2016-08-04",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Historical account of Standard Japanese construction and promotion through modern national-language policy, including regional/social varieties obscured by a single-language national narrative."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:7559",
+    "peid": 7559,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 7559,
+      "verifiedPeopleName": "Japanese",
+      "pgidAnchors": [
+        "PG007559"
+      ],
+      "countryIso3Anchors": [
+        "JPN"
+      ],
+      "languageIso6393Anchors": [
+        "jpn"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T20:07:17.329Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Japanese in Japan and ties the record to Japanese (jpn). Glottolog independently identifies Japanese as a national language, while scholarship documents both the historical construction of Standard Japanese and the persistence of regional and social linguistic diversity.",
+      "claimIds": [
+        "claim:japanese-japan-identity",
+        "claim:japanese-language",
+        "claim:japanese-standardization-diversity-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Ethnoreligion - Shinbutso-shugo' label for this record. It is retained as source-level mission context and is not generalized into a statement about the belief or practice of every Japanese person.",
+      "claimIds": [
+        "claim:japanese-japan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Japanese nationality, language standardization, cultural identity and the provider religion label are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 1 and less than 2% evangelical presence with no recent church-planting activity, while separately reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:japanese-japan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources remain narrower than actual access",
+        "summary": "The source reports Bible and Jesus Film availability. Those fields are not converted into claims about distribution, comprehension or use across Japan.",
+        "claimIds": [
+          "claim:japanese-japan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:japanese-japan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG007559 reports PEID 7559, display name Japanese, country Japan and primary language Japanese (jpn).",
+        "citationIds": [
+          "ctx-source:peoplegroups-japanese-japan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:japanese-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "Glottolog identifies Japanese with glottocode nucl1643 and ISO 639-3 code jpn and records Japanese as a de facto national language.",
+        "citationIds": [
+          "ctx-source:glottolog-japanese"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "National-language status is an institutional language-level statement and does not imply a uniform personal identity or exclusive language use."
+      },
+      {
+        "id": "claim:japanese-standardization-diversity-context",
+        "dimension": "history",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Scholarship on modern Japan documents the historical construction and promotion of Standard Japanese as a national language while also describing regional and social varieties that are obscured by a single-language national narrative.",
+        "citationIds": [
+          "ctx-source:cambridge-gottlieb-japan-identity",
+          "ctx-source:cambridge-okamoto-standard-japanese"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is institutional and linguistic history, not a claim that every Japanese person relates to language or national identity in the same way."
+      },
+      {
+        "id": "claim:japanese-japan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Ethnoreligion - Shinbutso-shugo' as the aggregate primary-religion label for PG007559.",
+        "citationIds": [
+          "ctx-source:peoplegroups-japanese-japan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Japanese person's belief or practice."
+      },
+      {
+        "id": "claim:japanese-japan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG007559; it separately reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-japanese-japan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:japanese-japan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and five total evangelical resources for PG007559.",
+        "citationIds": [
+          "ctx-source:peoplegroups-japanese-japan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-japanese-japan-api",
+      "ctx-source:peoplegroups-japanese-japan",
+      "ctx-source:glottolog-japanese",
+      "ctx-source:cambridge-gottlieb-japan-identity",
+      "ctx-source:cambridge-okamoto-standard-japanese"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

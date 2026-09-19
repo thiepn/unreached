@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-brahui-pakistan",
+      "sourceId": "peoplegroups-profile-PG006335",
+      "title": "PeopleGroups.org — Brahui of Pakistan (PGID PG006335)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/PG006335/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Current profile fast facts and resource sections: Brahui in Pakistan, Brahui (brh), aggregate Sunni Islam label, GSEC/SPI presentation, JESUS film listing and Bible-resource surfaces. Live PEID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-brahui",
+      "sourceId": "glottolog-brah1256",
+      "title": "Glottolog 5.3 — Brahui",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/glottolog?iso=brh",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Brahui language index: glottocode brah1256, ISO 639-3 brh, Dravidian classification."
+    },
+    {
+      "id": "ctx-source:iranica-brahui",
+      "sourceId": "iranica-brahui-1989",
+      "title": "BRAHUI",
+      "publisher": "Encyclopaedia Iranica",
+      "url": "https://www.iranicaonline.org/articles/brahui/",
+      "sourceType": "reference",
+      "publicationDate": "1989-12-15",
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Ethnography and language overview: Brahui communities principally in Pakistani Baluchistan; Dravidian basis of Brahui; historical discussion of settlement, literature and multilingual language use."
+    },
+    {
+      "id": "ctx-source:iranica-frontier-languages",
+      "sourceId": "iranica-indo-iranian-frontier-languages",
+      "title": "INDO-IRANIAN FRONTIER LANGUAGES",
+      "publisher": "Encyclopaedia Iranica",
+      "url": "https://www.iranicaonline.org/articles/indo-iranian-frontier-languages-and-the-influence-of-persian/",
+      "sourceType": "reference",
+      "publicationDate": "2006-11-15",
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Overview of Pakistan's western/northern multilingual setting, including Brahui alongside Balochi, Pashto, Urdu and other regional languages; used as context for language contact rather than as an ethnic generalization."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:6335",
+    "peid": 6335,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 6335,
+      "verifiedPeopleName": "Brahui",
+      "pgidAnchors": [
+        "PG006335"
+      ],
+      "countryIso3Anchors": [
+        "PAK"
+      ],
+      "languageIso6393Anchors": [
+        "brh"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:52:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Brahui in Pakistan and ties the record to Brahui (brh). Glottolog and Encyclopaedia Iranica independently identify Brahui as a Dravidian language and document a long multilingual setting in Pakistani Baluchistan.",
+      "claimIds": [
+        "claim:brahui-pakistan-identity",
+        "claim:brahui-language",
+        "claim:brahui-regional-language-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Sunni Islam label for this source record. It remains a provider-level mission-research classification and is not a statement about every Brahui person's belief or practice.",
+      "claimIds": [
+        "claim:brahui-pakistan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate keeps the mission classification tied to PeopleGroups.org fields. Brahui ethnicity, multilingualism, regional history and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG006335 below the 2% evangelical threshold with GSEC 1 and no recent church-planting activity while its SPI presentation is Engaged yet Unreached.",
+        "claimIds": [
+          "claim:brahui-pakistan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources stay source-specific",
+        "summary": "The provider currently lists a Brahui JESUS film and Bible-resource surfaces; the candidate does not infer how widely any resource is distributed, understood or used.",
+        "claimIds": [
+          "claim:brahui-pakistan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:brahui-pakistan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG006335 identifies the people-group record as Brahui in Pakistan and lists Brahui (brh) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-brahui-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; the guarded maintainer review must re-fetch the live record and verify PEID before publication."
+      },
+      {
+        "id": "claim:brahui-language",
+        "dimension": "identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog and Encyclopaedia Iranica independently classify Brahui as a Dravidian language; Glottolog assigns ISO 639-3 code brh and glottocode brah1256.",
+        "citationIds": [
+          "ctx-source:glottolog-brahui",
+          "ctx-source:iranica-brahui"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:brahui-regional-language-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Reference scholarship places Brahui in a historically multilingual region where Brahui, Balochi, Urdu and other languages have interacted; older ethnographic descriptions document substantial bilingualism, so a single primary-language label should not be read as exclusive language use.",
+        "citationIds": [
+          "ctx-source:iranica-brahui",
+          "ctx-source:iranica-frontier-languages"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The detailed bilingualism evidence in the Iranica Brahui article is historical and is not presented as a current percentage or as universal for every Brahui community."
+      },
+      {
+        "id": "claim:brahui-pakistan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Brahui of Pakistan profile reports Sunni Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-brahui-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG006335, not a statement about every Brahui person's belief or practice."
+      },
+      {
+        "id": "claim:brahui-pakistan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports less than 2% evangelical presence and no recent church-planting activity for PG006335, and its profile presents the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-brahui-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:brahui-pakistan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists one JESUS film on its Brahui resource surface and provides linked Bible-resource surfaces, while its Faith Comes by Hearing section currently lists no Bible resource entry for the language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-brahui-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "These are provider resource-surface observations; they do not establish overall Scripture availability, distribution, comprehension or use."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-brahui-pakistan",
+      "ctx-source:glottolog-brahui",
+      "ctx-source:iranica-brahui",
+      "ctx-source:iranica-frontier-languages"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

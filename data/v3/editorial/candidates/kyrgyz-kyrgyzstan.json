@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-kyrgyz-kyrgyzstan-api",
+      "sourceId": "peoplegroups-pgid-PG024357-api",
+      "title": "PeopleGroups.org API — Kyrgyz of Kyrgyzstan (PG024357)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG024357",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Live Phase 12 research registry: PEID 24357; Kyrgyz in Kyrgyzstan; Kyrgyz (kir); Islam - Sunni; GSEC 3; Engaged; congregations exist; dispersed church planting; Bible and Jesus Film Available; 5 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-kyrgyz-kyrgyzstan",
+      "sourceId": "peoplegroups-profile-PG024357",
+      "title": "PeopleGroups.org — Kyrgyz of Kyrgyzstan (PGID PG024357)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg024357/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Public profile fast facts and provider mission/resource presentation for Kyrgyz in Kyrgyzstan."
+    },
+    {
+      "id": "ctx-source:glottolog-kyrgyz",
+      "sourceId": "glottolog-kirg1245",
+      "title": "Glottolog 5.3 — Kirghiz",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/kirg1245",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Kirghiz/Kyrgyz spoken L1 language entry: glottocode kirg1245, ISO 639-3 kir; statutory national-language status in Kyrgyzstan."
+    },
+    {
+      "id": "ctx-source:degruyter-jamasheva-kyrgyz-policy",
+      "sourceId": "degruyter-9783110720228-013",
+      "title": "Language Policy in the Kyrgyz Republic: Gains and Losses",
+      "publisher": "De Gruyter",
+      "url": "https://doi.org/10.1515/9783110720228-013",
+      "sourceType": "academic",
+      "publicationDate": "2023-01-01",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Chapter analyzing Kyrgyz-language processes, policy and government directives across Soviet and post-Soviet periods, including language development and census context."
+    },
+    {
+      "id": "ctx-source:cambridge-reichl-manas",
+      "sourceId": "cambridge-oralities-kirghiz-manas",
+      "title": "“The true nature of the aoidos”: the Kirghiz singer of tales and the epic of Manas",
+      "publisher": "Cambridge University Press / Arc Humanities Press",
+      "url": "https://www.cambridge.org/core/books/abs/john-miles-foleys-world-of-oralities/true-nature-of-the-aoidos-the-kirghiz-singer-of-tales-and-the-epic-of-manas/F9D9F8114523A7E576C6915A663B2FE6",
+      "sourceType": "academic",
+      "publicationDate": "2026-06-30",
+      "accessedAt": "2026-09-19T20:07:17.329Z",
+      "locator": "Chapter specifically examining Kyrgyz singers of tales and the epic of Manas within oral-tradition scholarship."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:24357",
+    "peid": 24357,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 24357,
+      "verifiedPeopleName": "Kyrgyz",
+      "pgidAnchors": [
+        "PG024357"
+      ],
+      "countryIso3Anchors": [
+        "KGZ"
+      ],
+      "languageIso6393Anchors": [
+        "kir"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T20:07:17.329Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Kyrgyz in Kyrgyzstan and ties the record to Kyrgyz (kir). Glottolog independently records Kyrgyz as a statutory national language, while recent scholarship documents both the institutional history of language policy and the Manas epic within Kyrgyz oral-tradition studies.",
+      "claimIds": [
+        "claim:kyrgyz-kyrgyzstan-identity",
+        "claim:kyrgyz-language",
+        "claim:kyrgyz-language-policy-context",
+        "claim:kyrgyz-manas-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Islam - Sunni' label for this record. It is retained as source context and is not generalized into a statement about every Kyrgyz person's belief or practice.",
+      "claimIds": [
+        "claim:kyrgyz-kyrgyzstan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Kyrgyz language policy, oral tradition and Sunni identity are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 3 and less than 2% evangelical presence with dispersed church-planting activity, while reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:kyrgyz-kyrgyzstan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resource availability remains a source field",
+        "summary": "The source reports Bible and Jesus Film availability. Availability is not treated as evidence of universal distribution, comprehension or use.",
+        "claimIds": [
+          "claim:kyrgyz-kyrgyzstan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:kyrgyz-kyrgyzstan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG024357 reports PEID 24357, display name Kyrgyz, country Kyrgyzstan and primary language Kyrgyz (kir).",
+        "citationIds": [
+          "ctx-source:peoplegroups-kyrgyz-kyrgyzstan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:kyrgyz-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "Glottolog identifies Kirghiz/Kyrgyz with glottocode kirg1245 and ISO 639-3 code kir and records Kyrgyz as a statutory national language in Kyrgyzstan.",
+        "citationIds": [
+          "ctx-source:glottolog-kyrgyz"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "National-language status is institutional context and does not imply exclusive language use or one uniform national identity."
+      },
+      {
+        "id": "claim:kyrgyz-language-policy-context",
+        "dimension": "history",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "A 2023 study of language policy in the Kyrgyz Republic traces major Soviet and post-Soviet policies, government directives and social processes that shaped the development and public functions of Kyrgyz.",
+        "citationIds": [
+          "ctx-source:degruyter-jamasheva-kyrgyz-policy"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": "This is institutional language-policy history, not a claim about an individual's political or linguistic preferences."
+      },
+      {
+        "id": "claim:kyrgyz-manas-context",
+        "dimension": "culture",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Recent oral-tradition scholarship specifically examines Kyrgyz singers of tales and performance of the epic of Manas as a literary and performative tradition.",
+        "citationIds": [
+          "ctx-source:cambridge-reichl-manas"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The presence of a major oral tradition is cultural-historical context and does not imply that every Kyrgyz person performs, knows or relates to it in the same way."
+      },
+      {
+        "id": "claim:kyrgyz-kyrgyzstan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Islam - Sunni' as the aggregate primary-religion label for PG024357.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kyrgyz-kyrgyzstan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Kyrgyz person's belief or practice."
+      },
+      {
+        "id": "claim:kyrgyz-kyrgyzstan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 3, less than 2% evangelical presence and dispersed church-planting activity for PG024357; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kyrgyz-kyrgyzstan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:kyrgyz-kyrgyzstan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and five total evangelical resources for PG024357.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kyrgyz-kyrgyzstan-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-kyrgyz-kyrgyzstan-api",
+      "ctx-source:peoplegroups-kyrgyz-kyrgyzstan",
+      "ctx-source:glottolog-kyrgyz",
+      "ctx-source:degruyter-jamasheva-kyrgyz-policy",
+      "ctx-source:cambridge-reichl-manas"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

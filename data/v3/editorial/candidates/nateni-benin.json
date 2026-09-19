@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-nateni-api",
+      "sourceId": "peoplegroups-pgid-PG012345",
+      "title": "PeopleGroups.org API documentation — Nateni of Benin example record",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/using-the-api/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-17T15:45:00Z",
+      "locator": "Single-record API example for PG012345 / PEID 12345, including Benin, Nateni (ntm), GSEC, evangelical level, engagement and resource fields"
+    },
+    {
+      "id": "ctx-source:glottolog-nateni",
+      "sourceId": "glottolog-nate1242",
+      "title": "Glottolog 5.3 — Nateni",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/nate1242",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-17T15:45:00Z",
+      "locator": "Nateni language entry: glottocode nate1242, ISO 639-3 ntm, country Benin"
+    },
+    {
+      "id": "ctx-source:sil-natemba-kinship",
+      "sourceId": "sil-togo-benin-58766",
+      "title": "Système de parenté des Natemba dans le nord-ouest du Bénin",
+      "publisher": "SIL Togo-Bénin / SIL International",
+      "url": "https://togo-benin.sil.org/fr/resources/archives/58766",
+      "sourceType": "academic",
+      "publicationDate": "2014-01-01",
+      "accessedAt": "2026-09-17T15:45:00Z",
+      "locator": "Abstract and publication metadata describing Natemba communities in north-western Benin and a study of social structure, kinship and marriage"
+    },
+    {
+      "id": "ctx-source:benin-nateni-literacy",
+      "sourceId": "benin-government-literacy-2018",
+      "title": "Campagne expérimentale d’alphabétisation au profit des artisans",
+      "publisher": "Gouvernement de la République du Bénin",
+      "url": "https://www.gouv.bj/article/173/campagne-experimentale-dalphabetisation-au-profit-des-artisans/",
+      "sourceType": "official",
+      "publicationDate": "2018-02-09",
+      "accessedAt": "2026-09-17T15:45:00Z",
+      "locator": "Government announcement listing nateni among the 11 languages used at launch because teaching materials were available"
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12345",
+    "peid": 12345,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12345,
+      "verifiedPeopleName": "Nateni",
+      "pgidAnchors": ["PG012345"],
+      "countryIso3Anchors": ["BEN"],
+      "languageIso6393Anchors": ["ntm"],
+      "matchEvidence": ["provider-peid", "provider-pgid", "name", "country", "language"],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-17T15:45:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The Nateni people-group record in Benin is tied to the Nateni language (ISO 639-3 ntm). Independent linguistic and anthropological references also place Nateni/Natemba communities in Benin, including the north-west of the country.",
+      "claimIds": ["claim:nateni-identity", "claim:nateni-language", "claim:nateni-social-context"]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org assigns an aggregate primary-religion label to the Nateni record. That source classification is useful mission-research context but must not be treated as a statement about every Nateni person’s belief, practice or identity.",
+      "claimIds": ["claim:nateni-religion-context"]
+    },
+    "whyUnreachedIntro": "This candidate explains the current unreached classification only from documented PeopleGroups.org mission-status evidence. It does not infer spiritual resistance from Nateni culture, language, ethnicity or religion.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently classifies PG012345 as GSEC 1 and reports less than 2% evangelical presence with no active church planting activity in the source’s recent-activity window.",
+        "claimIds": ["claim:nateni-gsec"]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported Christian resources are not absent",
+        "summary": "The source record reports Bible availability while also reporting that a Jesus Film resource is not available, so this candidate does not describe the community as having no Christian-language resources at all.",
+        "claimIds": ["claim:nateni-resources"]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:nateni-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The PeopleGroups.org API documentation currently uses PG012345 as its Nateni example record and reports PEID 12345, country Benin, display name Nateni and primary language Nateni (ntm).",
+        "citationIds": ["ctx-source:peoplegroups-nateni-api"],
+        "asOf": "2026-09-17",
+        "reviewAfter": "2027-03-17",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:nateni-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Nateni as a spoken L1 language of Benin with ISO 639-3 code ntm and glottocode nate1242.",
+        "citationIds": ["ctx-source:glottolog-nateni"],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:nateni-social-context",
+        "dimension": "social-identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "A 2014 SIL Togo-Bénin anthropology paper explicitly studies Natemba communities in north-western Benin and focuses on social structure, kinship relationships and marriage practices.",
+        "citationIds": ["ctx-source:sil-natemba-kinship"],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The paper provides community-level anthropological context; it should not be generalized to every individual or household."
+      },
+      {
+        "id": "claim:nateni-literacy-context",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "In 2018, the Government of Benin listed nateni among the eleven languages used at the launch of an experimental adult-literacy campaign and said teaching materials were already available in those languages.",
+        "citationIds": ["ctx-source:benin-nateni-literacy"],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:nateni-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Nateni example record lists the primary religion as 'Ethnoreligion - Animism.'",
+        "citationIds": ["ctx-source:peoplegroups-nateni-api"],
+        "asOf": "2026-09-17",
+        "reviewAfter": "2027-03-17",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is an aggregate provider classification for PG012345, not a claim about every Nateni person’s beliefs or practices."
+      },
+      {
+        "id": "claim:nateni-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1 for PG012345, with the brief label 'Less than 2% Evangelical, No Active CP Activity'; the same record reports that congregations exist and that the people group is engaged.",
+        "citationIds": ["ctx-source:peoplegroups-nateni-api"],
+        "asOf": "2026-09-17",
+        "reviewAfter": "2027-03-17",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:nateni-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Nateni example record reports Bible availability as 'Available', Jesus Film availability as 'Not Available', and three total evangelical resources.",
+        "citationIds": ["ctx-source:peoplegroups-nateni-api"],
+        "asOf": "2026-09-17",
+        "reviewAfter": "2027-03-17",
+        "sensitivity": "public",
+        "interpretationNote": "These are provider availability labels; they do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-nateni-api",
+      "ctx-source:glottolog-nateni",
+      "ctx-source:sil-natemba-kinship",
+      "ctx-source:benin-nateni-literacy"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "npm run geography:build",
     "dev": "vite",
-    "build": "npm run typecheck && npm run v3:phase1-check && npm run v3:phase2-check && npm run v3:phase3-check && npm run v3:phase4-check && npm run v3:phase5-check && npm run v3:phase6-check && npm run v3:phase7-check && npm run v3:phase8-check && npm run v3:phase9-check && npm run v3:phase10-check && npm run v3:phase11-check && npm run data:check && npm run peoplegroups:check && npm run peoplegroups:runtime-check && npm run peoplegroups:visible-check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run visualization:live-check && npm run country:check && npm run people:check && npm run comprehension:check && npm run context:check && npm run editorial-expansion:check && npm run prayer:check && npm run prayer-practice:check && npm run prayer-rotation:check && npm run prayer-session:check && npm run offline:check && npm run sync:check && npm run instant-data:check && npm run language:check && npm run discovery:check && npm run editorial-discovery:check && npm run navigation:check && npm run accessibility:check && npm run css:check && npm run operations:check && npm run release:check && npm run phase5:check && vite build && npm run offline:dist && npm run release:dist",
+    "build": "npm run typecheck && npm run v3:phase1-check && npm run v3:phase2-check && npm run v3:phase3-check && npm run v3:phase4-check && npm run v3:phase5-check && npm run v3:phase6-check && npm run v3:phase7-check && npm run v3:phase8-check && npm run v3:phase9-check && npm run v3:phase10-check && npm run v3:phase11-check && npm run v3:phase12-candidate-check && npm run v3:phase12-readiness && npm run data:check && npm run peoplegroups:check && npm run peoplegroups:runtime-check && npm run peoplegroups:visible-check && npm run geography:build && npm run geography:check && npm run visualization:check && npm run visualization:live-check && npm run country:check && npm run people:check && npm run comprehension:check && npm run context:check && npm run editorial-expansion:check && npm run prayer:check && npm run prayer-practice:check && npm run prayer-rotation:check && npm run prayer-session:check && npm run offline:check && npm run sync:check && npm run instant-data:check && npm run language:check && npm run discovery:check && npm run editorial-discovery:check && npm run navigation:check && npm run accessibility:check && npm run css:check && npm run operations:check && npm run release:check && npm run phase5:check && vite build && npm run offline:dist && npm run release:dist",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "v3:phase1-check": "tsx scripts/v3/phase1-check.ts",
     "v3:phase2-check": "tsx scripts/v3/phase2-check.ts",
@@ -19,6 +19,11 @@
     "v3:phase9-check": "tsx scripts/v3/phase9-check.ts",
     "v3:phase10-check": "tsx scripts/v3/phase10-check.ts",
     "v3:phase11-check": "tsx scripts/v3/phase11-check.ts",
+    "v3:phase12-candidate-check": "tsx scripts/v3/phase12-candidate-check.ts",
+    "v3:phase12-readiness": "tsx scripts/v3/phase12-readiness.ts",
+    "v3:phase12-certify": "tsx scripts/v3/phase12-certify.ts",
+    "v3:phase12-editorial-queue": "tsx scripts/v3/phase12-editorial-queue.ts",
+    "v3:phase12-editorial-scaffold": "tsx scripts/v3/phase12-editorial-scaffold.ts",
     "v3:phase4-visual": "playwright test tests/e2e/v3-phase4-design-system.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:phase5-shell-visual": "playwright test tests/e2e/v3-phase5-shell-navigation.spec.ts --project=chromium --workers=1",
     "v3:phase6-explore-visual": "playwright test tests/e2e/v3-phase6-explore.spec.ts --project=chromium --workers=1",
@@ -27,6 +32,7 @@
     "v3:phase9-discovery-visual": "playwright test tests/e2e/v3-phase9-search-discovery.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:phase10-prayer-visual": "playwright test tests/e2e/v3-phase10-prayer.spec.ts --project=chromium --workers=1",
     "v3:phase11-memory-visual": "playwright test tests/e2e/v3-phase11-personal-memory.spec.ts --project=chromium --project=mobile-chromium --workers=1",
+    "v3:phase12-visual": "playwright test tests/e2e/v3-phase12-certification.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:editorial-preview": "tsx scripts/v3/editorial-preview.ts",
     "data:check": "tsx scripts/data/check.ts",
     "peoplegroups:check": "tsx scripts/data/peoplegroups/check.ts",
@@ -63,11 +69,18 @@
     "release:dist": "tsx scripts/release/check-dist.ts",
     "audit:baseline": "tsx scripts/audit/phase0-baseline.ts",
     "audit:phase0": "npm run audit:baseline && playwright test tests/e2e/phase0-regression.spec.ts tests/e2e/phase0-stress.spec.ts --project=chromium",
-    "e2e": "playwright test",
+    "e2e": "npm run e2e:v3",
     "preview": "vite preview",
     "check": "npm run build",
     "operations:check": "tsx scripts/operations/phase4-check.ts",
-    "audit:licenses": "node scripts/operations/dependency-license-audit.mjs"
+    "audit:licenses": "node scripts/operations/dependency-license-audit.mjs",
+    "e2e:v3": "playwright test --config=playwright.v3.config.ts",
+    "e2e:historical": "playwright test --config=playwright.config.ts",
+    "v3:phase12-review-candidate": "tsx scripts/v3/phase12-review-candidate.ts",
+    "v3:phase12-review-workbench": "tsx scripts/v3/phase12-review-workbench.ts",
+    "v3:phase12-editorial-scaffold-batch": "tsx scripts/v3/phase12-editorial-scaffold-batch.ts",
+    "v3:phase12-live-candidate-audit": "tsx scripts/v3/phase12-live-candidate-audit.ts",
+    "v3:phase12-live-research-batches": "tsx scripts/v3/phase12-live-research-batches.ts"
   },
   "engines": {
     "node": ">=22.12.0"
@@ -76,7 +89,7 @@
     "@fontsource-variable/newsreader": "5.3.0",
     "@fontsource-variable/source-sans-3": "5.3.0",
     "lucide-preact": "1.33.0",
-    "maplibre-gl": "5.24.0",
+    "maplibre-gl": "6.4.1",
     "preact": "10.29.8",
     "zod": "4.4.3"
   },

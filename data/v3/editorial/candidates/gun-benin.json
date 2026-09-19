@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-gun-benin-api",
+      "sourceId": "peoplegroups-pgid-PG012325-api",
+      "title": "PeopleGroups.org API — Gun of Benin (PG012325)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012325",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Live record verified by Phase 12 registry: PEID 12325; Gun in Benin; Gun (guw); GSEC 1; Engaged; congregations exist; Bible and Jesus Film Available; 5 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-gun-benin",
+      "sourceId": "peoplegroups-profile-PG012325",
+      "title": "PeopleGroups.org — Gun of Benin (PGID PG012325)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012325/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Profile fast facts and resources: Gun in Benin, guw, Ethnoreligion, GSEC presentation, JESUS – Gun-Gbe film entry and linked Bible-resource surfaces."
+    },
+    {
+      "id": "ctx-source:glottolog-gun",
+      "sourceId": "glottolog-gunn1250",
+      "title": "Glottolog 5.3 — Gun",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/gunn1250",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Gun entry: glottocode gunn1250, ISO 639-3 guw, countries Benin and Nigeria, developing status."
+    },
+    {
+      "id": "ctx-source:uac-gungbe-expansion",
+      "sourceId": "uac-ligan-gungbe-2015",
+      "title": "Peuples Gun et facteurs d’expansion du gungbè",
+      "publisher": "Université d'Abomey-Calavi / Cahiers d'Etudes Linguistiques",
+      "url": "https://dspace.uac.bj/items/08998342-2804-4822-8b5a-58faaad692e5",
+      "sourceType": "academic",
+      "publicationDate": "2015-01-01",
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Abstract: Gun communities in Benin and Nigeria; gungbe as a cross-border/intercommunication language; discussion of media, literacy, written production and other expansion contexts."
+    },
+    {
+      "id": "ctx-source:glottolog-ofulue-gungbe",
+      "sourceId": "glottolog-ref-551220",
+      "title": "Bilingualism and language maintenance in small language communities: The case of Gungbe",
+      "publisher": "Cambridge Scholars Publishing",
+      "url": "https://glottolog.org/resource/reference/id/551220",
+      "sourceType": "academic",
+      "publicationDate": "2015-01-01",
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Bibliographic record for Ofulue 2015, a sociolinguistically oriented chapter on bilingualism and language maintenance in Gungbe."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12325",
+    "peid": 12325,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12325,
+      "verifiedPeopleName": "Gun",
+      "pgidAnchors": [
+        "PG012325"
+      ],
+      "countryIso3Anchors": [
+        "BEN"
+      ],
+      "languageIso6393Anchors": [
+        "guw"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:10:27Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Gun in Benin and ties the record to Gun (guw). Glottolog independently lists Gun in Benin and Nigeria, while Beninese academic work describes Gungbe as a cross-border language of intercommunication with written, literacy and media domains.",
+      "claimIds": [
+        "claim:gun-benin-identity",
+        "claim:gun-language",
+        "claim:gun-cross-border-language-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Ethnoreligion label for this record. It is retained as source context and is not generalized into a statement about every Gun person's beliefs or practices.",
+      "claimIds": [
+        "claim:gun-benin-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The mission classification is explained only from PeopleGroups.org fields. Cross-border language use, cultural history and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The structured source reports GSEC 1, less than 2% evangelical presence and no recent church planting, while also reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:gun-benin-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported language resources are not a measure of use",
+        "summary": "The provider reports Bible and Jesus Film availability and lists a Gun-Gbe JESUS film; availability does not establish distribution or comprehension across communities.",
+        "claimIds": [
+          "claim:gun-benin-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:gun-benin-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG012325 reports PEID 12325, display name Gun, country Benin and primary language Gun (guw).",
+        "citationIds": [
+          "ctx-source:peoplegroups-gun-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:gun-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Gun with glottocode gunn1250 and ISO 639-3 code guw and lists Benin and Nigeria among its countries.",
+        "citationIds": [
+          "ctx-source:glottolog-gun"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:gun-cross-border-language-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Independent linguistic and Beninese academic sources document Gungbe across Benin and Nigeria and describe it as a cross-border language of intercommunication, with scholarship also examining bilingualism and language maintenance.",
+        "citationIds": [
+          "ctx-source:glottolog-gun",
+          "ctx-source:uac-gungbe-expansion",
+          "ctx-source:glottolog-ofulue-gungbe"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The sociolinguistic literature covers particular border communities and should not be generalized into one current language-use pattern for every Gun community."
+      },
+      {
+        "id": "claim:gun-benin-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports Ethnoreligion as the aggregate primary-religion label for PG012325.",
+        "citationIds": [
+          "ctx-source:peoplegroups-gun-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Gun person's belief or practice."
+      },
+      {
+        "id": "claim:gun-benin-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG012325; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-gun-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields, not a judgment about individuals."
+      },
+      {
+        "id": "claim:gun-benin-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and five total evangelical resources for PG012325; the public profile lists a JESUS – Gun-Gbe film entry and linked Bible-resource surfaces.",
+        "citationIds": [
+          "ctx-source:peoplegroups-gun-benin-api",
+          "ctx-source:peoplegroups-gun-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability labels and links do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-gun-benin-api",
+      "ctx-source:peoplegroups-gun-benin",
+      "ctx-source:glottolog-gun",
+      "ctx-source:uac-gungbe-expansion",
+      "ctx-source:glottolog-ofulue-gungbe"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

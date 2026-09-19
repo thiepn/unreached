@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-saho-eritrea",
+      "sourceId": "peoplegroups-profile-PG011532",
+      "title": "PeopleGroups.org — Saho of Eritrea (PGID PG011532)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/PG011532/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Current profile fast facts and resource sections: Saho in Eritrea, Saho (ssy), aggregate Sunni Islam label, GSEC 1 / Unengaged and Unreached, JESUS film listing and Bible-resource surfaces. Live PEID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-saho",
+      "sourceId": "glottolog-saho1246",
+      "title": "Glottolog 5.3 — Saho",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/saho1246",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Saho spoken L1 language entry: glottocode saho1246, ISO 639-3 ssy; countries Eritrea and Ethiopia."
+    },
+    {
+      "id": "ctx-source:trieste-saho-housing",
+      "sourceId": "eut-atra9-saho-2022",
+      "title": "Housing and dwelling among the Saho-speaking communities of Eritrea and Ethiopia: History, anthropology and lexicography",
+      "publisher": "EUT Edizioni Università di Trieste",
+      "url": "https://www.openstarts.units.it/entities/publication/f5ee80c0-580e-4d89-b7b7-aee64c9b90ff",
+      "sourceType": "academic",
+      "publicationDate": "2022-01-01",
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Field-research volume covering approximately twenty Saho-speaking localities, dwelling/material-culture terminology, sociofamilial aspects and dialect variation; published by University of Trieste Press."
+    },
+    {
+      "id": "ctx-source:saho-grammar-banti-vergari",
+      "sourceId": "sahoarchive-banti-vergari-2005",
+      "title": "A Sketch of Saho Grammar",
+      "publisher": "Journal of Eritrean Studies / authors archived by Saho Archive",
+      "url": "https://www.sahoarchive.org/grammatical-notes/",
+      "sourceType": "academic",
+      "publicationDate": "2005-01-01",
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Bibliographic and introductory material for Banti and Vergari's 2005 grammar sketch: Saho as an East Cushitic language, description of the central/northern variety and Eritrean orthography."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:11532",
+    "peid": 11532,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 11532,
+      "verifiedPeopleName": "Saho",
+      "pgidAnchors": [
+        "PG011532"
+      ],
+      "countryIso3Anchors": [
+        "ERI"
+      ],
+      "languageIso6393Anchors": [
+        "ssy"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:52:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Saho in Eritrea and ties the record to Saho (ssy). Glottolog independently identifies Saho in Eritrea and Ethiopia, while recent interdisciplinary field research documents material-culture, household and dialect variation across multiple Saho-speaking localities.",
+      "claimIds": [
+        "claim:saho-eritrea-identity",
+        "claim:saho-language",
+        "claim:saho-material-culture-context",
+        "claim:saho-dialect-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org provides an aggregate Sunni Islam label for this people-group-in-country record. It is preserved as source context and is not generalized into a statement about every Saho person's belief or practice.",
+      "claimIds": [
+        "claim:saho-eritrea-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current mission classification only from PeopleGroups.org source-native fields. Language, culture, household patterns and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG011532 below the 2% evangelical threshold with GSEC 1 and no recent church-planting activity, and its SPI presentation is Unengaged and Unreached.",
+        "claimIds": [
+          "claim:saho-eritrea-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "A listed film is not the same as broad resource access",
+        "summary": "The provider currently lists one Saho JESUS film and no Faith Comes by Hearing Bible entry on its language resource surface; this draft does not convert either observation into a claim about total Christian-resource access.",
+        "claimIds": [
+          "claim:saho-eritrea-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:saho-eritrea-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG011532 identifies the people-group record as Saho in Eritrea and lists Saho (ssy) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-saho-eritrea"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; the guarded maintainer review must re-fetch the live record and verify PEID before publication."
+      },
+      {
+        "id": "claim:saho-language",
+        "dimension": "identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Saho with glottocode saho1246 and ISO 639-3 code ssy in Eritrea and Ethiopia, while a published grammar sketch describes it as an East Cushitic language and documents a standardized Eritrean orthography.",
+        "citationIds": [
+          "ctx-source:glottolog-saho",
+          "ctx-source:saho-grammar-banti-vergari"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:saho-material-culture-context",
+        "dimension": "culture",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "A 2022 interdisciplinary field-research volume documents construction techniques, dwelling terminology, household activities and sociofamilial aspects among Saho-speaking communities in Eritrea and Ethiopia.",
+        "citationIds": [
+          "ctx-source:trieste-saho-housing"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The research covers multiple localities and explicitly studies variation; it should not be turned into one uniform household description for all Saho people."
+      },
+      {
+        "id": "claim:saho-dialect-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Linguistic and anthropological work documents internal dialect and lexical variation across Saho-speaking communities, so the source's single Saho language code is useful for identification but does not erase local linguistic variation.",
+        "citationIds": [
+          "ctx-source:trieste-saho-housing",
+          "ctx-source:saho-grammar-banti-vergari"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a language-variation statement, not a claim that every locality uses a distinct dialect."
+      },
+      {
+        "id": "claim:saho-eritrea-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Saho of Eritrea profile reports Sunni Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-saho-eritrea"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG011532, not a statement about every Saho person's belief or practice."
+      },
+      {
+        "id": "claim:saho-eritrea-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG011532, and its profile presents the record as Unengaged and Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-saho-eritrea"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:saho-eritrea-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists one JESUS film on its Saho resource surface and currently shows no Faith Comes by Hearing Bible-resource entry for Saho, while also linking to a Bible.com language surface.",
+        "citationIds": [
+          "ctx-source:peoplegroups-saho-eritrea"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider surfaces can differ by partner and do not establish total Scripture availability, distribution, comprehension or use."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-saho-eritrea",
+      "ctx-source:glottolog-saho",
+      "ctx-source:trieste-saho-housing",
+      "ctx-source:saho-grammar-banti-vergari"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

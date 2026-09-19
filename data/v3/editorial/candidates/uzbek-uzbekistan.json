@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-uzbek-uzbekistan",
+      "sourceId": "peoplegroups-profile-PG024324",
+      "title": "PeopleGroups.org — Uzbeks of Uzbekistan (PGID PG024324)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg024324/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Current profile fast facts and resource sections: Uzbek in Uzbekistan, Northern Uzbek (uzn), aggregate Sunni Islam label, GSEC 3 / Engaged yet Unreached, JESUS and Magdalena listings and linked Bible-resource surfaces. Live PEID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-northern-uzbek",
+      "sourceId": "glottolog-nort2690",
+      "title": "Glottolog 5.3 — Northern Uzbek",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/nort2690",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Northern Uzbek spoken L1 language entry: glottocode nort2690, ISO 639-3 uzn; countries include Uzbekistan; language-status note identifies statutory national-language use."
+    },
+    {
+      "id": "ctx-source:cambridge-uzbek-language-policy",
+      "sourceId": "cambridge-nation-building-uzbek-language-policy",
+      "title": "Language policy and ethnic relations in Uzbekistan",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/nationbuilding-in-the-postsoviet-borderlands/language-policy-and-ethnic-relations-in-uzbekistan/909A29E2560CDA94F16FD61A9D17DA88",
+      "sourceType": "academic",
+      "publicationDate": "1998-01-01",
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Historical analysis of the 1989 and 1995 state-language laws and the symbolic/institutional role of Uzbek in post-Soviet nation-building."
+    },
+    {
+      "id": "ctx-source:cambridge-uzbek-historiography",
+      "sourceId": "cambridge-ijas-navoi-uzbek-history",
+      "title": "Inventing a National Writer: The Soviet Celebration of the 1948 Alisher Navoi Jubilee and the Writing of Uzbek History",
+      "publisher": "Cambridge University Press / International Journal of Asian Studies",
+      "url": "https://www.cambridge.org/core/journals/international-journal-of-asian-studies/article/inventing-a-national-writer-the-soviet-celebration-of-the-1948-alisher-navoi-jubilee-and-the-writing-of-uzbek-history/091265FB6DA62AF34B63F954163725D2",
+      "sourceType": "academic",
+      "publicationDate": "2017-07-01",
+      "accessedAt": "2026-09-19T18:52:00Z",
+      "locator": "Study of Soviet-era Uzbek national historiography and the changing representation of Alisher Navoi; used to show that modern national identity narratives have historical institutional development rather than timeless uniformity."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:24324",
+    "peid": 24324,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 24324,
+      "verifiedPeopleName": "Uzbeks",
+      "pgidAnchors": [
+        "PG024324"
+      ],
+      "countryIso3Anchors": [
+        "UZB"
+      ],
+      "languageIso6393Anchors": [
+        "uzn"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:52:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Uzbeks in Uzbekistan and ties the record to Northern Uzbek (uzn). Glottolog independently identifies Northern Uzbek and its national institutional role, while scholarship documents how modern language policy and national historiography developed through the Soviet and post-Soviet periods.",
+      "claimIds": [
+        "claim:uzbek-uzbekistan-identity",
+        "claim:northern-uzbek-language",
+        "claim:uzbek-language-policy-history",
+        "claim:uzbek-historiography-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports an aggregate Sunni Islam label for this people-group-in-country record. It is retained as source context rather than generalized into a claim about the belief or practice of every Uzbek person.",
+      "claimIds": [
+        "claim:uzbek-uzbekistan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current unreached classification is explained only from PeopleGroups.org mission-status evidence. National identity, language policy, history and religion are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG024324 below the 2% evangelical threshold with GSEC 3 and dispersed church-planting activity, while presenting the record as Engaged yet Unreached.",
+        "claimIds": [
+          "claim:uzbek-uzbekistan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources remain narrower than actual access",
+        "summary": "The provider lists Northern Uzbek film and Bible-resource links; this candidate keeps them as availability indicators rather than assuming distribution or use.",
+        "claimIds": [
+          "claim:uzbek-uzbekistan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:uzbek-uzbekistan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG024324 identifies the people-group record as Uzbeks in Uzbekistan and lists Uzbek, Northern (uzn) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-uzbek-uzbekistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; the guarded maintainer review must re-fetch the live record and verify PEID and exact display-name normalization before publication."
+      },
+      {
+        "id": "claim:northern-uzbek-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "Glottolog identifies Northern Uzbek with glottocode nort2690 and ISO 639-3 code uzn, lists Uzbekistan among its countries, and records Uzbek's national statutory status.",
+        "citationIds": [
+          "ctx-source:glottolog-northern-uzbek"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Glottolog's language-status metadata is a language-level statement and does not imply exclusive language use by every Uzbek person."
+      },
+      {
+        "id": "claim:uzbek-language-policy-history",
+        "dimension": "history",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Historical scholarship documents the elevation of Uzbek through the 1989 state-language law and its revised 1995 framework, showing that the language's modern institutional role developed through specific legal and political changes.",
+        "citationIds": [
+          "ctx-source:cambridge-uzbek-language-policy"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": "This is historical institutional context, not a claim about current political preference or individual identity."
+      },
+      {
+        "id": "claim:uzbek-historiography-context",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Research on Uzbek historiography shows that representations of national literary and historical identity were actively reshaped during the Soviet period; this candidate therefore avoids presenting present-day Uzbek identity as a single timeless or uniform cultural narrative.",
+        "citationIds": [
+          "ctx-source:cambridge-uzbek-historiography",
+          "ctx-source:cambridge-uzbek-language-policy"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The synthesis is a guardrail against essentialism and does not make claims about an individual's national or political identity."
+      },
+      {
+        "id": "claim:uzbek-uzbekistan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Uzbek of Uzbekistan profile reports Sunni Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-uzbek-uzbekistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG024324, not a statement about every Uzbek person's belief or practice."
+      },
+      {
+        "id": "claim:uzbek-uzbekistan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 3, less than 2% evangelical presence and dispersed church-planting activity for PG024324, while presenting the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-uzbek-uzbekistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:uzbek-uzbekistan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists JESUS and Magdalena film entries for Uzbek, Northern (uzn) and links Northern Uzbek Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-uzbek-uzbekistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-uzbek-uzbekistan",
+      "ctx-source:glottolog-northern-uzbek",
+      "ctx-source:cambridge-uzbek-language-policy",
+      "ctx-source:cambridge-uzbek-historiography"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

@@ -29,6 +29,7 @@ test("selected country keeps detailed breakdown opt in", async ({ page }) => {
   await search.fill("Benin");
 
   const benin = page.locator(".explore-panel--phase10 .country-row", { hasText: "Benin" }).first();
+  await benin.scrollIntoViewIfNeeded();
   await expect(benin).toBeVisible();
   await benin.click();
 
