@@ -23,7 +23,7 @@ A historical observation has three independent time concepts:
 
 These timestamps are not interchangeable.
 
-PeopleGroups.org currently supplies `UpdatedDate` on source records, but Phase 14 does not assume the API exposes prior revisions. Consequently:
+PeopleGroups.org currently supplies `UpdatedDate` on source records. The provider also publishes a separate historical GSEC overview archive as global aggregate PDF reports for 2011–2024 and states that archive is no longer being updated. Those reports are not individual PGID revision history, and Phase 14 does not ingest or reinterpret them as such. The UI links to the provider archive for research context. Consequently:
 
 - the current source record must never be presented as evidence of an earlier state;
 - a provider update date does not prove which individual field changed;
@@ -82,7 +82,7 @@ Clearing browser site data removes it. The profile also exposes a reset action t
 
 The current PeopleGroups.org API documentation was re-reviewed on 2026-09-19. The API remains the canonical public read-only runtime source and documents `UpdatedDate` for records.
 
-Phase 14 does not create a public provider snapshot archive. The local historical ledger is a private continuity aid derived from ordinary runtime records already requested for the profile.
+Phase 14 does not create a public provider snapshot archive. The local historical ledger is a private continuity aid derived from ordinary runtime records already requested for the profile. The provider's historical GSEC overview PDFs remain at PeopleGroups.org and are linked rather than copied, parsed or redistributed by Phase 14.
 
 ## Joshua Project boundary
 
