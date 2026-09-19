@@ -20,9 +20,9 @@ PeopleGroups.org states that its public API is free and read-only and expressly 
 
 **Reviewed:** 19 September 2026
 
-Unreached may keep a bounded local history of distinct PeopleGroups.org mission-source states actually observed by the current browser. The history uses the provider's source fields and `UpdatedDate` when supplied, plus local observation timestamps.
+Unreached may keep a bounded local history of PeopleGroups.org mission-source state transitions actually observed by the current browser. The history uses the provider's source fields and `UpdatedDate` when supplied, plus local observation timestamps.
 
-- Storage: separate device-local IndexedDB only; maximum 24 distinct states per PGID
+- Storage: separate device-local IndexedDB only; maximum 24 retained timeline points per PGID
 - Sync/export: excluded from private continuity, server storage and server-held account export
 - Redistribution: no public historical snapshot archive, bulk export or provider mirror
 - Interpretation: no backfill, interpolation, inferred intermediate state or causal claim
