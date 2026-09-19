@@ -45,6 +45,23 @@ const identity = {
 const failed = Object.entries(identity).filter(([, ok]) => !ok).map(([key]) => key);
 if (failed.length) throw new Error(`${name} failed live identity checks: ${failed.join(", ")}.`);
 
+const liveGsec = live.GSEC ?? null;
+if (liveGsec === null || liveGsec < 0 || liveGsec > 3) {
+  throw new Error(`${name} moved outside the Phase 12 GSEC 0–3 scope (current GSEC: ${liveGsec ?? "unknown"}).`);
+}
+const liveMission = {
+  gsec: liveGsec,
+  gsecBrief: live.GSECbrf ?? null,
+  evangelicalLevel: live.EvngLvl ?? null,
+  engagementStatus: live.EngStat ?? null,
+  congregationExists: live.CongExst ?? null,
+  churchPlanting: live.Plnting ?? null,
+  bibleAvailability: live.Bible ?? null,
+  jesusFilmAvailability: live.Jesus ?? null,
+  totalResources: live.ResTot ?? null,
+  sourceUpdatedAt: live.UpdatedDate ?? null,
+};
+
 const shadow = reviewed(candidate, "Phase 12 review-preview shadow only", at);
 assertEditorialProfileIntegrity(adaptLegacyContextPackageToV3Editorial(shadow, `data/v3/editorial/candidates/${name}`), now);
 
@@ -52,6 +69,7 @@ const reviewDir = resolve(root, "artifacts/v3-phase12/reviews");
 await mkdir(reviewDir, { recursive: true });
 await writeFile(resolve(reviewDir, `${name.replace(/\.json$/, "")}.json`), `${JSON.stringify({
   schemaVersion: 1, generatedAt: at, candidate: name, peid: candidate.profile.peid, pgid, identity,
+  phase12Scope: { gsec0To3: true }, liveMission,
   sourceCount: candidate.sources.length, claimCount: candidate.profile.claims.length,
   sources: candidate.sources.map(({ id, title, publisher, url, locator, sourceType }) => ({ id, title, publisher, url, locator, sourceType })),
   claims: candidate.profile.claims.map(({ id, dimension, kind, temporalClass, text, citationIds, asOf, reviewAfter, sensitivity }) => ({ id, dimension, kind, temporalClass, text, citationIds, asOf, reviewAfter, sensitivity })),
@@ -59,7 +77,7 @@ await writeFile(resolve(reviewDir, `${name.replace(/\.json$/, "")}.json`), `${JS
 }, null, 2)}\n`, "utf8");
 
 if (!has("publish")) {
-  console.log(`Prepared non-mutating review packet for ${name}; live identity and reviewed-profile policy passed. Human evidence review is still required.`);
+  console.log(`Prepared non-mutating review packet for ${name}; live identity, GSEC 0–3 scope and reviewed-profile policy passed. Human evidence review is still required.`);
   process.exit(0);
 }
 

@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-eastern-baloch-pakistan",
+      "sourceId": "peoplegroups-profile-PG006346",
+      "title": "PeopleGroups.org — Eastern Baloch of Pakistan (PGID PG006346)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg006346/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Current profile fast facts and resource sections: Eastern Baloch in Pakistan, Eastern Balochi (bgp), aggregate Sunni Islam label, GSEC/SPI presentation, JESUS and linked Bible-resource surfaces. Live PEID/PGID identity must be re-fetched before publication."
+    },
+    {
+      "id": "ctx-source:glottolog-eastern-balochi",
+      "sourceId": "glottolog-east2304",
+      "title": "Glottolog 5.3 — Eastern Balochi",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/east2304",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Eastern Balochi spoken L1 language entry: glottocode east2304, ISO 639-3 bgp, country Pakistan."
+    },
+    {
+      "id": "ctx-source:iranica-baluchi-language",
+      "sourceId": "iranica-baluchistan-iii",
+      "title": "BALUCHISTAN iii. Baluchi Language and Literature",
+      "publisher": "Encyclopaedia Iranica",
+      "url": "https://www.iranicaonline.org/articles/baluchistan-iii/",
+      "sourceType": "reference",
+      "publicationDate": "1988-12-15",
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Language overview: Baluchi within the Western Iranian group; discussion of dialect geography including Eastern Hill Baluchi east of Quetta and the diversity of written/dialect forms."
+    },
+    {
+      "id": "ctx-source:iranica-baluchistan-ethnography",
+      "sourceId": "iranica-baluchistan-i",
+      "title": "BALUCHISTAN i. Geography, History and Ethnography",
+      "publisher": "Encyclopaedia Iranica",
+      "url": "https://www.iranicaonline.org/articles/baluchistan-index/baluchistan-i/",
+      "sourceType": "reference",
+      "publicationDate": "1988-12-15",
+      "accessedAt": "2026-09-19T18:23:00Z",
+      "locator": "Historical and ethnographic overview emphasizing the region's cultural and linguistic heterogeneity and cautioning against overly simple accounts of Baluch identity."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:6346",
+    "peid": 6346,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 6346,
+      "verifiedPeopleName": "Baloch, Eastern",
+      "pgidAnchors": [
+        "PG006346"
+      ],
+      "countryIso3Anchors": [
+        "PAK"
+      ],
+      "languageIso6393Anchors": [
+        "bgp"
+      ],
+      "matchEvidence": [
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T18:23:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Eastern Baloch in Pakistan and ties the record to Eastern Balochi (bgp). Glottolog independently places Eastern Balochi in Pakistan, while Encyclopaedia Iranica situates Baluchi within the Western Iranian language group and stresses that Baluchistan is culturally and linguistically heterogeneous.",
+      "claimIds": [
+        "claim:eastern-baloch-pakistan-identity",
+        "claim:eastern-balochi-language",
+        "claim:eastern-baloch-heterogeneity-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports an aggregate Sunni Islam label for this people-group-in-country record. That source label is useful mission-research context but cannot be generalized to every Eastern Baloch person's belief or practice.",
+      "claimIds": [
+        "claim:eastern-baloch-pakistan-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current unreached classification is explained only from PeopleGroups.org mission-status evidence. Ethnicity, regional history, language and religion are not treated as causes of spiritual status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently reports PG006346 below the 2% evangelical threshold with GSEC 1 and no recent church-planting activity.",
+        "claimIds": [
+          "claim:eastern-baloch-pakistan-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Language resources are reported, not assumed to be universally accessible",
+        "summary": "The provider page links an Eastern Balochi JESUS film and Bible-resource providers; this candidate does not turn those links into a claim of universal access or comprehension.",
+        "claimIds": [
+          "claim:eastern-baloch-pakistan-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:eastern-baloch-pakistan-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG006346 identifies the people-group record as Eastern Baloch in Pakistan and lists Balochi, Eastern (bgp) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-eastern-baloch-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile establishes PGID/name/country/language alignment; live PEID identity must still be re-fetched before publication."
+      },
+      {
+        "id": "claim:eastern-balochi-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Eastern Balochi with glottocode east2304 and ISO 639-3 code bgp and lists Pakistan as its country.",
+        "citationIds": [
+          "ctx-source:glottolog-eastern-balochi"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:eastern-baloch-heterogeneity-context",
+        "dimension": "social-identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Independent linguistic and ethnographic references place Baluchi varieties across a broad and internally diverse region; Encyclopaedia Iranica specifically warns that Baluchistan contains major cultural and linguistic discontinuities, so this candidate treats 'Eastern Baloch' as the source record's scoped identity rather than a uniform description of all Baluch communities.",
+        "citationIds": [
+          "ctx-source:iranica-baluchi-language",
+          "ctx-source:iranica-baluchistan-ethnography",
+          "ctx-source:peoplegroups-eastern-baloch-pakistan"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This synthesis is intentionally a caution against overgeneralization, not a new ethnic taxonomy."
+      },
+      {
+        "id": "claim:eastern-baloch-pakistan-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Eastern Baloch of Pakistan profile reports Sunni Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-eastern-baloch-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG006346, not a statement about every Eastern Baloch person's belief or practice."
+      },
+      {
+        "id": "claim:eastern-baloch-pakistan-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG006346, and presents the record as Unengaged and Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-eastern-baloch-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:eastern-baloch-pakistan-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile lists a JESUS film resource for Balochi, Eastern (bgp) and links Eastern Balochi Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-eastern-baloch-pakistan"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-eastern-baloch-pakistan",
+      "ctx-source:glottolog-eastern-balochi",
+      "ctx-source:iranica-baluchi-language",
+      "ctx-source:iranica-baluchistan-ethnography"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

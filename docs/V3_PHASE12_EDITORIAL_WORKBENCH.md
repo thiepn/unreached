@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains `nateni-benin.json`, `hausa-benin.json`, `anii-benin.json` and `weme-benin.json`. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
+The workbench currently contains **12 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbek of Uzbekistan and Saho of Eritrea. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -69,7 +69,7 @@ Prepare a live-identity-checked, non-mutating review packet:
 npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json
 ```
 
-The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, runs the full reviewed-profile policy in shadow mode, and writes an evidence packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
+The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, **fails closed if live GSEC is no longer 0–3**, captures the current GSEC/evangelical/engagement/church-planting/resource/update fields in the review packet, runs the full reviewed-profile policy in shadow mode, and writes the packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
 
 After a maintainer has opened every cited source and completed all eight review checks, publication can be performed deterministically:
 
@@ -86,14 +86,14 @@ To check every current draft against the live PeopleGroups identity boundary and
 npm run v3:phase12-review-workbench
 ```
 
-This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks and the full reviewed-profile policy in shadow mode.
+This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks, remain inside the live GSEC 0–3 Phase 12 scope, and pass the full reviewed-profile policy in shadow mode. The generated index includes the current source-native mission/resource snapshot so the maintainer can compare current provider state with the cited draft claims.
 
 Batch review never sets review metadata and never publishes. Final publication remains a deliberate one-candidate-at-a-time action through the guarded `v3:phase12-review-candidate -- --publish ... --attest-review-complete` path so each human attestation stays explicit and attributable.
 ## Maintainer publication boundary
 
 A candidate becomes publishable only after a maintainer checks the actual evidence and records the normal review contract:
 
-1. verify PEID/PGID/name/country/language identity against the current PeopleGroups.org record;
+1. verify PEID/PGID/name/country/language identity and the live GSEC 0–3 scope against the current PeopleGroups.org record;
 2. open every material citation and confirm the claim is supported by the cited locator;
 3. verify current claims, `asOf` dates and `reviewAfter` dates;
 4. check religion/community wording for aggregate-label overreach;
@@ -109,11 +109,11 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready draft candidates in the workbench: **4**.
-- Nateni candidate: source audit refreshed on **19 September 2026**; no material contradiction found, but human maintainer attestation is still required.
-- Hausa of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and Cambridge evidence; human maintainer attestation is required.
-- Anii of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog, SIL and Cambridge evidence; human maintainer attestation is required.
-- Weme of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and a dedicated SIL sociolinguistic survey; human maintainer attestation is required.
-- Remaining public reviewed-profile gap: **88** until a candidate is actually reviewed and published.
+- Review-ready Tier-3 draft candidates in the workbench: **12**.
+- Batch 1 — Benin: Nateni, Hausa, Anii and Weme. Human evidence sign-off is tracked in **Issue #96**.
+- Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbek (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
+- Separate source-scaffold research for Dendi, Foodo, Gun and Aizo of Benin remains tracked in **Issue #97**; those records are not counted as candidate drafts until actual candidate packages are written and pass the candidate gate.
+- All current draft packages pass the mechanical Tier-3 candidate integrity policy. Live identity revalidation and human evidence review remain mandatory before publication.
+- Remaining public reviewed-profile gap: **88** until candidates are actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.

@@ -96,6 +96,23 @@ for (const name of entries) {
     throw new Error(name + " failed live identity checks: " + failed.join(", ") + ".");
   }
 
+  const liveGsec = live.GSEC ?? null;
+  if (liveGsec === null || liveGsec < 0 || liveGsec > 3) {
+    throw new Error(name + " moved outside the Phase 12 GSEC 0–3 scope (current GSEC: " + (liveGsec ?? "unknown") + ").");
+  }
+  const liveMission = {
+    gsec: liveGsec,
+    gsecBrief: live.GSECbrf ?? null,
+    evangelicalLevel: live.EvngLvl ?? null,
+    engagementStatus: live.EngStat ?? null,
+    congregationExists: live.CongExst ?? null,
+    churchPlanting: live.Plnting ?? null,
+    bibleAvailability: live.Bible ?? null,
+    jesusFilmAvailability: live.Jesus ?? null,
+    totalResources: live.ResTot ?? null,
+    sourceUpdatedAt: live.UpdatedDate ?? null,
+  };
+
   const shadow = shadowPublished(candidate, checkedAt);
   assertEditorialProfileIntegrity(
     adaptLegacyContextPackageToV3Editorial(
@@ -113,6 +130,8 @@ for (const name of entries) {
     sourceCount: candidate.sources.length,
     claimCount: candidate.profile.claims.length,
     identityChecks,
+    phase12Scope: { gsec0To3: true },
+    liveMission,
     liveIdentity: {
       name: live.NmDisp,
       country: live.Ctry,
@@ -186,6 +205,9 @@ for (const report of reports) {
     "- Sources: " + String(report.sourceCount),
     "- Material claims: " + String(report.claimCount),
     "- Live identity: pass",
+    "- Live Phase 12 GSEC 0–3 scope: pass",
+    "- Live GSEC: " + String((report.liveMission as { gsec?: unknown }).gsec ?? "unknown"),
+    "- Live mission/source update: " + String((report.liveMission as { sourceUpdatedAt?: unknown }).sourceUpdatedAt ?? "not reported"),
     "- Reviewed-profile structural policy: pass",
     "",
     "### Maintainer checks",
@@ -212,5 +234,5 @@ await writeFile(
 
 console.log(
   "Phase 12 batch review packet prepared for " + reports.length
-  + " candidates. All passed live identity and shadow-reviewed policy checks; human maintainer review is still required.",
+  + " candidates. All passed live identity, GSEC 0–3 scope and shadow-reviewed policy checks; human maintainer review is still required.",
 );

@@ -123,5 +123,8 @@ const index = {
 };
 await writeFile(resolve(outputRoot, "batch-scaffold-index.json"), JSON.stringify(index, null, 2) + "\n", "utf8");
 
-if (!prepared.length) throw new Error("No requested records were eligible for a Phase 12 research scaffold. See batch-scaffold-index.json.");
+if (!prepared.length) {
+  console.error(JSON.stringify(index, null, 2));
+  throw new Error("No requested records were eligible for a Phase 12 research scaffold. See batch-scaffold-index.json and the emitted skip reasons.");
+}
 console.log("Prepared " + prepared.length + " Phase 12 research scaffolds from " + pgids.length + " requested PGIDs; " + skipped.length + " skipped. No candidate or publication content was created.");
