@@ -101,7 +101,7 @@ export function createPeopleGroupsHistoryObservation(
 
   return missionHistoryObservationSchema.parse({
     schemaVersion: 1,
-    id: `${context.pgid}:${signature}`,
+    id: `${context.pgid}:${timestamp}:${signature}`,
     provider: "peoplegroups-org",
     peid: record.peid,
     pgid: context.pgid,
@@ -117,15 +117,17 @@ export function createPeopleGroupsHistoryObservation(
 }
 
 function sortTimeline(a: MissionHistoryObservation, b: MissionHistoryObservation): number {
-  const aTime = Date.parse(a.sourceUpdatedAt ?? a.firstObservedAt);
-  const bTime = Date.parse(b.sourceUpdatedAt ?? b.firstObservedAt);
-  if (aTime !== bTime) return bTime - aTime;
-  return Date.parse(b.firstObservedAt) - Date.parse(a.firstObservedAt);
+  const observedDifference = Date.parse(b.firstObservedAt) - Date.parse(a.firstObservedAt);
+  if (observedDifference !== 0) return observedDifference;
+  const aSource = a.sourceUpdatedAt ? Date.parse(a.sourceUpdatedAt) : 0;
+  const bSource = b.sourceUpdatedAt ? Date.parse(b.sourceUpdatedAt) : 0;
+  return bSource - aSource;
 }
 
 /**
- * Store only distinct tracked source states. Repeated visits update last-seen
- * metadata instead of manufacturing extra timeline points.
+ * Store only transitions between tracked source states. Consecutive repeated
+ * visits update last-seen metadata instead of manufacturing extra timeline
+ * points, while a later return to an earlier signature remains a real event.
  */
 export function mergeMissionHistoryObservations(
   existing: readonly MissionHistoryObservation[],
@@ -137,26 +139,32 @@ export function mergeMissionHistoryObservations(
 
   const compatible = existing
     .map((item) => missionHistoryObservationSchema.parse(item))
-    .filter((item) => item.provider === nextIncoming.provider && item.pgid === nextIncoming.pgid);
+    .filter((item) => item.provider === nextIncoming.provider && item.pgid === nextIncoming.pgid)
+    .sort(sortTimeline);
 
-  const same = compatible.find((item) => item.signature === nextIncoming.signature);
-  const mergedSame = same
-    ? missionHistoryObservationSchema.parse({
-        ...same,
-        sourceUpdatedAt: same.sourceUpdatedAt ?? nextIncoming.sourceUpdatedAt,
-        latestSourceUpdatedAt: laterTimestamp(same.latestSourceUpdatedAt, nextIncoming.latestSourceUpdatedAt),
-        firstObservedAt: Date.parse(same.firstObservedAt) <= Date.parse(nextIncoming.firstObservedAt)
-          ? same.firstObservedAt
-          : nextIncoming.firstObservedAt,
-        lastObservedAt: Date.parse(same.lastObservedAt) >= Date.parse(nextIncoming.lastObservedAt)
-          ? same.lastObservedAt
-          : nextIncoming.lastObservedAt,
-      })
-    : nextIncoming;
+  const latest = compatible[0] ?? null;
+  if (latest?.signature === nextIncoming.signature) {
+    const mergedLatest = missionHistoryObservationSchema.parse({
+      ...latest,
+      sourceUpdatedAt: latest.sourceUpdatedAt ?? nextIncoming.sourceUpdatedAt,
+      latestSourceUpdatedAt: laterTimestamp(latest.latestSourceUpdatedAt, nextIncoming.latestSourceUpdatedAt),
+      firstObservedAt: Date.parse(latest.firstObservedAt) <= Date.parse(nextIncoming.firstObservedAt)
+        ? latest.firstObservedAt
+        : nextIncoming.firstObservedAt,
+      lastObservedAt: Date.parse(latest.lastObservedAt) >= Date.parse(nextIncoming.lastObservedAt)
+        ? latest.lastObservedAt
+        : nextIncoming.lastObservedAt,
+    });
+
+    return [
+      mergedLatest,
+      ...compatible.slice(1),
+    ].sort(sortTimeline).slice(0, limit);
+  }
 
   return [
-    ...compatible.filter((item) => item.signature !== nextIncoming.signature),
-    mergedSame,
+    nextIncoming,
+    ...compatible,
   ].sort(sortTimeline).slice(0, limit);
 }
 
