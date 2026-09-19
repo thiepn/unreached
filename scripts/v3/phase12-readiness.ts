@@ -54,6 +54,17 @@ for (const marker of [
   if (!workbenchDocs.includes(marker)) throw new Error(`Phase 12 editorial workbench document missing: ${marker}`);
 }
 
+const reviewCandidateScript = await readText("scripts/v3/phase12-review-candidate.ts");
+const reviewWorkbenchScript = await readText("scripts/v3/phase12-review-workbench.ts");
+for (const [label, source] of [
+  ["single-candidate review", reviewCandidateScript],
+  ["workbench review", reviewWorkbenchScript],
+] as const) {
+  for (const marker of ["liveMission", "live.GSEC", "outside the Phase 12 GSEC 0–3 scope"]) {
+    if (!source.includes(marker)) throw new Error(`Phase 12 ${label} is missing live mission-scope guard: ${marker}`);
+  }
+}
+
 for (const script of [
   "v3:phase12-candidate-check",
   "v3:phase12-readiness",

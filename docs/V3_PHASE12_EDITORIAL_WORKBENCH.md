@@ -69,7 +69,7 @@ Prepare a live-identity-checked, non-mutating review packet:
 npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json
 ```
 
-The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, runs the full reviewed-profile policy in shadow mode, and writes an evidence packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
+The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, **fails closed if live GSEC is no longer 0–3**, captures the current GSEC/evangelical/engagement/church-planting/resource/update fields in the review packet, runs the full reviewed-profile policy in shadow mode, and writes the packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
 
 After a maintainer has opened every cited source and completed all eight review checks, publication can be performed deterministically:
 
@@ -86,14 +86,14 @@ To check every current draft against the live PeopleGroups identity boundary and
 npm run v3:phase12-review-workbench
 ```
 
-This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks and the full reviewed-profile policy in shadow mode.
+This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks, remain inside the live GSEC 0–3 Phase 12 scope, and pass the full reviewed-profile policy in shadow mode. The generated index includes the current source-native mission/resource snapshot so the maintainer can compare current provider state with the cited draft claims.
 
 Batch review never sets review metadata and never publishes. Final publication remains a deliberate one-candidate-at-a-time action through the guarded `v3:phase12-review-candidate -- --publish ... --attest-review-complete` path so each human attestation stays explicit and attributable.
 ## Maintainer publication boundary
 
 A candidate becomes publishable only after a maintainer checks the actual evidence and records the normal review contract:
 
-1. verify PEID/PGID/name/country/language identity against the current PeopleGroups.org record;
+1. verify PEID/PGID/name/country/language identity and the live GSEC 0–3 scope against the current PeopleGroups.org record;
 2. open every material citation and confirm the claim is supported by the cited locator;
 3. verify current claims, `asOf` dates and `reviewAfter` dates;
 4. check religion/community wording for aggregate-label overreach;
