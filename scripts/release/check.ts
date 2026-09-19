@@ -33,18 +33,20 @@ for (const marker of [
   "private notes",
   "prayer-memory entries",
   "does not currently implement its own analytics",
-  "17 September 2026",
+  "19 September 2026",
+  "mission-source state transitions",
 ]) if (!privacy.includes(marker)) throw new Error(`Release privacy notice missing: ${marker}`);
 
 const publicPrivacy = await readText("public/privacy.html");
 for (const marker of [
   "Privacy notice",
-  "17 September 2026",
+  "19 September 2026",
   "Optional private continuity",
   "private notes",
   "prayer-memory trail",
   "Analytics and advertising",
   "Your controls",
+  "mission-source state transitions",
 ]) {
   if (!publicPrivacy.includes(marker)) throw new Error(`Release public privacy page missing: ${marker}`);
 }
