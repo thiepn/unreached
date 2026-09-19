@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains `nateni-benin.json` and `hausa-benin.json`. Both use claim-level citations and remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
+The workbench currently contains `nateni-benin.json`, `hausa-benin.json`, `anii-benin.json` and `weme-benin.json`. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -29,6 +29,17 @@ The scaffold never creates a public profile and never edits the publication mani
 
 The Phase 12 GitHub Actions workflow exposes the same tool through the optional `editorial_pgid` workflow-dispatch input and uploads the resulting packet as a private workflow artifact.
 
+## Batch source scaffolding
+
+For the next research batch, fetch several explicit PGIDs in one non-ranking operation:
+
+```bash
+npm run v3:phase12-editorial-scaffold-batch -- --pgids=PG012316,PG012320
+```
+
+The command accepts 1-25 explicit PGIDs, preserves input order, fetches each current PeopleGroups record, captures the actual PEID/PGID/name/country/language identity, skips already-reviewed profiles and records outside the Phase 12 GSEC 0-3 scope, and writes one source snapshot plus research packet per eligible record under `artifacts/v3-phase12/workbench/`.
+
+It also writes `batch-scaffold-index.json` with every prepared/skipped record. It applies **no ranking or priority score** and creates neither candidate JSON nor public content. Use this instead of inferring a PEID from a PGID.
 ## Mechanical candidate gate
 
 Run:
