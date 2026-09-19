@@ -98,14 +98,14 @@ interface RegistrySource {
   termsReviewedAt: string;
 }
 const registry = await readJson<{ schemaVersion: number; reviewedAt: string; sources: RegistrySource[] }>("data/source-registry.json");
-if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-19") throw new Error("Source registry metadata is stale for the V3 Phase 14 source review.");
+if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-20") throw new Error("Source registry metadata is stale for the V3 Phase 15 source review.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 
 const peopleGroups = byId.get("peoplegroups-org-api");
 if (!peopleGroups?.runtimeReadAllowed || !peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) {
   throw new Error("PeopleGroups.org must remain the canonical approved public runtime while static/browser corpus redistribution stays blocked.");
 }
-if (peopleGroups.termsReviewedAt !== "2026-09-19") throw new Error("PeopleGroups.org Phase 14 historical-use review date is stale.");
+if (peopleGroups.termsReviewedAt !== "2026-09-20") throw new Error("PeopleGroups.org Phase 15 Scripture/language review date is stale.");
 
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed || naturalEarth.termsReviewedAt !== "2026-08-28") {
