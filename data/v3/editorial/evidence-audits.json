@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "status": "pre-review-only",
-  "generatedAt": "2026-09-19T19:58:00Z",
+  "generatedAt": "2026-09-19T20:30:00Z",
   "notice": "These AI-assisted evidence audits are pre-review aids only. They are not maintainer approval, do not complete the publication checklist, and do not change the public reviewed-profile count.",
   "entries": [
     {
@@ -121,6 +121,30 @@
     {
       "candidate": "hararghe-oromo-ethiopia.json",
       "document": "docs/V3_PHASE12_HARARGHE_OROMO_ETHIOPIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "japanese-japan.json",
+      "document": "docs/V3_PHASE12_JAPANESE_JAPAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "kyrgyz-kyrgyzstan.json",
+      "document": "docs/V3_PHASE12_KYRGYZ_KYRGYZSTAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "sunda-indonesia.json",
+      "document": "docs/V3_PHASE12_SUNDA_INDONESIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "thai-thailand.json",
+      "document": "docs/V3_PHASE12_THAI_THAILAND_EVIDENCE_AUDIT.md",
       "checkedAt": "2026-09-19",
       "status": "pre-review-only"
     }
