@@ -7,7 +7,7 @@
 
 Phase 16 turns the explicit entity and evidence relationships established across V3 into an inspectable, typed mission knowledge graph.
 
-The graph is not a global similarity engine and does not create a universal mission ontology. It is a bounded per-profile evidence graph derived in memory from already loaded, already permitted data.
+The graph is not a global similarity engine, contains no hidden similarity model, and does not create a universal mission ontology. It is a bounded per-profile evidence graph derived in memory from already loaded, already permitted data.
 
 ## Gate D remains binding
 
