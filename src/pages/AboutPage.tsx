@@ -5,6 +5,7 @@ const definitions = [
   ["GSEC", "Global Status of Evangelical Christianity is the IMB / PeopleGroups.org source framework. Unreached preserves the source value and does not translate it into Joshua Project JPScale or Frontier fields."],
   ["Source comparison", "A side-by-side view of two independently maintained mission-research assertions for a manually matched people-group-in-country record. Agreement does not erase methodology differences, and disagreement does not produce a combined winner or score."],
   ["Source history", "A bounded device-private sequence of PeopleGroups.org source-state transitions observed by this browser. History starts when this device sees a record; earlier values are never backfilled, interpolated or inferred."],
+  ["Scripture/resource evidence", "PeopleGroups.org Bible, Jesus Film and resource-count fields are shown as source-reported availability evidence with explicit PGID denominators. They are not converted into inferred translation-completeness milestones."],
   ["PGID", "The PeopleGroups.org primary identifier for a people-group-in-country source record."],
   ["PEID", "The PeopleGroups.org People Group Entity ID field. The 23 August 2026 certification snapshot contained 12,370 PGIDs and 12,370 PEIDs in a one-to-one relationship. That is a dated release result, not a permanent guarantee about future provider data."],
   ["Reviewed editorial context", "Separately authored, cited contextual material attached only after explicit PeopleGroups.org source-record identity review. Missing reviewed context stays missing rather than being replaced with generated cultural or spiritual claims."],
@@ -37,6 +38,7 @@ export function AboutPage() {
           <li><strong>Disagreement stays visible.</strong><span>Source comparisons can agree, disagree or be incomplete. Unreached preserves both source-scoped assertions instead of averaging them or selecting a preferred provider.</span></li>
           <li><strong>History is observed, never backfilled.</strong><span>Historical mission intelligence records only source-state transitions this device actually observed. Consecutive repeated visits are de-duplicated, provider update dates are preserved, and no earlier trend point is invented from current data.</span></li>
           <li><strong>Coverage beside aggregates.</strong><span>Map, country and language summaries are aggregates over source records, not national census or language-census statistics.</span></li>
+          <li><strong>Language relationships stay narrow.</strong><span>Shared PeopleGroups.org family labels and same-country language records can be shown as source relationships, but they do not prove mutual intelligibility, bilingualism, dialect compatibility or resource transfer.</span></li>
           <li><strong>Editorial identity must be proven.</strong><span>Reviewed articles store explicit PEID, PGID, country, language and name evidence before publication.</span></li>
           <li><strong>External data fails closed.</strong><span>Runtime responses are schema-validated, bounded and rejected when source contracts drift incompatibly.</span></li>
           <li><strong>Prayer without performance tracking.</strong><span>Private prayer tools store only the limited continuity state needed for Saved/list membership, rotation and the latest explicit prayer timestamp.</span></li>
@@ -63,7 +65,7 @@ export function AboutPage() {
         <p>The service worker does not intercept or runtime-cache PeopleGroups.org requests. Partial provider data is never persisted as a complete prepared snapshot.</p>
         <p>Historical mission-source observations are bounded and private to this device. They are not uploaded by private continuity, stored by the server, included in server exports, or combined with Joshua Project responses. Repeated identical tracked states are de-duplicated rather than presented as artificial trend points.</p>
         <p>Anonymous/local-only use is the default. Optional private continuity requires a separate merge-and-enable action after authentication and syncs only Saved/prayer membership, source-backed snapshots and the latest prayer timestamp. Recent browsing and prayer-performance/history data are excluded.</p>
-        <p><a href="/unreached/privacy.html">Read the public privacy notice</a>. Source and licensing records were most recently reviewed on <strong>19 September 2026</strong>.</p>
+        <p><a href="/unreached/privacy.html">Read the public privacy notice</a>. Source and licensing records were most recently reviewed on <strong>20 September 2026</strong>.</p>
       </section>
 
       <section class="about-section" aria-labelledby="boundaries-heading">
