@@ -65,6 +65,13 @@ for (const [label, source] of [
   }
 }
 
+for (const marker of ["Phase 12 Maintainer Review", "Evidence sources", "Human maintainer checks"]) {
+  if (!reviewCandidateScript.includes(marker)) throw new Error(`Phase 12 single-candidate review is missing reviewer packet marker: ${marker}`);
+}
+for (const marker of ["Live source snapshot", "Evidence sources", "Maintainer checks"]) {
+  if (!reviewWorkbenchScript.includes(marker)) throw new Error(`Phase 12 workbench review is missing reviewer packet marker: ${marker}`);
+}
+
 for (const script of [
   "v3:phase12-candidate-check",
   "v3:phase12-readiness",
