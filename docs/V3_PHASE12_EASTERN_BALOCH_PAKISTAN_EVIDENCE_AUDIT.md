@@ -6,7 +6,7 @@
 
 ## Result
 
-No material contradiction was found. The live Phase 12 candidate diagnostic passed the current PeopleGroups identity checks and GSEC scope for this draft.
+No material contradiction was found. The first automated live diagnostic found one display-name anchor mismatch only: the draft used `Baloch, Eastern` while the current API `NmDisp` is `Eastern Baloch`. PEID 6346, PGID PG006346, Pakistan, `bgp` and GSEC 1 all matched. The draft identity anchor was corrected to the exact live display name, and the subsequent live diagnostic passed the full identity and GSEC-scope checks.
 
 ## Evidence checked
 
