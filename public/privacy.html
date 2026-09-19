@@ -17,7 +17,7 @@
     <header><h1>Privacy notice</h1><p class="meta">Effective and reviewed 19 September 2026</p><p>Unreached is designed to work without an account. Local-only use is the default.</p></header>
 
     <h2>Browser-local data</h2>
-    <p>Depending on the features you use, this browser may store Saved/prayer membership, private notes attached to people you intentionally keep, a bounded local prayer-memory trail from explicit “Record prayer today” actions, a bounded recent-route list, the latest prayer timestamp you explicitly record, optional sync metadata, a validated PeopleGroups.org snapshot in IndexedDB for offline resilience, and a bounded history of distinct PeopleGroups.org mission-source states observed on this device. A signed-in session may also keep a Cloudflare Access token in sessionStorage until the browser session ends.</p>
+    <p>Depending on the features you use, this browser may store Saved/prayer membership, private notes attached to people you intentionally keep, a bounded local prayer-memory trail from explicit “Record prayer today” actions, a bounded recent-route list, the latest prayer timestamp you explicitly record, optional sync metadata, a validated PeopleGroups.org snapshot in IndexedDB for offline resilience, and a bounded history of PeopleGroups.org mission-source state transitions observed on this device. A signed-in session may also keep a Cloudflare Access token in sessionStorage until the browser session ends.</p>
     <p>Private notes are limited to 2,000 characters each. Prayer memory retains at most the latest 30 recorded prayer moments. Both can be deleted locally and neither is treated as mission-source or editorial content.</p>
 
     <h2>Optional private continuity</h2>
@@ -35,7 +35,7 @@
     <p class="note">Deleting server-held account data does not automatically erase local Saved/prayer data, private notes, prayer memory, recent browsing, or mission-source history. Local browser state remains until you clear it separately.</p>
 
     <h2>Mission-data cache</h2>
-    <p>The validated PeopleGroups.org snapshot is a device-local resilience cache. It is not uploaded to the private continuity service and is not exposed by Unreached as a public dataset download or API.</p><p>Historical mission intelligence is stored separately as a bounded local log of distinct PeopleGroups.org states actually observed by this browser. Repeated identical states are de-duplicated. The history is not synced, stored on the Unreached server, included in server exports, or used to persist Joshua Project responses. Clearing browser site data removes it.</p>
+    <p>The validated PeopleGroups.org snapshot is a device-local resilience cache. It is not uploaded to the private continuity service and is not exposed by Unreached as a public dataset download or API.</p><p>Historical mission intelligence is stored separately as a bounded local log of PeopleGroups.org source-state transitions actually observed by this browser. Consecutive repeated observations of the same tracked state are de-duplicated. The history is not synced, stored on the Unreached server, included in server exports, or used to persist Joshua Project responses. Clearing browser site data removes it.</p>
 
     <h2>Changes</h2>
     <p>Material privacy changes must update this public notice and the release-policy checks before deployment.</p>
