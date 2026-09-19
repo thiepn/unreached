@@ -77,6 +77,11 @@ for (const marker of ["identity-mismatch", "out-of-scope", "provider-error", "li
   if (!liveAuditScript.includes(marker)) throw new Error(`Phase 12 live candidate audit is missing diagnostic boundary: ${marker}`);
 }
 
+const liveResearchScript = await readText("scripts/v3/phase12-live-research-batches.ts");
+for (const marker of ["non-ranking-live-research-registry", "research-ready", "provider-error", "research-batches/index.json", "publicationEffect"]) {
+  if (!liveResearchScript.includes(marker)) throw new Error(`Phase 12 live research-batch audit is missing boundary: ${marker}`);
+}
+
 for (const script of [
   "v3:phase12-candidate-check",
   "v3:phase12-readiness",
@@ -88,6 +93,7 @@ for (const script of [
   "v3:phase12-review-candidate",
   "v3:phase12-review-workbench",
   "v3:phase12-live-candidate-audit",
+  "v3:phase12-live-research-batches",
 ]) {
   if (!pkg.scripts?.[script]) throw new Error(`Phase 12 package script is not wired: ${script}.`);
 }
