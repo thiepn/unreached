@@ -11,6 +11,7 @@ import {
 } from "../../src/editorial/index.js";
 import { createPeopleGroupsApiClient } from "../../src/providers/peoplegroups/index.js";
 import { loadPhase12EditorialCatalog } from "./phase12-content.js";
+import { evidenceAuditMap, loadPhase12EvidenceAuditIndex } from "./phase12-evidence-audits.js";
 
 const root = process.cwd();
 const candidateDir = resolve(root, "data/v3/editorial/candidates");
@@ -62,6 +63,8 @@ if (!entries.length) throw new Error("Phase 12 candidate workbench is empty.");
 const now = new Date();
 const checkedAt = now.toISOString();
 const catalog = await loadPhase12EditorialCatalog(now);
+const auditIndex = await loadPhase12EvidenceAuditIndex();
+const auditsByCandidate = evidenceAuditMap(auditIndex);
 const client = createPeopleGroupsApiClient();
 const reports: Array<Record<string, unknown>> = [];
 
@@ -77,6 +80,8 @@ for (const name of entries) {
   if (catalog.reviewedPeids.has(candidate.profile.peid)) {
     throw new Error(name + " duplicates published PEID " + candidate.profile.peid + ".");
   }
+  const preReviewAudit = auditsByCandidate.get(name);
+  if (!preReviewAudit) throw new Error(name + " has no indexed AI-assisted pre-review evidence audit.");
 
   const pgid = candidate.profile.identity.pgidAnchors[0];
   if (!pgid) throw new Error(name + " has no PGID identity anchor.");
@@ -131,6 +136,7 @@ for (const name of entries) {
     claimCount: candidate.profile.claims.length,
     identityChecks,
     phase12Scope: { gsec0To3: true },
+    preReviewAudit,
     liveMission,
     liveIdentity: {
       name: live.NmDisp,
@@ -220,6 +226,7 @@ for (const report of reports) {
     "- Live identity: pass",
     "- Live Phase 12 GSEC 0–3 scope: pass",
     "- Reviewed-profile structural policy: pass",
+    "- AI-assisted pre-review audit: `" + String((report.preReviewAudit as { document?: unknown }).document ?? "missing") + "` (pre-review only; not maintainer approval)",
     "",
     "### Live source snapshot",
     "",
