@@ -1,9 +1,12 @@
 import { createRemoteJWKSet, decodeJwt, jwtVerify } from "jose";
 
+import { fetchJoshuaComparisonRecord, JoshuaSourceError } from "./joshua-project";
 import { applyMutationAtomic, type WorkerSyncMutation } from "./mutations";
 
 const PRIVATE_PREFIX = "/unreached-sync/private";
 const HEALTH_PATH = "/unreached-sync/health";
+const MISSION_SOURCE_PREFIX = "/unreached-sources";
+const JOSHUA_PEOPLE_PREFIX = `${MISSION_SOURCE_PREFIX}/joshua-project/people/`;
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_MUTATIONS = 200;
 const CLASSIFICATIONS = new Set(["unreached", "reached", "unknown", "unreached-only", "other-only", "mixed"]);
@@ -315,8 +318,19 @@ function authCompletionPage(origin: string, token: string): Response {
 async function handleRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   if (url.pathname === HEALTH_PATH && request.method === "GET") {
-    return json({ ok: true, service: "unreached-private-continuity", version: "2.0.0" });
+    return json({ ok: true, service: "unreached-private-continuity", version: "2.1.0" });
   }
+
+  if (url.pathname.startsWith(JOSHUA_PEOPLE_PREFIX)) {
+    if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+    const origin = request.headers.get("Origin");
+    if (origin && origin !== env.APP_ORIGIN) throw new HttpError(403, "Origin not allowed");
+    const id = url.pathname.slice(JOSHUA_PEOPLE_PREFIX.length);
+    if (!/^[0-9]+[A-Z]{2,4}$/.test(id)) return json({ error: "Not found" }, 404);
+    const apiKey = (env as Env & { JOSHUA_PROJECT_API_KEY?: string }).JOSHUA_PROJECT_API_KEY;
+    return json(await fetchJoshuaComparisonRecord(id, apiKey));
+  }
+
   if (!url.pathname.startsWith(PRIVATE_PREFIX)) return json({ error: "Not found" }, 404);
 
   if (url.pathname === `${PRIVATE_PREFIX}/auth/start` && request.method === "GET") {
@@ -363,7 +377,7 @@ export default {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") {
       if (request.headers.get("Origin") !== env.APP_ORIGIN) return json({ error: "Origin not allowed" }, 403);
-      if (url.pathname !== HEALTH_PATH && !url.pathname.startsWith(PRIVATE_PREFIX)) return json({ error: "Not found" }, 404);
+      if (url.pathname !== HEALTH_PATH && !url.pathname.startsWith(PRIVATE_PREFIX) && !url.pathname.startsWith(MISSION_SOURCE_PREFIX)) return json({ error: "Not found" }, 404);
       return new Response(null, {
         status: 204,
         headers: {
@@ -380,9 +394,9 @@ export default {
     try {
       return withCors(await handleRequest(request, env), request, env);
     } catch (error) {
-      if (error instanceof HttpError) return withCors(json({ error: error.message }, error.status), request, env);
-      console.error(JSON.stringify({ event: "unreached_private_sync_error", message: error instanceof Error ? error.message : String(error) }));
-      return withCors(json({ error: "Private sync encountered an internal error." }, 500), request, env);
+      if (error instanceof HttpError || error instanceof JoshuaSourceError) return withCors(json({ error: error.message }, error.status), request, env);
+      console.error(JSON.stringify({ event: "unreached_worker_error", message: error instanceof Error ? error.message : String(error) }));
+      return withCors(json({ error: "Unreached service encountered an internal error." }, 500), request, env);
     }
   },
 } satisfies ExportedHandler<Env>;

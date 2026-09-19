@@ -90,15 +90,18 @@ interface RegistrySource {
   runtimeReadAllowed?: boolean;
   publicReleaseAllowed: boolean;
   browserRedistributionAllowed: boolean;
+  commercialUse?: boolean | null;
+  cacheStatus?: string;
+  permissionGate?: string;
   termsReviewedAt: string;
 }
 const registry = await readJson<{ schemaVersion: number; reviewedAt: string; sources: RegistrySource[] }>("data/source-registry.json");
-if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-16") throw new Error("Source registry metadata is stale for the V3 Phase 1 source review.");
+if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-17") throw new Error("Source registry metadata is stale for the V3 Phase 13 source review.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 
 const peopleGroups = byId.get("peoplegroups-org-api");
 if (!peopleGroups?.runtimeReadAllowed || !peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) {
-  throw new Error("PeopleGroups.org must be approved for public runtime use while static/browser corpus redistribution remains blocked.");
+  throw new Error("PeopleGroups.org must remain the canonical approved public runtime while static/browser corpus redistribution stays blocked.");
 }
 if (peopleGroups.termsReviewedAt !== "2026-09-16") throw new Error("PeopleGroups.org Phase 1 terms review date is stale.");
 
@@ -108,10 +111,15 @@ if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAl
 }
 
 const joshuaProject = byId.get("joshua-project-api");
-if (!joshuaProject || joshuaProject.runtimeReadAllowed || joshuaProject.publicReleaseAllowed || joshuaProject.browserRedistributionAllowed) {
-  throw new Error("joshua-project-api must remain unavailable to the public runtime/static release.");
+if (!joshuaProject?.runtimeReadAllowed || !joshuaProject.publicReleaseAllowed || joshuaProject.browserRedistributionAllowed) {
+  throw new Error("Joshua Project Phase 13 must allow only the reviewed runtime/public comparison path while browser/bulk redistribution remains blocked.");
 }
-if (joshuaProject.termsReviewedAt !== "2026-09-16") throw new Error("Joshua Project Phase 1 terms review date is stale.");
+if (joshuaProject.commercialUse !== false || joshuaProject.termsReviewedAt !== "2026-09-17") {
+  throw new Error("Joshua Project Phase 13 must remain non-commercial and tied to the 17 September 2026 terms review.");
+}
+if (!joshuaProject.cacheStatus?.includes("no-store") || !joshuaProject.permissionGate?.includes("Gate D")) {
+  throw new Error("Joshua Project Phase 13 must retain no-store handling and the post-3.0 Gate D prerequisite.");
+}
 
 for (const id of ["progress-bible-registered-data", "ethnologue"]) {
   const source = byId.get(id);
@@ -125,6 +133,11 @@ for (const marker of ["production policy", "PeopleGroups.org / IMB Global Resear
 }
 if (policy.includes("primary V1 source for people-group")) throw new Error("Obsolete Joshua Project primary-source policy remains in the current legal policy.");
 
+const phase13 = await readText("docs/V3_PHASE13_MULTI_SOURCE_MISSION_INTELLIGENCE.md");
+for (const marker of ["Gate D", "manual crosswalk", "JOSHUA_PROJECT_API_KEY", "no-store", "Data provided by Joshua Project"]) {
+  if (!phase13.includes(marker)) throw new Error(`Phase 13 source policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
@@ -133,7 +146,7 @@ for (const marker of ["Resolve release identity from package metadata", "RELEASE
 }
 
 const envExample = await readText(".env.example");
-if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Build-time API key example missing.");
+if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Development/server API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current Phase 11 privacy disclosure, PeopleGroups runtime permissions, Phase 1 source reviews, attribution, project licensing and third-party notices agree with production behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13 Joshua Project comparison boundaries, attribution, project licensing and third-party notices agree with repository behavior.");

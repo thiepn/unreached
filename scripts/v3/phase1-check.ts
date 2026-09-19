@@ -70,13 +70,16 @@ expectBlocked(
   () => assertSourceUseAllowed(registry, "peoplegroups-org-api", "browser-redistribution"),
   "PeopleGroups.org corpus redistribution",
 );
+
+// Phase 1 originally blocked Joshua Project through the focused 3.0 launch.
+// Phase 13 is the separately reviewed integration that gate anticipated. The
+// historical launch decision remains intact; only the narrow Phase 13 runtime
+// comparison is now approved by the current source registry.
+assertSourceUseAllowed(registry, "joshua-project-api", "runtime-read");
+assertSourceUseAllowed(registry, "joshua-project-api", "public-release");
 expectBlocked(
-  () => assertSourceUseAllowed(registry, "joshua-project-api", "runtime-read"),
-  "Joshua Project runtime activation before a separate approved integration",
-);
-expectBlocked(
-  () => assertSourceUseAllowed(registry, "joshua-project-api", "public-release"),
-  "Joshua Project production publication before a separate approved integration",
+  () => assertSourceUseAllowed(registry, "joshua-project-api", "browser-redistribution"),
+  "Joshua Project browser/bulk redistribution",
 );
 
 for (const sourceId of ["peoplegroups-org-api", "joshua-project-api"]) {
@@ -85,6 +88,15 @@ for (const sourceId of ["peoplegroups-org-api", "joshua-project-api"]) {
   if (Date.parse(source.termsReviewedAt) < Date.parse("2026-09-16")) {
     throw new Error(`${sourceId} terms review predates the Phase 1 source decision.`);
   }
+}
+
+const joshua = registry.sources.find((candidate) => candidate.id === "joshua-project-api");
+if (!joshua || joshua.termsReviewedAt !== "2026-09-17") {
+  throw new Error("Phase 13 must supersede the historical Joshua Project block only after a fresh terms review.");
+}
+for (const marker of ["manually reviewed", "no-store", "server-side secret", "do not average"]) {
+  const policyText = [joshua.publicRedistribution, joshua.cacheStatus, joshua.permissionGate ?? "", ...joshua.requirements].join("\n").toLowerCase();
+  if (!policyText.includes(marker.toLowerCase())) throw new Error(`Phase 13 Joshua Project policy is missing boundary: ${marker}`);
 }
 
 const phase1 = await readFile(new URL("../../docs/V3_PHASE1_SOURCE_ARCHITECTURE.md", import.meta.url), "utf8");
@@ -100,4 +112,4 @@ for (const requiredText of [
   }
 }
 
-console.log("V3 Phase 1 source architecture checks passed: canonical PeopleGroups/IMB launch strategy, source-scoped classification boundary, unknown preservation, and Joshua Project production gate are enforced.");
+console.log("V3 Phase 1 source architecture checks passed: the canonical PeopleGroups/IMB launch decision and source-scoped classification boundary remain intact, while the separately reviewed Phase 13 Joshua Project comparison exception is constrained by its current policy gate.");

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "reviewedAt": "2026-09-16",
+  "reviewedAt": "2026-09-17",
   "sources": [
     {
       "id": "peoplegroups-org-api",
@@ -61,24 +61,28 @@
       "contentTypes": ["people_groups", "countries", "languages", "mission_metrics", "scripture_resource_indicators"],
       "status": "conditional",
       "commercialUse": false,
-      "runtimeReadAllowed": false,
-      "publicReleaseAllowed": false,
+      "runtimeReadAllowed": true,
+      "publicReleaseAllowed": true,
       "browserRedistributionAllowed": false,
-      "publicRedistribution": "not used by the production runtime; any reintroduction must satisfy non-commercial, attribution, value-add and termination/cache-deletion obligations",
-      "cacheStatus": "not active",
+      "publicRedistribution": "Phase 13 permits only narrow on-demand display of manually crosswalked records as a value-added source comparison. No static corpus mirror, bulk endpoint, downloadable snapshot or provider replacement service is permitted.",
+      "cacheStatus": "on-demand pass-through only; no Worker, application-corpus or browser persistence; responses use HTTP no-store",
       "attributionRequired": true,
       "attributionText": "Data provided by Joshua Project",
       "developmentIngestionAllowed": true,
       "requirements": [
         "non-commercial use",
-        "visible linked attribution on pages displaying Joshua Project content",
+        "visible linked attribution on every page displaying Joshua Project content",
         "no direct replication or highly overlapping public service",
-        "provide meaningful value-add rather than repackaging Joshua Project content",
-        "delete downloaded or cached data if API access is terminated",
-        "do not expose API credentials"
+        "provide meaningful value-add through source comparison and methodology explanation rather than repackaging Joshua Project content",
+        "serve only manually reviewed provider identity crosswalks; do not fuzzy-match names or assume numeric identifier equivalence",
+        "preserve source-native LeastReached classification rather than recalculating it from rounded percentage fields",
+        "do not average, merge or silently reconcile Joshua Project classifications with PeopleGroups.org / IMB classifications",
+        "do not persist Joshua Project API responses in Worker storage, the application corpus, service-worker caches or browser persistence",
+        "delete any downloaded or cached data if API access is terminated",
+        "keep the Joshua Project API credential exclusively in a server-side secret and never expose it to browser code or repository history"
       ],
-      "permissionGate": "Phase 1 re-reviewed the current terms on 2026-09-16. Joshua Project remains inactive for the Unreached 3.0 launch because its API is revocable, credentialed, non-commercial, requires page-level attribution, prohibits direct/high-overlap replication, and requires cached/downloaded data deletion on termination. A separate reviewed integration may be considered in Phase 13 or later; no production activation is implied.",
-      "termsReviewedAt": "2026-09-16"
+      "permissionGate": "Phase 13 re-reviewed the current Joshua Project API terms and documentation on 2026-09-17. A narrow post-3.0 comparison integration is approved only on the Phase 13 branch: three manually reviewed PGIC identity links, on-demand no-store requests through the Worker, minimal returned fields, visible linked attribution and no bulk/corpus persistence. The branch remains blocked by V3 Gate D until Unreached 3.0 is certified and shipped, and production activation additionally requires the JOSHUA_PROJECT_API_KEY Worker secret.",
+      "termsReviewedAt": "2026-09-17"
     },
     {
       "id": "joshua-project-photos",
