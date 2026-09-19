@@ -79,7 +79,8 @@
     "v3:phase12-review-candidate": "tsx scripts/v3/phase12-review-candidate.ts",
     "v3:phase12-review-workbench": "tsx scripts/v3/phase12-review-workbench.ts",
     "v3:phase12-editorial-scaffold-batch": "tsx scripts/v3/phase12-editorial-scaffold-batch.ts",
-    "v3:phase12-live-candidate-audit": "tsx scripts/v3/phase12-live-candidate-audit.ts"
+    "v3:phase12-live-candidate-audit": "tsx scripts/v3/phase12-live-candidate-audit.ts",
+    "v3:phase12-live-research-batches": "tsx scripts/v3/phase12-live-research-batches.ts"
   },
   "engines": {
     "node": ">=22.12.0"
