@@ -7,7 +7,7 @@
 
 Phase 14 adds trustworthy historical context to mission-source records without pretending that Unreached possesses a historical provider archive that does not exist.
 
-The first historical layer is a bounded, device-private observation history for the canonical PeopleGroups.org / IMB people-group-in-country record. It records distinct source states this browser actually observes over time. It does not backfill, interpolate, predict or infer earlier source values from the current record.
+The first historical layer is a bounded, device-private transition history for the canonical PeopleGroups.org / IMB people-group-in-country record. It records distinct source states this browser actually observes over time. It does not backfill, interpolate, predict or infer earlier source values from the current record.
 
 ## Gate D remains binding
 
@@ -50,14 +50,14 @@ Narrative descriptions, coordinates, taxonomy, editorial text, prayer state and 
 
 Repeated page visits must not manufacture a time series.
 
-A stable signature is calculated from the tracked fields. When the same PGID is seen again with the same signature:
+A stable signature is calculated from the tracked fields. When the same PGID is seen again and the latest stored timeline point has the same signature:
 
 - no new timeline point is created;
 - `lastObservedAt` advances;
 - `latestSourceUpdatedAt` may advance if the provider reports a later update date;
 - the oldest source-update timestamp attached to that distinct state is retained when known.
 
-A new timeline point exists only when at least one tracked field changes.
+A new timeline point exists only when the tracked state differs from the latest stored point. If a record changes A → B → A, the return to A is retained as a new historical transition rather than collapsed into the older A episode.
 
 ## Storage boundary
 
@@ -65,7 +65,7 @@ Phase 14 uses a separate IndexedDB database:
 
 - database: `unreached-mission-history-v1`;
 - store: `peoplegroups-observations`;
-- maximum: 24 distinct states per PGID.
+- maximum: 24 retained timeline points per PGID.
 
 The ledger is:
 
