@@ -92,7 +92,7 @@ jobs:
       - name: Generate maintainer-ready workbench review packet
         if: steps.live_candidate_audit.outcome == 'success'
         continue-on-error: true
-        run: npm run v3:phase12-review-workbench
+        run: npm run v3:phase12-review-workbench -- --from-live-audit
 
       - name: Audit tracked editorial research batches against live source records
         id: live_research_batches
