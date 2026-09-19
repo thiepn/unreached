@@ -4,3 +4,4 @@ export * from "./filter";
 export * from "./format";
 export * from "./runtime";
 export * from "./live";
+export * from "./intelligence";
