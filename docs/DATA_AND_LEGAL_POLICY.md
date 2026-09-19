@@ -114,6 +114,31 @@ Not approved:
 
 ProgressBible and Ethnologue therefore remain excluded as direct Phase 15 providers.
 
+## 3C. Phase 16 mission knowledge graph
+
+**Status:** DERIVED IN-MEMORY EVIDENCE GRAPH ONLY  
+**Reviewed:** 20 September 2026
+
+Phase 16 may derive a bounded per-profile graph from already loaded, already permitted PeopleGroups.org runtime data and reviewed Unreached editorial publications.
+
+Approved graph relationships:
+
+- direct PGID source fields with exact source-field provenance;
+- explicit PeopleGroups.org taxonomy labels;
+- related people records only when an explicit taxonomy field matches;
+- reviewed editorial profile → claim → citation relationships.
+
+Not approved:
+
+- fuzzy-name, embedding, geographic-proximity or behavioral similarity edges;
+- hidden relevance/confidence scores that rank people groups or sources;
+- merging editorial synthesis into provider facts;
+- treating missing edges as proof that a real-world relationship does not exist;
+- persisting or silently graphing Joshua Project no-store responses;
+- creating a downloadable graph mirror of the provider corpus.
+
+The graph is derived in memory and adds no D1, Worker, IndexedDB graph store, private-sync field or analytics telemetry.
+
 ## 4. Natural Earth
 
 **Status:** APPROVED  
@@ -207,6 +232,8 @@ Production source records should remain traceable to the provider and provider i
 
 For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Consecutive repeated observations of the same tracked state must be de-duplicated, while a later return after an intervening state remains a historical transition.
 
+For knowledge-graph relationships, every edge must retain its typed evidence layer, source identity, source-record IDs and exact source fields where applicable. Derived taxonomy matches must remain distinguishable from direct provider fields and reviewed editorial claims.
+
 For language/resource intelligence, raw provider labels, PGID denominators and missing values must remain visible. Shared family labels and country overlap are descriptive source relationships only; they must not be upgraded into intelligibility, bilingualism or translation-completeness claims.
 
 For multi-source comparisons, each assertion must retain its own provider and methodology identity. Cross-source agreement must not be presented as proof that definitions are identical, and disagreement must not be silently resolved into one provider-independent verdict.
@@ -249,6 +276,7 @@ A release must fail if any of the following is false:
 - PeopleGroups.org is recorded as the canonical public runtime while static corpus redistribution remains blocked;
 - Phase 14 historical observations, if present, remain bounded, device-private, observed-only, consecutively de-duplicated and excluded from sync, server storage, server export and Joshua Project data;
 - Phase 15 Scripture/language intelligence preserves exact PeopleGroups resource/family semantics and does not infer translation milestones, intelligibility, bilingualism or resource transfer;
+- Phase 16 knowledge-graph edges remain typed/provenanced, derived in memory only, free of hidden similarity/ranking semantics, and exclude persisted Joshua Project comparison data;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
