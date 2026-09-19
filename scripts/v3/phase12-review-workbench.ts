@@ -196,6 +196,19 @@ const markdown: string[] = [
 ];
 
 for (const report of reports) {
+  const liveMission = report.liveMission as {
+    gsec?: unknown;
+    gsecBrief?: unknown;
+    evangelicalLevel?: unknown;
+    engagementStatus?: unknown;
+    congregationExists?: unknown;
+    churchPlanting?: unknown;
+    bibleAvailability?: unknown;
+    jesusFilmAvailability?: unknown;
+    totalResources?: unknown;
+    sourceUpdatedAt?: unknown;
+  };
+  const sources = report.sources as Array<{ title?: unknown; url?: unknown; sourceType?: unknown; publisher?: unknown; locator?: unknown }>;
   markdown.push(
     "## " + String(report.peopleName),
     "",
@@ -206,9 +219,31 @@ for (const report of reports) {
     "- Material claims: " + String(report.claimCount),
     "- Live identity: pass",
     "- Live Phase 12 GSEC 0–3 scope: pass",
-    "- Live GSEC: " + String((report.liveMission as { gsec?: unknown }).gsec ?? "unknown"),
-    "- Live mission/source update: " + String((report.liveMission as { sourceUpdatedAt?: unknown }).sourceUpdatedAt ?? "not reported"),
     "- Reviewed-profile structural policy: pass",
+    "",
+    "### Live source snapshot",
+    "",
+    "- GSEC: " + String(liveMission.gsec ?? "unknown") + " — " + String(liveMission.gsecBrief ?? "No brief label"),
+    "- Evangelical level: " + String(liveMission.evangelicalLevel ?? "Not reported"),
+    "- Engagement: " + String(liveMission.engagementStatus ?? "Not reported"),
+    "- Congregation exists: " + String(liveMission.congregationExists ?? "Not reported"),
+    "- Church planting: " + String(liveMission.churchPlanting ?? "Not reported"),
+    "- Bible availability: " + String(liveMission.bibleAvailability ?? "Not reported"),
+    "- Jesus Film availability: " + String(liveMission.jesusFilmAvailability ?? "Not reported"),
+    "- Total resources: " + String(liveMission.totalResources ?? "Not reported"),
+    "- Source updated: " + String(liveMission.sourceUpdatedAt ?? "Not reported"),
+    "",
+    "### Evidence sources",
+    "",
+  );
+  for (const source of sources) {
+    markdown.push(
+      "- [" + String(source.title ?? "Untitled source") + "](" + String(source.url ?? "") + ") — "
+      + String(source.sourceType ?? "other") + "; "
+      + String(source.locator ?? "No locator supplied"),
+    );
+  }
+  markdown.push(
     "",
     "### Maintainer checks",
     "",

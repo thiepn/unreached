@@ -69,7 +69,7 @@ Prepare a live-identity-checked, non-mutating review packet:
 npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json
 ```
 
-The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, **fails closed if live GSEC is no longer 0–3**, captures the current GSEC/evangelical/engagement/church-planting/resource/update fields in the review packet, runs the full reviewed-profile policy in shadow mode, and writes the packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
+The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, **fails closed if live GSEC is no longer 0–3**, captures the current GSEC/evangelical/engagement/church-planting/resource/update fields, runs the full reviewed-profile policy in shadow mode, and writes both JSON and a reviewer-friendly Markdown packet under `artifacts/v3-phase12/reviews/`. The Markdown packet contains direct evidence URLs/locators, every material claim and citation ID, the live source snapshot, and the eight human review checks in one place. It does **not publish by default**.
 
 After a maintainer has opened every cited source and completed all eight review checks, publication can be performed deterministically:
 
@@ -86,7 +86,7 @@ To check every current draft against the live PeopleGroups identity boundary and
 npm run v3:phase12-review-workbench
 ```
 
-This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks, remain inside the live GSEC 0–3 Phase 12 scope, and pass the full reviewed-profile policy in shadow mode. The generated index includes the current source-native mission/resource snapshot so the maintainer can compare current provider state with the cited draft claims.
+This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks, remain inside the live GSEC 0–3 Phase 12 scope, and pass the full reviewed-profile policy in shadow mode. The Markdown index includes each candidate's current source-native mission/resource snapshot plus direct evidence links and source locators, so a maintainer can review the batch without digging through candidate JSON.
 
 Batch review never sets review metadata and never publishes. Final publication remains a deliberate one-candidate-at-a-time action through the guarded `v3:phase12-review-candidate -- --publish ... --attest-review-complete` path so each human attestation stays explicit and attributable.
 ## Maintainer publication boundary
