@@ -1,4 +1,5 @@
 name: V3 Phase 12 Batch 2 Source Scaffold
+# Rerun after September 2026 provider-schema adapter
 
 on:
   push:
