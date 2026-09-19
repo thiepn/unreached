@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "status": "human-review-required",
+  "generatedAt": "2026-09-19T20:30:00Z",
+  "notice": "Every Phase 12 draft candidate must belong to exactly one accountable human review batch. This registry tracks review responsibility only; it is not evidence review, approval, publication, ranking or release certification.",
+  "batches": [
+    {
+      "id": "batch-1-benin",
+      "issue": 96,
+      "title": "Phase 12 Editorial Review Batch 1 — Benin",
+      "candidates": [
+        "nateni-benin.json",
+        "hausa-benin.json",
+        "anii-benin.json",
+        "weme-benin.json"
+      ]
+    },
+    {
+      "id": "batch-2-cross-region",
+      "issue": 98,
+      "title": "Phase 12 Editorial Review Batch 2 — Cross-region candidates",
+      "candidates": [
+        "afar-ethiopia.json",
+        "eastern-baloch-pakistan.json",
+        "tamajeq-mali.json",
+        "fur-sudan.json",
+        "kabyle-algeria.json",
+        "brahui-pakistan.json",
+        "uzbek-uzbekistan.json",
+        "saho-eritrea.json"
+      ]
+    },
+    {
+      "id": "batch-3-benin-promotions",
+      "issue": 99,
+      "title": "Phase 12 Editorial Review Batch 3 — Benin research promotions",
+      "candidates": [
+        "dendi-benin.json",
+        "foodo-benin.json",
+        "gun-benin.json",
+        "aizo-benin.json"
+      ]
+    },
+    {
+      "id": "batch-4-cross-region-promotions",
+      "issue": 101,
+      "title": "Phase 12 Editorial Review Batch 4 — Cross-region research promotions",
+      "candidates": [
+        "kham-tibetans-china.json",
+        "turkmen-turkmenistan.json",
+        "acehnese-indonesia.json",
+        "hararghe-oromo-ethiopia.json"
+      ]
+    },
+    {
+      "id": "batch-5-asia-promotions",
+      "issue": 103,
+      "title": "Phase 12 Editorial Review Batch 5 — Asia research promotions",
+      "candidates": [
+        "japanese-japan.json",
+        "kyrgyz-kyrgyzstan.json",
+        "sunda-indonesia.json",
+        "thai-thailand.json"
+      ]
+    }
+  ]
+}

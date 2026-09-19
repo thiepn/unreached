@@ -82,6 +82,15 @@ for (const marker of ["identity-mismatch", "out-of-scope", "provider-error", "li
   if (!liveAuditScript.includes(marker)) throw new Error(`Phase 12 live candidate audit is missing diagnostic boundary: ${marker}`);
 }
 
+const reviewBatchRegistry = await readText("data/v3/editorial/review-batches.json");
+const reviewBatchLoader = await readText("scripts/v3/phase12-review-batches.ts");
+for (const marker of ["human-review-required", "\"issue\"", "\"candidates\""]) {
+  if (!reviewBatchRegistry.includes(marker)) throw new Error(`Phase 12 review-batch registry is missing accountability marker: ${marker}`);
+}
+for (const marker of ["reviewAssignmentMap", "assigned to more than one human review batch", "issueUrl"]) {
+  if (!reviewBatchLoader.includes(marker)) throw new Error(`Phase 12 review-batch loader is missing accountability guard: ${marker}`);
+}
+
 const liveResearchScript = await readText("scripts/v3/phase12-live-research-batches.ts");
 for (const marker of ["non-ranking-live-research-registry", "research-ready", "provider-error", "index.json", "publicationEffect"]) {
   if (!liveResearchScript.includes(marker)) throw new Error(`Phase 12 live research-batch audit is missing boundary: ${marker}`);
