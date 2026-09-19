@@ -61,6 +61,7 @@ for (const script of [
   "v3:phase12-visual",
   "v3:phase12-editorial-queue",
   "v3:phase12-editorial-scaffold",
+  "v3:phase12-editorial-scaffold-batch",
   "v3:phase12-review-candidate",
   "v3:phase12-review-workbench",
 ]) {
