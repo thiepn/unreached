@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-kashmiri-india-api",
+      "sourceId": "peoplegroups-pgid-PG043159-api",
+      "title": "PeopleGroups.org API — Kashmiri of India (PG043159)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG043159",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Live Phase 12 registry: PEID 43159; Kashmiri in India; Kashmiri (kas); Islam - Sunni; GSEC 1; Engaged; congregations exist; no churches planted; Bible and Jesus Film Available; 6 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-kashmiri-india",
+      "sourceId": "peoplegroups-profile-PG043159",
+      "title": "PeopleGroups.org — Kashmiri of India (PGID PG043159)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg043159/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Public profile and provider resource presentation for Kashmiri in India."
+    },
+    {
+      "id": "ctx-source:glottolog-kashmiri",
+      "sourceId": "glottolog-kash1277",
+      "title": "Glottolog 5.3 — Kashmiri",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/glottolog?iso=kas",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Kashmiri language entry: glottocode kash1277, ISO 639-3 kas; language identity and classification context."
+    },
+    {
+      "id": "ctx-source:bhat-kashmiri-identities",
+      "sourceId": "cambridge-scholars-kashmiri-identities",
+      "title": "The Changing Language Roles and Linguistic Identities of the Kashmiri Speech Community",
+      "publisher": "Cambridge Scholars Publishing",
+      "url": "https://www.cambridgescholars.com/product/978-1-4438-7962-0",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Book-length sociolinguistic study of changing language roles and linguistic identities within the Kashmiri speech community."
+    },
+    {
+      "id": "ctx-source:cambridge-srinagar-koshur",
+      "sourceId": "cambridge-jol-srinagar-koshur",
+      "title": "Weight sensitivity and syllable codas in Srinagar Koshur",
+      "publisher": "Cambridge University Press / Journal of Linguistics",
+      "url": "https://www.cambridge.org/core/journals/journal-of-linguistics/article/abs/weight-sensitivity-and-syllable-codas-in-srinagar-koshur1/2940B0D60AF6EA3B4FCDEC36741BFAB0",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Linguistic study of Srinagar Koshur/Kashmiri; used only as locality-bounded evidence of a documented Kashmiri variety."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:43159",
+    "peid": 43159,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 43159,
+      "verifiedPeopleName": "Kashmiri",
+      "pgidAnchors": [
+        "PG043159"
+      ],
+      "countryIso3Anchors": [
+        "IND"
+      ],
+      "languageIso6393Anchors": [
+        "kas"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T21:04:21.126Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Kashmiri in India and ties the record to Kashmiri (kas). Glottolog independently identifies the language, while sociolinguistic scholarship documents changing language roles and identities and linguistic work on Srinagar Koshur provides a deliberately locality-bounded example of internal language study.",
+      "claimIds": [
+        "claim:kashmiri-india-identity",
+        "claim:kashmiri-language",
+        "claim:kashmiri-language-identity-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports Islam - Sunni as the aggregate primary-religion label for this record. It is retained as provider context and not generalized into a statement about every Kashmiri person's belief or practice.",
+      "claimIds": [
+        "claim:kashmiri-india-religion"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org source-native fields. Kashmiri language identity, locality and the provider religion label are not treated as causes of mission status, and no political or territorial position is inferred.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity while reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:kashmiri-india-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources remain source-specific",
+        "summary": "The source reports Bible and Jesus Film availability; provider availability does not establish distribution, comprehension or use.",
+        "claimIds": [
+          "claim:kashmiri-india-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:kashmiri-india-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG043159 reports PEID 43159, display name Kashmiri, country India and primary language Kashmiri (kas).",
+        "citationIds": [
+          "ctx-source:peoplegroups-kashmiri-india-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:kashmiri-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Kashmiri with glottocode kash1277 and ISO 639-3 code kas.",
+        "citationIds": [
+          "ctx-source:glottolog-kashmiri"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:kashmiri-language-identity-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Sociolinguistic research describes changing language roles and linguistic identities within the Kashmiri speech community, while a phonological study of Srinagar Koshur documents one locality-specific variety; together these sources support linguistic diversity context without generalizing Srinagar findings to all Kashmiri speakers.",
+        "citationIds": [
+          "ctx-source:bhat-kashmiri-identities",
+          "ctx-source:cambridge-srinagar-koshur"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "Kashmir is politically contested. These sources are used only for language and sociolinguistic context; no sovereignty, territorial or political-allegiance claim is inferred."
+      },
+      {
+        "id": "claim:kashmiri-india-religion",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports Islam - Sunni as the aggregate primary-religion label for PG043159.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kashmiri-india-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Kashmiri person's belief or practice."
+      },
+      {
+        "id": "claim:kashmiri-india-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG043159; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kashmiri-india-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields and not a judgment about individuals."
+      },
+      {
+        "id": "claim:kashmiri-india-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and six total evangelical resources for PG043159.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kashmiri-india-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-kashmiri-india-api",
+      "ctx-source:peoplegroups-kashmiri-india",
+      "ctx-source:glottolog-kashmiri",
+      "ctx-source:bhat-kashmiri-identities",
+      "ctx-source:cambridge-srinagar-koshur"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

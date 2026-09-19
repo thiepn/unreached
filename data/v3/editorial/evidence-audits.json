@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "status": "pre-review-only",
-  "generatedAt": "2026-09-19T20:30:00Z",
+  "generatedAt": "2026-09-19T21:10:00Z",
   "notice": "These AI-assisted evidence audits are pre-review aids only. They are not maintainer approval, do not complete the publication checklist, and do not change the public reviewed-profile count.",
   "entries": [
     {
@@ -145,6 +145,30 @@
     {
       "candidate": "thai-thailand.json",
       "document": "docs/V3_PHASE12_THAI_THAILAND_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "chechens-russian-federation.json",
+      "document": "docs/V3_PHASE12_CHECHENS_RUSSIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "south-azeri-iran.json",
+      "document": "docs/V3_PHASE12_SOUTH_AZERI_IRAN_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "kashmiri-india.json",
+      "document": "docs/V3_PHASE12_KASHMIRI_INDIA_EVIDENCE_AUDIT.md",
+      "checkedAt": "2026-09-19",
+      "status": "pre-review-only"
+    },
+    {
+      "candidate": "malays-malaysia.json",
+      "document": "docs/V3_PHASE12_MALAYS_MALAYSIA_EVIDENCE_AUDIT.md",
       "checkedAt": "2026-09-19",
       "status": "pre-review-only"
     }

@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-chechens-russia-api",
+      "sourceId": "peoplegroups-pgid-PG024428-api",
+      "title": "PeopleGroups.org API — Chechens of Russian Federation (PG024428)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG024428",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Live Phase 12 registry: PEID 24428; Chechens in Russian Federation; Chechen (che); Islam - Sunni; GSEC 2; Engaged; congregations exist; concentrated church planting; Bible and Jesus Film Available; 4 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-chechens-russia",
+      "sourceId": "peoplegroups-profile-PG024428",
+      "title": "PeopleGroups.org — Chechens of Russian Federation (PGID PG024428)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg024428/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Public people-group profile and provider resource presentation; structured API fields remain the current mission-status boundary."
+    },
+    {
+      "id": "ctx-source:glottolog-chechen",
+      "sourceId": "glottolog-chec1245",
+      "title": "Glottolog 5.3 — Chechen",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/chec1245",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Chechen language entry: glottocode chec1245, ISO 639-3 che, Nakh-Daghestanian classification and Russian Federation country context."
+    },
+    {
+      "id": "ctx-source:cambridge-north-caucasian",
+      "sourceId": "cambridge-languages-ussr-north-caucasian",
+      "title": "North Caucasian Languages",
+      "publisher": "Cambridge University Press",
+      "url": "https://www.cambridge.org/core/books/abs/languages-of-the-ussr/north-caucasian-languages/E2AD3AC6A9389949C52101A6725C43E6",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Reference chapter on North Caucasian language families, including Nakh languages such as Chechen; used only for linguistic classification/context."
+    },
+    {
+      "id": "ctx-source:chechnya-language-law",
+      "sourceId": "chechnya-law-language-2007",
+      "title": "Law of the Chechen Republic on Languages",
+      "publisher": "Chechen Republic legal publication",
+      "url": "https://chechnya-gov.ru/doc/867",
+      "sourceType": "official",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "Legal/institutional language-policy source; used only to document formal language status and not political allegiance."
+    },
+    {
+      "id": "ctx-source:rudn-chechen-literature-2025",
+      "sourceId": "rudn-polylinguality-chechen-2025",
+      "title": "Modern Chechen literature / Elbrus Minkailov study",
+      "publisher": "RUDN University / Polylinguality and Transcultural Practices",
+      "url": "https://journals.rudn.ru/polylinguality/article/view/45379/en_US",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T21:04:21.126Z",
+      "locator": "2025 literary study used as bounded evidence that contemporary Chechen-language literary production exists."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:24428",
+    "peid": 24428,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 24428,
+      "verifiedPeopleName": "Chechens",
+      "pgidAnchors": [
+        "PG024428"
+      ],
+      "countryIso3Anchors": [
+        "RUS"
+      ],
+      "languageIso6393Anchors": [
+        "che"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T21:04:21.126Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live PeopleGroups.org record identifies Chechens in the Russian Federation and ties the record to Chechen (che). Independent linguistic sources place Chechen in the Nakh-Daghestanian/Nakh context, while legal and literary sources document formal language status and contemporary Chechen-language cultural production without implying one political identity.",
+      "claimIds": [
+        "claim:chechens-russia-identity",
+        "claim:chechen-language",
+        "claim:chechen-language-cultural-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org reports Islam - Sunni as the aggregate primary-religion label for this people-group-in-country record. That provider classification is retained as source context and not generalized into a statement about every Chechen person's belief or practice.",
+      "claimIds": [
+        "claim:chechens-russia-religion"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current mission classification only from PeopleGroups.org source-native fields. Chechen ethnicity, language policy, literature, regional history and Sunni identity are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 2, less than 2% evangelical presence and concentrated church-planting activity, while also reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:chechens-russia-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources remain source-specific",
+        "summary": "The source reports Bible and Jesus Film availability. Those fields do not establish distribution, comprehension or use across Chechen communities.",
+        "claimIds": [
+          "claim:chechens-russia-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:chechens-russia-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG024428 reports PEID 24428, display name Chechens, country Russian Federation and primary language Chechen (che).",
+        "citationIds": [
+          "ctx-source:peoplegroups-chechens-russia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:chechen-language",
+        "dimension": "identity",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Chechen with glottocode chec1245 and ISO 639-3 code che; North Caucasian linguistic reference work places Chechen in the Nakh branch of the wider North Caucasian language context.",
+        "citationIds": [
+          "ctx-source:glottolog-chechen",
+          "ctx-source:cambridge-north-caucasian"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:chechen-language-cultural-context",
+        "dimension": "culture",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Formal language policy and recent literary scholarship document institutional and literary use of Chechen; together they show a living language context without implying a uniform political or cultural identity among Chechens.",
+        "citationIds": [
+          "ctx-source:chechnya-language-law",
+          "ctx-source:rudn-chechen-literature-2025"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "Language law and literary production are institutional/cultural context only; they are not evidence of individual political affiliation, security history or personal identity."
+      },
+      {
+        "id": "claim:chechens-russia-religion",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports Islam - Sunni as the aggregate primary-religion label for PG024428.",
+        "citationIds": [
+          "ctx-source:peoplegroups-chechens-russia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Chechen person's belief or practice."
+      },
+      {
+        "id": "claim:chechens-russia-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 2, less than 2% evangelical presence and concentrated church-planting activity for PG024428; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-chechens-russia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields and not a judgment about individuals."
+      },
+      {
+        "id": "claim:chechens-russia-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and four total evangelical resources for PG024428.",
+        "citationIds": [
+          "ctx-source:peoplegroups-chechens-russia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-chechens-russia-api",
+      "ctx-source:peoplegroups-chechens-russia",
+      "ctx-source:glottolog-chechen",
+      "ctx-source:cambridge-north-caucasian",
+      "ctx-source:chechnya-language-law",
+      "ctx-source:rudn-chechen-literature-2025"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
