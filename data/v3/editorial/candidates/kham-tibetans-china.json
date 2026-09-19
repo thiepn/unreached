@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-kham-tibetans-china-api",
+      "sourceId": "peoplegroups-pgid-PG007224-api",
+      "title": "PeopleGroups.org API — Kham Tibetans of China (PG007224)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG007224",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Live Phase 12 research registry: PEID 7224; Kham Tibetans in China; Tibetan, Khams (khg); Buddhism - Tibetan; GSEC 1; Engaged; congregations exist; no churches planted; Bible and Jesus Film Available; 4 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-kham-tibetans-china",
+      "sourceId": "peoplegroups-profile-PG007224",
+      "title": "PeopleGroups.org — Kham Tibetans of China (PGID PG007224)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg007224/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Public people-group profile: Kham Tibetans in China, Tibetan, Khams (khg), Tibetan Buddhism, and provider mission/resource presentation. Structured API fields remain the current mission-status boundary."
+    },
+    {
+      "id": "ctx-source:glottolog-khams-tibetan",
+      "sourceId": "glottolog-kham1282",
+      "title": "Glottolog 5.3 — Khams Tibetan",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/kham1282",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Khams Tibetan spoken L1 language entry: glottocode kham1282, ISO 639-3 khg; countries include China, India and Myanmar."
+    },
+    {
+      "id": "ctx-source:cambridge-relyea-kham-2015",
+      "sourceId": "cambridge-modern-asian-studies-kham-2015",
+      "title": "Yokes of Gold and Threads of Silk: Sino-Tibetan competition for authority in early twentieth century Kham",
+      "publisher": "Cambridge University Press / Modern Asian Studies",
+      "url": "https://www.cambridge.org/core/journals/modern-asian-studies/article/abs/yokes-of-gold-and-threads-of-silk-sinotibetan-competition-for-authority-in-early-twentieth-century-kham/157B5B560C962E5B6E81F4A55B12B336",
+      "sourceType": "academic",
+      "publicationDate": "2015-03-12",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Abstract and article framing: Kham as a historically multi-polity borderland with overlapping structures of authority and changing early-twentieth-century state claims."
+    },
+    {
+      "id": "ctx-source:cambridge-gartar-kham-2024",
+      "sourceId": "cambridge-bsoas-gartar-kham-2024",
+      "title": "The Seventh Dalai Lama's residence in Kham: Gartar Monastery interactions with indigenous chiefs and the Qing court",
+      "publisher": "Cambridge University Press / Bulletin of the School of Oriental and African Studies",
+      "url": "https://www.cambridge.org/core/journals/bulletin-of-the-school-of-oriental-and-african-studies/article/abs/seventh-dalai-lamas-residence-in-kham-gartar-monastery-interactions-with-indigenous-chiefs-and-the-qing-court/F428A380393EA2B520C397DDBD775FE2",
+      "sourceType": "academic",
+      "publicationDate": "2024-05-16",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Abstract: eighteenth- to early-twentieth-century interactions among Gartar Monastery, local leaders, Tibetan government institutions and the Qing court in northern Kham."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:7224",
+    "peid": 7224,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 7224,
+      "verifiedPeopleName": "Kham Tibetans",
+      "pgidAnchors": [
+        "PG007224"
+      ],
+      "countryIso3Anchors": [
+        "CHN"
+      ],
+      "languageIso6393Anchors": [
+        "khg"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:52:53.050Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live PeopleGroups record identifies Kham Tibetans in China and ties the record to Tibetan, Khams (khg). Glottolog independently identifies Khams Tibetan, while historical scholarship describes Kham as a region with varied local polities and overlapping religious and political institutions rather than one timeless uniform political unit.",
+      "claimIds": [
+        "claim:kham-tibetans-china-identity",
+        "claim:khams-tibetan-language",
+        "claim:kham-historical-region-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies the aggregate label 'Buddhism - Tibetan' for this people-group-in-country record. That provider classification is retained as source context and is not treated as a statement about every Kham Tibetan person's beliefs or practice.",
+      "claimIds": [
+        "claim:kham-tibetans-china-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current unreached classification is explained only from PeopleGroups.org source-native mission fields. Tibetan language, Kham regional history and Buddhist identity are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 1 and less than 2% evangelical presence with no recent church-planting activity, while separately reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:kham-tibetans-china-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources do not establish local reach",
+        "summary": "The structured source reports Bible and Jesus Film availability for the record. Those availability fields do not establish distribution, comprehension or use across Kham Tibetan communities.",
+        "claimIds": [
+          "claim:kham-tibetans-china-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:kham-tibetans-china-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG007224 reports PEID 7224, display name Kham Tibetans, country China and primary language Tibetan, Khams (khg).",
+        "citationIds": [
+          "ctx-source:peoplegroups-kham-tibetans-china-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:khams-tibetan-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Khams Tibetan with glottocode kham1282 and ISO 639-3 code khg and lists China among its countries.",
+        "citationIds": [
+          "ctx-source:glottolog-khams-tibetan"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:kham-historical-region-context",
+        "dimension": "history",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Historical research describes Kham as a region containing multiple local polities and institutions in which Tibetan religious authorities, local leaders and Qing or later Chinese state authorities interacted in changing ways over time.",
+        "citationIds": [
+          "ctx-source:cambridge-relyea-kham-2015",
+          "ctx-source:cambridge-gartar-kham-2024"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is bounded historical context. It is not used to infer present political allegiance, territorial preference or a uniform historical experience for every person represented by PG007224."
+      },
+      {
+        "id": "claim:kham-tibetans-china-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Buddhism - Tibetan' as the aggregate primary-religion label for PG007224.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kham-tibetans-china-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Kham Tibetan person's belief or practice."
+      },
+      {
+        "id": "claim:kham-tibetans-china-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG007224; it separately reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kham-tibetans-china-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These source-native mission-research fields are reported separately and are not reconciled into an invented verdict or judgment about individuals."
+      },
+      {
+        "id": "claim:kham-tibetans-china-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and four total evangelical resources for PG007224.",
+        "citationIds": [
+          "ctx-source:peoplegroups-kham-tibetans-china-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish local distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-kham-tibetans-china-api",
+      "ctx-source:peoplegroups-kham-tibetans-china",
+      "ctx-source:glottolog-khams-tibetan",
+      "ctx-source:cambridge-relyea-kham-2015",
+      "ctx-source:cambridge-gartar-kham-2024"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

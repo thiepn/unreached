@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-hararghe-oromo-ethiopia-api",
+      "sourceId": "peoplegroups-pgid-PG046420-api",
+      "title": "PeopleGroups.org API — Hararghe Oromo of Ethiopia (PG046420)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG046420",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Live Phase 12 research registry: PEID 46420; Hararghe Oromo in Ethiopia; Oromo, Eastern (hae); Islam - Sunni; GSEC 1; Unengaged; congregations exist; no churches planted; Bible and Jesus Film Available; 4 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-hararghe-oromo-ethiopia",
+      "sourceId": "peoplegroups-profile-PG046420",
+      "title": "PeopleGroups.org — Hararghe Oromo of Ethiopia (PGID PG046420)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg046420/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Public profile fast facts: Hararghe Oromo in Ethiopia, Oromo, Eastern (hae), Sunni Islam and provider mission/resource presentation."
+    },
+    {
+      "id": "ctx-source:glottolog-eastern-oromo",
+      "sourceId": "glottolog-east2652",
+      "title": "Glottolog 5.3 — Eastern Oromo",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/east2652",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Eastern Oromo spoken L1 language entry: glottocode east2652, ISO 639-3 hae, country Ethiopia; subclassification references include Janko 2009."
+    },
+    {
+      "id": "ctx-source:glottolog-janko-oromo-2009",
+      "sourceId": "glottolog-ref-320477",
+      "title": "Towards the genetic classification of Afaan Oromo dialects",
+      "publisher": "University of Oslo",
+      "url": "https://glottolog.org/resource/reference/id/320477",
+      "sourceType": "academic",
+      "publicationDate": "2009-01-01",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "254-page dissertation; Glottolog bibliography metadata explicitly maps the Barentu/eastern/Hararge dialect area to Oromo, Eastern (hae), with localities including Dire Dawa, Bisidimo, Jijiga and Chercher."
+    },
+    {
+      "id": "ctx-source:sage-hussein-hararghe-2019",
+      "sourceId": "sage-culture-psychology-17721861",
+      "title": "‘You can hear wholly only if you remove the waxes in your ears’: The Hararghe Oromo’s theory for establishing the intersubjective foundation of cognition",
+      "publisher": "SAGE / Culture & Psychology",
+      "url": "https://journals.sagepub.com/doi/10.1177/1354067X17721861",
+      "sourceType": "academic",
+      "publicationDate": "2019-03-01",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Study of Hararghe Oromo mirriiysa performance culture using texts collected from folk performers and participant interpretation; examines listening, criticality, mindfulness, interpersonal sensitivity and emotional intelligence."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:46420",
+    "peid": 46420,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 46420,
+      "verifiedPeopleName": "Hararghe Oromo",
+      "pgidAnchors": [
+        "PG046420"
+      ],
+      "countryIso3Anchors": [
+        "ETH"
+      ],
+      "languageIso6393Anchors": [
+        "hae"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:52:53.050Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Hararghe Oromo in Ethiopia and ties the record to Oromo, Eastern (hae). Glottolog and a University of Oslo dialect study independently connect Hararge/eastern Oromo speech to the Eastern Oromo code, while Hararghe-specific cultural research documents mirriiysa as one locally studied performance tradition.",
+      "claimIds": [
+        "claim:hararghe-oromo-ethiopia-identity",
+        "claim:eastern-oromo-language",
+        "claim:hararghe-oromo-dialect-context",
+        "claim:hararghe-mirriiysa-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Islam - Sunni' label for this record. It is retained as provider context and is not generalized into a statement about every Hararghe Oromo person's belief or practice.",
+      "claimIds": [
+        "claim:hararghe-oromo-ethiopia-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The mission classification is explained only from PeopleGroups.org source-native fields. Oromo dialect identity, Hararghe cultural performance and Sunni identity are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The structured source reports GSEC 1 and less than 2% evangelical presence with no recent church-planting activity; it separately reports Unengaged status and that congregations exist.",
+        "claimIds": [
+          "claim:hararghe-oromo-ethiopia-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources remain narrow evidence",
+        "summary": "The live record reports Bible and Jesus Film availability. Those fields do not establish distribution, comprehension or use across Hararghe Oromo communities.",
+        "claimIds": [
+          "claim:hararghe-oromo-ethiopia-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:hararghe-oromo-ethiopia-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG046420 reports PEID 46420, display name Hararghe Oromo, country Ethiopia and primary language Oromo, Eastern (hae).",
+        "citationIds": [
+          "ctx-source:peoplegroups-hararghe-oromo-ethiopia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:eastern-oromo-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Eastern Oromo with glottocode east2652 and ISO 639-3 code hae and lists Ethiopia as its country.",
+        "citationIds": [
+          "ctx-source:glottolog-eastern-oromo"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:hararghe-oromo-dialect-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog and Janko's dialect-classification dissertation associate Barentu/eastern/Hararge Oromo speech with Eastern Oromo (hae), including documented Hararge-area localities.",
+        "citationIds": [
+          "ctx-source:glottolog-eastern-oromo",
+          "ctx-source:glottolog-janko-oromo-2009"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "This is linguistic classification evidence and is not used to define a single cultural, political or personal identity for every Hararghe Oromo speaker."
+      },
+      {
+        "id": "claim:hararghe-mirriiysa-context",
+        "dimension": "culture",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "A Hararghe Oromo study documents mirriiysa as a socio-cultural performance in which listening, understanding and response are interpreted in socially meaningful interactive contexts.",
+        "citationIds": [
+          "ctx-source:sage-hussein-hararghe-2019"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The study analyzes a set of performance texts and participating folk performers; it is not generalized into a claim that every Hararghe Oromo person practices or interprets mirriiysa identically."
+      },
+      {
+        "id": "claim:hararghe-oromo-ethiopia-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Islam - Sunni' as the aggregate primary-religion label for PG046420.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hararghe-oromo-ethiopia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Hararghe Oromo person's belief or practice."
+      },
+      {
+        "id": "claim:hararghe-oromo-ethiopia-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG046420; it separately reports Unengaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hararghe-oromo-ethiopia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These source-native fields are retained separately; the candidate does not infer a contradiction-free narrative or make a judgment about individuals."
+      },
+      {
+        "id": "claim:hararghe-oromo-ethiopia-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and four total evangelical resources for PG046420.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hararghe-oromo-ethiopia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability fields do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-hararghe-oromo-ethiopia-api",
+      "ctx-source:peoplegroups-hararghe-oromo-ethiopia",
+      "ctx-source:glottolog-eastern-oromo",
+      "ctx-source:glottolog-janko-oromo-2009",
+      "ctx-source:sage-hussein-hararghe-2019"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
