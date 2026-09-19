@@ -51,34 +51,8 @@ const batches: ResearchBatch[] = [];
 const globallySeenPgids = new Set<string>();
 for (const file of files) {
   const batch = parseBatch(JSON.parse(await readFile(resolve(registryDir, file), "utf8")) as unknown, file);
-  for (const pgid of batch.pgids) {
-    if (globallySeenPgids.has(pgid)) throw new Error("Research-batch registry duplicates " + pgid + " across batches.");
-    globallySeenPgids.add(pgid);
-  }
-  batches.push(batch);
-}
-
-const catalog = await loadPhase12EditorialCatalog();
-const candidateFiles = (await readdir(candidateDir)).filter((name) => name.endsWith(".json")).sort();
-const candidatePeids = new Map<number, string>();
-for (const file of candidateFiles) {
-  const candidate = editorialContextProfilePackageSchema.parse(
-    JSON.parse(await readFile(resolve(candidateDir, file), "utf8")) as unknown,
-  );
-  candidatePeids.set(candidate.profile.peid, file);
-}
-
-const client = createPeopleGroupsApiClient();
-const generatedAt = new Date().toISOString();
-const batchReports: Array<Record<string, unknown>> = [];
-let providerErrorCount = 0;
-let researchReadyCount = 0;
-
-await mkdir(outputDir, { recursive: true });
-
-for (const batch of batches) {
-  const records: Array<Record<string, unknown>> = [];
-  for (const pgid of batch.pgids) {
+  const RESEARCH_FETCH_CONCURRENCY = 4;
+  const resolvePgid = async (pgid: string): Promise<Record<string, unknown>> => {
     try {
       const live = await client.fetchByPgid(pgid);
       const gsec = live.GSEC ?? null;
@@ -95,7 +69,7 @@ for (const batch of batches) {
 
       if (status === "research-ready") researchReadyCount += 1;
 
-      records.push({
+      return {
         requestedPgid: pgid,
         status,
         candidateFile: candidate,
@@ -125,15 +99,20 @@ for (const batch of batches) {
           sourceUpdatedAt: live.UpdatedDate ?? null,
           sourceRecordUrl: "https://peoplegroups.org/wp-json/pg/v1/people-groups/" + live.PGID,
         },
-      });
+      };
     } catch (error) {
       providerErrorCount += 1;
-      records.push({
+      return {
         requestedPgid: pgid,
         status: "provider-error",
         reason: error instanceof Error ? error.message : "unknown-provider-error",
-      });
+      };
     }
+  };
+
+  for (let offset = 0; offset < batch.pgids.length; offset += RESEARCH_FETCH_CONCURRENCY) {
+    const chunk = batch.pgids.slice(offset, offset + RESEARCH_FETCH_CONCURRENCY);
+    records.push(...await Promise.all(chunk.map(resolvePgid)));
   }
 
   const report = {
