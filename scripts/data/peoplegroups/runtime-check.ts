@@ -6,7 +6,7 @@ import {
 import { createPeopleGroupsApiClient, PeopleGroupsApiError } from "../../../src/providers/peoplegroups/api.js";
 import { buildRuntimeCountrySummaries, buildRuntimePeopleEntities } from "../../../src/providers/peoplegroups/model.js";
 import { createPeopleGroupsCorpusLoader } from "../../../src/providers/peoplegroups/runtime.js";
-import type { PeopleGroupsApiRecord } from "../../../src/providers/peoplegroups/types.js";
+import { peopleGroupsApiRecordSchema, type PeopleGroupsApiRecord } from "../../../src/providers/peoplegroups/types.js";
 
 function record(overrides: Partial<PeopleGroupsApiRecord> = {}): PeopleGroupsApiRecord {
   return {
@@ -51,6 +51,95 @@ function record(overrides: Partial<PeopleGroupsApiRecord> = {}): PeopleGroupsApi
     UpdatedDate: "2026-07-17T00:00:00.000Z",
     ...overrides,
   };
+}
+
+const september2026ProviderShape = {
+  OBJECTID: 5139,
+  PEID: 12316,
+  PGID: "PG012316",
+  Name: "Dendi",
+  DisplayName: "Dendi",
+  AlternateNames: null,
+  ISOAlpha3: "BEN",
+  CountryName: "Benin",
+  UNm49RegionName: "Africa",
+  UNm49SubRegionName: "Western Africa",
+  Population: 345000,
+  EvangelicalLevel: "Less than 2%",
+  CongregationsExist: "Yes",
+  ChurchPlantingWithinLast2Years: "No Churches Planted",
+  EngagementStatus: "Engaged",
+  GSEC: 1,
+  GSECDescription: "Less than 2% Evangelical, No Recent CP Activity",
+  GSECLongDescription: "this people group is less than 2% evangelical",
+  EngagementProgress: 1,
+  EngagementProgressDesc: "Engaged yet Unreached",
+  LostnessPriority: 1,
+  LostnessPriorityName: "Pioneer Unreached People Group",
+  LostnessPriorityDescription: "0.1% or Greater but Less than 0.5% Evangelical",
+  LanguageCode: "ddn",
+  LanguageName: "Dendi (Benin)",
+  LanguageFamily: "Songhay",
+  ROR: "MOF",
+  ReligionName: "Islam - Folk",
+  ReligionDisplayName: "Folk Islam",
+  imbAffinityName: "Sub-Saharan African Peoples",
+  ROP2Name: "Songhai",
+  ROP3Name: "Dendi",
+  ROP25Name: "Dendi (Dandawa)",
+  BibleAvailability: "Available",
+  JesusFilmAvailability: "Available",
+  ResourceTotal: 5,
+  Description: "Source description",
+  LocationDescription: null,
+  Lat: 11.67,
+  Long: 3.32,
+  UpdatedDate: "1781791196000",
+};
+
+const migratedRecord = peopleGroupsApiRecordSchema.parse(september2026ProviderShape);
+if (
+  migratedRecord.PEID !== 12316
+  || migratedRecord.NmDisp !== "Dendi"
+  || migratedRecord.ISOalpha3 !== "BEN"
+  || migratedRecord.Ctry !== "Benin"
+  || migratedRecord.ROL !== "ddn"
+  || migratedRecord.Lang !== "Dendi (Benin)"
+  || migratedRecord.GSEC !== 1
+  || migratedRecord.GSECbrf !== "Less than 2% Evangelical, No Recent CP Activity"
+  || migratedRecord.SPI !== 1
+  || migratedRecord.LPI !== 1
+  || migratedRecord.Affbloc !== "Sub-Saharan African Peoples"
+  || migratedRecord.PplClstr !== "Songhai"
+  || migratedRecord.PplNm !== "Dendi"
+  || migratedRecord.Ethne !== "Dendi (Dandawa)"
+  || migratedRecord.Bible !== "Available"
+  || migratedRecord.Jesus !== "Available"
+  || migratedRecord.ResTot !== 5
+  || migratedRecord.UpdatedDate !== "2026-06-18T13:59:56.000Z"
+) {
+  throw new Error("September 2026 PeopleGroups provider-shape normalization is incorrect.");
+}
+
+const migratedClient = createPeopleGroupsApiClient({
+  fetchImpl: async () => new Response(JSON.stringify(september2026ProviderShape), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  }),
+  timeoutMs: 1000,
+});
+const migratedSingle = await migratedClient.fetchByPgid("PG012316");
+const migratedEntity = buildRuntimePeopleEntities([migratedSingle])[0];
+if (
+  !migratedEntity
+  || migratedEntity.peid !== 12316
+  || migratedEntity.contexts[0]?.country.iso3 !== "BEN"
+  || migratedEntity.contexts[0]?.language.iso6393 !== "ddn"
+  || migratedEntity.contexts[0]?.reach.classification !== "unreached"
+  || migratedEntity.contexts[0]?.resources.bibleAvailability !== "Available"
+  || migratedEntity.sourceUpdatedAt !== "2026-06-18T13:59:56.000Z"
+) {
+  throw new Error("September 2026 PeopleGroups provider shape must preserve canonical runtime semantics.");
 }
 
 const page1 = [

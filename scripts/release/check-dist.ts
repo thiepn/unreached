@@ -54,7 +54,12 @@ async function size(path: string): Promise<number> {
 
 const assetsDir = resolve(dist, "assets");
 const assetNames = await readdir(assetsDir);
-if (!assetNames.some((name) => /maplibre-gl-csp-worker/i.test(name))) throw new Error("Production dist is missing the dedicated MapLibre worker asset.");
+// MapLibre 5 emitted `maplibre-gl-csp-worker-*`. MapLibre 6's ESM worker,
+// bundled through Vite's `?worker&url` pipeline, intentionally emits
+// `maplibre-gl-worker-*`. Either name represents the same release invariant:
+// a dedicated same-origin worker asset rather than an inline/blob worker.
+const maplibreWorker = assetNames.find((name) => /^maplibre-gl-(?:csp-)?worker-[a-zA-Z0-9_-]+\.js$/.test(name));
+if (!maplibreWorker) throw new Error("Production dist is missing the dedicated same-origin MapLibre worker asset.");
 let largestJsGzip = 0;
 let largestCssGzip = 0;
 for (const name of assetNames) {
@@ -69,4 +74,4 @@ const geographyBytes = (await stat(resolve(dist, "maps/world-countries.geojson")
 if (geographyBytes > 5 * 1024 * 1024) throw new Error(`World geography unexpectedly exceeds 5 MiB (${geographyBytes} bytes).`);
 const total = await size(dist);
 if (total > 20 * 1024 * 1024) throw new Error(`Production dist unexpectedly exceeds 20 MiB (${total} bytes).`);
-console.log(`v1.3 production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only PeopleGroups domains plus ${publishedPeids.size} reviewed editorial profile shards, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
+console.log(`v1.3 production-dist checks passed: ${(total / 1024 / 1024).toFixed(2)} MiB total, runtime-only PeopleGroups domains plus ${publishedPeids.size} reviewed editorial profile shards, dedicated worker ${maplibreWorker}, ${(largestJsGzip / 1024).toFixed(1)} KiB largest JS gzip, ${(largestCssGzip / 1024).toFixed(1)} KiB largest CSS gzip.`);
