@@ -123,7 +123,7 @@ export function MissionHistoryPanel({ record }: { record: PeopleProfileRecord })
         <div><span class="eyebrow">Historical mission intelligence</span><h2 id="mission-history-heading">Source history on this device</h2></div>
         <History size={21} aria-hidden="true" />
       </div>
-      <p class="people-section__intro">Unreached keeps a bounded, device-private history of this PeopleGroups.org record. A new timeline point is created only when tracked source fields change. Repeated visits do not manufacture a trend.</p>
+      <p class="people-section__intro">Unreached keeps a bounded, device-private history of this PeopleGroups.org record. A new timeline point is created only when the tracked state changes from the latest stored state. Consecutive repeated visits do not manufacture a trend.</p>
 
       <div class="mission-history-boundary" role="note">
         <strong>Observed history, not reconstructed history.</strong>
@@ -144,7 +144,7 @@ export function MissionHistoryPanel({ record }: { record: PeopleProfileRecord })
       {state.status === "ready" && observations.length > 1 ? (
         <>
           <div class="mission-history-summary" role="status">
-            <span>{observations.length} distinct local source states</span>
+            <span>{observations.length} local source-history points</span>
             <strong>{latestChanges.length === 1 ? "1 tracked field changed since the previous state" : `${latestChanges.length} tracked fields changed since the previous state`}</strong>
           </div>
           <ol class="mission-history-timeline" aria-label="PeopleGroups.org source history">
