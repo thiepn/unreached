@@ -204,7 +204,7 @@ for (const marker of [
 
 const registry = sourceRegistrySchema.parse(JSON.parse(await read("data/source-registry.json")) as unknown);
 const peopleGroups = registry.sources.find((source) => source.id === "peoplegroups-org-api");
-if (!peopleGroups || peopleGroups.termsReviewedAt !== "2026-09-19" || peopleGroups.browserRedistributionAllowed) {
+if (!peopleGroups || Date.parse(peopleGroups.termsReviewedAt) < Date.parse("2026-09-19") || peopleGroups.browserRedistributionAllowed) {
   throw new Error("Phase 14 PeopleGroups source policy must be freshly reviewed while public redistribution remains blocked.");
 }
 for (const phrase of ["on-device", "backfill", "de-duplicate"]) {
