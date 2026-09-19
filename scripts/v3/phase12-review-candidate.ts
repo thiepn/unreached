@@ -4,6 +4,7 @@ import { editorialContextAvailabilitySchema, editorialContextManifestSchema, edi
 import { adaptLegacyContextPackageToV3Editorial, assertEditorialProfileIntegrity } from "../../src/editorial/index.js";
 import { createPeopleGroupsApiClient } from "../../src/providers/peoplegroups/index.js";
 import { loadPhase12EditorialCatalog } from "./phase12-content.js";
+import { evidenceAuditMap, loadPhase12EvidenceAuditIndex } from "./phase12-evidence-audits.js";
 
 const root = process.cwd();
 const args = process.argv.slice(2);
@@ -31,6 +32,9 @@ if (candidate.fixture || candidate.profile.review.status !== "draft" || candidat
 const now = new Date();
 const at = now.toISOString();
 const catalog = await loadPhase12EditorialCatalog(now);
+const auditIndex = await loadPhase12EvidenceAuditIndex();
+const preReviewAudit = evidenceAuditMap(auditIndex).get(name);
+if (!preReviewAudit) throw new Error(`${name} has no indexed AI-assisted pre-review evidence audit.`);
 if (catalog.reviewedPeids.has(candidate.profile.peid)) throw new Error(`PEID ${candidate.profile.peid} is already published.`);
 const pgid = candidate.profile.identity.pgidAnchors[0];
 if (!pgid) throw new Error(`${name} has no PGID anchor.`);
@@ -69,7 +73,7 @@ const reviewDir = resolve(root, "artifacts/v3-phase12/reviews");
 await mkdir(reviewDir, { recursive: true });
 await writeFile(resolve(reviewDir, `${name.replace(/\.json$/, "")}.json`), `${JSON.stringify({
   schemaVersion: 1, generatedAt: at, candidate: name, peid: candidate.profile.peid, pgid, identity,
-  phase12Scope: { gsec0To3: true }, liveMission,
+  phase12Scope: { gsec0To3: true }, liveMission, preReviewAudit,
   sourceCount: candidate.sources.length, claimCount: candidate.profile.claims.length,
   sources: candidate.sources.map(({ id, title, publisher, url, locator, sourceType }) => ({ id, title, publisher, url, locator, sourceType })),
   claims: candidate.profile.claims.map(({ id, dimension, kind, temporalClass, text, citationIds, asOf, reviewAfter, sensitivity }) => ({ id, dimension, kind, temporalClass, text, citationIds, asOf, reviewAfter, sensitivity })),
@@ -87,6 +91,7 @@ const markdown: string[] = [
   "- Live identity checks: pass",
   "- Live Phase 12 GSEC 0–3 scope: pass",
   "- Reviewed-profile structural policy: pass",
+  "- AI-assisted pre-review audit: `" + preReviewAudit.document + "` (" + preReviewAudit.checkedAt + "; not maintainer approval)",
   "- Publication requested: " + (has("publish") ? "yes" : "no"),
   "",
   "## Live source snapshot",
