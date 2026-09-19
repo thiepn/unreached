@@ -28,6 +28,11 @@ const changedState: HuiFixtureState = {
   updatedDate: "2026-09-20T00:00:00.000Z",
 };
 
+const revertedState: HuiFixtureState = {
+  ...initialState,
+  updatedDate: "2026-09-21T00:00:00.000Z",
+};
+
 async function installHuiPeopleGroupsRecord(page: Page, current: () => HuiFixtureState): Promise<void> {
   await page.route(`https://peoplegroups.org/wp-json/pg/v1/people-groups/${HUI_PGID}`, async (route) => {
     const state = current();
@@ -83,8 +88,12 @@ async function deleteIndexedDb(page: Page, name: string): Promise<void> {
   }, name);
 }
 
-async function installChangedProviderState(page: Page, setState: (state: HuiFixtureState) => void): Promise<void> {
-  setState(changedState);
+async function installProviderState(
+  page: Page,
+  setState: (state: HuiFixtureState) => void,
+  next: HuiFixtureState,
+): Promise<void> {
+  setState(next);
   await deleteIndexedDb(page, "unreached-peoplegroups-v1");
   await page.reload();
 }
@@ -121,10 +130,10 @@ test("a real tracked source change creates a distinct timeline point with exact 
   const panel = page.locator('[data-phase14-history="true"]');
   await expect(panel).toHaveAttribute("data-history-count", "1");
 
-  await installChangedProviderState(page, (next) => { state = next; });
+  await installProviderState(page, (next) => { state = next; }, changedState);
 
   await expect(panel).toHaveAttribute("data-history-count", "2");
-  await expect(panel.getByText("2 distinct local source states", { exact: true })).toBeVisible();
+  await expect(panel.getByText("2 local source-history points", { exact: true })).toBeVisible();
   await expect(panel.getByText("Mission classification", { exact: true })).toBeVisible();
   await expect(panel.getByText("Unreached → Does not meet IMB unreached rule", { exact: true })).toBeVisible();
   await expect(panel.getByText("GSEC", { exact: true }).first()).toBeVisible();
@@ -135,6 +144,24 @@ test("a real tracked source change creates a distinct timeline point with exact 
   await page.screenshot({ path: `${artifactDir}/hui-history-change.png`, fullPage: true });
 });
 
+test("a later return to an earlier tracked state remains a new historical transition", async ({ page }) => {
+  let state = initialState;
+  await installHuiPeopleGroupsRecord(page, () => state);
+
+  await page.goto(`./#/peoples/${HUI_PEID}`);
+  const panel = page.locator('[data-phase14-history="true"]');
+  await expect(panel).toHaveAttribute("data-history-count", "1");
+
+  await installProviderState(page, (next) => { state = next; }, changedState);
+  await expect(panel).toHaveAttribute("data-history-count", "2");
+
+  await installProviderState(page, (next) => { state = next; }, revertedState);
+  await expect(panel).toHaveAttribute("data-history-count", "3");
+  await expect(panel.getByText("3 local source-history points", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Does not meet IMB unreached rule → Unreached", { exact: true })).toBeVisible();
+  await expect(panel.getByText("4 → 1", { exact: true })).toBeVisible();
+});
+
 test("reset discards earlier local states and retains only the current source state", async ({ page }) => {
   let state = initialState;
   await installHuiPeopleGroupsRecord(page, () => state);
@@ -143,7 +170,7 @@ test("reset discards earlier local states and retains only the current source st
   const panel = page.locator('[data-phase14-history="true"]');
   await expect(panel).toHaveAttribute("data-history-count", "1");
 
-  await installChangedProviderState(page, (next) => { state = next; });
+  await installProviderState(page, (next) => { state = next; }, changedState);
   await expect(panel).toHaveAttribute("data-history-count", "2");
 
   await panel.getByRole("button", { name: /Reset local history to current state/ }).click();
