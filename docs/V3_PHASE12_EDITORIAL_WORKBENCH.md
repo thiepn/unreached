@@ -73,6 +73,8 @@ It re-fetches every draft's anchored PGID and records the live PEID, name, count
 
 The workflow step deliberately uses `continue-on-error`: a PeopleGroups/network outage must not make the deterministic release build red. **Identity mismatches and GSEC scope drift remain publication blockers** and must be corrected before human review/promotion.
 
+When the live diagnostic succeeds, the Phase 12 PR workflow automatically runs `v3:phase12-review-workbench` and includes the maintainer-ready JSON/Markdown review index in the normal Phase 12 artifact bundle. A separate workflow dispatch is still available for an explicit refresh, but routine PR review no longer requires it.
+
 ## Guarded review and publication command
 
 Prepare a live-identity-checked, non-mutating review packet:
