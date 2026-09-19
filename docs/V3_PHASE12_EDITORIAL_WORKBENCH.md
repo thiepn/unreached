@@ -50,6 +50,23 @@ The gate verifies that each candidate:
 
 The in-memory shadow review exists only to test structure, freshness, citation integrity, prohibited language and section depth. It never writes review metadata back to the candidate and never increments the public reviewed-profile count.
 
+## Guarded review and publication command
+
+Prepare a live-identity-checked, non-mutating review packet:
+
+```bash
+npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json
+```
+
+The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, runs the full reviewed-profile policy in shadow mode, and writes an evidence packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
+
+After a maintainer has opened every cited source and completed all eight review checks, publication can be performed deterministically:
+
+```bash
+npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json --publish --reviewer-role="Release-maintainer evidence review" --attest-review-complete
+```
+
+Both an explicit human reviewer role and `--attest-review-complete` are required. Automated/mechanical/AI reviewer roles are rejected. The command writes the reviewed profile, updates the production manifest and public context count, then removes the draft candidate so duplicate identities fail closed.
 ## Maintainer publication boundary
 
 A candidate becomes publishable only after a maintainer checks the actual evidence and records the normal review contract:
@@ -71,6 +88,7 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 
 - Public substantial reviewed profiles: **12 / 100**.
 - Review-ready draft candidates in the workbench: **1**.
+- Nateni candidate: source audit refreshed on **19 September 2026**; no material contradiction found, but human maintainer attestation is still required.
 - Remaining public reviewed-profile gap: **88** until a candidate is actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.
