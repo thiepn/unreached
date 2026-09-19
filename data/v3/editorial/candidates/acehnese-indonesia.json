@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-acehnese-indonesia-api",
+      "sourceId": "peoplegroups-pgid-PG022477-api",
+      "title": "PeopleGroups.org API — Acehnese of Indonesia (PG022477)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG022477",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Live Phase 12 research registry: PEID 22477; Acehnese in Indonesia; Aceh (ace); Islam - Sunni; GSEC 1; Engaged; congregations exist; no churches planted; Bible and Jesus Film Available; 4 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-acehnese-indonesia",
+      "sourceId": "peoplegroups-profile-PG022477",
+      "title": "PeopleGroups.org — Acehnese of Indonesia (PGID PG022477)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg022477/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Public people-group profile: Acehnese in Indonesia, Aceh (ace), Sunni Islam and provider mission/resource presentation. Structured API values remain the current source boundary where partner-resource surfaces differ."
+    },
+    {
+      "id": "ctx-source:glottolog-acehnese",
+      "sourceId": "glottolog-achi1257",
+      "title": "Glottolog 5.3 — Acehnese",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/achi1257",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Acehnese spoken L1 language entry: glottocode achi1257, ISO 639-3 ace, country Indonesia; current source notes threatened status and provincial-identity role."
+    },
+    {
+      "id": "ctx-source:usk-acehnese-parents-2023",
+      "sourceId": "usk-siele-25632",
+      "title": "Acehnese parents’ attitudes and their implications in the intergenerational transmission of the heritage language",
+      "publisher": "Universitas Syiah Kuala / Studies in English Language and Education",
+      "url": "https://jurnal.usk.ac.id/SiELE/article/view/25632",
+      "sourceType": "academic",
+      "publicationDate": "2023-01-31",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Qualitative study of 20 Acehnese-speaking female parents in two suburbs of Lhokseumawe; findings concern parental attitudes, home-domain language practice and intergenerational transmission."
+    },
+    {
+      "id": "ctx-source:uin-acehnese-south-2024",
+      "sourceId": "uin-buletin-al-turas-34246",
+      "title": "The Acehnese Language Use in South Aceh Regency: A Sociolinguistic Analysis",
+      "publisher": "UIN Syarif Hidayatullah Jakarta / Buletin Al-Turas",
+      "url": "https://journal.uinjkt.ac.id/index.php/al-turats/article/view/34246/0",
+      "sourceType": "academic",
+      "publicationDate": "2024-04-30",
+      "accessedAt": "2026-09-19T19:52:53.050Z",
+      "locator": "Qualitative sociolinguistic study of Acehnese-language use in South Aceh Regency using documentary work, field studies, focus groups and interviews."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:22477",
+    "peid": 22477,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 22477,
+      "verifiedPeopleName": "Acehnese",
+      "pgidAnchors": [
+        "PG022477"
+      ],
+      "countryIso3Anchors": [
+        "IDN"
+      ],
+      "languageIso6393Anchors": [
+        "ace"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:52:53.050Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Acehnese in Indonesia and ties the record to Aceh (ace). Glottolog independently identifies Acehnese, while recent locality-specific sociolinguistic studies document both active heritage-language maintenance efforts and pressures affecting intergenerational use.",
+      "claimIds": [
+        "claim:acehnese-indonesia-identity",
+        "claim:acehnese-language",
+        "claim:acehnese-language-maintenance-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Islam - Sunni' label for this record. It is retained as source context and is not generalized into a statement about every Acehnese person's belief or practice.",
+      "claimIds": [
+        "claim:acehnese-indonesia-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org mission fields. Acehnese language maintenance, regional culture and Sunni identity are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The structured source reports GSEC 1 and less than 2% evangelical presence with no recent church-planting activity, while separately reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:acehnese-indonesia-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Provider resource fields stay source-specific",
+        "summary": "The live record reports Bible and Jesus Film availability. Partner-facing profile surfaces can vary, so the structured fields are preserved without inventing a reconciled access claim.",
+        "claimIds": [
+          "claim:acehnese-indonesia-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:acehnese-indonesia-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG022477 reports PEID 22477, display name Acehnese, country Indonesia and primary language Aceh (ace).",
+        "citationIds": [
+          "ctx-source:peoplegroups-acehnese-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:acehnese-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "Glottolog identifies Acehnese with glottocode achi1257 and ISO 639-3 code ace and lists Indonesia as its country.",
+        "citationIds": [
+          "ctx-source:glottolog-acehnese"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Glottolog's vitality/status metadata is language-level context and does not describe the language practice of every Acehnese household."
+      },
+      {
+        "id": "claim:acehnese-language-maintenance-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "current",
+        "text": "Recent studies in Lhokseumawe and South Aceh document locality- and household-specific variation in Acehnese language use and intergenerational transmission, including both maintenance efforts and pressures toward language shift.",
+        "citationIds": [
+          "ctx-source:usk-acehnese-parents-2023",
+          "ctx-source:uin-acehnese-south-2024"
+        ],
+        "asOf": "2024-04-30",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These studies cover specific localities and samples. Their findings are not generalized into one current language-use pattern for all Acehnese communities."
+      },
+      {
+        "id": "claim:acehnese-indonesia-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Islam - Sunni' as the aggregate primary-religion label for PG022477.",
+        "citationIds": [
+          "ctx-source:peoplegroups-acehnese-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Acehnese person's belief or practice."
+      },
+      {
+        "id": "claim:acehnese-indonesia-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG022477; it separately reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-acehnese-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These source-native mission fields coexist in the live record and are not reconciled into an invented verdict."
+      },
+      {
+        "id": "claim:acehnese-indonesia-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and four total evangelical resources for PG022477.",
+        "citationIds": [
+          "ctx-source:peoplegroups-acehnese-indonesia-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Structured provider availability fields do not establish distribution, comprehension, use or translation completeness; public partner-resource surfaces may not display an identical combination."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-acehnese-indonesia-api",
+      "ctx-source:peoplegroups-acehnese-indonesia",
+      "ctx-source:glottolog-acehnese",
+      "ctx-source:usk-acehnese-parents-2023",
+      "ctx-source:uin-acehnese-south-2024"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
