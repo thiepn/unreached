@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-**Reviewed:** 17 September 2026
+**Reviewed:** 19 September 2026
 
 Unreached combines project-authored software/content with external data and open-source components. Nothing in the Unreached project license changes the rights attached to third-party material.
 
@@ -15,6 +15,18 @@ Production mission data is read from the public PeopleGroups.org API operated by
 - Images: linked/provider or third-party images are not redistributed by Unreached without separate rights review
 
 PeopleGroups.org states that its public API is free and read-only and expressly invites maps, prayer tools and research applications. Provider data remains provider data; Unreached's source registry records runtime-use approval separately from static redistribution rights.
+
+### Phase 14 device-private source history
+
+**Reviewed:** 19 September 2026
+
+Unreached may keep a bounded local history of distinct PeopleGroups.org mission-source states actually observed by the current browser. The history uses the provider's source fields and `UpdatedDate` when supplied, plus local observation timestamps.
+
+- Storage: separate device-local IndexedDB only; maximum 24 distinct states per PGID
+- Sync/export: excluded from private continuity, server storage and server-held account export
+- Redistribution: no public historical snapshot archive, bulk export or provider mirror
+- Interpretation: no backfill, interpolation, inferred intermediate state or causal claim
+- Joshua Project: Phase 13 comparison responses remain no-store and are not copied into this history
 
 ## Natural Earth
 
