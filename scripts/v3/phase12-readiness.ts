@@ -72,6 +72,11 @@ for (const marker of ["Live source snapshot", "Evidence sources", "Maintainer ch
   if (!reviewWorkbenchScript.includes(marker)) throw new Error(`Phase 12 workbench review is missing reviewer packet marker: ${marker}`);
 }
 
+const liveAuditScript = await readText("scripts/v3/phase12-live-candidate-audit.ts");
+for (const marker of ["identity-mismatch", "out-of-scope", "provider-error", "live-candidate-audit.json", "non-blocking-live-diagnostic"]) {
+  if (!liveAuditScript.includes(marker)) throw new Error(`Phase 12 live candidate audit is missing diagnostic boundary: ${marker}`);
+}
+
 for (const script of [
   "v3:phase12-candidate-check",
   "v3:phase12-readiness",
@@ -82,6 +87,7 @@ for (const script of [
   "v3:phase12-editorial-scaffold-batch",
   "v3:phase12-review-candidate",
   "v3:phase12-review-workbench",
+  "v3:phase12-live-candidate-audit",
 ]) {
   if (!pkg.scripts?.[script]) throw new Error(`Phase 12 package script is not wired: ${script}.`);
 }
