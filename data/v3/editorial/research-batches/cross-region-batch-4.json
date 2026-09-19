@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "cross-region-batch-4",
+  "title": "Cross-region research batch 4",
+  "issue": 100,
+  "publicationEffect": "none",
+  "selectionNote": "Explicit editorial research set tracked in Issue #100. Order is workflow order only and is not a mission-priority, urgency, population, spiritual-need, funding or importance ranking.",
+  "pgids": [
+    "PG007224",
+    "PG024639",
+    "PG022477",
+    "PG046420"
+  ]
+}
