@@ -145,6 +145,11 @@ for (const marker of ["Gate D", "24 retained timeline points", "A → B → A", 
   if (!phase14.includes(marker)) throw new Error(`Phase 14 historical source policy documentation missing: ${marker}`);
 }
 
+const phase15 = await readText("docs/V3_PHASE15_SCRIPTURE_LANGUAGE_INTELLIGENCE.md");
+for (const marker of ["Gate D", "Scripture & Language Intelligence", "ProgressBible and Ethnologue remain excluded", "mutual intelligibility", "Phase 16 — Mission Knowledge Graph"]) {
+  if (!phase15.includes(marker)) throw new Error(`Phase 15 Scripture/language policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
