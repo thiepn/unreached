@@ -5,6 +5,7 @@ import { editorialContextProfilePackageSchema, type EditorialContextProfilePacka
 import { adaptLegacyContextPackageToV3Editorial, assertEditorialProfileIntegrity } from "../../src/editorial/index.js";
 import { loadPhase12EditorialCatalog } from "./phase12-content.js";
 import { evidenceAuditMap, loadPhase12EvidenceAuditIndex } from "./phase12-evidence-audits.js";
+import { loadPhase12ReviewBatchIndex, reviewAssignmentMap } from "./phase12-review-batches.js";
 
 const root = process.cwd();
 const candidateDir = resolve(root, "data/v3/editorial/candidates");
@@ -45,6 +46,15 @@ if (auditIndex.entries.length !== entries.length) {
   throw new Error(`Phase 12 evidence-audit index has ${auditIndex.entries.length} entries for ${entries.length} candidates.`);
 }
 
+const reviewBatchIndex = await loadPhase12ReviewBatchIndex();
+const reviewAssignments = reviewAssignmentMap(reviewBatchIndex);
+if (reviewAssignments.size !== entries.length) {
+  throw new Error(`Phase 12 review-batch registry assigns ${reviewAssignments.size} candidates for ${entries.length} current drafts.`);
+}
+for (const assigned of reviewAssignments.keys()) {
+  if (!entries.includes(assigned)) throw new Error(`Phase 12 review-batch registry assigns stale/nonexistent candidate ${assigned}.`);
+}
+
 const seenPeids = new Set<number>();
 for (const name of entries) {
   const raw = JSON.parse(await readFile(resolve(candidateDir, name), "utf8"));
@@ -52,6 +62,11 @@ for (const name of entries) {
   const profile = pkg.profile;
   const audit = auditsByCandidate.get(name);
   if (!audit) throw new Error(`${name} has no indexed AI-assisted pre-review evidence audit.`);
+  const reviewAssignment = reviewAssignments.get(name);
+  if (!reviewAssignment) throw new Error(`${name} has no accountable human review-batch assignment.`);
+  if (!reviewAssignment.title.includes("Editorial Review")) {
+    throw new Error(`${name} review batch #${reviewAssignment.issue} is not clearly labeled as an editorial review batch.`);
+  }
   const auditDocument = await readFile(resolve(root, audit.document), "utf8");
   const auditLower = auditDocument.toLocaleLowerCase("en");
   if (!auditLower.includes("not maintainer approval") || !auditLower.includes("not publication")) {
@@ -87,4 +102,4 @@ for (const name of entries) {
   assertEditorialProfileIntegrity(adapted, new Date());
 }
 
-console.log(`V3 Phase 12 candidate checks passed for ${entries.length} review-ready draft${entries.length === 1 ? "" : "s"} with one indexed AI-assisted pre-review evidence audit per draft. Drafts remain excluded from the ${catalog.reviewedProfiles.length}/100 published reviewed-profile count until maintainer evidence review.`);
+console.log(`V3 Phase 12 candidate checks passed for ${entries.length} review-ready draft${entries.length === 1 ? "" : "s"} with one indexed AI-assisted pre-review evidence audit and exactly one accountable human review-batch assignment per draft. Drafts remain excluded from the ${catalog.reviewedProfiles.length}/100 published reviewed-profile count until maintainer evidence review.`);
