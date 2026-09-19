@@ -103,6 +103,21 @@ For each tracked PGID it fetches the current PeopleGroups record and records the
 
 The registry is explicitly **non-ranking** and has `publicationEffect: "none"`. It creates no candidate claims and changes no public content. Its purpose is to make the transition from an explicit research PGID list to a correctly anchored candidate possible without ever inferring PEID from PGID.
 
+## Human review-batch accountability
+
+Every current draft must be assigned to exactly one accountable human review batch in:
+
+`data/v3/editorial/review-batches.json`
+
+The registry currently maps all 24 drafts across Issues **#96, #98, #99, #101 and #103**. The candidate gate rejects:
+
+- a draft with no review assignment;
+- a candidate assigned to more than one review batch;
+- a stale registry entry for a candidate that no longer exists;
+- duplicate review-batch IDs or duplicate GitHub issue assignments.
+
+The registry is intentionally labeled `human-review-required`: assignment to an issue is **not evidence review, approval or publication**. Single-candidate and consolidated workbench review packets surface the responsible issue automatically so every draft has an explicit human sign-off destination.
+
 ## Guarded review and publication command
 
 Prepare a live-identity-checked, non-mutating review packet:
