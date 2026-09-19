@@ -22,7 +22,7 @@
       "publicReleaseAllowed": true,
       "browserRedistributionAllowed": false,
       "publicRedistribution": "No static corpus mirror or Unreached bulk-data API. Provider data is accessed through the provider's public read-only API and is not relicensed by Unreached.",
-      "cacheStatus": "device-local validated resilience cache plus bounded device-private mission-history observations; never synced, exported, or publicly redistributed",
+      "cacheStatus": "device-local validated resilience cache plus bounded device-private mission-history transitions; never synced, exported, or publicly redistributed",
       "attributionRequired": null,
       "attributionText": "Data provided and maintained by the Global Research Department of the International Mission Board via PeopleGroups.org",
       "developmentIngestionAllowed": true,
@@ -37,7 +37,7 @@
         "re-review the beta API documentation before releases that materially change provider access or caching",
         "historical observations may persist only on-device as a bounded private log and must remain excluded from private sync, server storage, exports and public redistribution",
         "store only source-returned mission fields plus source UpdatedDate and local observation times; do not backfill, interpolate or infer past source states",
-        "de-duplicate identical tracked mission states so repeated visits do not manufacture time-series points",
+        "de-duplicate consecutive repeated observations of the same tracked mission state so repeat visits do not manufacture time-series points, while later reversions remain visible",
         "provider-hosted historical GSEC overview PDFs may be linked for research context but must not be copied or parsed into an Unreached historical dataset without a separate rights and methodology review"
       ],
       "permissionGate": "Phase 14 re-reviewed the current PeopleGroups.org public API and Research Data pages on 2026-09-19. The API remains a free public read-only runtime source and documents UpdatedDate for source records. PeopleGroups.org separately publishes historical GSEC overview PDFs for 2011–2024 and says that aggregate archive is no longer currently updated. Phase 14 links to that provider-hosted archive but does not copy or reinterpret it as individual PGID revision history. Per-record historical intelligence is approved only as a bounded device-private observation history created from ordinary runtime reads; no public snapshot archive, bulk export, server history service, provider mirror or inferred backfill is introduced.",
