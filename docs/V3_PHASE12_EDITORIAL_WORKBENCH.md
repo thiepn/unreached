@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains `nateni-benin.json` and `hausa-benin.json`. Both use claim-level citations and remain outside `public/data/context/manifest.v1.json`, so neither counts toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
+The workbench currently contains `nateni-benin.json` and `hausa-benin.json`. Both use claim-level citations and remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
