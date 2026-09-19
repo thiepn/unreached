@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, HeartHandshake, Li
 import { hrefFor } from "../app/router";
 import { DefinitiveEditorialProfile } from "../components/DefinitiveEditorialProfile";
 import { MeaningSummary } from "../components/MeaningSummary";
+import { MissionHistoryPanel } from "../components/MissionHistoryPanel";
 import { MultiSourceMissionPanel } from "../components/MultiSourceMissionPanel";
 import { ProfileLocalActions } from "../components/ProfileLocalActions";
 import { TermHelp } from "../components/TermHelp";
@@ -194,6 +195,7 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
         <div class="people-profile-context v3-people-mission-context" data-profile-stage="understand">
           <UnreachedExplanation record={record} />
           <SourceContext record={record} />
+          <MissionHistoryPanel record={record} />
           <MultiSourceMissionPanel record={record} />
           <ProviderContext record={record} />
         </div>

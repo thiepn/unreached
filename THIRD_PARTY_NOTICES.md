@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-**Reviewed:** 17 September 2026
+**Reviewed:** 19 September 2026
 
 Unreached combines project-authored software/content with external data and open-source components. Nothing in the Unreached project license changes the rights attached to third-party material.
 
@@ -16,6 +16,18 @@ Production mission data is read from the public PeopleGroups.org API operated by
 
 PeopleGroups.org states that its public API is free and read-only and expressly invites maps, prayer tools and research applications. Provider data remains provider data; Unreached's source registry records runtime-use approval separately from static redistribution rights.
 
+### Phase 14 device-private source history
+
+**Reviewed:** 19 September 2026
+
+Unreached may keep a bounded local history of PeopleGroups.org mission-source state transitions actually observed by the current browser. The history uses the provider's source fields and `UpdatedDate` when supplied, plus local observation timestamps.
+
+- Storage: separate device-local IndexedDB only; maximum 24 retained timeline points per PGID
+- Sync/export: excluded from private continuity, server storage and server-held account export
+- Redistribution: no public historical snapshot archive, bulk export or provider mirror
+- Interpretation: no backfill, interpolation, inferred intermediate state or causal claim
+- Joshua Project: Phase 13 comparison responses remain no-store and are not copied into this history
+
 ## Natural Earth
 
 Natural Earth vector/raster map data is public domain.
@@ -25,6 +37,8 @@ Natural Earth vector/raster map data is public domain.
 - Attribution: not legally required by Natural Earth; Unreached retains source attribution for provenance
 
 ## Joshua Project
+
+**Reviewed:** 17 September 2026
 
 Phase 13 introduces Joshua Project only as an optional secondary mission-intelligence comparison for a small set of manually reviewed people-group-in-country identity links. PeopleGroups.org remains the canonical atlas runtime.
 

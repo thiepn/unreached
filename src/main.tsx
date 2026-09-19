@@ -51,6 +51,7 @@ import "./styles/account/base.css";
 import "./styles/shell/navigation.css";
 import "./styles/people/explorer.css";
 import "./styles/people/profile.css";
+import "./styles/people/history.css";
 import "./styles/explore/map-workspace.css";
 import "./styles/foundation/detail-records.css";
 import "./styles/prayer/guides-and-lists.css";

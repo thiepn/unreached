@@ -33,18 +33,20 @@ for (const marker of [
   "private notes",
   "prayer-memory entries",
   "does not currently implement its own analytics",
-  "17 September 2026",
+  "19 September 2026",
+  "mission-source state transitions",
 ]) if (!privacy.includes(marker)) throw new Error(`Release privacy notice missing: ${marker}`);
 
 const publicPrivacy = await readText("public/privacy.html");
 for (const marker of [
   "Privacy notice",
-  "17 September 2026",
+  "19 September 2026",
   "Optional private continuity",
   "private notes",
   "prayer-memory trail",
   "Analytics and advertising",
   "Your controls",
+  "mission-source state transitions",
 ]) {
   if (!publicPrivacy.includes(marker)) throw new Error(`Release public privacy page missing: ${marker}`);
 }
@@ -96,14 +98,14 @@ interface RegistrySource {
   termsReviewedAt: string;
 }
 const registry = await readJson<{ schemaVersion: number; reviewedAt: string; sources: RegistrySource[] }>("data/source-registry.json");
-if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-17") throw new Error("Source registry metadata is stale for the V3 Phase 13 source review.");
+if (registry.schemaVersion !== 3 || registry.reviewedAt !== "2026-09-19") throw new Error("Source registry metadata is stale for the V3 Phase 14 source review.");
 const byId = new Map(registry.sources.map((source) => [source.id, source]));
 
 const peopleGroups = byId.get("peoplegroups-org-api");
 if (!peopleGroups?.runtimeReadAllowed || !peopleGroups.publicReleaseAllowed || peopleGroups.browserRedistributionAllowed) {
   throw new Error("PeopleGroups.org must remain the canonical approved public runtime while static/browser corpus redistribution stays blocked.");
 }
-if (peopleGroups.termsReviewedAt !== "2026-09-16") throw new Error("PeopleGroups.org Phase 1 terms review date is stale.");
+if (peopleGroups.termsReviewedAt !== "2026-09-19") throw new Error("PeopleGroups.org Phase 14 historical-use review date is stale.");
 
 const naturalEarth = byId.get("natural-earth");
 if (!naturalEarth?.publicReleaseAllowed || !naturalEarth.browserRedistributionAllowed || naturalEarth.termsReviewedAt !== "2026-08-28") {
@@ -138,6 +140,11 @@ for (const marker of ["Gate D", "manual crosswalk", "JOSHUA_PROJECT_API_KEY", "n
   if (!phase13.includes(marker)) throw new Error(`Phase 13 source policy documentation missing: ${marker}`);
 }
 
+const phase14 = await readText("docs/V3_PHASE14_HISTORICAL_MISSION_INTELLIGENCE.md");
+for (const marker of ["Gate D", "24 retained timeline points", "A → B → A", "historical GSEC overview", "excluded from private continuity sync"]) {
+  if (!phase14.includes(marker)) throw new Error(`Phase 14 historical source policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
@@ -149,4 +156,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Development/server API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13 Joshua Project comparison boundaries, attribution, project licensing and third-party notices agree with repository behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13 Joshua Project comparison boundaries, Phase 14 observed-history boundaries, attribution, project licensing and third-party notices agree with repository behavior.");

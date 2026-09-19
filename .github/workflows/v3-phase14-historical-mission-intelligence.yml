@@ -1,0 +1,69 @@
+name: V3 Phase 14 Historical Mission Intelligence
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase13-multi-source-intelligence
+    paths:
+      - "package.json"
+      - "data/source-registry.json"
+      - "docs/V3_PHASE14_HISTORICAL_MISSION_INTELLIGENCE.md"
+      - "docs/DATA_AND_LEGAL_POLICY.md"
+      - "THIRD_PARTY_NOTICES.md"
+      - "public/privacy.html"
+      - "src/mission/history.ts"
+      - "src/mission/history-store.ts"
+      - "src/components/MissionHistoryPanel.tsx"
+      - "src/pages/PeoplePage.tsx"
+      - "src/pages/AboutPage.tsx"
+      - "src/styles/people/history.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase14-check.ts"
+      - "tests/e2e/v3-phase14-history.spec.ts"
+      - ".github/workflows/v3-phase14-historical-mission-intelligence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 14 history and storage boundaries
+        run: npm run v3:phase14-check
+
+      - name: Run complete production build gate
+        run: npm run build
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify historical mission intelligence on desktop and mobile
+        run: npm run v3:phase14-visual
+
+      - name: Upload Phase 14 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase14-history
+          path: artifacts/v3-phase14
+          if-no-files-found: warn
+          retention-days: 30
