@@ -38,6 +38,8 @@ Natural Earth vector/raster map data is public domain.
 
 ## Joshua Project
 
+**Reviewed:** 17 September 2026
+
 Phase 13 introduces Joshua Project only as an optional secondary mission-intelligence comparison for a small set of manually reviewed people-group-in-country identity links. PeopleGroups.org remains the canonical atlas runtime.
 
 - API terms: https://api.joshuaproject.net/terms_of_use
