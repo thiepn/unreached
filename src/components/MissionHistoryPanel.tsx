@@ -127,7 +127,8 @@ export function MissionHistoryPanel({ record }: { record: PeopleProfileRecord })
 
       <div class="mission-history-boundary" role="note">
         <strong>Observed history, not reconstructed history.</strong>
-        <p>There is no historical provider feed in this feature. Earlier values are never inferred from today's record. This local history is excluded from account sync, server storage and exports.</p>
+        <p>PeopleGroups.org separately publishes historical GSEC overview PDFs at global aggregate level. This per-record feature does not treat those reports as prior states for this PGID. Earlier values are never inferred from today's record. This local history is excluded from account sync, server storage and exports.</p>
+        <a href="https://peoplegroups.org/downloads/" target="_blank" rel="noreferrer">Open PeopleGroups.org historical GSEC overview archive</a>
       </div>
 
       {state.status === "loading" && !observations.length ? <div class="people-context-absence" role="status"><strong>Preparing local source history…</strong></div> : null}
