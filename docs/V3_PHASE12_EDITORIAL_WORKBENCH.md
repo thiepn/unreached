@@ -155,6 +155,7 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 - Batch 1 — Benin: Nateni, Hausa, Anii and Weme. Human evidence sign-off is tracked in **Issue #96**.
 - Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbek (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
 - Batch 3 — Benin research promotions: Dendi, Foodo, Gun and Aizo. Research/provenance is closed in **Issue #97**; human evidence sign-off is tracked in **Issue #99**.
+- Batch 4 — cross-region research only: Kham Tibetan (China), Turkmen (Turkmenistan), Acehnese (Indonesia) and Hararghe Oromo (Ethiopia). Live identity/GSEC research is tracked in **Issue #100**; no Batch 4 candidate drafts exist yet and the workbench count remains 16.
 - All current draft packages pass the mechanical Tier-3 candidate integrity policy. Live identity revalidation and human evidence review remain mandatory before publication.
 - Remaining public reviewed-profile gap: **88** until candidates are actually reviewed and published.
 
