@@ -77,7 +77,9 @@
     "operations:check": "tsx scripts/operations/phase4-check.ts",
     "audit:licenses": "node scripts/operations/dependency-license-audit.mjs",
     "e2e:v3": "playwright test --config=playwright.v3.config.ts",
-    "e2e:historical": "playwright test --config=playwright.config.ts"
+    "e2e:historical": "playwright test --config=playwright.config.ts",
+    "v3:phase12-review-candidate": "tsx scripts/v3/phase12-review-candidate.ts",
+    "v3:phase12-review-workbench": "tsx scripts/v3/phase12-review-workbench.ts"
   },
   "engines": {
     "node": ">=22.12.0"

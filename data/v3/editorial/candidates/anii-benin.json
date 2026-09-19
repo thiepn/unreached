@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-anii-benin-api",
+      "sourceId": "peoplegroups-pgid-PG012305-api",
+      "title": "PeopleGroups.org API — Anii of Benin (PG012305)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012305",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T00:45:00Z",
+      "locator": "Single-record provider endpoint for PG012305; live identity must be re-fetched by the guarded Phase 12 review command before publication"
+    },
+    {
+      "id": "ctx-source:peoplegroups-anii-benin",
+      "sourceId": "peoplegroups-profile-PG012305",
+      "title": "PeopleGroups.org — Anii of Benin (PGID PG012305)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012305/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T00:45:00Z",
+      "locator": "Profile summary and fast facts: Anii in Benin, blo, GSEC/engagement, aggregate religion and resource sections"
+    },
+    {
+      "id": "ctx-source:glottolog-anii",
+      "sourceId": "glottolog-anii1245",
+      "title": "Glottolog 5.3 — Anii",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/anii1245",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T00:45:00Z",
+      "locator": "Anii language entry: glottocode anii1245, ISO 639-3 blo, countries Benin and Togo"
+    },
+    {
+      "id": "ctx-source:sil-anii-survey",
+      "sourceId": "sil-togo-benin-9042",
+      "title": "A sociolinguistic survey of the Anii-Akpe language area",
+      "publisher": "SIL Togo-Bénin / SIL International",
+      "url": "https://togo-benin.sil.org/fr/resources/archives/9042",
+      "sourceType": "academic",
+      "publicationDate": "2009-01-01",
+      "accessedAt": "2026-09-19T00:45:00Z",
+      "locator": "94-page survey of Anii-Akpe communities in Benin and Togo; dialect comprehension, language use, attitudes, bilingualism, education and literacy"
+    },
+    {
+      "id": "ctx-source:cambridge-anii-2024",
+      "sourceId": "cambridge-jol-2024-anii",
+      "title": "Irrealis as modality: evidence from Gιsιɖa Anii",
+      "publisher": "Cambridge University Press / Journal of Linguistics",
+      "url": "https://www.cambridge.org/core/journals/journal-of-linguistics/article/irrealis-as-modality-evidence-from-gsda-anii/C7D8B736EAB958BDAC08F29761BBDAD8",
+      "sourceType": "academic",
+      "publicationDate": "2024-01-01",
+      "accessedAt": "2026-09-19T00:45:00Z",
+      "locator": "Introduction and methods: Anii on the Togo–Benin border, Bassila dialect fieldwork, community orthography and Anii-speaker literacy team"
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12305",
+    "peid": 12305,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12305,
+      "verifiedPeopleName": "Anii",
+      "pgidAnchors": [
+        "PG012305"
+      ],
+      "countryIso3Anchors": [
+        "BEN"
+      ],
+      "languageIso6393Anchors": [
+        "blo"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T00:45:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Anii in Benin and ties the record to Anii (blo). Independent linguistic sources place Anii in Benin and Togo, while recent fieldwork in Bassila documents active language research and community literacy work.",
+      "claimIds": [
+        "claim:anii-benin-identity",
+        "claim:anii-language",
+        "claim:anii-sociolinguistic-history",
+        "claim:anii-bassila-literacy-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate primary-religion label for this people-group-in-country record. The label is useful source context but is not a claim about the beliefs or practice of every Anii person.",
+      "claimIds": [
+        "claim:anii-benin-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current unreached classification only from PeopleGroups.org mission-status evidence. Language diversity, literacy, culture and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently presents PG012305 as GSEC 1, less than 2% evangelical, and Engaged yet Unreached.",
+        "claimIds": [
+          "claim:anii-benin-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Resource availability must stay source-specific",
+        "summary": "The current provider page reports no film entries for Anii while separately linking Bible-resource providers, so the candidate preserves those labels without converting them into a total-access claim.",
+        "claimIds": [
+          "claim:anii-benin-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:anii-benin-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG012305 identifies the people-group record as Anii in Benin and lists Anii (blo) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-anii-benin-api",
+          "ctx-source:peoplegroups-anii-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:anii-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Anii with glottocode anii1245 and ISO 639-3 code blo, and lists Benin and Togo among its countries.",
+        "citationIds": [
+          "ctx-source:glottolog-anii"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:anii-sociolinguistic-history",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "A 2009 SIL sociolinguistic survey of Anii-Akpe communities in Benin and Togo reported strong intercomprehension evidence, no indication of language shift at the time, and positive attitudes toward Anii language development.",
+        "citationIds": [
+          "ctx-source:sil-anii-survey"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "These are historical survey findings and are not presented as a measurement of current language use in every Anii community."
+      },
+      {
+        "id": "claim:anii-bassila-literacy-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Recent linguistic fieldwork in Bassila, Benin describes collaborative work with Anii speakers and a local team that publishes Anii material and promotes literacy, complementing earlier survey evidence of community interest in language development.",
+        "citationIds": [
+          "ctx-source:cambridge-anii-2024",
+          "ctx-source:sil-anii-survey"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The Cambridge work focuses on the Bassila dialect and should not be generalized to every Anii-speaking locality."
+      },
+      {
+        "id": "claim:anii-benin-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Anii of Benin profile reports Folk Islam as its aggregate primary-religion label.",
+        "citationIds": [
+          "ctx-source:peoplegroups-anii-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for PG012305, not a statement about each Anii person’s belief or practice."
+      },
+      {
+        "id": "claim:anii-benin-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1 and less than 2% evangelical for PG012305 and presents the record as Engaged yet Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-anii-benin-api",
+          "ctx-source:peoplegroups-anii-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:anii-benin-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile reports no film entries for Anii (blo) on its media-resource surface while separately linking Anii Bible-resource providers.",
+        "citationIds": [
+          "ctx-source:peoplegroups-anii-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider resource links do not by themselves establish distribution, comprehension, use or translation completeness in Anii communities."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-anii-benin-api",
+      "ctx-source:peoplegroups-anii-benin",
+      "ctx-source:glottolog-anii",
+      "ctx-source:sil-anii-survey",
+      "ctx-source:cambridge-anii-2024"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

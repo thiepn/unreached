@@ -38,6 +38,16 @@ on:
         required: false
         default: ""
         type: string
+      editorial_candidate:
+        description: "Optional candidate filename to generate a live identity-checked maintainer review packet"
+        required: false
+        default: ""
+        type: string
+      review_editorial_workbench:
+        description: "Generate one non-mutating live review packet for every current Phase 12 draft candidate"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -163,5 +173,65 @@ jobs:
         with:
           name: unreached-v3-phase12-editorial-scaffold-${{ inputs.editorial_pgid }}
           path: artifacts/v3-phase12/workbench
+          if-no-files-found: error
+          retention-days: 30
+
+  editorial-candidate-review:
+    if: github.event_name == 'workflow_dispatch' && inputs.editorial_candidate != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Prepare live identity-checked maintainer review packet
+        env:
+          EDITORIAL_CANDIDATE: ${{ inputs.editorial_candidate }}
+        run: npm run v3:phase12-review-candidate -- --candidate="$EDITORIAL_CANDIDATE"
+
+      - name: Upload private maintainer review packet
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-review
+          path: artifacts/v3-phase12/reviews
+          if-no-files-found: error
+          retention-days: 30
+
+  editorial-workbench-review:
+    if: github.event_name == 'workflow_dispatch' && inputs.review_editorial_workbench == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Prepare live identity-checked workbench review packet
+        run: npm run v3:phase12-review-workbench
+
+      - name: Upload private workbench review packet
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase12-workbench-review
+          path: artifacts/v3-phase12/reviews
           if-no-files-found: error
           retention-days: 30

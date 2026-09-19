@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-hausa-benin-api",
+      "sourceId": "peoplegroups-pgid-PG012327-api",
+      "title": "PeopleGroups.org API — Hausa of Benin (PG012327)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012327",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T00:30:00Z",
+      "locator": "Single-record provider endpoint for PG012327; live identity must be re-fetched by the guarded Phase 12 review command before publication"
+    },
+    {
+      "id": "ctx-source:peoplegroups-hausa-benin",
+      "sourceId": "peoplegroups-profile-PG012327",
+      "title": "PeopleGroups.org — Hausa of Benin (PGID PG012327)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012327/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T00:30:00Z",
+      "locator": "People-group profile fast facts, diaspora description, GSEC/engagement presentation, language and Christian-resource sections"
+    },
+    {
+      "id": "ctx-source:glottolog-hausa",
+      "sourceId": "glottolog-haus1257",
+      "title": "Glottolog 5.3 — Hausa",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/haus1257.html",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T00:30:00Z",
+      "locator": "Hausa language entry: glottocode haus1257, ISO 639-3 hau, countries include Benin"
+    },
+    {
+      "id": "ctx-source:cambridge-hausa-diaspora",
+      "sourceId": "cambridge-hia-2016-hausa-diaspora",
+      "title": "Beyond the World of Commerce: Rethinking Hausa Diaspora History through Marriage, Distance, and Legal Testimony",
+      "publisher": "Cambridge University Press / History in Africa",
+      "url": "https://www.cambridge.org/core/journals/history-in-africa/article/abs/beyond-the-world-of-commerce-rethinking-hausa-diaspora-history-through-marriage-distance-and-legal-testimony/475EA07BD512A73C086A0CE5BBAF2BA7",
+      "sourceType": "academic",
+      "publicationDate": "2016-04-25",
+      "accessedAt": "2026-09-19T00:30:00Z",
+      "locator": "Abstract: Hausa migration and settlement in the Cameroon Grassfields; historiographic note that West African Hausa diaspora studies have often focused on commerce and Islam"
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12327",
+    "peid": 12327,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12327,
+      "verifiedPeopleName": "Hausa",
+      "pgidAnchors": [
+        "PG012327"
+      ],
+      "countryIso3Anchors": [
+        "BEN"
+      ],
+      "languageIso6393Anchors": [
+        "hau"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T00:30:00Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Hausa in Benin as a diaspora people-group record whose primary language is Hausa (hau). Glottolog independently records Hausa as a language present in Benin. Broader historical scholarship documents Hausa diaspora communities across West Africa, while cautioning against reducing those histories to a single commercial or religious narrative.",
+      "claimIds": [
+        "claim:hausa-benin-identity",
+        "claim:hausa-language",
+        "claim:hausa-diaspora-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate primary-religion label for this Hausa people-group-in-country record. That provider classification is mission-research context and is not a statement about the beliefs, practice or identity of every Hausa person in Benin.",
+      "claimIds": [
+        "claim:hausa-benin-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This candidate explains the current unreached classification only from PeopleGroups.org source-native mission-status fields. It does not infer receptivity, resistance or spiritual condition from Hausa identity, diaspora history, language or religion.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "PeopleGroups.org currently presents PG012327 as GSEC 1, less than 2% evangelical, and categorizes the record as Unengaged and Unreached.",
+        "claimIds": [
+          "claim:hausa-benin-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported Hausa-language Christian resources are present",
+        "summary": "The provider profile links multiple Hausa-language films and Bible resources, so this candidate does not describe the record as having no Hausa-language Christian media.",
+        "claimIds": [
+          "claim:hausa-benin-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:hausa-benin-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile PG012327 identifies the people-group record as Hausa in Benin and lists Hausa (hau) as its primary language.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hausa-benin-api",
+          "ctx-source:peoplegroups-hausa-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:hausa-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Hausa with glottocode haus1257 and ISO 639-3 code hau, and lists Benin among the countries where the language is spoken.",
+        "citationIds": [
+          "ctx-source:glottolog-hausa"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:hausa-diaspora-context",
+        "dimension": "history",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "PeopleGroups.org describes the Hausa of Benin record as a diaspora community, while academic scholarship documents historical Hausa migration and settlement elsewhere in West Africa and notes that Hausa diaspora historiography has often concentrated on commerce and Islam.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hausa-benin",
+          "ctx-source:cambridge-hausa-diaspora"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The Cambridge article studies Hausa communities in the Cameroon Grassfields, not Benin; it is used only for broader Hausa diaspora historiography and not as direct evidence about Beninese Hausa households."
+      },
+      {
+        "id": "claim:hausa-benin-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org Hausa of Benin profile reports an aggregate primary-religion label of Islam - Folk.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hausa-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider-level classification for PG012327 and must not be generalized to every Hausa person in Benin."
+      },
+      {
+        "id": "claim:hausa-benin-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "PeopleGroups.org currently reports GSEC 1 and less than 2% evangelical for PG012327, and presents the record as Unengaged and Unreached.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hausa-benin-api",
+          "ctx-source:peoplegroups-hausa-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields for one people-group-in-country record, not a judgment about individuals."
+      },
+      {
+        "id": "claim:hausa-benin-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The current PeopleGroups.org profile links Hausa-language film resources including JESUS, Magdalena and The Savior and also links Hausa Bible resources.",
+        "citationIds": [
+          "ctx-source:peoplegroups-hausa-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Linked resource availability does not establish distribution, comprehension, use or translation completeness among Hausa communities in Benin."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-hausa-benin-api",
+      "ctx-source:peoplegroups-hausa-benin",
+      "ctx-source:glottolog-hausa",
+      "ctx-source:cambridge-hausa-diaspora"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

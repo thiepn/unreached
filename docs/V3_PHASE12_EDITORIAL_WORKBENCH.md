@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The first review-ready candidate is `nateni-benin.json`. It contains claim-level citations from PeopleGroups.org / IMB, Glottolog, SIL Togo-Bénin and the Government of Benin. It is **not** part of `public/data/context/manifest.v1.json` and therefore does not count toward the 100-profile Unreached 3.0 certification target.
+The workbench currently contains `nateni-benin.json` and `hausa-benin.json`. Both use claim-level citations and remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -50,6 +50,34 @@ The gate verifies that each candidate:
 
 The in-memory shadow review exists only to test structure, freshness, citation integrity, prohibited language and section depth. It never writes review metadata back to the candidate and never increments the public reviewed-profile count.
 
+## Guarded review and publication command
+
+Prepare a live-identity-checked, non-mutating review packet:
+
+```bash
+npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json
+```
+
+The command re-fetches the anchored PeopleGroups record, verifies PEID/PGID/name/country/language identity, runs the full reviewed-profile policy in shadow mode, and writes an evidence packet under `artifacts/v3-phase12/reviews/`. It does **not publish by default**.
+
+After a maintainer has opened every cited source and completed all eight review checks, publication can be performed deterministically:
+
+```bash
+npm run v3:phase12-review-candidate -- --candidate=nateni-benin.json --publish --reviewer-role="Release-maintainer evidence review" --attest-review-complete
+```
+
+Both an explicit human reviewer role and `--attest-review-complete` are required. Automated/mechanical/AI reviewer roles are rejected. The command writes the reviewed profile, updates the production manifest and public context count, then removes the draft candidate so duplicate identities fail closed.
+## Batch maintainer review packet
+
+To check every current draft against the live PeopleGroups identity boundary and generate one consolidated maintainer checklist, run:
+
+```bash
+npm run v3:phase12-review-workbench
+```
+
+This command is **non-mutating**. It produces `workbench-review-index.json` and `workbench-review-index.md` under `artifacts/v3-phase12/reviews/`. Every draft must pass live PEID/PGID/name/country/language checks and the full reviewed-profile policy in shadow mode.
+
+Batch review never sets review metadata and never publishes. Final publication remains a deliberate one-candidate-at-a-time action through the guarded `v3:phase12-review-candidate -- --publish ... --attest-review-complete` path so each human attestation stays explicit and attributable.
 ## Maintainer publication boundary
 
 A candidate becomes publishable only after a maintainer checks the actual evidence and records the normal review contract:
@@ -70,7 +98,11 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready draft candidates in the workbench: **1**.
+- Review-ready draft candidates in the workbench: **4**.
+- Nateni candidate: source audit refreshed on **19 September 2026**; no material contradiction found, but human maintainer attestation is still required.
+- Hausa of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and Cambridge evidence; human maintainer attestation is required.
+- Anii of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog, SIL and Cambridge evidence; human maintainer attestation is required.
+- Weme of Benin candidate: added **19 September 2026** with PeopleGroups.org, Glottolog and a dedicated SIL sociolinguistic survey; human maintainer attestation is required.
 - Remaining public reviewed-profile gap: **88** until a candidate is actually reviewed and published.
 
 This workbench is a content-production accelerator, not a way to lower the Phase 12 release threshold.
