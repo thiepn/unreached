@@ -191,7 +191,7 @@ for (const marker of [
   "Source history",
   "History is observed, never backfilled.",
   "Historical mission-source observations are bounded and private to this device.",
-  "19 September 2026",
+  "Source and licensing records were most recently reviewed on",
 ]) requireText(about, marker, "public methodology disclosure");
 
 const privacy = await read("public/privacy.html");
