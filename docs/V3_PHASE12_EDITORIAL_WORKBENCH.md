@@ -10,7 +10,7 @@ Candidate packages live under:
 
 They use the same profile-package schema as production editorial shards, but they must remain `review.status = "draft"` until a maintainer performs the evidence review and intentionally publishes them.
 
-The workbench currently contains **12 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbek of Uzbekistan and Saho of Eritrea. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
+The workbench currently contains **16 Tier-3 drafts**. Batch 1 contains Nateni, Hausa, Anii and Weme of Benin. Batch 2 adds Afar of Ethiopia, Eastern Baloch and Brahui of Pakistan, Tamajeq of Mali, Fur of Sudan, Kabyle of Algeria, Uzbeks of Uzbekistan and Saho of Eritrea. Batch 3 promotes the completed Issue #97 research set: Dendi, Foodo, Gun and Aizo of Benin. All remain outside `public/data/context/manifest.v1.json`. Draft candidate material **does not count** toward the 100-profile Unreached 3.0 certification target until explicit human maintainer review and publication.
 
 ## Start a new research packet from a PGID
 
@@ -57,9 +57,51 @@ The gate verifies that each candidate:
 - has at least three sources and at least one non-mission-research source;
 - has at least four material claims;
 - has internally resolvable citation/source identifiers;
+- has exactly one indexed AI-assisted pre-review evidence audit under `data/v3/editorial/evidence-audits.json`;
+- the mapped audit document explicitly remains **not maintainer approval** and **not publication**;
 - can pass the full V3 reviewed-profile structural/evidence policy when evaluated as an in-memory shadow publication.
 
 The in-memory shadow review exists only to test structure, freshness, citation integrity, prohibited language and section depth. It never writes review metadata back to the candidate and never increments the public reviewed-profile count.
+
+## Pre-review evidence-audit index
+
+Every Tier-3 draft is mapped in:
+
+`data/v3/editorial/evidence-audits.json`
+
+The index links each candidate to one AI-assisted evidence-audit document and labels every entry `pre-review-only`. The candidate gate requires an exact one-to-one mapping between current drafts and audit entries and verifies that every mapped document explicitly states that it is **not maintainer approval** and **not publication**.
+
+The batch and single-candidate review packets surface the mapped audit path so maintainers can read the pre-review findings alongside the live source snapshot and cited evidence. This layer improves evidence preparation; it never completes any human checkbox or changes review status.
+
+## Automatic live candidate diagnostic
+
+Every Phase 12 pull request now runs a **non-blocking** live candidate audit:
+
+```bash
+npm run v3:phase12-live-candidate-audit
+```
+
+It re-fetches every draft's anchored PGID and records the live PEID, name, country, language, GSEC, mission fields, resource labels and provider update date. Each draft is classified as `pass`, `identity-mismatch`, `out-of-scope` or `provider-error`, with JSON and Markdown evidence under `artifacts/v3-phase12/`.
+
+The workflow step deliberately uses `continue-on-error`: a PeopleGroups/network outage must not make the deterministic release build red. **Identity mismatches and GSEC scope drift remain publication blockers** and must be corrected before human review/promotion.
+
+When the live diagnostic succeeds, the Phase 12 PR workflow automatically runs `v3:phase12-review-workbench` and includes the maintainer-ready JSON/Markdown review index in the normal Phase 12 artifact bundle. A separate workflow dispatch is still available for an explicit refresh, but routine PR review no longer requires it.
+
+## Tracked research-batch registry
+
+Research-only batches can now be registered under:
+
+`data/v3/editorial/research-batches/`
+
+The current registry contains Issue #97's explicit Benin batch. On every Phase 12 PR, this command runs as a **non-blocking live diagnostic**:
+
+```bash
+npm run v3:phase12-live-research-batches
+```
+
+For each tracked PGID it fetches the current PeopleGroups record and records the authoritative PEID, display name, country, language/code, GSEC, mission/resource fields and provider update date. It also identifies whether that live PEID is already published, already exists as a candidate, is still research-ready, or has moved outside the GSEC 0–3 scope.
+
+The registry is explicitly **non-ranking** and has `publicationEffect: "none"`. It creates no candidate claims and changes no public content. Its purpose is to make the transition from an explicit research PGID list to a correctly anchored candidate possible without ever inferring PEID from PGID.
 
 ## Guarded review and publication command
 
@@ -109,10 +151,10 @@ AI-assisted research, writing and mechanical validation are allowed. They do not
 ## Current content state
 
 - Public substantial reviewed profiles: **12 / 100**.
-- Review-ready Tier-3 draft candidates in the workbench: **12**.
+- Review-ready Tier-3 draft candidates in the workbench: **16**.
 - Batch 1 — Benin: Nateni, Hausa, Anii and Weme. Human evidence sign-off is tracked in **Issue #96**.
 - Batch 2 — cross-region: Afar (Ethiopia), Eastern Baloch (Pakistan), Tamajeq (Mali), Fur (Sudan), Kabyle (Algeria), Brahui (Pakistan), Uzbek (Uzbekistan) and Saho (Eritrea). Human evidence sign-off is tracked in **Issue #98**.
-- Separate source-scaffold research for Dendi, Foodo, Gun and Aizo of Benin remains tracked in **Issue #97**; those records are not counted as candidate drafts until actual candidate packages are written and pass the candidate gate.
+- Batch 3 — Benin research promotions: Dendi, Foodo, Gun and Aizo. Research/provenance is closed in **Issue #97**; human evidence sign-off is tracked in **Issue #99**.
 - All current draft packages pass the mechanical Tier-3 candidate integrity policy. Live identity revalidation and human evidence review remain mandatory before publication.
 - Remaining public reviewed-profile gap: **88** until candidates are actually reviewed and published.
 

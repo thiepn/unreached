@@ -24,7 +24,6 @@
     "v3:phase12-certify": "tsx scripts/v3/phase12-certify.ts",
     "v3:phase12-editorial-queue": "tsx scripts/v3/phase12-editorial-queue.ts",
     "v3:phase12-editorial-scaffold": "tsx scripts/v3/phase12-editorial-scaffold.ts",
-    "v3:phase13-check": "tsx scripts/v3/phase13-check.ts",
     "v3:phase4-visual": "playwright test tests/e2e/v3-phase4-design-system.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:phase5-shell-visual": "playwright test tests/e2e/v3-phase5-shell-navigation.spec.ts --project=chromium --workers=1",
     "v3:phase6-explore-visual": "playwright test tests/e2e/v3-phase6-explore.spec.ts --project=chromium --workers=1",
@@ -34,7 +33,6 @@
     "v3:phase10-prayer-visual": "playwright test tests/e2e/v3-phase10-prayer.spec.ts --project=chromium --workers=1",
     "v3:phase11-memory-visual": "playwright test tests/e2e/v3-phase11-personal-memory.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:phase12-visual": "playwright test tests/e2e/v3-phase12-certification.spec.ts --project=chromium --project=mobile-chromium --workers=1",
-    "v3:phase13-visual": "playwright test tests/e2e/v3-phase13-multi-source.spec.ts --project=chromium --project=mobile-chromium --workers=1",
     "v3:editorial-preview": "tsx scripts/v3/editorial-preview.ts",
     "data:check": "tsx scripts/data/check.ts",
     "peoplegroups:check": "tsx scripts/data/peoplegroups/check.ts",
@@ -80,7 +78,11 @@
     "e2e:historical": "playwright test --config=playwright.config.ts",
     "v3:phase12-review-candidate": "tsx scripts/v3/phase12-review-candidate.ts",
     "v3:phase12-review-workbench": "tsx scripts/v3/phase12-review-workbench.ts",
-    "v3:phase12-editorial-scaffold-batch": "tsx scripts/v3/phase12-editorial-scaffold-batch.ts"
+    "v3:phase12-editorial-scaffold-batch": "tsx scripts/v3/phase12-editorial-scaffold-batch.ts",
+    "v3:phase12-live-candidate-audit": "tsx scripts/v3/phase12-live-candidate-audit.ts",
+    "v3:phase12-live-research-batches": "tsx scripts/v3/phase12-live-research-batches.ts",
+    "v3:phase13-check": "tsx scripts/v3/phase13-check.ts",
+    "v3:phase13-visual": "playwright test tests/e2e/v3-phase13-multi-source.spec.ts --project=chromium --project=mobile-chromium --workers=1"
   },
   "engines": {
     "node": ">=22.12.0"

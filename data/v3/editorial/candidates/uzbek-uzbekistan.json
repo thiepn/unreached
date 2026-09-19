@@ -54,7 +54,7 @@
       "provider": "peoplegroups-org",
       "origin": "peid-native",
       "targetPeid": 24324,
-      "verifiedPeopleName": "Uzbek",
+      "verifiedPeopleName": "Uzbeks",
       "pgidAnchors": [
         "PG024324"
       ],
@@ -76,7 +76,7 @@
       "verifiedAt": "2026-09-19T18:52:00Z"
     },
     "whoTheyAre": {
-      "summary": "The current PeopleGroups.org record identifies Uzbek in Uzbekistan and ties the record to Northern Uzbek (uzn). Glottolog independently identifies Northern Uzbek and its national institutional role, while scholarship documents how modern language policy and national historiography developed through the Soviet and post-Soviet periods.",
+      "summary": "The current PeopleGroups.org record identifies Uzbeks in Uzbekistan and ties the record to Northern Uzbek (uzn). Glottolog independently identifies Northern Uzbek and its national institutional role, while scholarship documents how modern language policy and national historiography developed through the Soviet and post-Soviet periods.",
       "claimIds": [
         "claim:uzbek-uzbekistan-identity",
         "claim:northern-uzbek-language",
@@ -117,7 +117,7 @@
         "evidenceLevel": "A",
         "certainty": "high",
         "temporalClass": "current",
-        "text": "The current PeopleGroups.org profile PG024324 identifies the people-group record as Uzbek in Uzbekistan and lists Uzbek, Northern (uzn) as its primary language.",
+        "text": "The current PeopleGroups.org profile PG024324 identifies the people-group record as Uzbeks in Uzbekistan and lists Uzbek, Northern (uzn) as its primary language.",
         "citationIds": [
           "ctx-source:peoplegroups-uzbek-uzbekistan"
         ],

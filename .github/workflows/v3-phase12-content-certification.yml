@@ -77,6 +77,35 @@ jobs:
       - name: Verify Phase 12 candidate workbench integrity
         run: npm run v3:phase12-candidate-check
 
+      - name: Diagnostic live candidate identity and GSEC-scope audit
+        id: live_candidate_audit
+        continue-on-error: true
+        run: npm run v3:phase12-live-candidate-audit
+
+      - name: Surface live candidate diagnostic in job summary
+        if: always()
+        run: |
+          if [ -f artifacts/v3-phase12/live-candidate-audit.md ]; then
+            cat artifacts/v3-phase12/live-candidate-audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Generate maintainer-ready workbench review packet
+        if: steps.live_candidate_audit.outcome == 'success'
+        continue-on-error: true
+        run: npm run v3:phase12-review-workbench
+
+      - name: Audit tracked editorial research batches against live source records
+        id: live_research_batches
+        continue-on-error: true
+        run: npm run v3:phase12-live-research-batches
+
+      - name: Surface live research-batch registry in job summary
+        if: always()
+        run: |
+          if [ -f artifacts/v3-phase12/research-batches/index.md ]; then
+            cat artifacts/v3-phase12/research-batches/index.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Verify Phase 12 automated readiness and editorial integrity
         run: npm run v3:phase12-readiness
 

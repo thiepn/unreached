@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-dendi-benin-api",
+      "sourceId": "peoplegroups-pgid-PG012316-api",
+      "title": "PeopleGroups.org API — Dendi of Benin (PG012316)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012316",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Live record verified by the Phase 12 research registry: PEID 12316; Dendi in Benin; Dendi (Benin) (ddn); GSEC 1; Engaged; Bible Available; Jesus Film Available; 5 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-dendi-benin",
+      "sourceId": "peoplegroups-profile-PG012316",
+      "title": "PeopleGroups.org — Dendi of Benin (PGID PG012316)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012316/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Profile fast facts and resource sections: Dendi in Benin, ddn, Folk Islam, GSEC presentation, two Dendi JESUS film entries and linked Bible-resource surfaces."
+    },
+    {
+      "id": "ctx-source:glottolog-dendi",
+      "sourceId": "glottolog-dend1243",
+      "title": "Glottolog 5.3 — Dendi (Benin)",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/dend1243",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Dendi (Benin) entry: glottocode dend1243, ISO 639-3 ddn, countries Benin/Niger/Nigeria; AES note describes wider-communication/trade-language use across northern Benin."
+    },
+    {
+      "id": "ctx-source:afriques-dendi-borgu",
+      "sourceId": "openedition-afriques-1174",
+      "title": "Bentyia (Kukyia): a Songhay–Mande meeting point, and a “missing link” in the archaeology of the West African diasporas of traders, warriors, praise-singers, and clerics",
+      "publisher": "Afriques / OpenEdition Journals",
+      "url": "https://doi.org/10.4000/afriques.1174",
+      "sourceType": "academic",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Sections 105–107: Dendi varieties near the Niger–Benin border and Borgu; historical discussion of post-1591 settlement and lingua-franca use in Parakou, Djougou and Kandi."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12316",
+    "peid": 12316,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12316,
+      "verifiedPeopleName": "Dendi",
+      "pgidAnchors": [
+        "PG012316"
+      ],
+      "countryIso3Anchors": [
+        "BEN"
+      ],
+      "languageIso6393Anchors": [
+        "ddn"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:10:27Z"
+    },
+    "whoTheyAre": {
+      "summary": "The current PeopleGroups.org record identifies Dendi in Benin and ties the record to Dendi (Benin) (ddn). Glottolog independently identifies the language across Benin and neighboring countries, while historical scholarship documents Dendi's wider communication role in northern Benin and Borgu.",
+      "claimIds": [
+        "claim:dendi-benin-identity",
+        "claim:dendi-language",
+        "claim:dendi-wider-communication-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate 'Islam - Folk' religion label for this people-group-in-country record. The label is source context and is not a claim about the belief or practice of every Dendi person.",
+      "claimIds": [
+        "claim:dendi-benin-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "This draft explains current unreached status only from PeopleGroups.org mission fields. Dendi history, language use, trade networks and religion are not treated as causes of mission status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The live structured source reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity, while also reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:dendi-benin-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Reported resources are present but access is not assumed",
+        "summary": "The provider reports Bible and Jesus Film availability and lists Dendi-language film resources; those fields do not establish distribution, comprehension or use in every Dendi community.",
+        "claimIds": [
+          "claim:dendi-benin-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:dendi-benin-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG012316 reports PEID 12316, display name Dendi, country Benin and primary language Dendi (Benin) (ddn).",
+        "citationIds": [
+          "ctx-source:peoplegroups-dendi-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:dendi-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Dendi (Benin) with glottocode dend1243 and ISO 639-3 code ddn and lists Benin, Niger and Nigeria among its countries.",
+        "citationIds": [
+          "ctx-source:glottolog-dendi"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:dendi-wider-communication-context",
+        "dimension": "history",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Independent linguistic and historical sources describe Dendi as a wider-communication language in northern Benin and document historical lingua-franca use in Borgu towns such as Parakou, Djougou and Kandi.",
+        "citationIds": [
+          "ctx-source:glottolog-dendi",
+          "ctx-source:afriques-dendi-borgu"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The historical source discusses regional Dendi-speaking communities and trade-language functions; it is not used to assert one ancestry, occupation or migration story for every person represented by PG012316."
+      },
+      {
+        "id": "claim:dendi-benin-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports 'Islam - Folk' as the aggregate primary-religion label for PG012316.",
+        "citationIds": [
+          "ctx-source:peoplegroups-dendi-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Dendi person's belief or practice."
+      },
+      {
+        "id": "claim:dendi-benin-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG012316; it also reports the record as Engaged, with congregations existing.",
+        "citationIds": [
+          "ctx-source:peoplegroups-dendi-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields, not a judgment about individuals."
+      },
+      {
+        "id": "claim:dendi-benin-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured record reports Bible availability as Available, Jesus Film availability as Available and five total evangelical resources for PG012316; the public profile lists two Dendi JESUS film entries and linked Bible-resource surfaces.",
+        "citationIds": [
+          "ctx-source:peoplegroups-dendi-benin-api",
+          "ctx-source:peoplegroups-dendi-benin"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "Provider availability labels and links do not establish distribution, comprehension, use or translation completeness."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-dendi-benin-api",
+      "ctx-source:peoplegroups-dendi-benin",
+      "ctx-source:glottolog-dendi",
+      "ctx-source:afriques-dendi-borgu"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}

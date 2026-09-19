@@ -54,6 +54,11 @@ for (const marker of [
   if (!workbenchDocs.includes(marker)) throw new Error(`Phase 12 editorial workbench document missing: ${marker}`);
 }
 
+const evidenceAuditLoader = await readText("scripts/v3/phase12-evidence-audits.ts");
+for (const marker of ["pre-review-only", "not maintainer approval", "evidence-audits.json"]) {
+  if (!evidenceAuditLoader.includes(marker)) throw new Error(`Phase 12 evidence-audit loader is missing boundary: ${marker}`);
+}
+
 const reviewCandidateScript = await readText("scripts/v3/phase12-review-candidate.ts");
 const reviewWorkbenchScript = await readText("scripts/v3/phase12-review-workbench.ts");
 for (const [label, source] of [
@@ -72,6 +77,16 @@ for (const marker of ["Live source snapshot", "Evidence sources", "Maintainer ch
   if (!reviewWorkbenchScript.includes(marker)) throw new Error(`Phase 12 workbench review is missing reviewer packet marker: ${marker}`);
 }
 
+const liveAuditScript = await readText("scripts/v3/phase12-live-candidate-audit.ts");
+for (const marker of ["identity-mismatch", "out-of-scope", "provider-error", "live-candidate-audit.json", "non-blocking-live-diagnostic"]) {
+  if (!liveAuditScript.includes(marker)) throw new Error(`Phase 12 live candidate audit is missing diagnostic boundary: ${marker}`);
+}
+
+const liveResearchScript = await readText("scripts/v3/phase12-live-research-batches.ts");
+for (const marker of ["non-ranking-live-research-registry", "research-ready", "provider-error", "index.json", "publicationEffect"]) {
+  if (!liveResearchScript.includes(marker)) throw new Error(`Phase 12 live research-batch audit is missing boundary: ${marker}`);
+}
+
 for (const script of [
   "v3:phase12-candidate-check",
   "v3:phase12-readiness",
@@ -82,6 +97,8 @@ for (const script of [
   "v3:phase12-editorial-scaffold-batch",
   "v3:phase12-review-candidate",
   "v3:phase12-review-workbench",
+  "v3:phase12-live-candidate-audit",
+  "v3:phase12-live-research-batches",
 ]) {
   if (!pkg.scripts?.[script]) throw new Error(`Phase 12 package script is not wired: ${script}.`);
 }

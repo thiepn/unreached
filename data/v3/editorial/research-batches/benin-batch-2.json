@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "benin-batch-2",
+  "title": "Benin research batch 2",
+  "issue": 97,
+  "publicationEffect": "none",
+  "selectionNote": "Explicit research records already tracked in Issue #97. Order is editorial workflow order only and is not a mission-priority, urgency, population, spiritual-need or funding ranking.",
+  "pgids": [
+    "PG012316",
+    "PG012320",
+    "PG012325",
+    "PG012297"
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "fixture": false,
+  "sources": [
+    {
+      "id": "ctx-source:peoplegroups-aizo-benin-api",
+      "sourceId": "peoplegroups-pgid-PG012297-api",
+      "title": "PeopleGroups.org API — Aizo of Benin (PG012297)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/wp-json/pg/v1/people-groups/PG012297",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Live record verified by Phase 12 registry: PEID 12297; Aizo in Benin; Gbe, Ayizo (ayb); GSEC 1; Engaged; congregations exist; Bible Not Available; Jesus Film Available; 2 total resources; source updated 2026-06-18."
+    },
+    {
+      "id": "ctx-source:peoplegroups-aizo-benin",
+      "sourceId": "peoplegroups-profile-PG012297",
+      "title": "PeopleGroups.org — Aizo of Benin (PGID PG012297)",
+      "publisher": "IMB Global Research / PeopleGroups.org",
+      "url": "https://peoplegroups.org/people_groups/pg012297/",
+      "sourceType": "mission-research",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Profile fast facts: Aizo in Benin, Gbe Ayizo (ayb), Ethnoreligion, GSEC presentation. The public media/resource sections are retained as a separate provider surface and are not used to override the structured API fields."
+    },
+    {
+      "id": "ctx-source:glottolog-ayizo",
+      "sourceId": "glottolog-ayiz1245",
+      "title": "Glottolog 5.3 — Ayizo Gbe",
+      "publisher": "Max Planck Institute for Evolutionary Anthropology / Glottolog",
+      "url": "https://glottolog.org/resource/languoid/id/ayiz1245",
+      "sourceType": "reference",
+      "publicationDate": null,
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Ayizo Gbe entry: glottocode ayiz1245, ISO 639-3 ayb, country Benin, vigorous status."
+    },
+    {
+      "id": "ctx-source:sil-gbe-overview",
+      "sourceId": "sil-togo-benin-41567",
+      "title": "A sociolinguistic survey of the Gbe language communities of Benin and Togo: Gbe language family overview",
+      "publisher": "SIL International / SIL Togo-Bénin",
+      "url": "https://togo-benin.sil.org/resources/archives/41567",
+      "sourceType": "academic",
+      "publicationDate": "2011-01-01",
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Abstract: tentative classification of Gbe varieties; chaining pattern; unresolved question whether varieties are dialects, distinct languages or a macrolanguage; Ayizo included in the survey series."
+    },
+    {
+      "id": "ctx-source:gbeto-ayizo-allada",
+      "sourceId": "glottolog-ref-46862",
+      "title": "Esquisse de la tonologie synchronique du Ayizɔ d'Allada, dialecte gbe du Sud-Bénin",
+      "publisher": "Journal of African Languages and Linguistics / De Gruyter",
+      "url": "https://glottolog.org/resource/reference/id/46862",
+      "sourceType": "academic",
+      "publicationDate": "2006-01-01",
+      "accessedAt": "2026-09-19T19:10:27Z",
+      "locator": "Bibliographic record and abstract: phonological/tonological study of the Ayizo variety of Allada in southern Benin."
+    }
+  ],
+  "profile": {
+    "peopleEntityId": "people-entity:peoplegroups:12297",
+    "peid": 12297,
+    "identity": {
+      "provider": "peoplegroups-org",
+      "origin": "peid-native",
+      "targetPeid": 12297,
+      "verifiedPeopleName": "Aizo",
+      "pgidAnchors": [
+        "PG012297"
+      ],
+      "countryIso3Anchors": [
+        "BEN"
+      ],
+      "languageIso6393Anchors": [
+        "ayb"
+      ],
+      "matchEvidence": [
+        "provider-peid",
+        "provider-pgid",
+        "name",
+        "country",
+        "language"
+      ],
+      "legacyPeopleGroupId": null,
+      "legacySourcePeopleId": null,
+      "numericCoincidenceUsed": false,
+      "verifiedAt": "2026-09-19T19:10:27Z"
+    },
+    "whoTheyAre": {
+      "summary": "The live source identifies Aizo in Benin and ties the record to Gbe, Ayizo (ayb). Glottolog independently identifies Ayizo Gbe in Benin, while SIL's Gbe-family survey emphasizes that the relationships among Gbe varieties form a chain that should not be forced into an overly simple dialect-versus-language classification.",
+      "claimIds": [
+        "claim:aizo-benin-identity",
+        "claim:aizo-language",
+        "claim:aizo-gbe-classification-context",
+        "claim:aizo-allada-linguistic-context"
+      ]
+    },
+    "religionAndCommunity": {
+      "summary": "PeopleGroups.org supplies an aggregate Ethnoreligion label for this source record. It is retained as aggregate context and is not generalized into a statement about every Aizo person's beliefs or practices.",
+      "claimIds": [
+        "claim:aizo-benin-religion-context"
+      ]
+    },
+    "whyUnreachedIntro": "The current mission classification is explained only from PeopleGroups.org mission fields. Gbe classification, language structure and religion are not treated as causes of unreached status.",
+    "whyUnreached": [
+      {
+        "dimension": "church-presence",
+        "heading": "Current source mission status",
+        "summary": "The structured source reports GSEC 1, less than 2% evangelical presence and no recent church planting, while also reporting engagement and existing congregations.",
+        "claimIds": [
+          "claim:aizo-benin-gsec"
+        ]
+      },
+      {
+        "dimension": "language-media",
+        "heading": "Provider resource fields are preserved without reconciliation",
+        "summary": "The structured record currently reports Bible as Not Available and Jesus Film as Available. The public profile's partner-resource surface may not display the same combination, so the candidate keeps the structured source values explicit instead of inventing a reconciled verdict.",
+        "claimIds": [
+          "claim:aizo-benin-resources"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim:aizo-benin-identity",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record PG012297 reports PEID 12297, display name Aizo, country Benin and primary language Gbe, Ayizo (ayb).",
+        "citationIds": [
+          "ctx-source:peoplegroups-aizo-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:aizo-language",
+        "dimension": "identity",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Ayizo Gbe with glottocode ayiz1245 and ISO 639-3 code ayb and lists Benin as its country.",
+        "citationIds": [
+          "ctx-source:glottolog-ayizo"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "public",
+        "interpretationNote": null
+      },
+      {
+        "id": "claim:aizo-gbe-classification-context",
+        "dimension": "language-media",
+        "kind": "synthesis",
+        "evidenceLevel": "B",
+        "certainty": "medium",
+        "temporalClass": "stable",
+        "text": "Glottolog identifies Ayizo Gbe as a distinct languoid, while SIL's Gbe-family overview describes a chaining pattern among Gbe varieties and states that no fully satisfying single dialect-versus-language classification has been established.",
+        "citationIds": [
+          "ctx-source:glottolog-ayizo",
+          "ctx-source:sil-gbe-overview"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The candidate preserves this classification uncertainty instead of turning one taxonomy into a universal statement about speaker identity."
+      },
+      {
+        "id": "claim:aizo-allada-linguistic-context",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "stable",
+        "text": "A 2006 Journal of African Languages and Linguistics study documents the tonology of the Ayizo variety of Allada in southern Benin.",
+        "citationIds": [
+          "ctx-source:gbeto-ayizo-allada"
+        ],
+        "asOf": null,
+        "reviewAfter": null,
+        "sensitivity": "generalized",
+        "interpretationNote": "The study is specific to the Allada variety and is not generalized to every Ayizo-speaking locality."
+      },
+      {
+        "id": "claim:aizo-benin-religion-context",
+        "dimension": "religion-community",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports Ethnoreligion as the aggregate primary-religion label for PG012297.",
+        "citationIds": [
+          "ctx-source:peoplegroups-aizo-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "This is a provider classification for one people-group-in-country record, not a statement about every Aizo person's belief or practice."
+      },
+      {
+        "id": "claim:aizo-benin-gsec",
+        "dimension": "church-presence",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live PeopleGroups.org record reports GSEC 1, less than 2% evangelical presence and no recent church-planting activity for PG012297; it also reports Engaged status and existing congregations.",
+        "citationIds": [
+          "ctx-source:peoplegroups-aizo-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "generalized",
+        "interpretationNote": "These are source-native mission-research fields, not a judgment about individuals."
+      },
+      {
+        "id": "claim:aizo-benin-resources",
+        "dimension": "language-media",
+        "kind": "fact",
+        "evidenceLevel": "A",
+        "certainty": "high",
+        "temporalClass": "current",
+        "text": "The live structured PeopleGroups record reports Bible availability as Not Available, Jesus Film availability as Available and two total evangelical resources for PG012297.",
+        "citationIds": [
+          "ctx-source:peoplegroups-aizo-benin-api"
+        ],
+        "asOf": "2026-09-19",
+        "reviewAfter": "2027-03-19",
+        "sensitivity": "public",
+        "interpretationNote": "The public profile's partner-resource sections do not currently display an identical surface. This candidate preserves the structured source fields without reconciling the discrepancy or inferring distribution, comprehension or use."
+      }
+    ],
+    "sourceIds": [
+      "ctx-source:peoplegroups-aizo-benin-api",
+      "ctx-source:peoplegroups-aizo-benin",
+      "ctx-source:glottolog-ayizo",
+      "ctx-source:sil-gbe-overview",
+      "ctx-source:gbeto-ayizo-allada"
+    ],
+    "review": {
+      "status": "draft",
+      "qualityTier": 3,
+      "aiAssisted": true,
+      "reviewedAt": null,
+      "reviewerRole": null,
+      "checklist": {
+        "namingChecked": false,
+        "materialClaimsCited": false,
+        "currentClaimsFresh": false,
+        "noStereotypeShortcuts": false,
+        "religionNuanced": false,
+        "sensitiveDataChecked": false,
+        "sourceLicensingChecked": false,
+        "identityMatchChecked": false
+      }
+    }
+  }
+}
