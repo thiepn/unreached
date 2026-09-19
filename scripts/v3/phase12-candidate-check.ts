@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { editorialContextProfilePackageSchema, type EditorialContextProfilePackage } from "../../src/context/types.js";
 import { adaptLegacyContextPackageToV3Editorial, assertEditorialProfileIntegrity } from "../../src/editorial/index.js";
 import { loadPhase12EditorialCatalog } from "./phase12-content.js";
+import { evidenceAuditMap, loadPhase12EvidenceAuditIndex } from "./phase12-evidence-audits.js";
 
 const root = process.cwd();
 const candidateDir = resolve(root, "data/v3/editorial/candidates");
@@ -38,11 +39,24 @@ const catalog = await loadPhase12EditorialCatalog();
 const entries = (await readdir(candidateDir)).filter((name) => name.endsWith(".json")).sort();
 if (!entries.length) throw new Error("Phase 12 candidate workspace is empty.");
 
+const auditIndex = await loadPhase12EvidenceAuditIndex();
+const auditsByCandidate = evidenceAuditMap(auditIndex);
+if (auditIndex.entries.length !== entries.length) {
+  throw new Error(`Phase 12 evidence-audit index has ${auditIndex.entries.length} entries for ${entries.length} candidates.`);
+}
+
 const seenPeids = new Set<number>();
 for (const name of entries) {
   const raw = JSON.parse(await readFile(resolve(candidateDir, name), "utf8"));
   const pkg = editorialContextProfilePackageSchema.parse(raw);
   const profile = pkg.profile;
+  const audit = auditsByCandidate.get(name);
+  if (!audit) throw new Error(`${name} has no indexed AI-assisted pre-review evidence audit.`);
+  const auditDocument = await readFile(resolve(root, audit.document), "utf8");
+  const auditLower = auditDocument.toLocaleLowerCase("en");
+  if (!auditLower.includes("not maintainer approval") || !auditLower.includes("not publication")) {
+    throw new Error(`${audit.document} must explicitly remain a pre-review aid, not maintainer approval/publication.`);
+  }
 
   if (pkg.fixture) throw new Error(`${name} is fixture content and cannot be a Phase 12 editorial candidate.`);
   if (profile.review.status !== "draft") throw new Error(`${name} must remain draft until an intentional maintainer evidence review publishes it.`);
@@ -73,4 +87,4 @@ for (const name of entries) {
   assertEditorialProfileIntegrity(adapted, new Date());
 }
 
-console.log(`V3 Phase 12 candidate checks passed for ${entries.length} review-ready draft${entries.length === 1 ? "" : "s"}. Drafts remain excluded from the ${catalog.reviewedProfiles.length}/100 published reviewed-profile count until maintainer evidence review.`);
+console.log(`V3 Phase 12 candidate checks passed for ${entries.length} review-ready draft${entries.length === 1 ? "" : "s"} with one indexed AI-assisted pre-review evidence audit per draft. Drafts remain excluded from the ${catalog.reviewedProfiles.length}/100 published reviewed-profile count until maintainer evidence review.`);
