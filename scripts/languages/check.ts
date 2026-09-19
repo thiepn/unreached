@@ -27,7 +27,8 @@ if (language.bible.knownContextCount !== 3 || language.bible.breakdown.find((ite
 if (language.jesusFilm.knownContextCount !== 2 || language.jesusFilm.breakdown.length !== 2) throw new Error("Raw Jesus Film availability labels were not preserved.");
 if (language.resources.knownContextCount !== 3 || language.resources.values.length !== 2) throw new Error("Raw resource-total field distribution failed.");
 if (language.family.knownContextCount !== 3 || language.family.breakdown.length !== 1 || language.family.breakdown[0]?.label !== "Test Family") throw new Error("Language family evidence distribution failed.");
-if (language.contexts.length !== 3 || language.contexts[0]?.pgid !== "PG001001" || language.contexts[0]?.bibleAvailability !== "Available") throw new Error("PGID-level language resource evidence was not retained.");
+const pg1001Evidence = language.contexts.find((item) => item.pgid === "PG001001");
+if (language.contexts.length !== 3 || pg1001Evidence?.bibleAvailability !== "Available" || pg1001Evidence.countryIso3 !== "BEN") throw new Error("PGID-level language resource evidence was not retained.");
 if (!language.denominator.includes("PGID country-context")) throw new Error("Language denominator must remain explicit.");
 if (language.sourceUpdatedAt !== "2026-08-03T00:00:00Z") throw new Error("Newest source update was not retained.");
 if (language.peoples[0]?.peid !== 1001 || language.countries[0]?.iso3 !== "BEN") throw new Error("Language relationship summaries failed.");
