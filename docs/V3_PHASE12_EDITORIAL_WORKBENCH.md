@@ -57,9 +57,21 @@ The gate verifies that each candidate:
 - has at least three sources and at least one non-mission-research source;
 - has at least four material claims;
 - has internally resolvable citation/source identifiers;
+- has exactly one indexed AI-assisted pre-review evidence audit under `data/v3/editorial/evidence-audits.json`;
+- the mapped audit document explicitly remains **not maintainer approval** and **not publication**;
 - can pass the full V3 reviewed-profile structural/evidence policy when evaluated as an in-memory shadow publication.
 
 The in-memory shadow review exists only to test structure, freshness, citation integrity, prohibited language and section depth. It never writes review metadata back to the candidate and never increments the public reviewed-profile count.
+
+## Pre-review evidence-audit index
+
+Every Tier-3 draft is mapped in:
+
+`data/v3/editorial/evidence-audits.json`
+
+The index links each candidate to one AI-assisted evidence-audit document and labels every entry `pre-review-only`. The candidate gate requires an exact one-to-one mapping between current drafts and audit entries and verifies that every mapped document explicitly states that it is **not maintainer approval** and **not publication**.
+
+The batch and single-candidate review packets surface the mapped audit path so maintainers can read the pre-review findings alongside the live source snapshot and cited evidence. This layer improves evidence preparation; it never completes any human checkbox or changes review status.
 
 ## Automatic live candidate diagnostic
 
