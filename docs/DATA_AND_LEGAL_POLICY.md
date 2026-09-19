@@ -13,7 +13,7 @@ The repository does not relicense third-party data or media.
 
 ## 2. Current production architecture
 
-Production atlas mission data is **not** a bundled dataset. People, country, language, religion, GSEC and resource records are read at runtime from the public PeopleGroups.org API. A validated copy may be stored privately in a user's browser for resilience. Phase 14 may also retain a bounded device-private history of distinct mission-source states actually observed by that browser. Neither mechanism is exposed as a public download or API.
+Production atlas mission data is **not** a bundled dataset. People, country, language, religion, GSEC and resource records are read at runtime from the public PeopleGroups.org API. A validated copy may be stored privately in a user's browser for resilience. Phase 14 may also retain a bounded device-private history of mission-source state transitions actually observed by that browser. Neither mechanism is exposed as a public download or API.
 
 PeopleGroups.org remains the canonical atlas runtime. V3 Phase 13 adds a narrowly scoped, optional Joshua Project comparison layer only for manually reviewed people-group-in-country identity links. Joshua Project responses are requested on demand through the Unreached Worker, reduced to a small comparison schema, returned with no-store handling and not persisted in the Unreached corpus or browser data stores.
 
@@ -35,7 +35,7 @@ Approved production use:
 - source-backed maps, people, country, language and prayer-subject views;
 - narrow source-native aggregations with coverage disclosure;
 - a validated device-local resilience cache;
-- a bounded device-private history of distinct observed source states, capped per PGID and excluded from sync/server storage/export;
+- a bounded device-private history of observed source-state transitions, capped per PGID and excluded from sync/server storage/export;
 - attribution and links back to PeopleGroups.org.
 
 Not approved by Unreached policy:
@@ -62,13 +62,13 @@ The About/source UI and repository notices must keep provider attribution visibl
 **Status:** CONDITIONAL — DEVICE-PRIVATE OBSERVATION HISTORY ONLY  
 **Reviewed:** 19 September 2026
 
-Phase 14 may retain a bounded history of distinct PeopleGroups.org mission-source states actually observed on the current device. PeopleGroups.org documents a source-native `UpdatedDate`. It also publishes historical GSEC overview PDFs at global aggregate level for 2011–2024 and states that archive is no longer currently updated. Those reports are not treated as individual PGID revision history.
+Phase 14 may retain a bounded history of PeopleGroups.org mission-source state transitions actually observed on the current device. PeopleGroups.org documents a source-native `UpdatedDate`. It also publishes historical GSEC overview PDFs at global aggregate level for 2011–2024 and states that archive is no longer currently updated. Those reports are not treated as individual PGID revision history.
 
 Approved use:
 
 - store only the narrow source-backed mission fields used by the profile plus provider `UpdatedDate` and local first/last-observed timestamps;
-- retain at most 24 distinct tracked states for one PGID;
-- de-duplicate repeated identical tracked states;
+- retain at most 24 timeline points for one PGID;
+- de-duplicate consecutive repeated observations of the same tracked state;
 - display concrete field changes between adjacent locally observed states;
 - reset the local history to the current source state;
 - link users to the provider-hosted historical GSEC overview archive without copying those PDF reports into the Phase 14 application corpus.
@@ -165,7 +165,7 @@ Third-party packages remain under their own licenses. Factual claims/citations i
 
 Anonymous/local-only use is the default. Unreached does not implement first-party analytics, advertising, profiling pixels or prayer-performance telemetry.
 
-Browser storage may contain Saved/prayer state, recent routes, latest-only prayer timestamps, optional sync metadata, a validated PeopleGroups cache and a bounded local history of distinct PeopleGroups mission-source states observed on that device. Optional private continuity is explicitly activated and is limited to the allow-listed Saved/prayer continuity subset described in `PRIVACY.md` and `docs/V20_PRIVATE_CONTINUITY.md`.
+Browser storage may contain Saved/prayer state, recent routes, latest-only prayer timestamps, optional sync metadata, a validated PeopleGroups cache and a bounded local history of PeopleGroups mission-source state transitions observed on that device. Optional private continuity is explicitly activated and is limited to the allow-listed Saved/prayer continuity subset described in `PRIVACY.md` and `docs/V20_PRIVATE_CONTINUITY.md`.
 
 Device-local PeopleGroups mission-source history is not persisted in private sync or server storage and is not included in server-held account export. Joshua Project comparison records are not persisted in browser storage, historical storage or private sync.
 
@@ -175,7 +175,7 @@ Do not publish confidential field information, personal prayer details, or infor
 
 Production source records should remain traceable to the provider and provider identifier. Derived values must preserve the source fields/formula and must not imply stronger precision or semantics than the inputs support.
 
-For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Repeated identical tracked states must be de-duplicated rather than presented as new trend points.
+For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Consecutive repeated observations of the same tracked state must be de-duplicated, while a later return after an intervening state remains a historical transition.
 
 For multi-source comparisons, each assertion must retain its own provider and methodology identity. Cross-source agreement must not be presented as proof that definitions are identical, and disagreement must not be silently resolved into one provider-independent verdict.
 
@@ -215,7 +215,7 @@ A release must fail if any of the following is false:
 - README/package/current release version agree;
 - `PRIVACY.md` and `/unreached/privacy.html` describe current optional sync rather than obsolete local-only behavior;
 - PeopleGroups.org is recorded as the canonical public runtime while static corpus redistribution remains blocked;
-- Phase 14 historical observations, if present, remain bounded, device-private, observed-only, de-duplicated and excluded from sync, server storage, server export and Joshua Project data;
+- Phase 14 historical observations, if present, remain bounded, device-private, observed-only, consecutively de-duplicated and excluded from sync, server storage, server export and Joshua Project data;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
