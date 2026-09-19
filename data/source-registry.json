@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "reviewedAt": "2026-09-19",
+  "reviewedAt": "2026-09-20",
   "sources": [
     {
       "id": "peoplegroups-org-api",
@@ -38,10 +38,15 @@
         "historical observations may persist only on-device as a bounded private log and must remain excluded from private sync, server storage, exports and public redistribution",
         "store only source-returned mission fields plus source UpdatedDate and local observation times; do not backfill, interpolate or infer past source states",
         "de-duplicate consecutive repeated observations of the same tracked mission state so repeat visits do not manufacture time-series points, while later reversions remain visible",
-        "provider-hosted historical GSEC overview PDFs may be linked for research context but must not be copied or parsed into an Unreached historical dataset without a separate rights and methodology review"
+        "provider-hosted historical GSEC overview PDFs may be linked for research context but must not be copied or parsed into an Unreached historical dataset without a separate rights and methodology review",
+        "preserve Bible, Jesus Film, resource-total, language-family and ISO language values as PeopleGroups.org source fields rather than translating them into stronger Scripture-completeness or intelligibility claims",
+        "mixed resource or family labels across PGID contexts must remain visible with explicit denominators instead of being collapsed into one language-wide verdict",
+        "shared LangFamily labels may support provider-label relationships only; they must not be presented as proof of mutual intelligibility, dialect equivalence or interchangeable Scripture resources",
+        "languages represented in the same country may be shown as geographic co-presence only; do not infer bilingualism or resource transfer",
+        "do not access ProgressBible registered data or Ethnologue proprietary content through Phase 15; their existing permission and licensing gates remain binding"
       ],
-      "permissionGate": "Phase 14 re-reviewed the current PeopleGroups.org public API and Research Data pages on 2026-09-19. The API remains a free public read-only runtime source and documents UpdatedDate for source records. PeopleGroups.org separately publishes historical GSEC overview PDFs for 2011–2024 and says that aggregate archive is no longer currently updated. Phase 14 links to that provider-hosted archive but does not copy or reinterpret it as individual PGID revision history. Per-record historical intelligence is approved only as a bounded device-private observation history created from ordinary runtime reads; no public snapshot archive, bulk export, server history service, provider mirror or inferred backfill is introduced.",
-      "termsReviewedAt": "2026-09-19"
+      "permissionGate": "Phase 15 re-reviewed the current PeopleGroups.org public API and GSEC field documentation on 2026-09-20. The public read-only API exposes ISO 639-3 language, language name/family, Bible availability, Jesus Film availability, total evangelical resources and source update date. Phase 15 may build source-evidence relationships over those already-approved runtime fields with explicit PGID denominators. It may not manufacture translation milestones, mutual intelligibility, bilingualism or resource-transfer claims, and it does not unlock ProgressBible registered data or Ethnologue proprietary content.",
+      "termsReviewedAt": "2026-09-20"
     },
     {
       "id": "natural-earth",
