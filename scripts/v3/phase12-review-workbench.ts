@@ -12,6 +12,7 @@ import {
 import { createPeopleGroupsApiClient } from "../../src/providers/peoplegroups/index.js";
 import { loadPhase12EditorialCatalog } from "./phase12-content.js";
 import { evidenceAuditMap, loadPhase12EvidenceAuditIndex } from "./phase12-evidence-audits.js";
+import { loadPhase12ReviewBatchIndex, reviewAssignmentMap } from "./phase12-review-batches.js";
 
 const root = process.cwd();
 const candidateDir = resolve(root, "data/v3/editorial/candidates");
@@ -65,6 +66,7 @@ const checkedAt = now.toISOString();
 const catalog = await loadPhase12EditorialCatalog(now);
 const auditIndex = await loadPhase12EvidenceAuditIndex();
 const auditsByCandidate = evidenceAuditMap(auditIndex);
+const reviewAssignments = reviewAssignmentMap(await loadPhase12ReviewBatchIndex());
 const client = createPeopleGroupsApiClient();
 const reports: Array<Record<string, unknown>> = [];
 
@@ -82,6 +84,8 @@ for (const name of entries) {
   }
   const preReviewAudit = auditsByCandidate.get(name);
   if (!preReviewAudit) throw new Error(name + " has no indexed AI-assisted pre-review evidence audit.");
+  const reviewAssignment = reviewAssignments.get(name);
+  if (!reviewAssignment) throw new Error(name + " has no accountable human review-batch assignment.");
 
   const pgid = candidate.profile.identity.pgidAnchors[0];
   if (!pgid) throw new Error(name + " has no PGID identity anchor.");
@@ -137,6 +141,7 @@ for (const name of entries) {
     identityChecks,
     phase12Scope: { gsec0To3: true },
     preReviewAudit,
+    reviewAssignment,
     liveMission,
     liveIdentity: {
       name: live.NmDisp,
@@ -227,6 +232,8 @@ for (const report of reports) {
     "- Live Phase 12 GSEC 0–3 scope: pass",
     "- Reviewed-profile structural policy: pass",
     "- AI-assisted pre-review audit: `" + String((report.preReviewAudit as { document?: unknown }).document ?? "missing") + "` (pre-review only; not maintainer approval)",
+    "- Human review batch: Issue #" + String((report.reviewAssignment as { issue?: unknown }).issue ?? "missing") + " — " + String((report.reviewAssignment as { title?: unknown }).title ?? "missing"),
+    "- Review issue: " + String((report.reviewAssignment as { issueUrl?: unknown }).issueUrl ?? "missing"),
     "",
     "### Live source snapshot",
     "",
