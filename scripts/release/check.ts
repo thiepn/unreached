@@ -138,6 +138,11 @@ for (const marker of ["Gate D", "manual crosswalk", "JOSHUA_PROJECT_API_KEY", "n
   if (!phase13.includes(marker)) throw new Error(`Phase 13 source policy documentation missing: ${marker}`);
 }
 
+const phase14 = await readText("docs/V3_PHASE14_HISTORICAL_MISSION_INTELLIGENCE.md");
+for (const marker of ["Gate D", "24 retained timeline points", "A → B → A", "historical GSEC overview", "excluded from private continuity sync"]) {
+  if (!phase14.includes(marker)) throw new Error(`Phase 14 historical source policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
@@ -149,4 +154,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Development/server API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13 Joshua Project comparison boundaries, attribution, project licensing and third-party notices agree with repository behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13 Joshua Project comparison boundaries, Phase 14 observed-history boundaries, attribution, project licensing and third-party notices agree with repository behavior.");
