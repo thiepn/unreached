@@ -63,7 +63,7 @@ test("regional and population evidence remain bounded and diaspora stays unestab
   const stats = panel.locator(".advanced-geographic-intelligence__stats");
   await expect(stats).toContainText("2");
   await expect(stats).toContainText("1/2");
-  await expect(stats).toContainText("120,000");
+  await expect(stats).toContainText("120K");
 
   const regions = panel.locator(".advanced-geographic-regions");
   await expect(regions).toContainText("Africa");
