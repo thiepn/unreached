@@ -100,7 +100,7 @@ test("language intelligence preserves mixed and partial source evidence", async 
   await expect(family).toContainText("All 2 contexts report a value · uniform reported label");
   await expect(family).toContainText("Niger-Congo (2)");
 
-  await page.screenshot({ path: `${artifactDir}/fon-intelligence.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/fon-intelligence.png` });
 });
 
 test("family and same-country relationships remain distinct", async ({ page }) => {
@@ -152,5 +152,5 @@ test("Phase 15 intelligence stays readable on a narrow mobile viewport", async (
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
 
-  await page.screenshot({ path: `${artifactDir}/fon-intelligence-mobile.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/fon-intelligence-mobile.png` });
 });

@@ -139,6 +139,35 @@ Not approved:
 
 The graph is derived in memory and adds no D1, Worker, IndexedDB graph store, private-sync field or analytics telemetry.
 
+## 3D. Phase 17 advanced geographic intelligence
+
+**Status:** COUNTRY-CONTEXT SOURCE EVIDENCE ONLY  
+**Reviewed:** 20 September 2026
+
+Phase 17 may derive a country-level distribution view from already loaded PeopleGroups.org and Natural Earth data.
+
+Approved:
+
+- the current PGID country context;
+- other PGIDs reporting the exact same normalized PeopleGroups.org ROP3 people-name field (`PplNm`);
+- country-level grouping;
+- Natural Earth continent grouping;
+- sums of known PGID population estimates with explicit field-coverage counts;
+- explicit user-triggered loading of the wider PeopleGroups corpus.
+
+Not approved:
+
+- treating same cluster or same affinity bloc as a people distribution footprint;
+- fuzzy-name or embedding-based geographic links;
+- city/settlement inference from provider coordinates;
+- migration-route, origin/destination or settlement chronology inference;
+- converting cross-country source-taxonomy matches into a diaspora claim;
+- presenting summed PGID population estimates as a census, global population, diaspora population or geographic share.
+
+Diaspora status remains **not established** unless a separately reviewed source explicitly supplies compatible migration/diaspora evidence.
+
+Phase 17 adds no new external provider and does not broaden PeopleGroups.org or Natural Earth redistribution rights.
+
 ## 4. Natural Earth
 
 **Status:** APPROVED  
@@ -232,6 +261,8 @@ Production source records should remain traceable to the provider and provider i
 
 For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Consecutive repeated observations of the same tracked state must be de-duplicated, while a later return after an intervening state remains a historical transition.
 
+For advanced geographic intelligence, direct PGID country evidence must remain distinguishable from cross-country ROP3 taxonomy matches. Country-level source distribution must never be relabeled as diaspora, migration, city-level settlement or verified global-population evidence.
+
 For knowledge-graph relationships, every edge must retain its typed evidence layer, source identity, source-record IDs and exact source fields where applicable. Derived taxonomy matches must remain distinguishable from direct provider fields and reviewed editorial claims.
 
 For language/resource intelligence, raw provider labels, PGID denominators and missing values must remain visible. Shared family labels and country overlap are descriptive source relationships only; they must not be upgraded into intelligibility, bilingualism or translation-completeness claims.
@@ -277,6 +308,7 @@ A release must fail if any of the following is false:
 - Phase 14 historical observations, if present, remain bounded, device-private, observed-only, consecutively de-duplicated and excluded from sync, server storage, server export and Joshua Project data;
 - Phase 15 Scripture/language intelligence preserves exact PeopleGroups resource/family semantics and does not infer translation milestones, intelligibility, bilingualism or resource transfer;
 - Phase 16 knowledge-graph edges remain typed/provenanced, derived in memory only, free of hidden similarity/ranking semantics, and exclude persisted Joshua Project comparison data;
+- Phase 17 geographic intelligence remains country-level, exact-ROP3-linked, explicit about population coverage, and must not infer diaspora/migration/city precision;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;

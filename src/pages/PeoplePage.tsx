@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, HeartHandshake, Link2, MapPinned, RefreshCw, UsersRound } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
+import { AdvancedGeographicIntelligencePanel } from "../components/AdvancedGeographicIntelligencePanel";
 import { DefinitiveEditorialProfile } from "../components/DefinitiveEditorialProfile";
 import { MeaningSummary } from "../components/MeaningSummary";
 import { MissionKnowledgeGraphPanel } from "../components/MissionKnowledgeGraphPanel";
@@ -206,6 +207,7 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
         {profile ? <DefinitiveEditorialProfile profile={profile} /> : null}
 
         <MissionKnowledgeGraphPanel record={record} related={related} editorial={publishedEditorial} />
+        <AdvancedGeographicIntelligencePanel record={record} countriesByIso3={geography.countriesByIso3} />
 
         <div class="people-profile-action-stage v3-people-action-stage" data-profile-stage="act">
           <ProfileLocalActions record={record} contextTier={profileTier} />
