@@ -155,6 +155,11 @@ for (const marker of ["Gate D", "Mission Knowledge Graph", "Derived source relat
   if (!phase16.includes(marker)) throw new Error(`Phase 16 knowledge-graph policy documentation missing: ${marker}`);
 }
 
+const phase17 = await readText("docs/V3_PHASE17_ADVANCED_GEOGRAPHIC_INTELLIGENCE.md");
+for (const marker of ["Gate D", "Advanced Geographic Intelligence", "Diaspora evidence: not established", "same ROP3", "country-context precision"]) {
+  if (!phase17.includes(marker)) throw new Error(`Phase 17 geographic-intelligence policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
