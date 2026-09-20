@@ -78,7 +78,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("church sharing generates a minimal German link and resolves current source eligibility", async ({ page, browser }) => {
-  await page.goto("./#/saved");
+  await page.goto("./?senderSecret=DO-NOT-SHARE#/saved");
 
   const builder = page.locator('[data-phase19-church-share="true"]');
   await expect(builder).toBeVisible();
@@ -94,6 +94,8 @@ test("church sharing generates a minimal German link and resolves current source
   expect(shareUrl).toContain("#/share/prayer?c=");
   expect(shareUrl).not.toContain("ULTRA-PRIVATE-NOTE-MUST-NEVER-SHARE");
   expect(shareUrl).not.toContain("Browser%20Test%20People");
+  expect(shareUrl).not.toContain("senderSecret");
+  expect(shareUrl).not.toContain("DO-NOT-SHARE");
 
   const recipientContext = await browser.newContext();
   const recipient = await recipientContext.newPage();
