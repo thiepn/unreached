@@ -1,0 +1,358 @@
+.church-prayer-share,
+.shared-prayer-page {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.church-prayer-share {
+  margin: var(--space-5) 0;
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--forest-100) 42%, var(--paper-0));
+}
+
+.church-prayer-share__heading,
+.shared-prayer-page__hero,
+.shared-prayer-page__section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.church-prayer-share__heading h3,
+.shared-prayer-page__hero h1,
+.shared-prayer-page__section-heading h2 {
+  margin: var(--space-1) 0 0;
+}
+
+.church-prayer-share__heading p,
+.shared-prayer-page__hero p,
+.shared-prayer-page__privacy p,
+.shared-prayer-page__unavailable > p,
+.shared-prayer-page__footer p {
+  margin: var(--space-2) 0 0;
+  color: var(--ink-2);
+}
+
+.church-prayer-share__settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, .4fr);
+  gap: var(--space-3);
+}
+
+.church-prayer-share__settings label,
+.church-prayer-share__result label {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.church-prayer-share__settings label > span,
+.church-prayer-share__result label > span {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+.church-prayer-share input,
+.church-prayer-share select {
+  width: 100%;
+  min-height: 44px;
+  padding: .55rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-0);
+  color: var(--ink-0);
+}
+
+.church-prayer-share__people {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.church-prayer-share__people legend {
+  padding: 0 var(--space-2);
+  font-weight: 700;
+}
+
+.church-prayer-share__people label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.church-prayer-share__people label:hover {
+  background: var(--paper-1);
+}
+
+.church-prayer-share__people input {
+  width: 1rem;
+  min-height: auto;
+  margin-top: .2rem;
+}
+
+.church-prayer-share__people label > span {
+  display: grid;
+  gap: .1rem;
+}
+
+.church-prayer-share__people small {
+  color: var(--ink-2);
+}
+
+.church-prayer-share__generate,
+.church-prayer-share__result button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  width: fit-content;
+  padding: .6rem .85rem;
+  border-radius: var(--radius-sm);
+}
+
+.church-prayer-share__generate {
+  border: 0;
+  background: var(--forest-700);
+  color: white;
+  font-weight: 700;
+}
+
+.church-prayer-share__generate:disabled {
+  opacity: .55;
+}
+
+.church-prayer-share__result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: end;
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-0);
+}
+
+.church-prayer-share__result input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .78rem;
+}
+
+.church-prayer-share__privacy {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-3);
+}
+
+.church-prayer-share__privacy > summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.church-prayer-share__privacy p {
+  color: var(--ink-2);
+}
+
+.church-prayer-share__empty {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.shared-prayer-page {
+  width: min(72rem, 100%);
+  margin: 0 auto;
+  padding: var(--space-6) 0 var(--space-9);
+}
+
+.shared-prayer-page--state {
+  max-width: 44rem;
+  min-height: 40vh;
+  align-content: center;
+}
+
+.shared-prayer-page--state h1 {
+  margin: 0;
+}
+
+.shared-prayer-page__hero {
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-0);
+}
+
+.shared-prayer-page__privacy {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--forest-700);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--forest-100) 60%, var(--paper-0));
+}
+
+.shared-prayer-page__privacy h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.shared-prayer-page__people,
+.shared-prayer-page__unavailable {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.shared-prayer-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.shared-prayer-card {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-0);
+}
+
+.shared-prayer-card__source {
+  color: var(--ink-2);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.shared-prayer-card h3 {
+  margin: 0;
+}
+
+.shared-prayer-card dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.shared-prayer-card dl > div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.shared-prayer-card dt {
+  color: var(--ink-2);
+  font-size: .82rem;
+  font-weight: 650;
+}
+
+.shared-prayer-card dd {
+  margin: 0;
+}
+
+.shared-prayer-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.shared-prayer-card__actions a,
+.shared-prayer-page__footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 40px;
+  padding: .45rem .65rem;
+  border-radius: var(--radius-sm);
+}
+
+.shared-prayer-card__actions a:first-child {
+  background: var(--forest-700);
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.shared-prayer-page__unavailable,
+.shared-prayer-page__empty {
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-1);
+}
+
+.shared-prayer-page__unavailable ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shared-prayer-page__unavailable li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.shared-prayer-page__unavailable li span {
+  color: var(--ink-2);
+  text-align: right;
+}
+
+.shared-prayer-page__footer {
+  display: grid;
+  gap: var(--space-3);
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-4);
+}
+
+.shared-prayer-page__footer > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+@media (max-width: 760px) {
+  .church-prayer-share__settings,
+  .church-prayer-share__result,
+  .shared-prayer-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .church-prayer-share__result button {
+    width: 100%;
+  }
+
+  .shared-prayer-page__hero,
+  .church-prayer-share__heading,
+  .shared-prayer-page__section-heading {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .shared-prayer-card dl > div {
+    grid-template-columns: 1fr;
+  }
+
+  .shared-prayer-page__unavailable li {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .shared-prayer-page__unavailable li span {
+    text-align: left;
+  }
+}
