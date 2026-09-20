@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, HeartHandshake, Li
 import { hrefFor } from "../app/router";
 import { DefinitiveEditorialProfile } from "../components/DefinitiveEditorialProfile";
 import { MeaningSummary } from "../components/MeaningSummary";
+import { MissionKnowledgeGraphPanel } from "../components/MissionKnowledgeGraphPanel";
 import { MissionHistoryPanel } from "../components/MissionHistoryPanel";
 import { MultiSourceMissionPanel } from "../components/MultiSourceMissionPanel";
 import { ProfileLocalActions } from "../components/ProfileLocalActions";
@@ -203,6 +204,8 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
         {editorial.loading ? <section class="v3-people-editorial-state" role="status"><BookOpen size={18} aria-hidden="true" /><div><strong>Checking reviewed context</strong><p>Source facts are already available while the editorial publication is being checked.</p></div></section> : null}
         {editorial.error ? <section class="v3-people-editorial-state" role="note"><BookOpen size={18} aria-hidden="true" /><div><strong>Reviewed context could not be loaded</strong><p>{editorial.error} The source-grounded profile remains available.</p></div></section> : null}
         {profile ? <DefinitiveEditorialProfile profile={profile} /> : null}
+
+        <MissionKnowledgeGraphPanel record={record} related={related} editorial={publishedEditorial} />
 
         <div class="people-profile-action-stage v3-people-action-stage" data-profile-stage="act">
           <ProfileLocalActions record={record} contextTier={profileTier} />
