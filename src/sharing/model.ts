@@ -93,8 +93,8 @@ export function sharedPrayerCollectionHash(collection: SharedPrayerCollection): 
   return `#/share/prayer?c=${encodeURIComponent(encodeSharedPrayerCollection(collection))}`;
 }
 
-export function absoluteSharedPrayerCollectionUrl(collection: SharedPrayerCollection, location: Pick<Location, "origin" | "pathname" | "search">): string {
-  return `${location.origin}${location.pathname}${location.search}${sharedPrayerCollectionHash(collection)}`;
+export function absoluteSharedPrayerCollectionUrl(collection: SharedPrayerCollection, location: Pick<Location, "origin" | "pathname">): string {
+  return `${location.origin}${location.pathname}${sharedPrayerCollectionHash(collection)}`;
 }
 
 export function resolveSharedPrayerCollection(
