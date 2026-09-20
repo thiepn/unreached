@@ -133,7 +133,9 @@
     "exploreJsGzipBytes": 307200,
     "otherJsChunkRawBytes": 204800,
     "otherJsChunkGzipBytes": 71680,
-    "maplibreCssRawBytes": 102400
+    "maplibreCssRawBytes": 102400,
+    "maplibreWorkerRawBytes": 563200,
+    "initialShellGzipBytes": 102400
   },
   "dependencies": {
     "applicationRuntime": [
