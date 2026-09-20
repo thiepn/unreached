@@ -1,7 +1,7 @@
 # Unreached 3.0 — Master Roadmap
 
-**Status:** Scope-frozen roadmap established in Phase 0  
-**Rule:** Phases 0–12 produce Unreached 3.0. Phases 13–20 are post-3.0 expansion and may not begin before Phase 12 passes.
+**Status:** Scope-frozen roadmap closed by Phase 20 Peak Certification  
+**Rule:** Phases 0–12 produce Unreached 3.0. Phases 13–20 are the finite post-3.0 peak-system expansion. Phase 20 closes the numbered V3 roadmap.
 
 ---
 
@@ -70,6 +70,8 @@ If an idea does not belong to the current phase:
 3. do not create a new public roadmap phase for it.
 
 Internal engineering substeps are allowed, but the roadmap remains these 21 phases (`0` through `20`).
+
+After Phase 20, ordinary maintenance, content growth, source refreshes and bug fixes do not create Phase 21+. A genuinely new architecture-level product capability requires an explicit reviewed architecture decision and corresponding lock update.
 
 ---
 
