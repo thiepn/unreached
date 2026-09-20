@@ -1,7 +1,9 @@
 import { ArrowLeft, ArrowUpRight, BookOpen, Compass, Database, Globe2, Languages, RefreshCw, UsersRound } from "lucide-preact";
 import { useEffect, useState } from "preact/hooks";
 
+import { readHashSearchParams } from "../app/hash-state";
 import { hrefFor } from "../app/router";
+import { GuidedJourneyBanner } from "../components/GuidedJourneyBanner";
 import { CountryGuidedStart } from "../components/CountryGuidedStart";
 import {
   ATLAS_COUNTRY_SOURCE,
@@ -10,6 +12,7 @@ import {
   useAtlasCountryExplorer,
   type AtlasCountryRuntimeRecord,
 } from "../countries";
+import { parseGuidedJourney } from "../guided-atlas";
 import { atlasRegionForCountry } from "../geography/regions";
 import { useWorldGeography } from "../map/geography";
 
@@ -107,6 +110,11 @@ export function CountryPage({ iso3 }: { iso3: string }) {
 
   const region = atlasRegionForCountry(feature);
   const name = record?.name ?? feature.properties.name;
+  const journey = parseGuidedJourney(readHashSearchParams());
+  const guidedPeople = journey && region?.id === journey.regionId
+    ? record?.contexts.find((context) => context.peid === journey.focusPeid) ?? null
+    : null;
+  const activeJourney = guidedPeople ? journey : null;
   const unreachedPeople = record?.contexts.filter((context) => context.reach.classification === "unreached") ?? [];
   const largestUnreachedPeople = [...unreachedPeople]
     .sort((a, b) => (b.population.value ?? -1) - (a.population.value ?? -1) || a.displayName.localeCompare(b.displayName, "en"))
@@ -137,6 +145,16 @@ export function CountryPage({ iso3 }: { iso3: string }) {
           <a class="country-map-link" href={prayerHref}>Pray for this country’s peoples <Compass size={17} aria-hidden="true" /></a>
         </div>
       </header>
+
+      {activeJourney && guidedPeople ? (
+        <GuidedJourneyBanner
+          state={activeJourney}
+          step="country"
+          countryIso3={code}
+          countryName={name}
+          peopleName={guidedPeople.displayName}
+        />
+      ) : null}
 
       {intelligence.warning ? <div class="country-data-notice country-data-notice--detail" role="status"><Database size={20} aria-hidden="true" /><div><strong>Showing cached source data</strong><p>{intelligence.warning}</p></div></div> : null}
       {intelligence.loading ? <div class="country-data-notice country-data-notice--detail" role="status"><Database size={20} aria-hidden="true" /><div><strong>Loading PeopleGroups.org</strong><p>{intelligence.progress ? `${intelligence.progress.loadedPages}/${intelligence.progress.totalPages} pages` : "Loading live people-country records…"}</p></div></div> : null}
