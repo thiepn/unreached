@@ -49,6 +49,9 @@ test("people profile exposes an inspectable typed knowledge graph", async ({ pag
 });
 
 test("related-record graph edges expose the exact taxonomy relationship", async ({ page }) => {
+  await page.goto("./#/peoples");
+  await expect(page.getByRole("link", { name: /Browser Test People/ }).first()).toBeVisible({ timeout: 15_000 });
+
   await page.goto("./#/peoples/" + VISIBLE_TEST_PEID);
   const graph = page.locator('[data-phase16-knowledge-graph="true"]');
 
