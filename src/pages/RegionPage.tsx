@@ -2,16 +2,25 @@ import { ArrowLeft, ArrowRight, Database, Globe2, MapPinned, UsersRound } from "
 import { useMemo } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
+import { GuidedRegionAtlasPanel } from "../components/GuidedRegionAtlasPanel";
 import { formatCount } from "../countries";
+import { useEditorialProfiles } from "../editorial/runtime";
 import { buildAtlasRegions, findAtlasRegion, routeCodeForCountry } from "../geography/regions";
 import { useAfterFirstPaint } from "../hooks/useResponsiveWork";
 import { useWorldGeography } from "../map/geography";
+import { usePeopleGroupsRuntimeStore } from "../providers/peoplegroups";
 import { formatLiveMissionLayerValue, useLiveMissionVisualization } from "../visualization";
 
 export function RegionPage({ regionId }: { regionId: string }) {
   const geography = useWorldGeography();
   const missionStart = useAfterFirstPaint();
   const mission = useLiveMissionVisualization(missionStart);
+  const peopleRuntime = usePeopleGroupsRuntimeStore(missionStart);
+  const editorial = useEditorialProfiles(missionStart);
+  const reviewedPeids = useMemo(
+    () => new Set(editorial.profiles.filter((profile) => profile.tier === "reviewed").map((profile) => profile.legacyContextProfile?.peid).filter((peid): peid is number => peid !== null && peid !== undefined)),
+    [editorial.profiles],
+  );
   const regions = useMemo(
     () => buildAtlasRegions(geography.countries, mission.countriesByIso3),
     [geography.countries, mission.countriesByIso3],
@@ -56,6 +65,15 @@ export function RegionPage({ regionId }: { regionId: string }) {
 
       {missionStart && mission.loading && !mission.ready ? <div class="v3-geography-state v3-geography-state--quiet" role="status"><Database size={17} aria-hidden="true" /> Adding mission context…</div> : null}
       {mission.warning ? <div class="v3-geography-state v3-geography-state--quiet" role="status">{mission.warning}</div> : null}
+
+      {mission.ready && peopleRuntime.ready ? (
+        <GuidedRegionAtlasPanel
+          region={region}
+          missionByIso3={mission.countriesByIso3}
+          peoples={peopleRuntime.entities}
+          reviewedPeids={reviewedPeids}
+        />
+      ) : null}
 
       <section class="v3-region-countries" aria-labelledby="region-countries-heading">
         <div class="v3-geography-section-heading">
