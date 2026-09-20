@@ -8,10 +8,34 @@
     "extensionPolicy": "New product capabilities after Phase 20 require an explicit architecture decision record; do not append public roadmap micro-phases."
   },
   "product": {
-    "primaryLoop": ["Discover", "Understand", "See the need", "Pray", "Remember"],
-    "primaryDestinations": ["Explore", "Peoples", "Pray", "Search", "Saved"],
-    "normalJourney": ["World", "Region", "Country", "People", "Context", "Prayer"],
-    "nonGoals": ["analytics-dashboard", "social-network", "mission-priority-ranking", "prayer-gamification"]
+    "primaryLoop": [
+      "Discover",
+      "Understand",
+      "See the need",
+      "Pray",
+      "Remember"
+    ],
+    "primaryDestinations": [
+      "Explore",
+      "Peoples",
+      "Pray",
+      "Search",
+      "Saved"
+    ],
+    "normalJourney": [
+      "World",
+      "Region",
+      "Country",
+      "People",
+      "Context",
+      "Prayer"
+    ],
+    "nonGoals": [
+      "analytics-dashboard",
+      "social-network",
+      "mission-priority-ranking",
+      "prayer-gamification"
+    ]
   },
   "routes": {
     "publicStatic": [
@@ -37,7 +61,9 @@
       "/languages/:ISO6393",
       "/pray/:PEID"
     ],
-    "internal": ["/dev/design-system"]
+    "internal": [
+      "/dev/design-system"
+    ]
   },
   "sources": {
     "peoplegroups-org-api": "canonical-runtime",
@@ -47,9 +73,21 @@
     "ethnologue": "blocked-without-license"
   },
   "privacy": {
-    "localOnly": ["personalNotes", "prayerMemory", "recent"],
-    "privateSyncKinds": ["saved", "prayer"],
-    "publicShareFields": ["version", "title", "locale", "peopleIds"],
+    "localOnly": [
+      "personalNotes",
+      "prayerMemory",
+      "recent"
+    ],
+    "privateSyncKinds": [
+      "saved",
+      "prayer"
+    ],
+    "publicShareFields": [
+      "version",
+      "title",
+      "locale",
+      "peopleIds"
+    ],
     "publicShareMaxPeople": 12,
     "publicShareStorage": "none"
   },
@@ -66,13 +104,22 @@
     "diasporaIsNotInferredFromDistribution": true
   },
   "localization": {
-    "certifiedLocales": ["en", "de"],
+    "certifiedLocales": [
+      "en",
+      "de"
+    ],
     "wholeAppLocalized": false,
     "catalogParityRequired": true,
     "rawHtmlTranslationsAllowed": false
   },
   "release": {
-    "browserProjects": ["chromium", "firefox", "webkit", "mobile-chromium", "mobile-webkit"],
+    "browserProjects": [
+      "chromium",
+      "firefox",
+      "webkit",
+      "mobile-chromium",
+      "mobile-webkit"
+    ],
     "historicalBrowserSuiteBlocking": false,
     "dependencyAuditLevel": "high",
     "accessibilityStylesMustLoadLast": true
@@ -87,5 +134,19 @@
     "otherJsChunkRawBytes": 204800,
     "otherJsChunkGzipBytes": 71680,
     "maplibreCssRawBytes": 102400
+  },
+  "dependencies": {
+    "applicationRuntime": [
+      "@fontsource-variable/newsreader",
+      "@fontsource-variable/source-sans-3",
+      "lucide-preact",
+      "maplibre-gl",
+      "preact",
+      "zod"
+    ],
+    "workerRuntime": [
+      "jose"
+    ],
+    "policy": "Any new runtime dependency requires an explicit architecture-lock update and normal dependency/license/security certification."
   }
 }
