@@ -1,7 +1,9 @@
 import { ArrowLeft, ArrowUpRight, BookOpen, Database, Globe2, HeartHandshake, Link2, MapPinned, RefreshCw, UsersRound } from "lucide-preact";
 
+import { readHashSearchParams } from "../app/hash-state";
 import { hrefFor } from "../app/router";
 import { AdvancedGeographicIntelligencePanel } from "../components/AdvancedGeographicIntelligencePanel";
+import { GuidedJourneyBanner } from "../components/GuidedJourneyBanner";
 import { DefinitiveEditorialProfile } from "../components/DefinitiveEditorialProfile";
 import { MeaningSummary } from "../components/MeaningSummary";
 import { MissionKnowledgeGraphPanel } from "../components/MissionKnowledgeGraphPanel";
@@ -12,6 +14,7 @@ import { TermHelp } from "../components/TermHelp";
 import { UnreachedExplanation } from "../components/UnreachedExplanation";
 import { bibleResourceExplanation, evangelicalLevelExplanation } from "../comprehension/explain";
 import { createSourceEditorialProfile, type EditorialProfile } from "../editorial";
+import { parseGuidedJourney } from "../guided-atlas";
 import { useEditorialProfiles } from "../editorial/runtime";
 import { atlasRegionForCountry } from "../geography/regions";
 import { useWorldGeography } from "../map/geography";
@@ -165,6 +168,8 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
   const publishedEditorial = editorial.profilesByPeid.get(record.peid) ?? null;
   const profile = publishedEditorial ?? (editorial.loading ? null : sourceEditorialProfile(record));
   const profileTier = profile?.tier ?? "source";
+  const journey = parseGuidedJourney(readHashSearchParams());
+  const activeJourney = journey && journey.focusPeid === record.peid && region?.id === journey.regionId ? journey : null;
 
   return (
     <article class="people-profile people-profile--v11 people-profile--phase9 people-profile--comprehension v3-people-profile" data-people-data-source={route.source ?? "unknown"} data-people-pgid={context.pgid} data-editorial-tier={profileTier}>
@@ -190,6 +195,16 @@ export function PeoplePage({ sourcePeopleId }: { sourcePeopleId: number }) {
           <a class="people-hero-secondary" href={hrefFor(`/countries/${context.country.iso3}`)}>Explore {context.country.name} <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </header>
+
+      {activeJourney ? (
+        <GuidedJourneyBanner
+          state={activeJourney}
+          step="people"
+          countryIso3={context.country.iso3}
+          countryName={context.country.name}
+          peopleName={record.displayName}
+        />
+      ) : null}
 
       <EssentialMetrics record={record} />
 
