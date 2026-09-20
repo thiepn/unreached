@@ -33,6 +33,18 @@ async function filesUnder(path: string): Promise<string[]> {
   return nested.flat();
 }
 
+interface RegistrySource {
+  id: string;
+  runtimeReadAllowed?: boolean;
+  publicReleaseAllowed: boolean;
+  browserRedistributionAllowed: boolean;
+  cacheStatus?: string;
+}
+
+interface SourceRegistry {
+  sources: RegistrySource[];
+}
+
 interface ArchitectureLock {
   schemaVersion: 1;
   program: string;
@@ -135,8 +147,8 @@ if (shell.includes('path: "/coverage"') || shell.includes('path: "/share/prayer"
   throw new Error("V3 Phase 20 internal/share destinations must not enter primary navigation.");
 }
 
-const registry = await json<any>("data/source-registry.json");
-const sources = new Map(registry.sources.map((source: any) => [source.id, source]));
+const registry = await json<SourceRegistry>("data/source-registry.json");
+const sources = new Map<string, RegistrySource>(registry.sources.map((source) => [source.id, source]));
 const peoplegroups = sources.get("peoplegroups-org-api");
 const naturalEarth = sources.get("natural-earth");
 const joshua = sources.get("joshua-project-api");
