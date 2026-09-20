@@ -148,8 +148,7 @@ button:disabled {
   display: none;
 }
 
-.eyebrow,
-.rail-label {
+.eyebrow {
   color: var(--forest-700);
   font-size: 0.74rem;
   font-weight: 750;
@@ -263,25 +262,6 @@ button:disabled {
   line-height: 1.48;
 }
 
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0.25rem 0.52rem;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 750;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.status-chip--neutral { color: var(--ink-2); }
-.status-chip--info { color: var(--ocean-700); }
-.status-chip--unreached { color: var(--status-unreached); }
-.status-chip--frontier { color: var(--status-frontier); }
-.status-chip--progress { color: var(--status-progress); }
-
 .map-stage {
   position: relative;
   min-width: 0;
@@ -371,63 +351,11 @@ button:disabled {
   display: none;
 }
 
-.section-page,
 .not-found {
   width: min(var(--page-max), 100%);
   min-height: calc(100dvh - var(--header-height));
   margin: 0 auto;
   padding: clamp(3rem, 8vw, 8rem) clamp(1.25rem, 6vw, 6rem);
-}
-
-.section-page {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
-  align-items: start;
-  gap: clamp(3rem, 9vw, 10rem);
-}
-
-.section-page__intro {
-  max-width: 850px;
-}
-
-.section-icon {
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  margin-bottom: var(--space-8);
-  border: 1px solid var(--line);
-  color: var(--forest-700);
-}
-
-.section-page__intro .status-chip {
-  margin-top: var(--space-8);
-}
-
-.section-page__rail {
-  margin-top: 4rem;
-  border-top: 2px solid var(--ink-0);
-}
-
-.rail-label {
-  padding: var(--space-3) 0 var(--space-5);
-}
-
-.rail-item {
-  display: grid;
-  grid-template-columns: 2rem 1fr;
-  gap: var(--space-3);
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--line);
-}
-
-.rail-item span {
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-}
-
-.rail-item strong {
-  font-weight: 600;
 }
 
 .text-link {
@@ -551,20 +479,11 @@ button:disabled {
     opacity: 1;
   }
 
-  .section-page,
   .not-found {
     min-height: calc(100dvh - var(--header-height) - var(--mobile-nav-height));
     padding: var(--space-12) var(--space-5);
   }
 
-  .section-page {
-    grid-template-columns: 1fr;
-    gap: var(--space-12);
-  }
-
-  .section-page__rail {
-    margin-top: 0;
-  }
 
   .display-title {
     font-size: clamp(2.8rem, 14vw, 4.6rem);
