@@ -54,7 +54,7 @@ export function RegionsPage() {
 
           <div class="v3-geography-note">
             <strong>What “region” means here</strong>
-            <p>Phase 7 uses Natural Earth’s continent field as the canonical atlas-region grouping. PeopleGroups provider region/subregion labels remain source context and are not promoted into universal geographic identity.</p>
+            <p>Natural Earth’s continent field is the canonical atlas-region grouping. PeopleGroups provider region/subregion labels remain source context and are not promoted into universal geographic identity.</p>
           </div>
         </>
       ) : null}
