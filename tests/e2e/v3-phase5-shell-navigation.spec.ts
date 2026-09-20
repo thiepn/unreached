@@ -107,3 +107,23 @@ test("desktop and mobile shell stay within the viewport", async ({ page }) => {
     expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
   }
 });
+
+test("global search locks background scroll and restores focus and body state", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./#/about");
+
+  const trigger = page.getByRole("button", { name: "Search people, countries and languages" });
+  await page.evaluate(() => { document.body.style.overflow = "clip"; });
+  await trigger.click();
+
+  const dialog = page.getByRole("dialog", { name: "Search Unreached" });
+  await expect(dialog).toBeVisible();
+  await expect(page.getByRole("searchbox", { name: "Search peoples, regions, countries or languages" })).toBeFocused();
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("hidden");
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("clip");
+});
+
