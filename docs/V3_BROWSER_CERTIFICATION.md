@@ -70,3 +70,12 @@ A failure in `npm run e2e:historical` is triaged into one of three categories:
 - **shared infrastructure defect** — fix the underlying product/test infrastructure and verify the V3 matrix again.
 
 The historical suite must never be used as a reason to weaken source correctness, accessibility, privacy, mission semantics, or the final V3 information architecture.
+
+
+## Phase 20 peak-lock guidance
+
+Phase 20 closes the numbered V3 roadmap but does not reduce browser coverage. The blocking V3 filename contract continues through Phase 20, and future maintenance specs should extend the current product contract rather than create Phase 21+ naming.
+
+Visual evidence should prefer a relevant component or bounded viewport capture over an ever-growing full-page screenshot. This avoids browser-engine image-dimension limits becoming false product failures as long-form people profiles grow, while preserving useful evidence for the surface under test.
+
+The five-project matrix remains release-blocking after Peak Certification.
