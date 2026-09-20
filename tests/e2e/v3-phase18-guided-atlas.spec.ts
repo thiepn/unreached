@@ -93,6 +93,7 @@ test("guided atlas remains usable on a narrow mobile viewport", async ({ page })
     client: document.documentElement.clientWidth,
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
+  await guide.screenshot({ path: artifactDir + "/guided-atlas-mobile.png" });
 
   await guide.getByRole("link", { name: /Begin with Benin/ }).click();
   await expect(page.locator('[data-guided-journey-step="country"]')).toBeVisible({ timeout: 15_000 });
@@ -102,6 +103,4 @@ test("guided atlas remains usable on a narrow mobile viewport", async ({ page })
     client: document.documentElement.clientWidth,
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
-
-  await guide.screenshot({ path: artifactDir + "/guided-atlas-mobile.png" });
 });
