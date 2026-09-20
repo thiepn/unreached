@@ -2,7 +2,7 @@ import { render } from "preact";
 
 import { App } from "./app/App";
 import { initializeOfflineRuntime } from "./offline/runtime";
-import { installPeopleGroupsReconnectRefresh, warmPeopleGroupsRuntime } from "./providers/peoplegroups";
+import { warmPeopleGroupsRuntime } from "./providers/peoplegroups";
 import { initializePrivateSyncRuntime } from "./sync/runtime";
 import "@fontsource-variable/newsreader";
 import "@fontsource-variable/source-sans-3";
@@ -83,4 +83,3 @@ initializeOfflineRuntime();
 initializePrivateSyncRuntime();
 render(<App />, document.getElementById("app")!);
 
-installPeopleGroupsReconnectRefresh();
