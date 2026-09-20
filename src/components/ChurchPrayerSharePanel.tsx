@@ -10,20 +10,20 @@ import {
 } from "../sharing";
 
 export function ChurchPrayerSharePanel({ prayerList }: { prayerList: readonly PrayerListEntry[] }) {
-  const eligibleEntries = prayerList.slice(0, MAX_SHARED_PRAYER_PEOPLE);
+  const prayerListKey = prayerList.map((entry) => entry.sourcePeopleId).join(",");
   const [title, setTitle] = useState("Church prayer collection");
   const [locale, setLocale] = useState<Locale>("en");
-  const [selected, setSelected] = useState<number[]>(() => eligibleEntries.map((entry) => entry.sourcePeopleId));
+  const [selected, setSelected] = useState<number[]>(() => prayerList.slice(0, MAX_SHARED_PRAYER_PEOPLE).map((entry) => entry.sourcePeopleId));
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const allowed = new Set(eligibleEntries.map((entry) => entry.sourcePeopleId));
+    const allowed = new Set(prayerList.map((entry) => entry.sourcePeopleId));
     setSelected((current) => {
       const retained = current.filter((id) => allowed.has(id));
-      return retained.length ? retained : eligibleEntries.map((entry) => entry.sourcePeopleId);
+      return retained.length ? retained : prayerList.slice(0, MAX_SHARED_PRAYER_PEOPLE).map((entry) => entry.sourcePeopleId);
     });
-  }, [prayerList.length]);
+  }, [prayerListKey]);
 
   useEffect(() => {
     setGeneratedUrl("");
@@ -66,12 +66,12 @@ export function ChurchPrayerSharePanel({ prayerList }: { prayerList: readonly Pr
         <div>
           <span class="v3-memory-eyebrow">Church sharing</span>
           <h3 id="church-prayer-share-heading">Create a privacy-safe prayer collection.</h3>
-          <p>Choose up to {MAX_SHARED_PRAYER_PEOPLE} people. The link contains only its title, language, version, and public PeopleGroups PEIDs—not your notes, prayer history, account, or timestamps.</p>
+          <p>Choose up to {MAX_SHARED_PRAYER_PEOPLE} people from your prayer list. The link contains only its title, language, version, and public PeopleGroups PEIDs—not your notes, prayer history, account, or timestamps.</p>
         </div>
         <Share2 size={20} aria-hidden="true" />
       </div>
 
-      {eligibleEntries.length ? (
+      {prayerList.length ? (
         <>
           <div class="church-prayer-share__settings">
             <label>
@@ -93,16 +93,20 @@ export function ChurchPrayerSharePanel({ prayerList }: { prayerList: readonly Pr
 
           <fieldset class="church-prayer-share__people">
             <legend>People to include · {selected.length}/{MAX_SHARED_PRAYER_PEOPLE}</legend>
-            {eligibleEntries.map((entry) => (
+            {prayerList.map((entry) => {
+              const checked = selectedSet.has(entry.sourcePeopleId);
+              return (
               <label key={entry.sourcePeopleId}>
                 <input
                   type="checkbox"
-                  checked={selectedSet.has(entry.sourcePeopleId)}
+                  checked={checked}
+                  disabled={!checked && selected.length >= MAX_SHARED_PRAYER_PEOPLE}
                   onChange={() => toggle(entry.sourcePeopleId)}
                 />
                 <span><strong>{entry.name}</strong><small>{[entry.countryName, entry.languageName].filter(Boolean).join(" · ") || ("PEID " + entry.sourcePeopleId)}</small></span>
               </label>
-            ))}
+              );
+            })}
           </fieldset>
 
           <button
