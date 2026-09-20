@@ -206,13 +206,14 @@ test("church sharing can choose beyond the first twelve and reconciles same-leng
   const replacementState = {
     ...state,
     prayerList: [
+      entries[0]!,
       {
-        ...entries[0],
+        ...entries[1],
         sourcePeopleId: replacementId,
         peopleGroupId: "people-entity:peoplegroups:" + replacementId,
         name: "Replacement prayer person",
       },
-      ...entries.slice(1),
+      ...entries.slice(2),
     ],
   };
   await page.evaluate(({ key, value }) => {
@@ -221,7 +222,7 @@ test("church sharing can choose beyond the first twelve and reconciles same-leng
   }, { key: PRIVATE_KEY, value: replacementState });
 
   await expect(builder.getByText("Replacement prayer person", { exact: true })).toBeVisible();
-  await expect(builder.getByText("Prayer person 1", { exact: true })).toHaveCount(0);
+  await expect(builder.getByText("Prayer person 2", { exact: true })).toHaveCount(0);
   await expect(builder.getByText("People to include · 11/12", { exact: true })).toBeVisible();
   await expect(builder.getByRole("checkbox").first()).toBeEnabled();
 });
