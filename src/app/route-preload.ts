@@ -15,6 +15,7 @@ const routePreloaders: Partial<Record<RouteId, RoutePreloader>> = {
   coverage: () => import("../pages/EditorialCoveragePage"),
   pray: () => import("../pages/PrayPage"),
   saved: () => import("../pages/SavedPage"),
+  "shared-prayer": () => import("../pages/SharedPrayerCollectionPage"),
   account: () => import("../pages/AccountPage"),
   about: () => import("../pages/AboutPage"),
 };
