@@ -205,6 +205,7 @@ export function buildGuidedRegionAtlas(input: {
     pathways,
     selectionMethod: "Eligible pathways use current GSEC 0–3 PeopleGroups.org records inside the Natural Earth region. Countries are ordered alphabetically and, when more than six are available, evenly sampled through that stable list. Within each selected country, a reviewed editorial profile is preferred for learning depth; otherwise the alphabetically first eligible source record is used. This is not mission-priority ranking.",
     boundaries: [
+      "Guided sequence: Region → Country → People → Prayer.",
       "A guided pathway is a learning sequence, not a recommendation that one country or people matters more than another.",
       "Reviewed editorial coverage affects teaching depth only; it is not used as a mission-importance score.",
       "Regional prose is limited to current source-backed geography and mission-data summaries.",
