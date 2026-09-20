@@ -193,6 +193,36 @@ Not approved:
 
 The guided atlas is additive and does not replace normal atlas exploration.
 
+## 3F. Phase 19 localization & church sharing
+
+**Status:** PUBLIC-IDENTIFIER SHARE LINKS ONLY  
+**Reviewed:** 20 September 2026
+
+Phase 19 may create serverless shared prayer links containing only:
+
+- payload version;
+- user-authored public collection title;
+- recipient UI locale;
+- public PeopleGroups PEIDs.
+
+Not approved for sharing:
+
+- personal notes;
+- prayer-list add/prayed timestamps;
+- prayer memory/history;
+- Saved state;
+- recent browsing;
+- account email or identifier;
+- private-sync state/revisions;
+- authentication state;
+- analytics/tracking identifiers.
+
+Shared collections are not stored in D1, Worker storage, private sync or a public collection directory.
+
+Recipients resolve PEIDs against current runtime data. Missing or no-longer-eligible records must be shown as unavailable and must not retain an outdated prayer classification.
+
+Phase 19's localization foundation currently certifies English and German catalog parity for the shared-prayer domain. It does not claim whole-application translation coverage.
+
 ## 4. Natural Earth
 
 **Status:** APPROVED  
@@ -286,6 +316,8 @@ Production source records should remain traceable to the provider and provider i
 
 For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Consecutive repeated observations of the same tracked state must be de-duplicated, while a later return after an intervening state remains a historical transition.
 
+For shared prayer collections, encoded output must remain limited to version, intentional title, locale and public PEIDs; private personalization/account/sync data must never enter the link, and recipients must re-resolve current prayer eligibility before a prayer action is shown. Localization catalogs must maintain key/placeholder parity and plain-text rendering.
+
 For guided-atlas journeys, regional prose must remain limited to source-derived atlas statements, pathway selection must remain non-ranking, reviewed coverage may affect teaching depth only, and journey progress must remain URL-only rather than persisted or synced.
 
 For advanced geographic intelligence, direct PGID country evidence must remain distinguishable from cross-country ROP3 taxonomy matches. Country-level source distribution must never be relabeled as diaspora, migration, city-level settlement or verified global-population evidence.
@@ -337,6 +369,7 @@ A release must fail if any of the following is false:
 - Phase 16 knowledge-graph edges remain typed/provenanced, derived in memory only, free of hidden similarity/ranking semantics, and exclude persisted Joshua Project comparison data;
 - Phase 17 geographic intelligence remains country-level, exact-ROP3-linked, explicit about population coverage, and must not infer diaspora/migration/city precision;
 - Phase 18 guided atlas prose remains source-grounded, pathway selection remains deterministic/non-ranking, and guided journey state remains URL-only with no stored completion history;
+- Phase 19 sharing remains serverless/public-identifier-only with current-source eligibility re-resolution, and localization catalogs remain parity-checked plain text;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
