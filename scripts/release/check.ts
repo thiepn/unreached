@@ -160,6 +160,11 @@ for (const marker of ["Gate D", "Advanced Geographic Intelligence", "Diaspora ev
   if (!phase17.includes(marker)) throw new Error(`Phase 17 geographic-intelligence policy documentation missing: ${marker}`);
 }
 
+const phase18 = await readText("docs/V3_PHASE18_GUIDED_MISSION_ATLAS.md");
+for (const marker of ["Gate D", "Guided Mission Atlas", "Region → Country → People → Prayer", "teaching-depth criterion", "URL-only journey state"]) {
+  if (!phase18.includes(marker)) throw new Error(`Phase 18 guided-atlas policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
