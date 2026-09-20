@@ -119,7 +119,7 @@ test("history begins with one verified local state and repeated visits de-duplic
   await expect(panel).toHaveAttribute("data-history-count", "1");
   await expect(panel.getByText("History starts with this verified source observation.", { exact: true })).toBeVisible();
 
-  await page.screenshot({ path: `${artifactDir}/hui-history-baseline.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/hui-history-baseline.png` });
 });
 
 test("a real tracked source change creates a distinct timeline point with exact changes", async ({ page }) => {
@@ -141,7 +141,7 @@ test("a real tracked source change creates a distinct timeline point with exact 
   await expect(panel.getByText("Population estimate", { exact: true })).toBeVisible();
   await expect(panel.getByText("13,800,000 → 13,900,000", { exact: true })).toBeVisible();
 
-  await page.screenshot({ path: `${artifactDir}/hui-history-change.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/hui-history-change.png` });
 });
 
 test("a later return to an earlier tracked state remains a new historical transition", async ({ page }) => {
@@ -252,5 +252,5 @@ test("historical mission intelligence stays readable without horizontal overflow
   }));
   expect(dimensions.width).toBeLessThanOrEqual(dimensions.client + 1);
 
-  await page.screenshot({ path: `${artifactDir}/hui-history-mobile.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/hui-history-mobile.png` });
 });

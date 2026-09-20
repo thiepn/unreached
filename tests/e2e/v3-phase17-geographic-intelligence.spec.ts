@@ -51,7 +51,7 @@ test("geographic intelligence starts at current PGID and loads wider ROP3 distri
   await expect(panel.getByText("Second Browser People", { exact: true })).toHaveCount(0);
   await expect(panel.locator('a[href="#/peoples/' + UNCOVERED_TEST_PEID + '"]')).toHaveCount(0);
 
-  await page.screenshot({ path: artifactDir + "/source-linked-distribution.png", fullPage: true });
+  await panel.screenshot({ path: artifactDir + "/source-linked-distribution.png" });
 });
 
 test("regional and population evidence remain bounded and diaspora stays unestablished", async ({ page }) => {
@@ -114,5 +114,5 @@ test("advanced geographic intelligence remains within a narrow mobile viewport",
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
 
-  await page.screenshot({ path: artifactDir + "/source-linked-distribution-mobile.png", fullPage: true });
+  await panel.screenshot({ path: artifactDir + "/source-linked-distribution-mobile.png" });
 });
