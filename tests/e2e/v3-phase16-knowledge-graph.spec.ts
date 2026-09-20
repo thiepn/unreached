@@ -45,7 +45,7 @@ test("people profile exposes an inspectable typed knowledge graph", async ({ pag
   await expect(graph.getByRole("button", { name: /ROP3 people name.*Browser Test People/i })).toBeVisible();
   await expect(graph.getByRole("button", { name: /People cluster.*Browser Test Cluster/i })).toBeVisible();
 
-  await page.screenshot({ path: artifactDir + "/people-knowledge-graph.png", fullPage: true });
+  await graph.screenshot({ path: artifactDir + "/people-knowledge-graph.png" });
 });
 
 test("related-record graph edges expose the exact taxonomy relationship", async ({ page }) => {
@@ -91,5 +91,5 @@ test("knowledge graph stays within the mobile viewport", async ({ page }) => {
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
 
-  await page.screenshot({ path: artifactDir + "/people-knowledge-graph-mobile.png", fullPage: true });
+  await graph.screenshot({ path: artifactDir + "/people-knowledge-graph-mobile.png" });
 });
