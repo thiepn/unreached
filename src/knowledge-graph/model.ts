@@ -525,17 +525,25 @@ export function knowledgeGraphNeighbors(graph: MissionKnowledgeGraph, nodeId: st
   direction: "outgoing" | "incoming";
 }> {
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
-  return graph.edges.flatMap((edge) => {
+  const neighbors: Array<{
+    edge: KnowledgeGraphEdge;
+    node: KnowledgeGraphNode;
+    direction: "outgoing" | "incoming";
+  }> = [];
+
+  for (const edge of graph.edges) {
     if (edge.from === nodeId) {
       const node = nodeById.get(edge.to);
-      return node ? [{ edge, node, direction: "outgoing" as const }] : [];
+      if (node) neighbors.push({ edge, node, direction: "outgoing" });
+      continue;
     }
     if (edge.to === nodeId) {
       const node = nodeById.get(edge.from);
-      return node ? [{ edge, node, direction: "incoming" as const }] : [];
+      if (node) neighbors.push({ edge, node, direction: "incoming" });
     }
-    return [];
-  }).sort((a, b) =>
+  }
+
+  return neighbors.sort((a, b) =>
     a.edge.evidenceKind.localeCompare(b.edge.evidenceKind)
     || a.edge.label.localeCompare(b.edge.label)
     || a.node.label.localeCompare(b.node.label)
