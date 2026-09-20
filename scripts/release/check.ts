@@ -171,7 +171,7 @@ for (const marker of ["Gate D", "Localization & Church Sharing", "English", "Ger
 }
 
 const phase20 = await readText("docs/V3_PHASE20_PEAK_CERTIFICATION.md");
-for (const marker of ["Peak Certification", "machine-readable architecture lock", "Phase 20 closes the numbered V3 roadmap", "distribution performance budgets", "maintenance/architecture-lock mode"]) {
+for (const marker of ["Peak Certification", "Machine-readable architecture lock", "Phase 20 closes the numbered V3 roadmap", "distribution performance budgets", "maintenance/architecture-lock mode"]) {
   if (!phase20.includes(marker)) throw new Error(`Phase 20 peak-certification documentation missing: ${marker}`);
 }
 
