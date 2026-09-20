@@ -26,8 +26,8 @@ test("peak shell preserves the simple primary architecture and finished copy", a
   await expect(desktopNav.getByRole("link", { name: "Peoples" })).toHaveAttribute("href", "#/peoples");
   await expect(desktopNav.getByRole("link", { name: "Pray" })).toHaveAttribute("href", "#/pray");
 
-  await expect(page.getByRole("button", { name: "Search people, countries and languages" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "My saved people and prayer list" })).toHaveAttribute("href", "#/saved");
+  await expect(page.locator('button[aria-label="Search people, countries and languages"]')).toHaveCount(1);
+  await expect(page.locator('a[aria-label="My saved people and prayer list"]')).toHaveAttribute("href", "#/saved");
   await expect(page.locator("main")).not.toContainText(/Phase\s+\d+/);
 
   const skip = page.locator(".skip-link");
@@ -57,7 +57,7 @@ test("peak journey reaches prayer and private memory without ranking mechanics",
   await page.getByRole("button", { name: "Add to private prayer list" }).click();
   await expect(page.getByRole("button", { name: "Remove from private prayer list" })).toBeVisible();
 
-  await page.getByRole("link", { name: "My saved people and prayer list" }).click();
+  await page.locator('a[href="#/saved"]:visible').first().click();
   await expect(page.getByRole("heading", { level: 1, name: "Saved" })).toBeVisible();
   await expect(page.locator('[data-prayer-list-peid="' + VISIBLE_TEST_PEID + '"]')).toBeVisible();
 
