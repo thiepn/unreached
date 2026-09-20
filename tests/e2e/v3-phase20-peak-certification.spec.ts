@@ -112,3 +112,46 @@ test("peak shared-prayer route fails closed on invalid public payload", async ({
   await expect(page.locator('[data-shared-prayer-peid]')).toHaveCount(0);
   await expect(page.locator("#main-content")).toBeFocused();
 });
+
+test("corrupted private-sync metadata fails closed without background upload", async ({ page }) => {
+  const syncKey = "unreached.sync.v1";
+  const tokenKey = "unreached.sync.access.v1";
+  const token = "aaaaaaaaaa.bbbbbbbbbb.cccccccccc";
+
+  await page.addInitScript(({ syncStorage, accessStorage, accessToken }) => {
+    localStorage.setItem(syncStorage, JSON.stringify({
+      version: 2,
+      enabled: true,
+      accountEmail: "owner@example.com",
+      accountMismatchEmail: null,
+      lastServerRevision: 4,
+      mirror: {},
+      pending: [null],
+      lastSyncedAt: "2026-09-20T12:00:00.000Z",
+      lastError: null,
+    }));
+    sessionStorage.setItem(accessStorage, accessToken);
+  }, { syncStorage: syncKey, accessStorage: tokenKey, accessToken: token });
+
+  let syncPosts = 0;
+  await page.route("**/unreached-sync/health", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+  });
+  await page.route("**/unreached-sync/private/state", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ account: { email: "owner@example.com" }, revision: 0, items: [] }),
+    });
+  });
+  await page.route("**/unreached-sync/private/sync", async (route) => {
+    syncPosts += 1;
+    await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: "must not upload" }) });
+  });
+
+  await page.goto("./#/account");
+  await expect(page.locator(".account-page")).toHaveAttribute("data-account-state", "ready-to-enable", { timeout: 15_000 });
+  await page.waitForTimeout(750);
+  expect(syncPosts).toBe(0);
+});
+
