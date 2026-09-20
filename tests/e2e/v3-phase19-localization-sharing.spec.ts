@@ -1,3 +1,5 @@
+import { mkdir } from "node:fs/promises";
+
 import { expect, test } from "@playwright/test";
 
 import {
@@ -8,6 +10,11 @@ import {
 } from "./peoplegroups-fixture";
 
 const PRIVATE_KEY = "unreached.personal.v2";
+const artifactDir = "artifacts/v3-phase19";
+
+test.beforeAll(async () => {
+  await mkdir(artifactDir, { recursive: true });
+});
 
 function privateState() {
   return {
@@ -70,7 +77,7 @@ test.beforeEach(async ({ page }) => {
   }, { key: PRIVATE_KEY, state: privateState() });
 });
 
-test("church sharing generates a minimal German link and resolves current source eligibility", async ({ page }) => {
+test("church sharing generates a minimal German link and resolves current source eligibility", async ({ page, browser }) => {
   await page.goto("./#/saved");
 
   const builder = page.locator('[data-phase19-church-share="true"]');
@@ -88,10 +95,12 @@ test("church sharing generates a minimal German link and resolves current source
   expect(shareUrl).not.toContain("ULTRA-PRIVATE-NOTE-MUST-NEVER-SHARE");
   expect(shareUrl).not.toContain("Browser%20Test%20People");
 
-  await page.evaluate((key) => window.localStorage.removeItem(key), PRIVATE_KEY);
-  await page.goto(shareUrl);
+  const recipientContext = await browser.newContext();
+  const recipient = await recipientContext.newPage();
+  await installPeopleGroupsFixture(recipient);
+  await recipient.goto(shareUrl);
 
-  const shared = page.locator('[data-phase19-shared-prayer="ready"]');
+  const shared = recipient.locator('[data-phase19-shared-prayer="ready"]');
   await expect(shared).toBeVisible({ timeout: 15_000 });
   await expect(shared).toHaveAttribute("data-shared-locale", "de");
   await expect(shared.getByRole("heading", { level: 1, name: "Gemeinsam beten: Gemeinde Gebetsliste" })).toBeVisible();
@@ -106,8 +115,9 @@ test("church sharing generates a minimal German link and resolves current source
   await expect(shared.getByText("Aktueller Quelldatensatz ist nicht als GSEC 0–3 klassifiziert", { exact: true })).toBeVisible();
   await expect(shared.locator('a[href="#/pray/' + RELATED_TEST_PEID + '"]')).toHaveCount(0);
 
-  const persisted = await page.evaluate((key) => window.localStorage.getItem(key), PRIVATE_KEY);
+  const persisted = await recipient.evaluate((key) => window.localStorage.getItem(key), PRIVATE_KEY);
   expect(persisted).toBeNull();
+  await recipientContext.close();
 });
 
 test("malformed collection links fail closed without starting the prayer runtime", async ({ page }) => {
@@ -139,5 +149,5 @@ test("shared prayer collection remains usable on mobile", async ({ page }) => {
   }));
   expect(dimensions.width).toBeLessThanOrEqual(dimensions.client + 1);
 
-  await shared.screenshot({ path: "artifacts/v3-phase19/shared-prayer-mobile.png" });
+  await shared.screenshot({ path: artifactDir + "/shared-prayer-mobile.png" });
 });
