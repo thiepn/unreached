@@ -313,5 +313,7 @@ The V3 roadmap is intentionally finite.
 - No Phase 13+ feature begins until Phase 12 passes.
 - New ideas discovered during implementation go into a parking lot unless required for the active phase's acceptance criteria.
 - A phase may be split internally for implementation safety, but that must not create an open-ended public roadmap of micro-phases.
+- Phase 20 closes the numbered V3 roadmap. Do not create Phase 21+ for ordinary iteration.
+- A genuinely new post-lock product capability requires an explicit reviewed architecture decision and an update to the Peak Architecture Lock.
 
 The purpose of this contract is to prevent Unreached from accumulating more infrastructure faster than it accumulates user value.
