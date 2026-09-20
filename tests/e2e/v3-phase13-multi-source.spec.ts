@@ -107,7 +107,7 @@ test("Joshua Project comparison is opt-in, attributed and keeps source methodolo
   await expect(panel.getByRole("link", { name: "Data provided by Joshua Project" })).toHaveAttribute("href", "https://joshuaproject.net/people_groups/12140/CH");
   expect(requests).toBe(1);
 
-  await page.screenshot({ path: `${artifactDir}/hui-source-agreement.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/hui-source-agreement.png` });
 });
 
 test("source disagreement stays visible instead of being reconciled into one verdict", async ({ page }) => {
@@ -202,5 +202,5 @@ test("Phase 13 comparison remains readable on mobile", async ({ page }) => {
 
   const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(dimensions.width).toBeLessThanOrEqual(dimensions.client + 1);
-  await page.screenshot({ path: `${artifactDir}/hui-source-agreement-mobile.png`, fullPage: true });
+  await panel.screenshot({ path: `${artifactDir}/hui-source-agreement-mobile.png` });
 });
