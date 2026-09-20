@@ -16,6 +16,7 @@ import {
 } from "lucide-preact";
 
 import { hrefFor } from "../app/router";
+import { ChurchPrayerSharePanel } from "../components/ChurchPrayerSharePanel";
 import {
   MAX_PERSONAL_NOTE_LENGTH,
   orderPrayerRotation,
@@ -190,6 +191,8 @@ export function SavedPage() {
             </div>
           </div>
         ) : null}
+
+        <ChurchPrayerSharePanel prayerList={state.prayerList} />
 
         {prayerRotation.length ? (
           <div class="v3-memory-grid saved-prayer-grid">
