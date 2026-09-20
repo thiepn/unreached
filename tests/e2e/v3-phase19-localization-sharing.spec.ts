@@ -151,3 +151,78 @@ test("shared prayer collection remains usable on mobile", async ({ page }) => {
 
   await shared.screenshot({ path: artifactDir + "/shared-prayer-mobile.png" });
 });
+
+test("church sharing can choose beyond the first twelve and reconciles same-length membership changes", async ({ page }) => {
+  const entries = Array.from({ length: 14 }, (_, index) => {
+    const id = 920001 + index;
+    return {
+      sourcePeopleId: id,
+      peopleGroupId: "people-entity:peoplegroups:" + id,
+      name: "Prayer person " + String(index + 1),
+      countryName: "Country " + String(index + 1),
+      languageName: "Language " + String(index + 1),
+      addedAt: "2026-09-01T10:00:00.000Z",
+      lastPrayedAt: null,
+    };
+  });
+  const state = {
+    version: 3,
+    savedPeoples: [],
+    prayerList: entries,
+    recent: [],
+    personalNotes: [],
+    prayerMemory: [],
+  };
+
+  await page.addInitScript(({ key, value }) => {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }, { key: PRIVATE_KEY, value: state });
+  await page.goto("./#/saved");
+
+  const builder = page.locator('[data-phase19-church-share="true"]');
+  await expect(builder).toBeVisible();
+  await expect(builder.getByText("People to include · 12/12", { exact: true })).toBeVisible();
+
+  const thirteenth = builder.getByRole("checkbox").nth(12);
+  await expect(thirteenth).toBeDisabled();
+
+  await builder.getByRole("checkbox").first().uncheck();
+  await expect(thirteenth).toBeEnabled();
+  await thirteenth.check();
+
+  await builder.getByRole("button", { name: "Generate share link" }).click();
+  const shareUrl = await builder.getByLabel("Generated prayer collection share link").inputValue();
+  const peopleIds = await page.evaluate((value) => {
+    const encoded = new URL(value).hash.split("?c=", 2)[1] ?? "";
+    const normalized = decodeURIComponent(encoded).replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+    return (JSON.parse(atob(padded)) as { peopleIds: number[] }).peopleIds;
+  }, shareUrl);
+  expect(peopleIds).toContain(920013);
+  expect(peopleIds).not.toContain(920001);
+  expect(peopleIds).toHaveLength(12);
+
+  const replacementId = 930001;
+  const replacementState = {
+    ...state,
+    prayerList: [
+      {
+        ...entries[0],
+        sourcePeopleId: replacementId,
+        peopleGroupId: "people-entity:peoplegroups:" + replacementId,
+        name: "Replacement prayer person",
+      },
+      ...entries.slice(1),
+    ],
+  };
+  await page.evaluate(({ key, value }) => {
+    window.localStorage.setItem(key, JSON.stringify(value));
+    window.dispatchEvent(new Event("unreached:personalization-change"));
+  }, { key: PRIVATE_KEY, value: replacementState });
+
+  await expect(builder.getByText("Replacement prayer person", { exact: true })).toBeVisible();
+  await expect(builder.getByText("Prayer person 1", { exact: true })).toHaveCount(0);
+  await expect(builder.getByText("People to include · 11/12", { exact: true })).toBeVisible();
+  await expect(builder.getByRole("checkbox").first()).toBeEnabled();
+});
+
