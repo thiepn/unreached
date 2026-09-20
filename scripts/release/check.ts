@@ -165,6 +165,11 @@ for (const marker of ["Gate D", "Guided Mission Atlas", "Region → Country → 
   if (!phase18.includes(marker)) throw new Error(`Phase 18 guided-atlas policy documentation missing: ${marker}`);
 }
 
+const phase19 = await readText("docs/V3_PHASE19_LOCALIZATION_CHURCH_SHARING.md");
+for (const marker of ["Gate D", "Localization & Church Sharing", "English", "German", "public PeopleGroups PEIDs", "No automatic import"]) {
+  if (!phase19.includes(marker)) throw new Error(`Phase 19 localization/sharing policy documentation missing: ${marker}`);
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);

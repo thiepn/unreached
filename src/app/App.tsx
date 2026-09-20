@@ -29,6 +29,7 @@ const PrayPage = lazy(() => import("../pages/PrayPage").then((module) => ({ defa
 const PrayerFocusPage = lazy(() => import("../pages/PrayerFocusPage").then((module) => ({ default: module.PrayerFocusPage })));
 const PrayerSessionPage = lazy(() => import("../pages/PrayerSessionPage").then((module) => ({ default: module.PrayerSessionPage })));
 const SavedPage = lazy(() => import("../pages/SavedPage").then((module) => ({ default: module.SavedPage })));
+const SharedPrayerCollectionPage = lazy(() => import("../pages/SharedPrayerCollectionPage").then((module) => ({ default: module.SharedPrayerCollectionPage })));
 
 function RouteFallback() {
   return (
@@ -53,6 +54,7 @@ export function App() {
     case "coverage": page = <EditorialCoveragePage />; break;
     case "pray": page = route.path === "/pray/session" ? <PrayerSessionPage /> : route.prayerSourceId ? <PrayerFocusPage sourcePeopleId={route.prayerSourceId} /> : <PrayPage />; break;
     case "saved": page = <SavedPage />; break;
+    case "shared-prayer": page = <SharedPrayerCollectionPage />; break;
     case "account": page = <AccountPage />; break;
     case "about": page = <AboutPage />; break;
     case "design-system": page = <DesignSystemPage />; break;

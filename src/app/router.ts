@@ -10,6 +10,7 @@ export type RouteId =
   | "coverage"
   | "pray"
   | "saved"
+  | "shared-prayer"
   | "account"
   | "about"
   | "design-system"
@@ -37,6 +38,7 @@ const ROUTES: Readonly<Record<string, RouteId>> = {
   "/pray": "pray",
   "/pray/session": "pray",
   "/saved": "saved",
+  "/share/prayer": "shared-prayer",
   "/account": "account",
   "/about": "about",
   "/dev/design-system": "design-system",
@@ -100,6 +102,7 @@ function titleForRoute(route: RouteState): string {
   if (route.id === "coverage") return "Reviewed Coverage | Unreached";
   if (route.id === "pray") return route.prayerSourceId ? `Prayer for PEID ${route.prayerSourceId} | Unreached` : "Prayer | Unreached";
   if (route.id === "saved") return "Saved | Unreached";
+  if (route.id === "shared-prayer") return "Shared Prayer Collection | Unreached";
   if (route.id === "account") return "Account & Sync | Unreached";
   if (route.id === "about") return "About & Sources | Unreached";
   if (route.id === "design-system") return "V3 Visual Foundation | Unreached";
