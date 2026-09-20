@@ -168,6 +168,31 @@ Diaspora status remains **not established** unless a separately reviewed source 
 
 Phase 17 adds no new external provider and does not broaden PeopleGroups.org or Natural Earth redistribution rights.
 
+## 3E. Phase 18 guided mission atlas
+
+**Status:** SOURCE-GROUNDED LEARNING LAYER ONLY  
+**Reviewed:** 20 September 2026
+
+Phase 18 may compose already approved Natural Earth, PeopleGroups.org and reviewed Unreached editorial data into a guided Region → Country → People → Prayer learning sequence.
+
+Approved:
+
+- regional prose generated only from current atlas geography and mission-source counts;
+- deterministic country sampling for manageable learning breadth;
+- preference for reviewed editorial profiles as a teaching-depth criterion;
+- URL-only journey state using public region IDs and PEIDs;
+- cross-page validation that journey parameters match the current country/people/prayer record.
+
+Not approved:
+
+- unsourced cultural, historical, political or strategic regional essays;
+- ranking countries or people by mission importance, urgency, population, prayer activity, saved status, source disagreement or model score;
+- storing guided-atlas completion/progress in browser persistence, private sync or server storage;
+- treating reviewed editorial coverage as a mission-priority signal;
+- changing Prayer 3.0 eligibility or wording.
+
+The guided atlas is additive and does not replace normal atlas exploration.
+
 ## 4. Natural Earth
 
 **Status:** APPROVED  
@@ -261,6 +286,8 @@ Production source records should remain traceable to the provider and provider i
 
 For historical observations, provider identity, record identity, source-update time and local observation time must remain distinguishable. Earlier states must not be synthesized from current values. Consecutive repeated observations of the same tracked state must be de-duplicated, while a later return after an intervening state remains a historical transition.
 
+For guided-atlas journeys, regional prose must remain limited to source-derived atlas statements, pathway selection must remain non-ranking, reviewed coverage may affect teaching depth only, and journey progress must remain URL-only rather than persisted or synced.
+
 For advanced geographic intelligence, direct PGID country evidence must remain distinguishable from cross-country ROP3 taxonomy matches. Country-level source distribution must never be relabeled as diaspora, migration, city-level settlement or verified global-population evidence.
 
 For knowledge-graph relationships, every edge must retain its typed evidence layer, source identity, source-record IDs and exact source fields where applicable. Derived taxonomy matches must remain distinguishable from direct provider fields and reviewed editorial claims.
@@ -309,6 +336,7 @@ A release must fail if any of the following is false:
 - Phase 15 Scripture/language intelligence preserves exact PeopleGroups resource/family semantics and does not infer translation milestones, intelligibility, bilingualism or resource transfer;
 - Phase 16 knowledge-graph edges remain typed/provenanced, derived in memory only, free of hidden similarity/ranking semantics, and exclude persisted Joshua Project comparison data;
 - Phase 17 geographic intelligence remains country-level, exact-ROP3-linked, explicit about population coverage, and must not infer diaspora/migration/city precision;
+- Phase 18 guided atlas prose remains source-grounded, pathway selection remains deterministic/non-ranking, and guided journey state remains URL-only with no stored completion history;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;

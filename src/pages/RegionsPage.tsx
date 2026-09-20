@@ -23,7 +23,7 @@ export function RegionsPage() {
         <div>
           <span class="v3-type-label">World atlas</span>
           <h1 id="regions-title" class="v3-type-display-xl">Explore by region.</h1>
-          <p class="v3-type-body-lg v3-reading">Move from the world into a geographic region, then into countries and the people represented there. Region identity comes from Natural Earth geography; mission context remains source-scoped PeopleGroups.org / IMB data.</p>
+          <p class="v3-type-body-lg v3-reading">Move from the world into a geographic region, then into countries and the people represented there. Each region now includes a source-grounded guided reading and optional Region → Country → People → Prayer learning paths. Region identity comes from Natural Earth geography; mission context remains source-scoped PeopleGroups.org / IMB data.</p>
         </div>
         <Globe2 size={40} aria-hidden="true" />
       </header>
@@ -42,7 +42,7 @@ export function RegionsPage() {
                   <ArrowRight size={18} aria-hidden="true" />
                 </div>
                 <h2>{region.name}</h2>
-                <p>{region.countryCount} navigable countries and areas{mission.ready ? ` · ${region.missionCountryCount} with current mission source records` : ""}</p>
+                <p>{region.countryCount} navigable countries and areas{mission.ready ? ` · ${region.missionCountryCount} with current mission source records` : ""}</p><span class="v3-region-card__guide-note">Guided regional reading inside</span>
                 <dl class="v3-region-card__facts">
                   <div><dt>Countries</dt><dd>{region.countryCount}</dd></div>
                   <div><dt>People groups represented</dt><dd>{mission.ready ? region.peopleContextCount : "—"}</dd></div>

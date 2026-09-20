@@ -1,7 +1,12 @@
 import { ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Compass, Database, RefreshCw, RotateCcw } from "lucide-preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
+import { readHashSearchParams } from "../app/hash-state";
 import { hrefFor } from "../app/router";
+import { GuidedJourneyBanner } from "../components/GuidedJourneyBanner";
+import { atlasRegionForCountry } from "../geography/regions";
+import { parseGuidedJourney } from "../guided-atlas";
+import { useWorldGeography } from "../map/geography";
 import { isSameLocalDate, prayerSnapshotFromEntity, selectNextPrayerRotationEntry, usePersonalization } from "../personalization";
 import {
   LIVE_PRAYER_TEMPLATE_REVIEW,
@@ -28,6 +33,7 @@ function categoryLabel(category: PrayerCategory): string {
 
 export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) {
   const route = useLivePrayerRouteRecord(sourcePeopleId);
+  const geography = useWorldGeography();
   const personalization = usePersonalization();
   const [pace, setPace] = useState<PrayerPace>("standard");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -44,6 +50,12 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
   const nextPrayerEntry = useMemo(() => selectNextPrayerRotationEntry(personalization.state.prayerList, {
     excludeSourcePeopleId: sourcePeopleId,
   }), [personalization.state.prayerList, sourcePeopleId]);
+  const journey = parseGuidedJourney(readHashSearchParams());
+  const geographyFeature = entity ? geography.countriesByIso3.get(entity.contexts[0]?.country.iso3 ?? "") ?? null : null;
+  const journeyRegion = geographyFeature ? atlasRegionForCountry(geographyFeature) : null;
+  const activeJourney = entity && journey && journey.focusPeid === sourcePeopleId && journeyRegion?.id === journey.regionId
+    ? journey
+    : null;
 
   useEffect(() => setActiveIndex(0), [pace, sourcePeopleId]);
 
@@ -97,6 +109,16 @@ export function PrayerFocusPage({ sourcePeopleId }: { sourcePeopleId: number }) 
         </div>
         <Compass size={34} aria-hidden="true" />
       </header>
+
+      {activeJourney ? (
+        <GuidedJourneyBanner
+          state={activeJourney}
+          step="prayer"
+          countryIso3={context.countryIso3}
+          countryName={context.countryName}
+          peopleName={profile.peopleName}
+        />
+      ) : null}
 
       <section class="v3-prayer-context" aria-labelledby="prayer-context-heading" data-v3-prayer-context="true">
         <div class="v3-prayer-context__intro">

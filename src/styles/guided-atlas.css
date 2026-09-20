@@ -1,0 +1,308 @@
+.guided-region-atlas {
+  display: grid;
+  gap: var(--space-6);
+  margin: var(--space-8) 0;
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-panel);
+}
+
+.guided-region-atlas__heading,
+.guided-region-atlas__journey-heading,
+.guided-region-pathway__header,
+.guided-journey-banner__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.guided-region-atlas__heading h2,
+.guided-region-atlas__journey-heading h3,
+.guided-region-pathway h4 {
+  margin: var(--space-1) 0 0;
+}
+
+.guided-region-atlas__essay {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 78rem;
+}
+
+.guided-region-atlas__essay > p,
+.guided-region-atlas__journey-heading p,
+.guided-region-atlas__method p,
+.guided-region-atlas__method li,
+.guided-region-atlas__empty p {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.guided-region-atlas__essay > p {
+  max-width: 76ch;
+  line-height: 1.72;
+}
+
+.guided-region-atlas__essay dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.guided-region-atlas__essay dl > div {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-1);
+}
+
+.guided-region-atlas__essay dt {
+  color: var(--ink-2);
+  font-size: .82rem;
+  font-weight: 650;
+}
+
+.guided-region-atlas__essay dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 750;
+}
+
+.guided-region-atlas__essay > small {
+  max-width: 80ch;
+  color: var(--ink-2);
+}
+
+.guided-region-atlas__pathways {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.guided-region-pathway {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-1);
+}
+
+.guided-region-pathway__header > div > span {
+  color: var(--forest-700);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.guided-region-pathway ol {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guided-region-pathway li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.guided-region-pathway li > span {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper-0);
+  font-weight: 750;
+}
+
+.guided-region-pathway li > div {
+  display: grid;
+  gap: .1rem;
+  padding-top: .15rem;
+}
+
+.guided-region-pathway li small {
+  color: var(--ink-2);
+}
+
+.guided-region-pathway__start {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: .65rem .9rem;
+  border-radius: var(--radius-sm);
+  background: var(--forest-700);
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.guided-region-pathway__start:hover,
+.guided-region-pathway__start:focus-visible {
+  text-decoration: underline;
+}
+
+.guided-region-atlas__empty {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+}
+
+.guided-region-atlas__method {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-4);
+}
+
+.guided-region-atlas__method > summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.guided-region-atlas__method > p {
+  margin-top: var(--space-3);
+}
+
+.guided-region-atlas__method ul {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: 0;
+}
+
+.guided-journey-banner {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--forest-700);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--forest-100) 62%, var(--paper-0));
+}
+
+.guided-journey-banner__top > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.guided-journey-banner__steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guided-journey-banner__steps li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-width: 0;
+  padding: .55rem .65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-0);
+  color: var(--ink-2);
+}
+
+.guided-journey-banner__steps li > span:first-child {
+  flex: 0 0 auto;
+  font-weight: 750;
+}
+
+.guided-journey-banner__steps li.is-current {
+  border-color: var(--forest-700);
+  color: var(--ink-0);
+  font-weight: 700;
+}
+
+.guided-journey-banner__steps li.is-complete {
+  color: var(--forest-700);
+}
+
+.guided-journey-banner__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.guided-journey-banner__actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: .55rem .75rem;
+  border-radius: var(--radius-sm);
+}
+
+.guided-journey-banner__next {
+  background: var(--forest-700);
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .guided-region-atlas__pathways {
+    grid-template-columns: 1fr;
+  }
+
+  .guided-region-atlas__essay dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .guided-region-atlas {
+    padding: var(--space-4);
+  }
+
+  .guided-region-atlas__heading,
+  .guided-region-atlas__journey-heading,
+  .guided-region-pathway__header,
+  .guided-journey-banner__top {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .guided-region-atlas__essay dl,
+  .guided-journey-banner__steps {
+    grid-template-columns: 1fr;
+  }
+
+  .guided-journey-banner__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .guided-journey-banner__actions a {
+    justify-content: center;
+  }
+}
+
+.v3-region-card__guide-note {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: var(--space-2);
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--forest-100) 68%, var(--paper-0));
+  color: var(--forest-700);
+  font-size: .78rem;
+  font-weight: 700;
+}

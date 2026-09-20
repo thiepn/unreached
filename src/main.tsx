@@ -55,6 +55,7 @@ import "./styles/people/profile.css";
 import "./styles/people/history.css";
 import "./styles/people/knowledge-graph.css";
 import "./styles/people/geographic-intelligence.css";
+import "./styles/guided-atlas.css";
 import "./styles/explore/map-workspace.css";
 import "./styles/foundation/detail-records.css";
 import "./styles/prayer/guides-and-lists.css";

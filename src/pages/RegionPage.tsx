@@ -2,8 +2,10 @@ import { ArrowLeft, ArrowRight, Database, Globe2, MapPinned, UsersRound } from "
 import { useMemo } from "preact/hooks";
 
 import { hrefFor } from "../app/router";
+import { GuidedRegionAtlasPanel } from "../components/GuidedRegionAtlasPanel";
 import { formatCount } from "../countries";
 import { buildAtlasRegions, findAtlasRegion, routeCodeForCountry } from "../geography/regions";
+import { useGuidedAtlasRuntime } from "../guided-atlas";
 import { useAfterFirstPaint } from "../hooks/useResponsiveWork";
 import { useWorldGeography } from "../map/geography";
 import { formatLiveMissionLayerValue, useLiveMissionVisualization } from "../visualization";
@@ -12,6 +14,7 @@ export function RegionPage({ regionId }: { regionId: string }) {
   const geography = useWorldGeography();
   const missionStart = useAfterFirstPaint();
   const mission = useLiveMissionVisualization(missionStart);
+  const guidedAtlas = useGuidedAtlasRuntime(missionStart);
   const regions = useMemo(
     () => buildAtlasRegions(geography.countries, mission.countriesByIso3),
     [geography.countries, mission.countriesByIso3],
@@ -56,6 +59,15 @@ export function RegionPage({ regionId }: { regionId: string }) {
 
       {missionStart && mission.loading && !mission.ready ? <div class="v3-geography-state v3-geography-state--quiet" role="status"><Database size={17} aria-hidden="true" /> Adding mission context…</div> : null}
       {mission.warning ? <div class="v3-geography-state v3-geography-state--quiet" role="status">{mission.warning}</div> : null}
+
+      {mission.ready && guidedAtlas.ready ? (
+        <GuidedRegionAtlasPanel
+          region={region}
+          missionByIso3={mission.countriesByIso3}
+          peoples={guidedAtlas.peoples}
+          reviewedPeids={guidedAtlas.reviewedPeids}
+        />
+      ) : null}
 
       <section class="v3-region-countries" aria-labelledby="region-countries-heading">
         <div class="v3-geography-section-heading">
