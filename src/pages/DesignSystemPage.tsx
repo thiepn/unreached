@@ -35,7 +35,7 @@ export function DesignSystemPage() {
     <div class="v3-page v3-design-system" data-v3-design-system="true">
       <div class="v3-page__frame">
         <header class="v3-design-system__hero">
-          <span class="v3-type-label">Unreached 3.0 · Phase 4</span>
+          <span class="v3-type-label">Unreached 3.0 · Visual foundation</span>
           <h1 class="v3-type-display-xl">Visual Foundation</h1>
           <p class="v3-type-body-lg v3-reading">
             A cartographic and editorial system for a serious mission atlas: restrained surfaces,
@@ -229,7 +229,7 @@ export function DesignSystemPage() {
               <div class="v3-stack-2">
                 <span class="v3-type-label">World atlas</span>
                 <strong class="v3-type-heading-md">Mission context</strong>
-                <p class="v3-type-body-sm">Example composition only; Phase 6 will own production Explore behavior.</p>
+                <p class="v3-type-body-sm">Example composition only; production Explore owns interactive atlas behavior.</p>
               </div>
               <div class="v3-map-legend" aria-label="Example mission legend">
                 <div class="v3-map-legend__row"><span class="v3-map-legend__swatch v3-map-legend__swatch--unreached" /><span>Unreached range</span><span>&lt;2%</span></div>

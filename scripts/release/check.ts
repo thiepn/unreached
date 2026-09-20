@@ -170,6 +170,21 @@ for (const marker of ["Gate D", "Localization & Church Sharing", "English", "Ger
   if (!phase19.includes(marker)) throw new Error(`Phase 19 localization/sharing policy documentation missing: ${marker}`);
 }
 
+const phase20 = await readText("docs/V3_PHASE20_PEAK_CERTIFICATION.md");
+for (const marker of ["Peak Certification", "Machine-readable architecture lock", "Phase 20 closes the numbered V3 roadmap", "distribution performance budgets", "maintenance/architecture-lock mode"]) {
+  if (!phase20.includes(marker)) throw new Error(`Phase 20 peak-certification documentation missing: ${marker}`);
+}
+
+const architectureLock = await readText("docs/V3_PEAK_ARCHITECTURE_LOCK.md");
+for (const marker of ["Peak Architecture Lock", "There is no Phase 21", "canonical runtime mission source", "Public church sharing", "Dependency lock", "Change-control procedure"]) {
+  if (!architectureLock.includes(marker)) throw new Error(`V3 peak architecture lock documentation missing: ${marker}`);
+}
+
+const architectureManifest = await readJson<{ schemaVersion: number; program: string; roadmap: { finalPhase: number; phaseCount: number; status: string } }>("data/v3-architecture-lock.json");
+if (architectureManifest.schemaVersion !== 1 || architectureManifest.program !== "Unreached V3" || architectureManifest.roadmap.finalPhase !== 20 || architectureManifest.roadmap.phaseCount !== 21 || architectureManifest.roadmap.status !== "closed-after-peak-certification") {
+  throw new Error("V3 peak architecture-lock manifest is missing or inconsistent.");
+}
+
 const genericPublisher = ".github/workflows/publish-release.yml";
 if (!existsSync(resolve(root, genericPublisher))) throw new Error("Generic exact-SHA release publisher is missing.");
 const publisher = await readText(genericPublisher);
@@ -181,4 +196,4 @@ const envExample = await readText(".env.example");
 if (!envExample.includes("JOSHUA_PROJECT_API_KEY=")) throw new Error("Development/server API key example missing.");
 if (index.includes("JOSHUA_PROJECT_API_KEY")) throw new Error("API key name leaked into client HTML.");
 
-console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13 Joshua Project comparison boundaries, Phase 14 observed-history boundaries, attribution, project licensing and third-party notices agree with repository behavior.");
+console.log("Release-truth checks passed: version 2.1.5, generic exact-SHA publication, scheduled release-drift monitoring, comprehension-first production UX, current privacy disclosure, PeopleGroups canonical runtime permissions, Phase 13–20 post-3.0 boundaries, Peak Architecture Lock, attribution, project licensing and third-party notices agree with repository behavior.");

@@ -1,0 +1,89 @@
+name: V3 Phase 20 Peak Certification
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase19-localization-church-sharing
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "worker/package.json"
+      - "worker/package-lock.json"
+      - "data/**"
+      - "src/**"
+      - "scripts/**"
+      - "tests/e2e/**"
+      - "docs/V3_**"
+      - "playwright.config.ts"
+      - "playwright.v3.config.ts"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  peak-certification:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            worker/package-lock.json
+
+      - name: Install application dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Worker dependencies reproducibly
+        working-directory: worker
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify peak architecture lock
+        run: npm run v3:phase20-check
+
+      - name: Build and certify final distribution budgets
+        run: npm run build
+
+      - name: Audit application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Audit Worker vulnerabilities
+        working-directory: worker
+        run: npm audit --audit-level=high
+
+      - name: Audit dependency licenses
+        run: npm run audit:licenses
+
+      - name: Install certified browser matrix
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run complete V3 desktop and mobile browser certification
+        run: npm run e2e
+
+      - name: Upload Phase 20 visual evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase20-peak-evidence
+          path: artifacts/v3-phase20
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase20-playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
+          retention-days: 30

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "program": "Unreached V3",
+  "roadmap": {
+    "finalPhase": 20,
+    "phaseCount": 21,
+    "status": "closed-after-peak-certification",
+    "extensionPolicy": "New product capabilities after Phase 20 require an explicit architecture decision record; do not append public roadmap micro-phases."
+  },
+  "product": {
+    "primaryLoop": [
+      "Discover",
+      "Understand",
+      "See the need",
+      "Pray",
+      "Remember"
+    ],
+    "primaryDestinations": [
+      "Explore",
+      "Peoples",
+      "Pray",
+      "Search",
+      "Saved"
+    ],
+    "normalJourney": [
+      "World",
+      "Region",
+      "Country",
+      "People",
+      "Context",
+      "Prayer"
+    ],
+    "nonGoals": [
+      "analytics-dashboard",
+      "social-network",
+      "mission-priority-ranking",
+      "prayer-gamification"
+    ]
+  },
+  "routes": {
+    "publicStatic": [
+      "/",
+      "/explore",
+      "/peoples",
+      "/search",
+      "/regions",
+      "/countries",
+      "/languages",
+      "/coverage",
+      "/pray",
+      "/pray/session",
+      "/saved",
+      "/share/prayer",
+      "/account",
+      "/about"
+    ],
+    "dynamic": [
+      "/regions/:region",
+      "/countries/:ISO3",
+      "/peoples/:PEID",
+      "/languages/:ISO6393",
+      "/pray/:PEID"
+    ],
+    "internal": [
+      "/dev/design-system"
+    ]
+  },
+  "sources": {
+    "peoplegroups-org-api": "canonical-runtime",
+    "natural-earth": "canonical-geography",
+    "joshua-project-api": "optional-no-store-comparison",
+    "progress-bible-registered-data": "blocked-without-permission",
+    "ethnologue": "blocked-without-license"
+  },
+  "privacy": {
+    "localOnly": [
+      "personalNotes",
+      "prayerMemory",
+      "recent"
+    ],
+    "privateSyncKinds": [
+      "saved",
+      "prayer"
+    ],
+    "publicShareFields": [
+      "version",
+      "title",
+      "locale",
+      "peopleIds"
+    ],
+    "publicShareMaxPeople": 12,
+    "publicShareStorage": "none"
+  },
+  "semantics": {
+    "unknownRemainsUnknown": true,
+    "sourceAssertionsRemainScoped": true,
+    "sourceDisagreementIsNotAveraged": true,
+    "noCompositeMissionScore": true,
+    "noMissionPriorityRanking": true,
+    "noPrayerScore": true,
+    "noPrayerStreak": true,
+    "noLeaderboard": true,
+    "geographicPrecisionMayNotExceedSourcePrecision": true,
+    "diasporaIsNotInferredFromDistribution": true
+  },
+  "localization": {
+    "certifiedLocales": [
+      "en",
+      "de"
+    ],
+    "wholeAppLocalized": false,
+    "catalogParityRequired": true,
+    "rawHtmlTranslationsAllowed": false
+  },
+  "release": {
+    "browserProjects": [
+      "chromium",
+      "firefox",
+      "webkit",
+      "mobile-chromium",
+      "mobile-webkit"
+    ],
+    "historicalBrowserSuiteBlocking": false,
+    "dependencyAuditLevel": "high",
+    "accessibilityStylesMustLoadLast": true
+  },
+  "performanceBudgets": {
+    "entryJsRawBytes": 102400,
+    "entryJsGzipBytes": 35840,
+    "globalCssRawBytes": 327680,
+    "globalCssGzipBytes": 61440,
+    "exploreJsRawBytes": 1126400,
+    "exploreJsGzipBytes": 307200,
+    "otherJsChunkRawBytes": 204800,
+    "otherJsChunkGzipBytes": 71680,
+    "maplibreCssRawBytes": 102400,
+    "maplibreWorkerRawBytes": 563200,
+    "initialShellGzipBytes": 102400
+  },
+  "dependencies": {
+    "applicationRuntime": [
+      "@fontsource-variable/newsreader",
+      "@fontsource-variable/source-sans-3",
+      "lucide-preact",
+      "maplibre-gl",
+      "preact",
+      "zod"
+    ],
+    "workerRuntime": [
+      "jose"
+    ],
+    "policy": "Any new runtime dependency requires an explicit architecture-lock update and normal dependency/license/security certification."
+  }
+}
