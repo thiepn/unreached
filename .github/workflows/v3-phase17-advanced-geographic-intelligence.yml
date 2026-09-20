@@ -1,0 +1,65 @@
+name: V3 Phase 17 Advanced Geographic Intelligence
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase16-mission-knowledge-graph
+    paths:
+      - "package.json"
+      - "docs/V3_PHASE17_ADVANCED_GEOGRAPHIC_INTELLIGENCE.md"
+      - "docs/DATA_AND_LEGAL_POLICY.md"
+      - "src/geography/intelligence.ts"
+      - "src/components/AdvancedGeographicIntelligencePanel.tsx"
+      - "src/pages/PeoplePage.tsx"
+      - "src/pages/AboutPage.tsx"
+      - "src/styles/people/geographic-intelligence.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase17-check.ts"
+      - "tests/e2e/v3-phase17-geographic-intelligence.spec.ts"
+      - ".github/workflows/v3-phase17-advanced-geographic-intelligence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 17 geographic evidence and precision boundaries
+        run: npm run v3:phase17-check
+
+      - name: Run complete production build gate
+        run: npm run build
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify advanced geographic intelligence on desktop and mobile
+        run: npm run v3:phase17-visual
+
+      - name: Upload Phase 17 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase17-geographic-intelligence
+          path: artifacts/v3-phase17
+          if-no-files-found: warn
+          retention-days: 30
