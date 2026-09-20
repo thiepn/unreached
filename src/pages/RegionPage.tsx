@@ -106,7 +106,7 @@ export function RegionPage({ regionId }: { regionId: string }) {
 
       <footer class="v3-geography-note">
         <UsersRound size={18} aria-hidden="true" />
-        <div><strong>Next step: people</strong><p>Country pages lead into individual people profiles and prayer. Phase 8 will rebuild the definitive people profile inside this geographic hierarchy.</p></div>
+        <div><strong>Next step: people</strong><p>Country pages lead into individual people profiles, source-grounded context, and focused prayer inside this geographic hierarchy.</p></div>
       </footer>
     </article>
   );
