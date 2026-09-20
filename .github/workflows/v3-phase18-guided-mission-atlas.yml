@@ -1,0 +1,70 @@
+name: V3 Phase 18 Guided Mission Atlas
+
+on:
+  pull_request:
+    branches:
+      - main
+      - phase/v3-phase17-advanced-geographic-intelligence
+    paths:
+      - "package.json"
+      - "docs/V3_PHASE18_GUIDED_MISSION_ATLAS.md"
+      - "docs/DATA_AND_LEGAL_POLICY.md"
+      - "src/guided-atlas/**"
+      - "src/components/GuidedRegionAtlasPanel.tsx"
+      - "src/components/GuidedJourneyBanner.tsx"
+      - "src/pages/RegionsPage.tsx"
+      - "src/pages/RegionPage.tsx"
+      - "src/pages/CountryPage.tsx"
+      - "src/pages/PeoplePage.tsx"
+      - "src/pages/PrayerFocusPage.tsx"
+      - "src/pages/AboutPage.tsx"
+      - "src/styles/guided-atlas.css"
+      - "src/main.tsx"
+      - "scripts/v3/phase18-check.ts"
+      - "tests/e2e/v3-phase18-guided-atlas.spec.ts"
+      - ".github/workflows/v3-phase18-guided-mission-atlas.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies reproducibly
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Phase 18 guided atlas selection and journey boundaries
+        run: npm run v3:phase18-check
+
+      - name: Run complete production build gate
+        run: npm run build
+
+      - name: Audit high and critical application vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Certify guided mission atlas on desktop and mobile
+        run: npm run v3:phase18-visual
+
+      - name: Upload Phase 18 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unreached-v3-phase18-guided-atlas
+          path: artifacts/v3-phase18
+          if-no-files-found: warn
+          retention-days: 30
