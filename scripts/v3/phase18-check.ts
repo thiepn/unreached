@@ -195,6 +195,7 @@ for (const invalid of [
 
 for (const path of [
   "src/guided-atlas/model.ts",
+  "src/guided-atlas/runtime.ts",
   "src/components/GuidedRegionAtlasPanel.tsx",
   "src/components/GuidedJourneyBanner.tsx",
   "src/styles/guided-atlas.css",
@@ -283,6 +284,7 @@ for (const directory of ["src/sync", "worker/src"]) {
 
 const guidedSourceFiles = [
   await read("src/guided-atlas/model.ts"),
+  await read("src/guided-atlas/runtime.ts"),
   await read("src/components/GuidedJourneyBanner.tsx"),
   await read("src/components/GuidedRegionAtlasPanel.tsx"),
 ].join("\n");
