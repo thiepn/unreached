@@ -69,8 +69,11 @@
 .church-prayer-share__people {
   display: grid;
   gap: var(--space-2);
+  max-height: 24rem;
   margin: 0;
   padding: var(--space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
 }
@@ -91,6 +94,10 @@
 
 .church-prayer-share__people label:hover {
   background: var(--paper-1);
+}
+
+.church-prayer-share__people label:has(input:disabled) {
+  opacity: .55;
 }
 
 .church-prayer-share__people input {
