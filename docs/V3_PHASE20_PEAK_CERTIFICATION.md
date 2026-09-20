@@ -5,7 +5,7 @@
 
 ## Scope
 
-Phase 20 is the final public V3 roadmap phase.
+Phase 20 is the final public V3 roadmap phase. Phase 20 closes the numbered V3 roadmap.
 
 It adds no new mission, prayer, geographic, social or sharing feature family.
 
