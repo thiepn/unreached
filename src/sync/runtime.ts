@@ -3,6 +3,7 @@ import {
   persistBrowserPersonalizationState,
   readBrowserPersonalizationState,
 } from "../personalization/runtime";
+import { prayerListEntrySchema, savedPersonSnapshotSchema } from "../personalization/types";
 import {
   clearSyncAccessToken,
   deleteRemoteAccount,
@@ -61,6 +62,55 @@ function stringOrNull(value: unknown): value is string | null {
   return value === null || typeof value === "string";
 }
 
+function timestampOrNull(value: unknown): value is string | null {
+  return value === null || (typeof value === "string" && !Number.isNaN(Date.parse(value)));
+}
+
+function positiveInteger(value: unknown): value is number {
+  return Number.isSafeInteger(value) && Number(value) > 0;
+}
+
+function nonnegativeInteger(value: unknown): value is number {
+  return Number.isSafeInteger(value) && Number(value) >= 0;
+}
+
+function syncPayloadValid(kind: SyncKind, payload: unknown): boolean {
+  return kind === "saved"
+    ? savedPersonSnapshotSchema.safeParse(payload).success
+    : prayerListEntrySchema.safeParse(payload).success;
+}
+
+function normalizeStoredSyncItem(value: unknown): SyncItem | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<SyncItem>;
+  if (candidate.kind !== "saved" && candidate.kind !== "prayer") return null;
+  if (!positiveInteger(candidate.sourcePeopleId) || typeof candidate.present !== "boolean" || !nonnegativeInteger(candidate.revision)) return null;
+  if (!timestampOrNull(candidate.lastPrayedAt ?? null) || typeof candidate.updatedAt !== "string" || Number.isNaN(Date.parse(candidate.updatedAt))) return null;
+  if (!candidate.present) {
+    if (candidate.payload !== null) return null;
+  } else if (!syncPayloadValid(candidate.kind, candidate.payload)) {
+    return null;
+  }
+  if (candidate.kind === "saved" && candidate.lastPrayedAt !== null) return null;
+  return candidate as SyncItem;
+}
+
+function normalizeStoredMutation(value: unknown): SyncMutation | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<SyncMutation>;
+  if (typeof candidate.mutationId !== "string" || candidate.mutationId.length < 1 || candidate.mutationId.length > 128) return null;
+  if (candidate.kind !== "saved" && candidate.kind !== "prayer") return null;
+  if (!positiveInteger(candidate.sourcePeopleId) || (candidate.action !== "upsert" && candidate.action !== "delete") || !nonnegativeInteger(candidate.baseItemRevision)) return null;
+  if (!timestampOrNull(candidate.lastPrayedAt ?? null)) return null;
+  if (candidate.action === "delete") {
+    if (candidate.payload !== null || candidate.lastPrayedAt !== null) return null;
+  } else if (!syncPayloadValid(candidate.kind, candidate.payload)) {
+    return null;
+  }
+  if (candidate.kind === "saved" && candidate.lastPrayedAt !== null) return null;
+  return candidate as SyncMutation;
+}
+
 function normalizeSyncState(value: unknown): LocalSyncState | null {
   if (!value || typeof value !== "object") return null;
   const candidate = value as StoredSyncStateCandidate;
@@ -73,14 +123,28 @@ function normalizeSyncState(value: unknown): LocalSyncState | null {
   if (!stringOrNull(candidate.lastSyncedAt ?? null) || !stringOrNull(candidate.lastError ?? null)) return null;
   if (candidate.version === 2 && !stringOrNull(candidate.accountMismatchEmail ?? null)) return null;
 
+  const mirror: Record<string, SyncItem> = {};
+  for (const [key, rawItem] of Object.entries(candidate.mirror as Record<string, unknown>)) {
+    const item = normalizeStoredSyncItem(rawItem);
+    if (!item || key !== `${item.kind}:${item.sourcePeopleId}`) return null;
+    mirror[key] = item;
+  }
+
+  const pending: SyncMutation[] = [];
+  for (const rawMutation of candidate.pending) {
+    const mutation = normalizeStoredMutation(rawMutation);
+    if (!mutation) return null;
+    pending.push(mutation);
+  }
+
   return {
     version: 2,
     enabled: candidate.enabled,
     accountEmail: (candidate.accountEmail ?? null) as string | null,
     accountMismatchEmail: candidate.version === 2 ? (candidate.accountMismatchEmail ?? null) as string | null : null,
     lastServerRevision: Number(candidate.lastServerRevision),
-    mirror: candidate.mirror as Record<string, SyncItem>,
-    pending: candidate.pending as SyncMutation[],
+    mirror,
+    pending,
     lastSyncedAt: (candidate.lastSyncedAt ?? null) as string | null,
     lastError: (candidate.lastError ?? null) as string | null,
   };
