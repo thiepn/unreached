@@ -45,6 +45,7 @@ test("geographic intelligence starts at current PGID and loads wider ROP3 distri
   await expect(nigeria).toBeVisible();
   await expect(nigeria).toContainText("Same ROP3 source taxonomy");
   await expect(nigeria).toContainText("PG910002");
+  await nigeria.locator("summary").click();
   await expect(nigeria.getByRole("link", { name: /Browser Test People/ })).toHaveAttribute("href", "#/peoples/" + RELATED_TEST_PEID);
 
   await expect(panel.getByText("Second Browser People", { exact: true })).toHaveCount(0);
