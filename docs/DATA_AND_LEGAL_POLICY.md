@@ -223,6 +223,28 @@ Recipients resolve PEIDs against current runtime data. Missing or no-longer-elig
 
 Phase 19's localization foundation currently certifies English and German catalog parity for the shared-prayer domain. It does not claim whole-application translation coverage.
 
+## 3G. Phase 20 Peak Architecture Lock
+
+**Status:** LONG-TERM CHANGE CONTROL  
+**Reviewed:** 20 September 2026
+
+Phase 20 adds no new third-party data source or redistribution right.
+
+It locks the already-reviewed source/privacy roles into `data/v3-architecture-lock.json` and makes drift release-blocking.
+
+Any future change that materially alters:
+
+- runtime source roles;
+- redistribution permissions;
+- privacy/storage boundaries;
+- public sharing fields;
+- certified localization claims;
+- runtime dependency set;
+
+must update the architecture lock, this policy where applicable, and the relevant source/license/privacy certification.
+
+Ordinary maintenance must not create a new source role or public data surface implicitly.
+
 ## 4. Natural Earth
 
 **Status:** APPROVED  
@@ -370,6 +392,7 @@ A release must fail if any of the following is false:
 - Phase 17 geographic intelligence remains country-level, exact-ROP3-linked, explicit about population coverage, and must not infer diaspora/migration/city precision;
 - Phase 18 guided atlas prose remains source-grounded, pathway selection remains deterministic/non-ranking, and guided journey state remains URL-only with no stored completion history;
 - Phase 19 sharing remains serverless/public-identifier-only with current-source eligibility re-resolution, and localization catalogs remain parity-checked plain text;
+- Phase 20 locks source/privacy/dependency roles into machine-readable release certification and requires explicit reviewed change control for future architecture-level changes;
 - Natural Earth remains public-release/redistribution approved;
 - Joshua Project Phase 13 use, if present, is covered by a current terms review, remains non-commercial, uses explicit linked attribution, manual crosswalks, a server-only key and no-store/no-persistence handling, and does not bypass Gate D;
 - ProgressBible and Ethnologue remain excluded from the public runtime unless a new reviewed policy explicitly changes that;
