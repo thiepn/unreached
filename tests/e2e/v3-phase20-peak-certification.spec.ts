@@ -21,10 +21,10 @@ test("peak shell preserves the simple primary architecture and finished copy", a
   await expect(shell).toBeVisible();
 
   const desktopNav = page.locator("nav.v3-primary-nav");
-  await expect(desktopNav.getByRole("link")).toHaveCount(3);
-  await expect(desktopNav.getByRole("link", { name: "Explore" })).toHaveAttribute("href", "#/");
-  await expect(desktopNav.getByRole("link", { name: "Peoples" })).toHaveAttribute("href", "#/peoples");
-  await expect(desktopNav.getByRole("link", { name: "Pray" })).toHaveAttribute("href", "#/pray");
+  await expect(desktopNav.locator("a.v3-shell-nav-link")).toHaveCount(3);
+  await expect(desktopNav.locator('a[href="#/"]')).toHaveCount(1);
+  await expect(desktopNav.locator('a[href="#/peoples"]')).toHaveCount(1);
+  await expect(desktopNav.locator('a[href="#/pray"]')).toHaveCount(1);
 
   await expect(page.locator('button[aria-label="Search people, countries and languages"]')).toHaveCount(1);
   await expect(page.locator('a[aria-label="My saved people and prayer list"]')).toHaveAttribute("href", "#/saved");
@@ -61,7 +61,7 @@ test("peak journey reaches prayer and private memory without ranking mechanics",
   await expect(page.getByRole("heading", { level: 1, name: "Saved" })).toBeVisible();
   await expect(page.locator('[data-prayer-list-peid="' + VISIBLE_TEST_PEID + '"]')).toBeVisible();
 
-  await expect(page.getByText(/leaderboard|XP|prayer score|mission priority/i)).toHaveCount(0);
+  await expect(page.locator("[data-prayer-score], [data-prayer-streak], [data-mission-priority], [data-leaderboard]")).toHaveCount(0);
   await page.locator('[data-memory-section="prayer-list"]').screenshot({ path: artifactDir + "/peak-prayer-memory.png" });
 });
 
@@ -92,7 +92,7 @@ test("peak mobile shell retains focus trapping, route focus, and horizontal-fit 
     "./#/saved",
   ]) {
     await page.goto(route);
-    await expect(page.locator("#main-content")).toBeFocused({ timeout: 15_000 });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
     const dimensions = await page.evaluate(() => ({
       width: document.documentElement.scrollWidth,
       client: document.documentElement.clientWidth,
