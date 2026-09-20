@@ -249,6 +249,15 @@ for (const path of ["src/pages/RegionPage.tsx", "src/pages/RegionsPage.tsx", "sr
   }
 }
 
+const publicUiFiles = sourceFiles.filter((path) => path.startsWith("src/pages/") || path.startsWith("src/components/"));
+for (const path of publicUiFiles) {
+  const source = await read(path);
+  const visiblePhaseText = source.match(/>[^<{\n]*\bPhase\s+\d+[^<{\n]*</i);
+  if (visiblePhaseText) {
+    throw new Error("V3 Phase 20 numbered roadmap copy leaked into visible UI in " + path + ": " + visiblePhaseText[0]);
+  }
+}
+
 const v3Scripts = Object.keys(packageJson.scripts ?? {})
   .flatMap((key) => [...key.matchAll(/^v3:phase(\d+)(?::|-|$)/g)].map((match) => Number(match[1])));
 if (v3Scripts.some((phase) => phase > 20)) throw new Error("V3 Phase 20 public roadmap scripts must not extend beyond Phase 20.");
