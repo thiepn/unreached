@@ -50,7 +50,7 @@ test("regional guide creates a source-grounded Region to Country to People to Pr
   await expect(prayerJourney).toContainText("Step 4 of 4");
   await expect(prayerJourney.getByRole("link", { name: /Return to the Africa guide/ })).toHaveAttribute("href", "#/regions/africa");
 
-  await page.screenshot({ path: artifactDir + "/guided-journey-prayer.png", fullPage: true });
+  await prayerJourney.screenshot({ path: artifactDir + "/guided-journey-prayer.png" });
 });
 
 test("regional guide explains deterministic non-ranking pathway selection", async ({ page }) => {
@@ -103,5 +103,5 @@ test("guided atlas remains usable on a narrow mobile viewport", async ({ page })
   }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
 
-  await page.screenshot({ path: artifactDir + "/guided-atlas-mobile.png", fullPage: true });
+  await guide.screenshot({ path: artifactDir + "/guided-atlas-mobile.png" });
 });
